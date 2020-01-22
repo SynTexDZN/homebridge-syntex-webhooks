@@ -1,0 +1,36 @@
+{
+  "name": "homebridge-syntex-webhooks",
+  "version": "1.0.0",
+  "description": "A webhook plugin for HTTP devices",
+  "main": "index.js",
+  "author": "SynTex",
+  "license": "ISC",
+  "engines": {
+    "homebridge": ">=0.3.0",
+    "node": ">=9.11.2"
+  },
+  "dependencies": {
+    "json-fs-store": "^1.0.1"
+  },
+  "keywords": [
+    "syntex",
+    "syntex-webhooks",
+    "homebridge-plugin",
+    "homebridge",
+    "plugin",
+    "http",
+    "webhook",
+    "webhooks",
+    "homekit",
+    "smarthome",
+    "siri"
+  ],
+  "homepage": "https://github.com/SynTexDZN/homebridge-syntex-webhooks#readme",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:SynTexDZN/homebridge-syntex-webhooks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SynTexDZN/homebridge-syntex-webhooks/issues"
+  }
+}
