@@ -11,7 +11,7 @@ module.exports = function(homebridge)
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
 
-    homebridge.registerPlatform("homebridge-syntex", "SynTexWebHook", SynTexWebHookPlatform);
+    homebridge.registerPlatform("homebridge-syntex", "SynTexWebHooks", SynTexWebHookPlatform);
     homebridge.registerAccessory("homebridge-syntex", "SynTexWebHookSensor", SynTexWebHookWebHookSensorAccessory);
     homebridge.registerAccessory("homebridge-syntex", "SynTexWebHookSwitch", SynTexWebHookWebHookSwitchAccessory);
 };
