@@ -84,8 +84,6 @@ SynTexWebHookPlatform.prototype = {
           
                                 if(obj)
                                 {                            
-                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json geladen!");
-                                    
                                     var found = false;
                                     
                                     for(var i = 0; i < obj.devices.length; i++)
@@ -111,7 +109,7 @@ SynTexWebHookPlatform.prototype = {
                                     }
                                     
                                     if(found == false)
-                                    {
+                                    {                                        
                                         if(urlParams.type)
                                         {
                                             obj.devices[obj.devices.length] = {mac: urlParams.mac, value: urlParams.value, type: urlParams.type};
@@ -129,6 +127,8 @@ SynTexWebHookPlatform.prototype = {
                                 }
                                 else
                                 {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
+                                    
                                     if(urlParams.type)
                                     {
                                         var device = {
@@ -194,8 +194,6 @@ SynTexWebHookPlatform.prototype = {
           
                                 if(obj)
                                 {                            
-                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json geladen!");
-                                    
                                     var found = false;
                                     
                                     for(var i = 0; i < obj.devices.length; i++)
@@ -208,15 +206,31 @@ SynTexWebHookPlatform.prototype = {
                                                 {
                                                     response.write(obj.devices[i].value.toString());
                                                     response.end();
+                                                    
+                                                    found = true;
                                                 }
                                             }
                                             else
                                             {
                                                 response.write(obj.devices[i].value.toString());
                                                 response.end();
+                                                
+                                                found = true;
                                             }
                                         }
                                     }
+                                    
+                                    if(!found)
+                                    {
+                                        response.write("Es wurde kein passendes Gerät gefunden!");
+                                        response.end();
+                                        
+                                        log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden!");
+                                    }
+                                }
+                                else
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
                                 }
                             });
                         }
@@ -510,8 +524,6 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
           
         if(obj)
         {                            
-            log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json geladen!");
-
             var found = false;
 
             for(var i = 0; i < obj.devices.length; i++)
@@ -535,6 +547,8 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
         }
         else
         {
+            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
+            
             var device = {
                 id: "storage",
                 devices: [{mac: this.mac, value: powerOn}]
