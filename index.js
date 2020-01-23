@@ -458,7 +458,7 @@ function SynTexWebHookSwitchAccessory(switchConfig, storage)
     this.changeHandler = (function(newState)
     {
         log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+        log(this.service.getCharacteristic(Characteristic.On).updateValue(newState));
     }).bind(this);
     
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
