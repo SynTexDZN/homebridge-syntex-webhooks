@@ -22,11 +22,11 @@ function SynTexWebHookPlatform(slog, sconfig, api)
     config = store(api.user.storagePath());
     log = slog;
     
-    this.sensors = config["sensors"] || [];
-    this.switches = config["switches"] || [];
+    this.sensors = sconfig["sensors"] || [];
+    this.switches = sconfig["switches"] || [];
     
-    this.cacheDirectory = config["cache_directory"] || "./.node-persist/storage";
-    this.port = config["port"] || 1710;
+    this.cacheDirectory = sconfig["cache_directory"] || "./.node-persist/storage";
+    this.port = sconfig["port"] || 1710;
     
     this.storage = store(this.cacheDirectory);
 }
