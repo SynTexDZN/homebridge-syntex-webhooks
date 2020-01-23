@@ -251,7 +251,7 @@ function SynTexWebHookSensorAccessory(sensorConfig, storage)
         
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )");
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.ContactSensorState).updateValue(newState ? Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
         }).bind(this);
         
@@ -263,7 +263,7 @@ function SynTexWebHookSensorAccessory(sensorConfig, storage)
         
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )");
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(newState);
         }).bind(this);
         
@@ -275,7 +275,7 @@ function SynTexWebHookSensorAccessory(sensorConfig, storage)
         
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )");
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(newState);
         }).bind(this);
         
@@ -290,7 +290,7 @@ function SynTexWebHookSensorAccessory(sensorConfig, storage)
         
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(newState);
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(newState);
         }).bind(this);
         
         this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).on('get', this.getState.bind(this));
@@ -301,7 +301,7 @@ function SynTexWebHookSensorAccessory(sensorConfig, storage)
         
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )");
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.LeakDetected).updateValue(newState);
         }).bind(this);
         
@@ -313,7 +313,7 @@ function SynTexWebHookSensorAccessory(sensorConfig, storage)
       
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(parseFloat(newState));
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(parseFloat(newState));
         }).bind(this);
     
         this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).on('get', this.getState.bind(this));
@@ -414,7 +414,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             callback(null, state);
         }
         
-        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für " + this.name + " ( " + this.type + " ) ist '" + state + "' ( " + this.mac + " )");
+        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
     });
     
     /*
@@ -457,7 +457,7 @@ function SynTexWebHookSwitchAccessory(switchConfig, storage)
     
     this.changeHandler = (function(newState)
     {
-        log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )");
+        log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
         this.service.getCharacteristic(Characteristic.On).updateValue(newState);
     }).bind(this);
     
@@ -494,7 +494,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 
         callback(null, state);
         
-        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für " + this.name + " ( " + this.type + " ) ist '" + state + "' ( " + this.mac + " )");
+        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
     });
 };
 
