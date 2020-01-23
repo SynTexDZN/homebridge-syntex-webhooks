@@ -10,14 +10,72 @@ A plugin to control and to create HTTP devices.
 
 # Example Config
 **INFO:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
+- For the mac address you can use either a `real mac address` or another `unique text`
+- Every device needs these configurations: `mac`, `name` and `type`
+
 ```
 "platforms": [
     {
         "platform": "SynTexWebhooks",
         "port": 1710,
         "cache_directory": "./SynTex/",
-        "sensors": [],
-        "switches": []
+        "sensors": [
+            {
+                "mac": "EC:FA:BC:59:3F:3C",
+                "name": "Temperature",
+                "type": "temperature"
+            },
+            {
+                "mac": "EC:FA:BC:59:3F:3C",
+                "name": "Humidity",
+                "type": "humidity"
+            },
+            {
+                "mac": "EC:FA:BC:59:3F:3C",
+                "name": "Light",
+                "type": "light"
+            },
+            {
+                "mac": "EC:FA:BC:59:3F:3C",
+                "name": "Leak",
+                "type": "leak"
+            },
+            {
+                "mac": "EC:FA:BC:59:3F:3C",
+                "name": "Motion",
+                "type": "motion"
+            },
+            {
+                "mac": "EC:FA:BC:59:3F:3C",
+                "name": "Contact",
+                "type": "contact"
+            }
+        ],
+        "switches": [
+            {
+                "mac": "EC:FA:BC:59:3F:3C",
+                "name": "Switch",
+                "type": "switch",
+                "on_method": "GET",
+                "on_url": "http://192.168.178.164/switch?state=true",
+                "off_method": "GET",
+                "off_url": "http://192.168.178.164/switch?state=false"
+            },
+            {
+                "mac": "EC:FA:BC:59:3F:3C",
+                "name": "Relais",
+                "type": "relais",
+                "on_method": "GET",
+                "on_url": "http://192.168.178.162/switch?state=true",
+                "off_method": "GET",
+                "off_url": "http://192.168.178.162/switch?state=false"
+            },
+            {
+                "mac": "dummy1",
+                "name": "Dummy",
+                "type": "switch"
+            }
+        ]
     }
 ]
 ```
