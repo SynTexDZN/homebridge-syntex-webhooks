@@ -36,17 +36,17 @@ A plugin to control and to create HTTP devices.
                 "type": "light"
             },
             {
-                "mac": "EC:FA:BC:59:3F:3C",
+                "mac": "sensor1",
                 "name": "Leak",
                 "type": "leak"
             },
             {
-                "mac": "EC:FA:BC:59:3F:3C",
+                "mac": "sensor2",
                 "name": "Motion",
                 "type": "motion"
             },
             {
-                "mac": "EC:FA:BC:59:3F:3C",
+                "mac": "sensor3",
                 "name": "Contact",
                 "type": "contact"
             }
@@ -71,7 +71,7 @@ A plugin to control and to create HTTP devices.
                 "off_url": "http://192.168.178.162/switch?state=false"
             },
             {
-                "mac": "dummy1",
+                "mac": "switch1",
                 "name": "Dummy",
                 "type": "switch"
             }
