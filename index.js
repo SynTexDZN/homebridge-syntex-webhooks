@@ -1,8 +1,6 @@
 var request = require('request');
 var http = require('http');
-var https = require('https');
 var url = require('url');
-var auth = require('http-auth');
 var store = require('json-fs-store');
 var Service, Characteristic;
 
@@ -16,34 +14,38 @@ module.exports = function(homebridge)
     homebridge.registerAccessory("homebridge-syntex-webhooks", "SynTexWebHookSwitch", SynTexWebHookSwitchAccessory);
 };
 
-function SynTexWebHookPlatform(log, config, api)
+var log;
+var config;
+
+function SynTexWebHookPlatform(slog, sconfig, api)
 {
+    config = store(api.user.storagePath());
+    log = slog;
+    
     this.sensors = config["sensors"] || [];
     this.switches = config["switches"] || [];
-    this.configPath = api.user.storagePath();
-    this.config = store(this.configPath);
-    this.cacheDirectory = config["cache_directory"] || "./.node-persist/storage";
-    this.storage = store(this.cacheDirectory);
-    this.log = log;
     
-    //this.autoConfig = config["autoConfig"] || true;
+    this.cacheDirectory = config["cache_directory"] || "./.node-persist/storage";
     this.port = config["port"] || 1710;
+    
+    this.storage = store(this.cacheDirectory);
 }
 
 SynTexWebHookPlatform.prototype = {
+    
     accessories : function(callback)
     {
         var accessories = [];
         
         for (var i = 0; i < this.sensors.length; i++)
         {
-            var Sensor = new SynTexWebHookSensorAccessory(this.log, this.sensors[i], this.storage);
+            var Sensor = new SynTexWebHookSensorAccessory(this.sensors[i], this.storage);
             accessories.push(Sensor);
         }
         
         for (var i = 0; i < this.switches.length; i++)
         {
-            var Switch = new SynTexWebHookSwitchAccessory(this.log, this.switches[i], this.storage);
+            var Switch = new SynTexWebHookSwitchAccessory(this.switches[i], this.storage);
             accessories.push(Switch);
         }
         
@@ -55,12 +57,15 @@ SynTexWebHookPlatform.prototype = {
             var urlParams = urlParts.query;
             var urlPath = urlParts.pathname;
             var body = [];
+            
             request.on('error', (function(err)
             {
-                this.log("[ERROR] Reason: %s.", err);
+                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Reason: ", err);
+                
             }).bind(this)).on('data', function(chunk)
             {
                 body.push(chunk);
+                
             }).on('end', (function()
             {
                 body = Buffer.concat(body).toString();
@@ -79,7 +84,7 @@ SynTexWebHookPlatform.prototype = {
           
                                 if(obj)
                                 {                            
-                                    this.log('[Devices] Storage.json geladen!');
+                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json geladen!");
                                     
                                     var found = false;
                                     
@@ -118,7 +123,8 @@ SynTexWebHookPlatform.prototype = {
                                     }
                                     
                                     this.storage.add(obj, (err) => {
-                                        this.log('Storage aktualisiert!');
+                                        
+                                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json aktualisiert!");
                                     });
                                 }
                                 else
@@ -139,7 +145,8 @@ SynTexWebHookPlatform.prototype = {
                                     }
                                     
                                     this.storage.add(device, (err) => {
-                                        this.log('Storage aktualisiert!');
+                                        
+                                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json aktualisiert!");
                                     });
                                 }
                                 
@@ -187,7 +194,7 @@ SynTexWebHookPlatform.prototype = {
           
                                 if(obj)
                                 {                            
-                                    this.log('[Devices] Storage.json geladen!');
+                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json geladen!");
                                     
                                     var found = false;
                                     
@@ -214,39 +221,24 @@ SynTexWebHookPlatform.prototype = {
                             });
                         }
                     }
-                    else
-                    {
-                        response.write("Error MAC");
-                        response.end();
-                    }
                 }
                 else if(urlPath == '/ping')
                 {
-                    this.log(this.configPath);
-                    
                     response.write("");
                     response.end();
                 }
-                else
-                {
-                    // Index
-                    
-                    this.log("Index wurde aufgerufen!");
-                    response.write("Hallo Welt!");
-                    response.end();                    
-                }
             }).bind(this));
+            
         }).bind(this);
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
-        this.log("Data Link Server läuft auf Port '%s'.", this.port);
+        log('\x1b[33m%s\x1b[0m', "[INFO]", "Data Link Server läuft auf Port ", "'" + this.port + "'");
     }
 }
 
-function SynTexWebHookSensorAccessory(log, sensorConfig, storage)
+function SynTexWebHookSensorAccessory(sensorConfig, storage)
 {
-    this.log = log;
     this.mac = sensorConfig["mac"];
     this.id = sensorConfig["id"];
     this.name = sensorConfig["name"];
@@ -259,7 +251,7 @@ function SynTexWebHookSensorAccessory(log, sensorConfig, storage)
         
         this.changeHandler = (function(newState)
         {
-            this.log("Change HomeKit state for contact sensor to '%s'.", newState);
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.ContactSensorState).updateValue(newState ? Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
         }).bind(this);
         
@@ -271,7 +263,7 @@ function SynTexWebHookSensorAccessory(log, sensorConfig, storage)
         
         this.changeHandler = (function(newState)
         {
-            this.log("Change HomeKit state for contact sensor to '%s'.", newState);
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(newState);
         }).bind(this);
         
@@ -283,7 +275,7 @@ function SynTexWebHookSensorAccessory(log, sensorConfig, storage)
         
         this.changeHandler = (function(newState)
         {
-            this.log("Change HomeKit value for temperature sensor to '%s'.", newState);
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(newState);
         }).bind(this);
         
@@ -298,8 +290,7 @@ function SynTexWebHookSensorAccessory(log, sensorConfig, storage)
         
         this.changeHandler = (function(newState)
         {
-            this.log("Change HomeKit value for humidity sensor to '%s'.", newState);
-            this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(newState);
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(newState);
         }).bind(this);
         
         this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).on('get', this.getState.bind(this));
@@ -310,7 +301,7 @@ function SynTexWebHookSensorAccessory(log, sensorConfig, storage)
         
         this.changeHandler = (function(newState)
         {
-            this.log("Change HomeKit value for humidity sensor to '%s'.", newState);
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.LeakDetected).updateValue(newState);
         }).bind(this);
         
@@ -322,8 +313,7 @@ function SynTexWebHookSensorAccessory(log, sensorConfig, storage)
       
         this.changeHandler = (function(newState)
         {
-            this.log("Change HomeKit value for light sensor to '%s'.", newState);
-            this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(parseFloat(newState));
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(parseFloat(newState));
         }).bind(this);
     
         this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).on('get', this.getState.bind(this));
@@ -348,7 +338,7 @@ function SynTexWebHookSensorAccessory(log, sensorConfig, storage)
     {
         this.service = new Service.SmokeSensor(this.name);
         this.changeHandler = (function(newState) {
-            this.log("Change HomeKit state for smoke sensor to '%s'.", newState);
+            log("Change HomeKit state for smoke sensor to '%s'.", newState);
             this.service.getCharacteristic(Characteristic.SmokeDetected).updateValue(newState ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED, undefined, CONTEXT_FROM_WEBHOOK);
         }).bind(this);
         this.service.getCharacteristic(Characteristic.SmokeDetected).on('get', this.getState.bind(this));
@@ -357,7 +347,7 @@ function SynTexWebHookSensorAccessory(log, sensorConfig, storage)
     {
         this.service = new Service.AirQualitySensor(this.name);
         this.changeHandler = (function(newState) {
-            this.log("Change HomeKit value for air quality sensor to '%s'.", newState);
+            log("Change HomeKit value for air quality sensor to '%s'.", newState);
             this.service.getCharacteristic(Characteristic.AirQuality).updateValue(newState, undefined, CONTEXT_FROM_WEBHOOK);
         }).bind(this);
         this.service.getCharacteristic(Characteristic.AirQuality).on('get', this.getState.bind(this));
@@ -366,9 +356,7 @@ function SynTexWebHookSensorAccessory(log, sensorConfig, storage)
 }
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
-{
-    this.log("Getting current state for '%s'...", this.id);
-    
+{    
     var state = null;
     
     this.storage.load('storage', (err, obj) => {    
@@ -426,7 +414,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             callback(null, state);
         }
         
-        this.log("Status von '%s' ist '%s'", this.id, state);
+        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für " + this.name + " ( " + this.type + " ) ist '" + state + "' ( " + this.mac + " )");
     });
     
     /*
@@ -447,47 +435,10 @@ SynTexWebHookSensorAccessory.prototype.getServices = function()
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function SynTexWebHookSwitchAccessory(log, switchConfig, storage)
+function SynTexWebHookSwitchAccessory(switchConfig, storage)
 {
-    this.log = log;
     this.mac = switchConfig["mac"];
+    this.type = switchConfig["type"];
     this.id = switchConfig["id"];
     this.name = switchConfig["name"];
     this.onURL = switchConfig["on_url"] || "";
@@ -506,7 +457,7 @@ function SynTexWebHookSwitchAccessory(log, switchConfig, storage)
     
     this.changeHandler = (function(newState)
     {
-        this.log("Change HomeKit state for switch to '%s'.", newState);
+        log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für " + this.name + " ( " + this.type + " ) geändert zu '" + newState + "' ( " + this.mac + " )");
         this.service.getCharacteristic(Characteristic.On).updateValue(newState);
     }).bind(this);
     
@@ -515,8 +466,6 @@ function SynTexWebHookSwitchAccessory(log, switchConfig, storage)
 
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
-    this.log("Getting current state for '%s'...", this.id);
-
     var state = null;
     
     this.storage.load('storage', (err, obj) => {    
@@ -533,8 +482,6 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
                     if(state == 'true' || state == 'false')
                     {
                         state = (state === 'true');
-                        
-                        this.log("Device Found");
                     }
                 }
             }    
@@ -547,14 +494,12 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 
         callback(null, state);
         
-        this.log("Status von '%s' ist '%s'", this.id, state);
+        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für " + this.name + " ( " + this.type + " ) ist '" + newState + "' ( " + this.mac + " )");
     });
 };
 
 SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, context)
 {
-    this.log("Switch state for '%s'...", this.id);
-    
     var urlToCall = this.onURL;
     var urlMethod = this.onMethod;
     var urlBody = this.onBody;
@@ -565,7 +510,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
           
         if(obj)
         {                            
-            this.log('[Switch] Storage.json geladen!');
+            log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json geladen!");
 
             var found = false;
 
@@ -585,7 +530,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
             }
 
             this.storage.add(obj, (err) => {
-                this.log('Storage aktualisiert!');
+                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json aktualisiert!");
             });
         }
         else
@@ -596,7 +541,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
             };
 
             this.storage.add(device, (err) => {
-                this.log('Storage aktualisiert!');
+                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json aktualisiert!");
             });
         }
     });    
@@ -623,12 +568,12 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
         {
             if(urlForm)
             {
-                this.log("Adding Form " + urlForm);
+                //log("Adding Form " + urlForm);
                 theRequest.form = JSON.parse(urlForm);
             }
             else if(urlBody)
             {
-                this.log("Adding Body " + urlBody);
+                //log("Adding Body " + urlBody);
                 theRequest.body = urlBody;
             }
         }
@@ -636,7 +581,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
         {
             var statusCode = response && response.statusCode ? response.statusCode : -1;
             
-            this.log("Request to '%s' finished with status code '%s' and body '%s'.", urlToCall, statusCode, body, err);
+            log("Anfrage zu '%s' wurde mit dem Status Code '%s' beendet: '%s'", urlToCall, statusCode, body, err);
             
             if(!err && statusCode == 200)
             {
