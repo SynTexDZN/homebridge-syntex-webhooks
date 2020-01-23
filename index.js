@@ -122,7 +122,10 @@ SynTexWebHookPlatform.prototype = {
                                     
                                     this.storage.add(obj, (err) => {
                                         
-                                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json aktualisiert!");
+                                        if(err)
+                                        {
+                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
+                                        }
                                     });
                                 }
                                 else
@@ -146,7 +149,10 @@ SynTexWebHookPlatform.prototype = {
                                     
                                     this.storage.add(device, (err) => {
                                         
-                                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json aktualisiert!");
+                                        if(err)
+                                        {
+                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
+                                        }
                                     });
                                 }
                                 
@@ -182,6 +188,11 @@ SynTexWebHookPlatform.prototype = {
                                             }
                                         }
                                     }
+                                }
+                                
+                                if(err)
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
                                 }
                             });
                                                
@@ -228,7 +239,8 @@ SynTexWebHookPlatform.prototype = {
                                         log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden!");
                                     }
                                 }
-                                else
+                                
+                                if(err || !obj)
                                 {
                                     log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
                                 }
@@ -403,7 +415,12 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
                         }
                     }
                 }
-            }    
+            }
+        }
+        
+        if(err || !obj)
+        {
+            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
         }
         
         if(state == null)
@@ -472,7 +489,7 @@ function SynTexWebHookSwitchAccessory(switchConfig, storage)
     this.changeHandler = (function(newState)
     {
         log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-        log(this.service.getCharacteristic(Characteristic.On).updateValue(newState));
+        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
     }).bind(this);
     
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
@@ -499,6 +516,11 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
                     }
                 }
             }    
+        }
+        
+        if(err || !obj)
+        {
+            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
         }
         
         if(state == null)
@@ -542,20 +564,26 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
             }
 
             this.storage.add(obj, (err) => {
-                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json aktualisiert!");
+                
+                if(err)
+                {
+                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
+                }
             });
         }
         else
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
-            
             var device = {
                 id: "storage",
                 devices: [{mac: this.mac, value: powerOn}]
             };
 
             this.storage.add(device, (err) => {
-                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Storage.json aktualisiert!");
+                
+                if(err)
+                {
+                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
+                }
             });
         }
     });    
