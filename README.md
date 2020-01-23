@@ -81,9 +81,9 @@ A plugin to control and to create HTTP devices.
 ```
 
 # Update HTTP Devices
-1. Open `http://<bridgeIP>/devices?mac=<bridgeMac>&value=<newValue>`
-2. Insert the `Bridge IP` and `Device Mac`
-3. For the `New Value` you can type these patterns:
+1. Open `http://`**'bridgeIP'**`/devices?mac=`**'bridgeMac'**`&value=`**'newValue'**
+2. Insert the **`Bridge IP`** and **`Device Mac`**
+3. For the **`New Value`** you can type these patterns:
 - For boolean devices: `true` / `false`
 - For numeric devices: `10` / `12.4`
 
