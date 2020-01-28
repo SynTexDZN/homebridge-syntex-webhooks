@@ -130,9 +130,9 @@ SynTexWebHookPlatform.prototype = {
                                         }
                                     });
                                 }
-                                else
+                                else if(!err)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR 1]", "Storage.json konnte nicht geladen werden!");
+                                    log('\x1b[33m%s\x1b[0m', "[INFO]", "Storage.json wurde ohne Inhalt geladen!");
                                     
                                     if(urlParams.type)
                                     {
