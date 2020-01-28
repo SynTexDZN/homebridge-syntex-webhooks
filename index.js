@@ -83,9 +83,7 @@ SynTexWebHookPlatform.prototype = {
                             this.storage.load('storage', (err, obj) => {    
           
                                 if(obj)
-                                {                 
-                                    log(obj.devices);
-                                    
+                                {                                                     
                                     var found = false;
                                     
                                     for(var i = 0; i < obj.devices.length; i++)
@@ -129,11 +127,13 @@ SynTexWebHookPlatform.prototype = {
                                             log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
                                         }
                                     });
+                                    
+                                    log(obj.devices);
                                 }
                                 
                                 if(err)
                                 {
-                                    log('\x1b[33m%s\x1b[0m', "[INFO]", "Storage.json wurde ohne Inhalt geladen!");
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
                                     
                                     if(urlParams.type)
                                     {
@@ -193,14 +193,9 @@ SynTexWebHookPlatform.prototype = {
                                     }
                                 }
                                 
-                                if(!obj)
+                                if(!obj && !err)
                                 {
-                                    if(!err)
-                                    {
-                                        log('\x1b[31m%s\x1b[0m', "[ERROR 0]", "Storage.json konnte nicht geladen werden!");
-                                    }
-                                    
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR 2]", "Storage.json konnte nicht geladen werden!");
+                                    log('\x1b[33m%s\x1b[0m', "[INFO]", "Storage.json wurde ohne Inhalt geladen!");
                                 }
                             });
                                                
