@@ -130,7 +130,7 @@ SynTexWebHookPlatform.prototype = {
                                 }
                                 else
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR 1]", "Storage.json konnte nicht geladen werden!");
                                     
                                     if(urlParams.type)
                                     {
@@ -192,7 +192,7 @@ SynTexWebHookPlatform.prototype = {
                                 
                                 if(err)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR 2]", "Storage.json konnte nicht geladen werden!");
                                 }
                             });
                                                
@@ -242,7 +242,7 @@ SynTexWebHookPlatform.prototype = {
                                 
                                 if(err || !obj)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR 3]", "Storage.json konnte nicht geladen werden!");
                                 }
                             });
                         }
@@ -420,7 +420,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         
         if(err || !obj)
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
+            log('\x1b[31m%s\x1b[0m', "[ERROR 4]", "Storage.json konnte nicht geladen werden!");
         }
         
         if(state == null)
@@ -520,7 +520,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         
         if(err || !obj)
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
+            log('\x1b[31m%s\x1b[0m', "[ERROR 5]", "Storage.json konnte nicht geladen werden!");
         }
         
         if(state == null)
