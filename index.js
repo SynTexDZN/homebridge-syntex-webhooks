@@ -130,7 +130,8 @@ SynTexWebHookPlatform.prototype = {
                                         }
                                     });
                                 }
-                                else if(!err)
+                                
+                                if(err)
                                 {
                                     log('\x1b[33m%s\x1b[0m', "[INFO]", "Storage.json wurde ohne Inhalt geladen!");
                                     
@@ -192,8 +193,13 @@ SynTexWebHookPlatform.prototype = {
                                     }
                                 }
                                 
-                                if(err)
+                                if(!obj)
                                 {
+                                    if(!err)
+                                    {
+                                        log('\x1b[31m%s\x1b[0m', "[ERROR 0]", "Storage.json konnte nicht geladen werden!");
+                                    }
+                                    
                                     log('\x1b[31m%s\x1b[0m', "[ERROR 2]", "Storage.json konnte nicht geladen werden!");
                                 }
                             });
