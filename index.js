@@ -101,7 +101,7 @@ SynTexWebHookPlatform.prototype = {
                                                     found = true;
                                                 }
                                             }
-                                            else
+                                            else if(!urlParams.type)
                                             {
                                                 obj.devices[i].value = urlParams.value;
                                                 
