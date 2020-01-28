@@ -83,7 +83,9 @@ SynTexWebHookPlatform.prototype = {
                             this.storage.load('storage', (err, obj) => {    
           
                                 if(obj)
-                                {                            
+                                {                 
+                                    log(obj.devices);
+                                    
                                     var found = false;
                                     
                                     for(var i = 0; i < obj.devices.length; i++)
