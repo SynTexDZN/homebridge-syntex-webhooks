@@ -82,7 +82,34 @@ SynTexWebHookPlatform.prototype = {
                         {
                             this.storage.load('storage', (err, obj) => {    
           
-                                if(obj)
+                                if(!obj && !err)
+                                {
+                                    log('\x1b[33m%s\x1b[0m', "[INFO]", "Storage.json wurde ohne Inhalt geladen!");
+                                    
+                                    if(urlParams.type)
+                                    {
+                                        var device = {
+                                            id: "storage",
+                                            devices: [{mac: urlParams.mac, value: urlParams.value, type: urlParams.type}]
+                                        };
+                                    }
+                                    else
+                                    {
+                                        var device = {
+                                            id: "storage",
+                                            devices: [{mac: urlParams.mac, value: urlParams.value}]
+                                        };
+                                    }
+                                    
+                                    this.storage.add(device, (err) => {
+                                        
+                                        if(err)
+                                        {
+                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
+                                        }
+                                    });
+                                }
+                                else if(obj && !err)
                                 {                                                     
                                     var found = false;
                                     
@@ -127,36 +154,10 @@ SynTexWebHookPlatform.prototype = {
                                             log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
                                         }
                                     });
-                                    
-                                    log(obj.devices);
                                 }
-                                
-                                if(err)
+                                else if(obj && err)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
-                                    
-                                    if(urlParams.type)
-                                    {
-                                        var device = {
-                                            id: "storage",
-                                            devices: [{mac: urlParams.mac, value: urlParams.value, type: urlParams.type}]
-                                        };
-                                    }
-                                    else
-                                    {
-                                        var device = {
-                                            id: "storage",
-                                            devices: [{mac: urlParams.mac, value: urlParams.value}]
-                                        };
-                                    }
-                                    
-                                    this.storage.add(device, (err) => {
-                                        
-                                        if(err)
-                                        {
-                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
-                                        }
-                                    });
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");                                    
                                 }
                                 
                                 for(var i = 0; i < accessories.length; i++)
@@ -193,10 +194,7 @@ SynTexWebHookPlatform.prototype = {
                                     }
                                 }
                                 
-                                if(!obj && !err)
-                                {
-                                    log('\x1b[33m%s\x1b[0m', "[INFO]", "Storage.json wurde ohne Inhalt geladen!");
-                                }
+                                log(obj.devices);
                             });
                                                
                             response.write("Success");
