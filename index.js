@@ -204,7 +204,7 @@ SynTexWebHookPlatform.prototype = {
                         {
                             this.storage.load('storage', (err, obj) => {    
           
-                                if(obj)
+                                if(obj && !err)
                                 {                            
                                     var found = false;
                                     
@@ -243,7 +243,7 @@ SynTexWebHookPlatform.prototype = {
                                 
                                 if(err || !obj)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR 3]", "Storage.json konnte nicht geladen werden!");
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
                                 }
                             });
                         }
@@ -345,38 +345,40 @@ function SynTexWebHookSensorAccessory(sensorConfig, storage)
     
         this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).on('get', this.getState.bind(this));
     }
-    
     /*
     else if(this.type === "occupancy")
     {
         this.service = new Service.OccupancySensor(this.name);
-        this.changeHandler = (function(newState) {
+        
+        this.changeHandler = (function(newState)
+        {
             this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(newState ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED, undefined, CONTEXT_FROM_WEBHOOK);
-            if (this.autoRelease) {
-                setTimeout(function() {
-                    this.storage.setItemSync("http-webhook-" + this.id, false);
-                    this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED, undefined, CONTEXT_FROM_TIMEOUTCALL);
-                }.bind(this), this.autoReleaseTime);
-            }
         }).bind(this);
+        
         this.service.getCharacteristic(Characteristic.OccupancyDetected).on('get', this.getState.bind(this));
     }
     else if(this.type === "smoke")
     {
         this.service = new Service.SmokeSensor(this.name);
-        this.changeHandler = (function(newState) {
+        
+        this.changeHandler = (function(newState)
+        {
             log("Change HomeKit state for smoke sensor to '%s'.", newState);
             this.service.getCharacteristic(Characteristic.SmokeDetected).updateValue(newState ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED, undefined, CONTEXT_FROM_WEBHOOK);
         }).bind(this);
+        
         this.service.getCharacteristic(Characteristic.SmokeDetected).on('get', this.getState.bind(this));
     }
     else if(this.type === "airquality")
     {
         this.service = new Service.AirQualitySensor(this.name);
-        this.changeHandler = (function(newState) {
+        
+        this.changeHandler = (function(newState)
+        {
             log("Change HomeKit value for air quality sensor to '%s'.", newState);
             this.service.getCharacteristic(Characteristic.AirQuality).updateValue(newState, undefined, CONTEXT_FROM_WEBHOOK);
         }).bind(this);
+        
         this.service.getCharacteristic(Characteristic.AirQuality).on('get', this.getState.bind(this));
     }
     */
@@ -388,7 +390,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     
     this.storage.load('storage', (err, obj) => {    
           
-        if(obj)
+        if(obj && !err)
         {    
             for(var i = 0; i < obj.devices.length; i++)
             {
@@ -437,6 +439,16 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             callback(null, state ? Characteristic.LEAK_DETECTED : Characteristic.LEAK_NOT_DETECTED);
         }
+        /*
+        else if(this.type === "smoke")
+        {
+            callback(null, state ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);
+        }
+        else if(this.type === "occupancy")
+        {
+            callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
+        }
+        */
         else if(this.type === "light")
         {
             callback(null, parseFloat(state));
@@ -448,17 +460,6 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         
         log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
     });
-    
-    /*
-    else if(this.type === "smoke")
-    {
-        callback(null, state ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);
-    }
-    else if(this.type === "occupancy")
-    {
-        callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
-    }
-    */
 };
 
 SynTexWebHookSensorAccessory.prototype.getServices = function()
@@ -502,9 +503,8 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
     
     this.storage.load('storage', (err, obj) => {    
           
-        if(obj)
+        if(obj && !err)
         {    
-    
             for(var i = 0; i < obj.devices.length; i++)
             {
                 if(obj.devices[i].mac === this.mac)
@@ -543,9 +543,18 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
     var urlForm = this.onForm;
     var urlHeaders = this.onHeaders;
     
+    if(!powerOn)
+    {
+        urlToCall = this.offURL;
+        urlMethod = this.offMethod;
+        urlBody = this.offBody;
+        urlForm = this.offForm;
+        urlHeaders = this.offHeaders;
+    }
+    
     this.storage.load('storage', (err, obj) => {    
           
-        if(obj)
+        if(obj && !err)
         {                            
             var found = false;
 
@@ -588,15 +597,6 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
             });
         }
     });    
-    
-    if(!powerOn)
-    {
-        urlToCall = this.offURL;
-        urlMethod = this.offMethod;
-        urlBody = this.offBody;
-        urlForm = this.offForm;
-        urlHeaders = this.offHeaders;
-    }
     
     if(urlToCall != "")
     {
