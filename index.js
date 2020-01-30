@@ -155,7 +155,7 @@ SynTexWebHookPlatform.prototype = {
                                         }
                                     });
                                 }
-                                else if(obj && err)
+                                else if(err)
                                 {
                                     log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");                                    
                                 }
@@ -194,7 +194,10 @@ SynTexWebHookPlatform.prototype = {
                                     }
                                 }
                                 
-                                log(obj.devices);
+                                if(obj && obj.devices)
+                                {
+                                   log(obj.devices);
+                                }
                             });
                                                
                             response.write("Success");
