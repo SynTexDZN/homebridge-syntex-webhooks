@@ -88,12 +88,12 @@ SynTexWebHookPlatform.prototype = {
                                 }
                                 else
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[SUCCESS]", "Keine Fehler beim Laden! (err)");         
+                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Keine Fehler beim Laden! (err)");         
                                 }
                                 
                                 if(obj)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Keine Fehler beim Laden! (obj)");                                    
+                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Keine Fehler beim Laden! (obj)");                                    
                                 }
                                 else
                                 {
