@@ -84,23 +84,27 @@ SynTexWebHookPlatform.prototype = {
           
                                 if(err)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden! (err)", err);                                    
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "ERR", err);                                    
                                 }
                                 else
                                 {
-                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Keine Fehler beim Laden! (err)");         
+                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "!ERR");         
                                 }
                                 
                                 if(obj)
                                 {
-                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Keine Fehler beim Laden! (obj)");                                    
+                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "OBJ");                                    
                                 }
                                 else
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden! (obj)");               
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "!OBJ");               
                                 }
                                 
-                                if(!obj && !err)
+                                if(!obj && err)
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geparst werden!");       
+                                }
+                                else if(!obj && !err)
                                 {
                                     log('\x1b[33m%s\x1b[0m', "[INFO]", "Storage.json wurde ohne Inhalt geladen!");
                                     
