@@ -82,6 +82,24 @@ SynTexWebHookPlatform.prototype = {
                         {
                             this.storage.load('storage', (err, obj) => {    
           
+                                if(err)
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden! (err)", err);                                    
+                                }
+                                else
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[SUCCESS]", "Keine Fehler beim Laden! (err)");         
+                                }
+                                
+                                if(obj)
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Keine Fehler beim Laden! (obj)");                                    
+                                }
+                                else
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden! (obj)");               
+                                }
+                                
                                 if(!obj && !err)
                                 {
                                     log('\x1b[33m%s\x1b[0m', "[INFO]", "Storage.json wurde ohne Inhalt geladen!");
@@ -154,10 +172,6 @@ SynTexWebHookPlatform.prototype = {
                                             log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
                                         }
                                     });
-                                }
-                                else if(err)
-                                {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");                                    
                                 }
                                 
                                 for(var i = 0; i < accessories.length; i++)
