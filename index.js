@@ -121,7 +121,7 @@ SynTexWebHookPlatform.prototype = {
                                                 }
                                                 else
                                                 {
-                                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", data);
+                                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", pathname, data.toString());
                                                 }
                                             });
                                         }
