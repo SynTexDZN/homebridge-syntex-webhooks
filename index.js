@@ -2,6 +2,8 @@ var request = require('request');
 var http = require('http');
 var url = require('url');
 var store = require('json-fs-store');
+var fs = require('fs');
+var path = require('path');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
@@ -84,7 +86,8 @@ SynTexWebHookPlatform.prototype = {
           
                                 if(err)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "ERR", err);                                    
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "ERR", err);    
+                                    log(obj);
                                 }
                                 else
                                 {
@@ -100,9 +103,35 @@ SynTexWebHookPlatform.prototype = {
                                     log('\x1b[31m%s\x1b[0m', "[ERROR]", "!OBJ");               
                                 }
                                 
+                                var pathname = this.cacheDirectory + 'storage.json';
+
+                                    fs.exists(pathname, function (exist)
+                                    {
+                                        if(!exist)
+                                        {
+                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", pathname + ' wurde nicht gefunden!');
+                                        }
+                                        else
+                                        {
+                                            fs.readFile(pathname, function(err, data)
+                                            {
+                                                if(err)
+                                                {
+                                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", 'Die Seite konnte nicht geladen werden: ' + err);
+                                                }
+                                                else
+                                                {
+                                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", data);
+                                                }
+                                            });
+                                        }
+                                    });
+                                
                                 if(!obj && err)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geparst werden!");       
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geparst werden!"); 
+                                    
+                                    
                                 }
                                 else if(!obj && !err)
                                 {
