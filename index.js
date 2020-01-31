@@ -103,7 +103,11 @@ SynTexWebHookPlatform.prototype = {
                                     log('\x1b[31m%s\x1b[0m', "[ERROR]", "!OBJ");               
                                 }
                                 
-                                var pathname = this.cacheDirectory + 'storage.json';
+                                if(!obj && err)
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geparst werden!"); 
+                                    
+                                    var pathname = this.cacheDirectory + 'storage.json';
 
                                     fs.exists(pathname, function (exist)
                                     {
@@ -126,12 +130,6 @@ SynTexWebHookPlatform.prototype = {
                                             });
                                         }
                                     });
-                                
-                                if(!obj && err)
-                                {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geparst werden!"); 
-                                    
-                                    
                                 }
                                 else if(!obj && !err)
                                 {
