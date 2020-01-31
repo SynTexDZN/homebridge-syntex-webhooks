@@ -87,29 +87,6 @@ SynTexWebHookPlatform.prototype = {
                                 if(err)
                                 {
                                     log('\x1b[31m%s\x1b[0m', "[ERROR]", "ERR", err);    
-                                    var pathname = this.cacheDirectory + 'storage.json';
-
-                                    fs.exists(pathname, function (exist)
-                                    {
-                                        if(!exist)
-                                        {
-                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", pathname + ' wurde nicht gefunden!');
-                                        }
-                                        else
-                                        {
-                                            fs.readFile(pathname, function(err, data)
-                                            {
-                                                if(err)
-                                                {
-                                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", 'Die Seite konnte nicht geladen werden: ' + err);
-                                                }
-                                                else
-                                                {
-                                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", pathname, data.toString());
-                                                }
-                                            });
-                                        }
-                                    });
                                 }
                                 else
                                 {
@@ -124,6 +101,30 @@ SynTexWebHookPlatform.prototype = {
                                 {
                                     log('\x1b[31m%s\x1b[0m', "[ERROR]", "!OBJ");               
                                 }
+                                
+                                var pathname = this.cacheDirectory + 'storage.json';
+
+                                fs.exists(pathname, function (exist)
+                                {
+                                    if(!exist)
+                                    {
+                                        log('\x1b[31m%s\x1b[0m', "[ERROR]", pathname + ' wurde nicht gefunden!');
+                                    }
+                                    else
+                                    {
+                                        fs.readFile(pathname, function(err, data)
+                                        {
+                                            if(err)
+                                            {
+                                                log('\x1b[31m%s\x1b[0m', "[ERROR]", 'Die Seite konnte nicht geladen werden: ' + err);
+                                            }
+                                            else
+                                            {
+                                                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", pathname, data.toString());
+                                            }
+                                        });
+                                    }
+                                });
                                 
                                 if(!obj && err)
                                 {
