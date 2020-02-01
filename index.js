@@ -86,7 +86,7 @@ SynTexWebHookPlatform.prototype = {
                             if(urlParams.type)
                             {
                                 var device = {
-                                    id: urlParams.mac,
+                                    mac: urlParams.mac,
                                     value: urlParams.value,
                                     type: urlParams.type
                                 };
@@ -94,7 +94,7 @@ SynTexWebHookPlatform.prototype = {
                             else
                             {
                                 var device = {
-                                    id: urlParams.mac,
+                                    mac: urlParams.mac,
                                     value: urlParams.value
                                 };
                             }
