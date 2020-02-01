@@ -2,8 +2,6 @@ var request = require('request');
 var http = require('http');
 var url = require('url');
 var store = require('json-fs-store');
-var fs = require('fs');
-var path = require('path');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
@@ -22,15 +20,15 @@ var storage;
 
 function SynTexWebHookPlatform(slog, sconfig, api)
 {
-    config = store(api.user.storagePath());
-    log = slog;
-    
+    var url = require('url');
     this.sensors = sconfig["sensors"] || [];
     this.switches = sconfig["switches"] || [];
     
-    this.cacheDirectory = sconfig["cache_directory"] || "./.node-persist/storage";
+    this.cacheDirectory = sconfig["cache_directory"] || "./.node-persist/devices";
     this.port = sconfig["port"] || 1710;
     
+    log = slog;
+    config = store(api.user.storagePath());
     storage = store(this.cacheDirectory);
 }
 
