@@ -139,29 +139,35 @@ SynTexWebHookPlatform.prototype = {
                         }
                         else
                         {
-                            var id = urlParams.mac;
-    
                             if(urlParams.type)
                             {
-                                id += '-' + urlParams.type[0].toUpperCase();
+                                var device = {
+                                    mac: urlParams.mac,
+                                    type: urlParams.type
+                                };
+                            }
+                            else
+                            {
+                                var device = {
+                                    mac: urlParams.mac
+                                };
                             }
                             
-                            storage.load(id, (err, obj) => {    
-
-                                if(obj && !err)
-                                {    
-                                    response.write(obj.value);
-                                    response.end();
-
-                                    log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + urlParams.mac + "' ist '" + obj.value + "'");
-                                }
-
-                                if(err || !obj)
+                            readDevice(device).then(function(res) {
+                                
+                                if(!res)
                                 {
                                     response.write("Es wurde kein passendes Gerät gefunden!");
                                     response.end();
 
                                     log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + urlParams.mac + ")");
+                                }
+                                else
+                                {
+                                    response.write(res);
+                                    response.end();
+
+                                    log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + urlParams.mac + "' ist '" + res + "'");
                                 }
                             });
                         }
@@ -302,33 +308,30 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 }
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
-{    
-    var state = null;
-    
-    var id = this.mac;
-    
+{        
     if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
     {
-        id += '-' + this.type[0].toUpperCase();
+        var device = {
+            mac: this.mac,
+            type: this.type
+        };
     }
-    
-    storage.load(id, (err, obj) => {    
-          
-        if(obj && !err)
-        {    
-            state = obj.value;
-            
-            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
-        }
+    else
+    {
+        var device = {
+            mac: this.mac
+        };
+    }
+
+    readDevice(device).then(function(state) {
         
-        if(err || !obj)
+        if(!state)
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR]", this.mac + ".json konnte nicht geladen werden!");
+            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + this.mac + ")");
         }
-        
-        if(state == null)
+        else
         {
-            state = false;
+            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "'");
         }
 
         if(this.type === "contact")
@@ -356,7 +359,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         else
         {
             callback(null, state);
-        }        
+        }
     });
 };
 
@@ -396,25 +399,19 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
-    var state = null;
-    
-    storage.load(this.mac, (err, obj) => {    
-          
-        if(obj && !err)
-        {    
-            state = obj.value;
-            
-            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
-        }
+    var device = {
+        mac: this.mac
+    };
+
+    readDevice(device).then(function(state) {
         
-        if(err || !obj)
+        if(!state)
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR]", this.mac + ".json konnte nicht geladen werden!");
+            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + this.mac + ")");
         }
-        
-        if(state == null)
+        else
         {
-            state = false;
+            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "'");
         }
 
         callback(null, state);
@@ -533,22 +530,27 @@ async function readDevice(obj)
 {
     return new Promise(resolve => {
         
-        storage.load(obj.mac, (err, obj) => {    
+        var id = obj.mac;
+    
+        if(obj.type)
+        {
+            id += '-' + obj.type[0].toUpperCase();
+        }
 
-            if(obj && !err)
+        storage.load(id, (err, device) => {    
+
+            if(device && !err)
             {    
-                response.write(obj.value);
-                response.end();
+                resolve(device.value);
 
-                log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
+                log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + id + "' ist '" + device.value + "'");
             }
 
-            if(err || !obj)
+            if(err || !device)
             {
-                response.write("Es wurde kein passendes Gerät gefunden!");
-                response.end();
+                resolve(false);
 
-                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + urlParams.mac + ")");
+                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + id + ")");
             }
         });
     });
