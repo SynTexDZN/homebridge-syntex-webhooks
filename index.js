@@ -141,7 +141,7 @@ SynTexWebHookPlatform.prototype = {
                         }
                         else
                         {
-                            storage.load(this.mac, (err, obj) => {    
+                            storage.load(urlParams.mac, (err, obj) => {    
 
                                 if(obj && !err)
                                 {    
