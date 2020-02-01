@@ -305,11 +305,13 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         if(obj && !err)
         {    
             state = obj.value;
+            
+            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
         }
         
         if(err || !obj)
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
+            log('\x1b[31m%s\x1b[0m', "[ERROR]", this.mac + ".json konnte nicht geladen werden!");
         }
         
         if(state == null)
@@ -342,9 +344,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         else
         {
             callback(null, state);
-        }
-        
-        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
+        }        
     });
 };
 
@@ -556,7 +556,7 @@ async function updateDevice(obj)
 
             if(err)
             {
-                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
+                log('\x1b[31m%s\x1b[0m', "[ERROR]", obj.mac + ".json konnte nicht aktualisiert werden!");
                 resolve(false);
             }
             else
