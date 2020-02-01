@@ -141,48 +141,22 @@ SynTexWebHookPlatform.prototype = {
                         }
                         else
                         {
-                            storage.load(urlParams.mac, (err, obj) => {    
-          
+                            storage.load(this.mac, (err, obj) => {    
+
                                 if(obj && !err)
-                                {                            
-                                    var found = false;
-                                    
-                                    for(var i = 0; i < obj.devices.length; i++)
-                                    {
-                                        if(obj.devices[i].mac === urlParams.mac)
-                                        {
-                                            if(urlParams.type && obj.devices[i].type)
-                                            {
-                                                if(urlParams.type == obj.devices[i].type)
-                                                {
-                                                    response.write(obj.devices[i].value.toString());
-                                                    response.end();
-                                                    
-                                                    found = true;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                response.write(obj.devices[i].value.toString());
-                                                response.end();
-                                                
-                                                found = true;
-                                            }
-                                        }
-                                    }
-                                    
-                                    if(!found)
-                                    {
-                                        response.write("Es wurde kein passendes Gerät gefunden!");
-                                        response.end();
-                                        
-                                        log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + urlParams.mac + ")");
-                                    }
+                                {    
+                                    response.write(obj.value);
+                                    response.end();
+
+                                    log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
                                 }
-                                
+
                                 if(err || !obj)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
+                                    response.write("Es wurde kein passendes Gerät gefunden!");
+                                    response.end();
+
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + urlParams.mac + ")");
                                 }
                             });
                         }
@@ -335,7 +309,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         
         if(err || !obj)
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR 4]", "Storage.json konnte nicht geladen werden!");
+            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
         }
         
         if(state == null)
@@ -432,7 +406,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         
         if(err || !obj)
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR 5]", "Storage.json konnte nicht geladen werden!");
+            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
         }
         
         if(state == null)
@@ -588,6 +562,31 @@ async function updateDevice(obj)
             else
             {
                 resolve(true);
+            }
+        });
+    });
+}
+
+async function readDevice(obj)
+{
+    return new Promise(resolve => {
+        
+        storage.load(obj.mac, (err, obj) => {    
+
+            if(obj && !err)
+            {    
+                response.write(obj.value);
+                response.end();
+
+                log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
+            }
+
+            if(err || !obj)
+            {
+                response.write("Es wurde kein passendes Gerät gefunden!");
+                response.end();
+
+                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + urlParams.mac + ")");
             }
         });
     });
