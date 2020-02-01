@@ -102,31 +102,6 @@ SynTexWebHookPlatform.prototype = {
                                     log('\x1b[31m%s\x1b[0m', "[ERROR]", "!OBJ");               
                                 }
                                 
-                                var pathname = this.cacheDirectory + 'storage.json';
-
-                                fs.exists(pathname, function (exist)
-                                {
-                                    if(!exist)
-                                    {
-                                        log('\x1b[31m%s\x1b[0m', "[ERROR]", pathname + ' wurde nicht gefunden!');
-                                    }
-                                    else
-                                    {
-                                        fs.readFile(pathname, function(err, data)
-                                        {
-                                            if(err)
-                                            {
-                                                log('\x1b[31m%s\x1b[0m', "[ERROR]", 'Die Seite konnte nicht geladen werden: ' + err);
-                                            }
-                                            else
-                                            {
-                                                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", pathname);
-                                                log(data.toString());
-                                            }
-                                        });
-                                    }
-                                });
-                                
                                 if(!obj && err)
                                 {
                                     log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geparst werden!"); 
@@ -150,12 +125,39 @@ SynTexWebHookPlatform.prototype = {
                                         };
                                     }
                                     
+                                    log(device);
+                                    
                                     this.storage.add(device, (err) => {
                                         
                                         if(err)
                                         {
                                             log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
                                         }
+                                        
+                                        var pathname = this.cacheDirectory + 'storage.json';
+
+                                        fs.exists(pathname, function (exist)
+                                        {
+                                            if(!exist)
+                                            {
+                                                log('\x1b[31m%s\x1b[0m', "[ERROR]", pathname + ' wurde nicht gefunden!');
+                                            }
+                                            else
+                                            {
+                                                fs.readFile(pathname, function(err, data)
+                                                {
+                                                    if(err)
+                                                    {
+                                                        log('\x1b[31m%s\x1b[0m', "[ERROR]", 'Die Seite konnte nicht geladen werden: ' + err);
+                                                    }
+                                                    else
+                                                    {
+                                                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", pathname);
+                                                        log(data.toString());
+                                                    }
+                                                });
+                                            }
+                                        });
                                     });
                                 }
                                 else if(obj && !err)
@@ -196,12 +198,39 @@ SynTexWebHookPlatform.prototype = {
                                         }
                                     }
                                     
+                                    log(obj);
+                                    
                                     this.storage.add(obj, (err) => {
                                         
                                         if(err)
                                         {
                                             log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
                                         }
+                                        
+                                        var pathname = this.cacheDirectory + 'storage.json';
+
+                                        fs.exists(pathname, function (exist)
+                                        {
+                                            if(!exist)
+                                            {
+                                                log('\x1b[31m%s\x1b[0m', "[ERROR]", pathname + ' wurde nicht gefunden!');
+                                            }
+                                            else
+                                            {
+                                                fs.readFile(pathname, function(err, data)
+                                                {
+                                                    if(err)
+                                                    {
+                                                        log('\x1b[31m%s\x1b[0m', "[ERROR]", 'Die Seite konnte nicht geladen werden: ' + err);
+                                                    }
+                                                    else
+                                                    {
+                                                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", pathname);
+                                                        log(data.toString());
+                                                    }
+                                                });
+                                            }
+                                        });
                                     });
                                 }
                                 
@@ -238,11 +267,12 @@ SynTexWebHookPlatform.prototype = {
                                         }
                                     }
                                 }
-                                
+                                /*
                                 if(obj && obj.devices)
                                 {
                                    log(obj.devices);
                                 }
+                                */
                             });
                                                
                             response.write("Success");
