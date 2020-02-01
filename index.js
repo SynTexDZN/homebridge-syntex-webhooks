@@ -313,13 +313,15 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     {
         var device = {
             mac: this.mac,
-            type: this.type
+            type: this.type,
+            name: this.name
         };
     }
     else
     {
         var device = {
-            mac: this.mac
+            mac: this.mac,
+            name: this.name
         };
     }
 
@@ -400,7 +402,8 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
     var device = {
-        mac: this.mac
+        mac: this.mac,
+        name: this.name
     };
 
     readDevice(device).then(function(state) {
