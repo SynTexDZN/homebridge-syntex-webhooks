@@ -446,7 +446,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
     
     var device = {
         mac: this.mac,
-        value: powerOn
+        value: powerOn.toString()
     };
 
     updateDevice(device);
