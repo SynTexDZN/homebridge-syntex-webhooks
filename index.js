@@ -145,7 +145,7 @@ SynTexWebHookPlatform.prototype = {
     
                             if(urlParams.type)
                             {
-                                id += '-' + urlParams.type[0];
+                                id += '-' + urlParams.type[0].toUpperCase();
                             }
                             
                             storage.load(id, (err, obj) => {    
@@ -311,7 +311,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     
     if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
     {
-        id += '-' + this.type[0];
+        id += '-' + this.type[0].toUpperCase();
     }
     
     storage.load(id, (err, obj) => {    
@@ -503,7 +503,7 @@ async function updateDevice(obj)
         if(obj.type)
         {
             var device = {
-                id: obj.mac + '-' + obj.type[0],
+                id: obj.mac + '-' + obj.type[0].toUpperCase(),
                 value: obj.value,
                 type: obj.type
             };
