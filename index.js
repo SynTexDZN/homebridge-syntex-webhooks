@@ -319,7 +319,8 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     else
     {
         var device = {
-            mac: this.mac
+            mac: this.mac,
+            name: this.name
         };
     }
 
@@ -400,7 +401,8 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
     var device = {
-        mac: this.mac
+        mac: this.mac,
+        name: this.name
     };
 
     readDevice(device).then(function(state) {
@@ -542,15 +544,11 @@ async function readDevice(obj)
             if(device && !err)
             {    
                 resolve(device.value);
-
-                log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + id + "' ist '" + device.value + "'");
             }
 
             if(err || !device)
             {
                 resolve(false);
-
-                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + id + ")");
             }
         });
     });
