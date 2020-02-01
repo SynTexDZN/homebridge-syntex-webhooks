@@ -82,30 +82,230 @@ SynTexWebHookPlatform.prototype = {
                     {
                         if(urlParams.value)
                         {
-                            if(urlParams.type)
-                            {
-                                var device = {
-                                    id: urlParams.mac,
-                                    value: urlParams.value,
-                                    type: urlParams.type
-                                };
-                            }
-                            else
-                            {
-                                var device = {
-                                    id: urlParams.mac,
-                                    value: urlParams.value
-                                };
-                            }
-                            
-                            updateDevice(device);
+                            this.storage.load('storage', (err, obj) => {    
+          
+                                if(err)
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "ERR", err);    
+                                }
+                                else
+                                {
+                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "!ERR");         
+                                }
+                                
+                                if(obj)
+                                {
+                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "OBJ");                                    
+                                }
+                                else
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "!OBJ");               
+                                }
+                                
+                                if(!obj && err)
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geparst werden!"); 
+                                    
+                                    var pathname = this.cacheDirectory + 'storage.json';
+
+                                    fs.exists(pathname, function (exist)
+                                    {
+                                        if(!exist)
+                                        {
+                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", pathname + ' wurde nicht gefunden!');
+                                        }
+                                        else
+                                        {
+                                            fs.readFile(pathname, function(err, data)
+                                            {
+                                                if(err)
+                                                {
+                                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", 'Die Seite konnte nicht geladen werden: ' + err);
+                                                }
+                                                else
+                                                {
+                                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", pathname);
+                                                    log(data.toString());
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                                else if(!obj && !err)
+                                {
+                                    log('\x1b[33m%s\x1b[0m', "[INFO]", "Storage.json wurde ohne Inhalt geladen!");
+                                    
+                                    if(urlParams.type)
+                                    {
+                                        var device = {
+                                            id: "storage",
+                                            devices: [{mac: urlParams.mac, value: urlParams.value, type: urlParams.type}]
+                                        };
+                                    }
+                                    else
+                                    {
+                                        var device = {
+                                            id: "storage",
+                                            devices: [{mac: urlParams.mac, value: urlParams.value}]
+                                        };
+                                    }
+                                    
+                                    log(device);
+                                    
+                                    this.storage.add(device, (err) => {
+                                        
+                                        if(err)
+                                        {
+                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
+                                        }
+                                        
+                                        var pathname = this.cacheDirectory + 'storage.json';
+
+                                        fs.exists(pathname, function (exist)
+                                        {
+                                            if(!exist)
+                                            {
+                                                log('\x1b[31m%s\x1b[0m', "[ERROR]", pathname + ' wurde nicht gefunden!');
+                                            }
+                                            else
+                                            {
+                                                fs.readFile(pathname, function(err, data)
+                                                {
+                                                    if(err)
+                                                    {
+                                                        log('\x1b[31m%s\x1b[0m', "[ERROR]", 'Die Seite konnte nicht geladen werden: ' + err);
+                                                    }
+                                                    else
+                                                    {
+                                                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", pathname);
+                                                        log(data.toString());
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    });
+                                }
+                                else if(obj && !err)
+                                {                                                     
+                                    var found = false;
+                                    
+                                    for(var i = 0; i < obj.devices.length; i++)
+                                    {
+                                        if(obj.devices[i].mac === urlParams.mac)
+                                        {
+                                            if(urlParams.type && obj.devices[i].type)
+                                            {
+                                                if(urlParams.type == obj.devices[i].type)
+                                                {
+                                                    obj.devices[i].value = urlParams.value;
+                                                    
+                                                    found = true;
+                                                }
+                                            }
+                                            else if(!urlParams.type)
+                                            {
+                                                obj.devices[i].value = urlParams.value;
+                                                
+                                                found = true;
+                                            }
+                                        }
+                                    }
+                                    
+                                    if(found == false)
+                                    {                                        
+                                        if(urlParams.type)
+                                        {
+                                            obj.devices[obj.devices.length] = {mac: urlParams.mac, value: urlParams.value, type: urlParams.type};
+                                        }
+                                        else
+                                        {
+                                            obj.devices[obj.devices.length] = {mac: urlParams.mac, value: urlParams.value};
+                                        }
+                                    }
+                                    
+                                    log(obj);
+                                    
+                                    this.storage.add(obj, (err) => {
+                                        
+                                        if(err)
+                                        {
+                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
+                                        }
+                                        
+                                        var pathname = this.cacheDirectory + 'storage.json';
+
+                                        fs.exists(pathname, function (exist)
+                                        {
+                                            if(!exist)
+                                            {
+                                                log('\x1b[31m%s\x1b[0m', "[ERROR]", pathname + ' wurde nicht gefunden!');
+                                            }
+                                            else
+                                            {
+                                                fs.readFile(pathname, function(err, data)
+                                                {
+                                                    if(err)
+                                                    {
+                                                        log('\x1b[31m%s\x1b[0m', "[ERROR]", 'Die Seite konnte nicht geladen werden: ' + err);
+                                                    }
+                                                    else
+                                                    {
+                                                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", pathname);
+                                                        log(data.toString());
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    });
+                                }
+                                
+                                for(var i = 0; i < accessories.length; i++)
+                                {
+                                    var accessory = accessories[i];
+
+                                    if(accessory.mac === urlParams.mac)
+                                    {
+                                        if(urlParams.type)
+                                        {
+                                            if(accessory.type === urlParams.type)
+                                            {
+                                                if(urlParams.value == 'true' || urlParams.value == 'false')
+                                                {
+                                                    accessory.changeHandler((urlParams.value === 'true'));
+                                                }
+                                                else
+                                                {
+                                                    accessory.changeHandler(urlParams.value);
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if(urlParams.value == 'true' || urlParams.value == 'false')
+                                            {
+                                                accessory.changeHandler((urlParams.value === 'true'));
+                                            }
+                                            else
+                                            {
+                                                accessory.changeHandler(urlParams.value);
+                                            }
+                                        }
+                                    }
+                                }
+                                /*
+                                if(obj && obj.devices)
+                                {
+                                   log(obj.devices);
+                                }
+                                */
+                            });
                                                
                             response.write("Success");
                             response.end();
                         }
                         else
                         {
-                            this.storage.load(urlParams.mac, (err, obj) => {    
+                            this.storage.load('storage', (err, obj) => {    
           
                                 if(obj && !err)
                                 {                            
@@ -291,11 +491,37 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {    
     var state = null;
     
-    this.storage.load(this.mac, (err, obj) => {    
+    this.storage.load('storage', (err, obj) => {    
           
         if(obj && !err)
         {    
-            state = obj.value;
+            for(var i = 0; i < obj.devices.length; i++)
+            {
+                if(obj.devices[i].mac === this.mac)
+                {
+                    if(obj.devices[i].type)
+                    {
+                        if(obj.devices[i].type == this.type)
+                        {
+                            state = obj.devices[i].value;
+                    
+                            if(state == 'true' || state == 'false')
+                            {
+                                state = (state === 'true');
+                            }
+                        }
+                    }
+                    else
+                    {
+                        state = obj.devices[i].value;
+                    
+                        if(state == 'true' || state == 'false')
+                        {
+                            state = (state === 'true');
+                        }
+                    }
+                }
+            }
         }
         
         if(err || !obj)
@@ -523,30 +749,3 @@ SynTexWebHookSwitchAccessory.prototype.getServices = function()
 {
     return [this.service];
 };
-
-function updateDevice(obj)
-{
-    if(obj.type)
-    {
-        var device = {
-            id: obj.mac,
-            value: obj.value,
-            type: obj.type
-        };
-    }
-    else
-    {
-        var device = {
-            id: obj.mac,
-            value: obj.value
-        };
-    }
-
-    this.storage.add(device, (err) => {
-
-        if(err)
-        {
-            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
-        }
-    }); 
-}
