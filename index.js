@@ -148,7 +148,7 @@ SynTexWebHookPlatform.prototype = {
                                     response.write(obj.value);
                                     response.end();
 
-                                    log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
+                                    log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + urlParams.mac + "' ist '" + obj.value + "'");
                                 }
 
                                 if(err || !obj)
