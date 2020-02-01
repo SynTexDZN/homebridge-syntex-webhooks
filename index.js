@@ -18,6 +18,7 @@ module.exports = function(homebridge)
 
 var log;
 var config;
+var storage;
 
 function SynTexWebHookPlatform(slog, sconfig, api)
 {
@@ -30,7 +31,7 @@ function SynTexWebHookPlatform(slog, sconfig, api)
     this.cacheDirectory = sconfig["cache_directory"] || "./.node-persist/storage";
     this.port = sconfig["port"] || 1710;
     
-    this.storage = store(this.cacheDirectory);
+    storage = store(this.cacheDirectory);
 }
 
 SynTexWebHookPlatform.prototype = {
@@ -41,13 +42,13 @@ SynTexWebHookPlatform.prototype = {
         
         for (var i = 0; i < this.sensors.length; i++)
         {
-            var Sensor = new SynTexWebHookSensorAccessory(this.sensors[i], this.storage);
+            var Sensor = new SynTexWebHookSensorAccessory(this.sensors[i], storage);
             accessories.push(Sensor);
         }
         
         for (var i = 0; i < this.switches.length; i++)
         {
-            var Switch = new SynTexWebHookSwitchAccessory(this.switches[i], this.storage);
+            var Switch = new SynTexWebHookSwitchAccessory(this.switches[i], storage);
             accessories.push(Switch);
         }
         
@@ -105,7 +106,7 @@ SynTexWebHookPlatform.prototype = {
                         }
                         else
                         {
-                            this.storage.load(urlParams.mac, (err, obj) => {    
+                            storage.load(urlParams.mac, (err, obj) => {    
           
                                 if(obj && !err)
                                 {                            
@@ -173,7 +174,7 @@ function SynTexWebHookSensorAccessory(sensorConfig, storage)
     this.id = sensorConfig["id"];
     this.name = sensorConfig["name"];
     this.type = sensorConfig["type"];
-    this.storage = storage;
+    storage = storage;
 
     if(this.type === "contact")
     {
@@ -291,7 +292,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {    
     var state = null;
     
-    this.storage.load(this.mac, (err, obj) => {    
+    storage.load(this.mac, (err, obj) => {    
           
         if(obj && !err)
         {    
@@ -361,7 +362,7 @@ function SynTexWebHookSwitchAccessory(switchConfig, storage)
     this.offBody = switchConfig["off_body"] || "";
     this.offForm = switchConfig["off_form"] || "";
     this.offHeaders = switchConfig["off_headers"] || "{}";
-    this.storage = storage;
+    storage = storage;
 
     this.service = new Service.Switch(this.name);
     
@@ -378,7 +379,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
     var state = null;
     
-    this.storage.load('storage', (err, obj) => {    
+    storage.load('storage', (err, obj) => {    
           
         if(obj && !err)
         {    
@@ -429,7 +430,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
         urlHeaders = this.offHeaders;
     }
     
-    this.storage.load('storage', (err, obj) => {    
+    storage.load('storage', (err, obj) => {    
           
         if(obj && !err)
         {                            
@@ -450,7 +451,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
                 obj.devices[obj.devices.length] = {mac: this.mac, value: powerOn};
             }
 
-            this.storage.add(obj, (err) => {
+            storage.add(obj, (err) => {
                 
                 if(err)
                 {
@@ -465,7 +466,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
                 devices: [{mac: this.mac, value: powerOn}]
             };
 
-            this.storage.add(device, (err) => {
+            storage.add(device, (err) => {
                 
                 if(err)
                 {
@@ -542,7 +543,7 @@ function updateDevice(obj)
         };
     }
 
-    this.storage.add(device, (err) => {
+    storage.add(device, (err) => {
 
         if(err)
         {
