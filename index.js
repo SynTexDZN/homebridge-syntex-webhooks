@@ -105,6 +105,31 @@ SynTexWebHookPlatform.prototype = {
                                 if(!obj && err)
                                 {
                                     log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geparst werden!"); 
+                                    
+                                    var pathname = this.cacheDirectory + 'storage.json';
+
+                                    fs.exists(pathname, function (exist)
+                                    {
+                                        if(!exist)
+                                        {
+                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", pathname + ' wurde nicht gefunden!');
+                                        }
+                                        else
+                                        {
+                                            fs.readFile(pathname, function(err, data)
+                                            {
+                                                if(err)
+                                                {
+                                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", 'Die Seite konnte nicht geladen werden: ' + err);
+                                                }
+                                                else
+                                                {
+                                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", pathname);
+                                                    log(data.toString());
+                                                }
+                                            });
+                                        }
+                                    });
                                 }
                                 else if(!obj && !err)
                                 {
