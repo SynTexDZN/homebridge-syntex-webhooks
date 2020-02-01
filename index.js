@@ -400,27 +400,18 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
     var state = null;
     
-    storage.load('storage', (err, obj) => {    
+    storage.load(this.mac, (err, obj) => {    
           
         if(obj && !err)
         {    
-            for(var i = 0; i < obj.devices.length; i++)
-            {
-                if(obj.devices[i].mac === this.mac)
-                {
-                    state = obj.devices[i].value;
-                    
-                    if(state == 'true' || state == 'false')
-                    {
-                        state = (state === 'true');
-                    }
-                }
-            }    
+            state = obj.value;
+            
+            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
         }
         
         if(err || !obj)
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht geladen werden!");
+            log('\x1b[31m%s\x1b[0m', "[ERROR]", this.mac + ".json konnte nicht geladen werden!");
         }
         
         if(state == null)
@@ -429,8 +420,6 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         }
 
         callback(null, state);
-        
-        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
     });
 };
 
@@ -451,51 +440,12 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
         urlHeaders = this.offHeaders;
     }
     
-    storage.load('storage', (err, obj) => {    
-          
-        if(obj && !err)
-        {                            
-            var found = false;
+    var device = {
+        mac: this.mac,
+        value: this.value
+    };
 
-            for(var i = 0; i < obj.devices.length; i++)
-            {
-                if(obj.devices[i].mac === this.mac)
-                {
-                    obj.devices[i].value = powerOn;
-
-                    found = true;
-                }
-            }
-
-            if(found == false)
-            {
-                obj.devices[obj.devices.length] = {mac: this.mac, value: powerOn};
-            }
-
-            storage.add(obj, (err) => {
-                
-                if(err)
-                {
-                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
-                }
-            });
-        }
-        else
-        {
-            var device = {
-                id: "storage",
-                devices: [{mac: this.mac, value: powerOn}]
-            };
-
-            storage.add(device, (err) => {
-                
-                if(err)
-                {
-                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
-                }
-            });
-        }
-    });    
+    updateDevice(device);
     
     if(urlToCall != "")
     {
