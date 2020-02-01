@@ -42,13 +42,13 @@ SynTexWebHookPlatform.prototype = {
         
         for (var i = 0; i < this.sensors.length; i++)
         {
-            var Sensor = new SynTexWebHookSensorAccessory(this.sensors[i], storage);
+            var Sensor = new SynTexWebHookSensorAccessory(this.sensors[i]);
             accessories.push(Sensor);
         }
         
         for (var i = 0; i < this.switches.length; i++)
         {
-            var Switch = new SynTexWebHookSwitchAccessory(this.switches[i], storage);
+            var Switch = new SynTexWebHookSwitchAccessory(this.switches[i]);
             accessories.push(Switch);
         }
         
@@ -99,7 +99,42 @@ SynTexWebHookPlatform.prototype = {
                                 };
                             }
                             
-                            updateDevice(device);
+                            updateDevice(device).then(function(res) {
+                                
+                                for(var i = 0; i < accessories.length; i++)
+                                {
+                                    var accessory = accessories[i];
+
+                                    if(accessory.mac === urlParams.mac)
+                                    {
+                                        if(urlParams.type)
+                                        {
+                                            if(accessory.type === urlParams.type)
+                                            {
+                                                if(urlParams.value == 'true' || urlParams.value == 'false')
+                                                {
+                                                    accessory.changeHandler((urlParams.value === 'true'));
+                                                }
+                                                else
+                                                {
+                                                    accessory.changeHandler(urlParams.value);
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if(urlParams.value == 'true' || urlParams.value == 'false')
+                                            {
+                                                accessory.changeHandler((urlParams.value === 'true'));
+                                            }
+                                            else
+                                            {
+                                                accessory.changeHandler(urlParams.value);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
                                                
                             response.write("Success");
                             response.end();
@@ -168,13 +203,12 @@ SynTexWebHookPlatform.prototype = {
     }
 }
 
-function SynTexWebHookSensorAccessory(sensorConfig, storage)
+function SynTexWebHookSensorAccessory(sensorConfig)
 {
     this.mac = sensorConfig["mac"];
     this.id = sensorConfig["id"];
     this.name = sensorConfig["name"];
     this.type = sensorConfig["type"];
-    storage = storage;
 
     if(this.type === "contact")
     {
@@ -346,7 +380,7 @@ SynTexWebHookSensorAccessory.prototype.getServices = function()
 };
 
 
-function SynTexWebHookSwitchAccessory(switchConfig, storage)
+function SynTexWebHookSwitchAccessory(switchConfig)
 {
     this.mac = switchConfig["mac"];
     this.type = switchConfig["type"];
@@ -362,7 +396,6 @@ function SynTexWebHookSwitchAccessory(switchConfig, storage)
     this.offBody = switchConfig["off_body"] || "";
     this.offForm = switchConfig["off_form"] || "";
     this.offHeaders = switchConfig["off_headers"] || "{}";
-    storage = storage;
 
     this.service = new Service.Switch(this.name);
     
@@ -525,29 +558,37 @@ SynTexWebHookSwitchAccessory.prototype.getServices = function()
     return [this.service];
 };
 
-function updateDevice(obj)
+async function updateDevice(obj)
 {
-    if(obj.type)
-    {
-        var device = {
-            id: obj.mac,
-            value: obj.value,
-            type: obj.type
-        };
-    }
-    else
-    {
-        var device = {
-            id: obj.mac,
-            value: obj.value
-        };
-    }
-
-    storage.add(device, (err) => {
-
-        if(err)
+    return new Promise(resolve => {
+        
+        if(obj.type)
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
+            var device = {
+                id: obj.mac,
+                value: obj.value,
+                type: obj.type
+            };
         }
-    }); 
+        else
+        {
+            var device = {
+                id: obj.mac,
+                value: obj.value
+            };
+        }
+
+        storage.add(device, (err) => {
+
+            if(err)
+            {
+                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Storage.json konnte nicht aktualisiert werden!");
+                resolve(false);
+            }
+            else
+            {
+                resolve(true);
+            }
+        });
+    });
 }
