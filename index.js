@@ -327,8 +327,6 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     
     var name = this.name;
     var mac = this.mac;
-    
-    log(this.name, this.mac);
 
     readDevice(device).then(function(state) {
         
@@ -410,16 +408,19 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         mac: this.mac,
         name: this.name
     };
+    
+    var name = this.name;
+    var mac = this.mac;
 
     readDevice(device).then(function(state) {
         
         if(!state)
         {
-            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + this.mac + ")");
+            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + mac + ")");
         }
         else
         {
-            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "'");
+            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + name + "' ist '" + state + "'");
         }
 
         callback(null, state);
