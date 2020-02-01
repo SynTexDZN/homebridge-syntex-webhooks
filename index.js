@@ -324,6 +324,8 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             name: this.name
         };
     }
+    
+    log(this.name, this.mac);
 
     readDevice(device).then(function(state) {
         
