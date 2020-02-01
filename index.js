@@ -192,16 +192,16 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 {
     this.mac = sensorConfig["mac"];
     this.id = sensorConfig["id"];
-    this.name = sensorConfig["name"];
+    this.sensorName = sensorConfig["name"];
     this.type = sensorConfig["type"];
 
     if(this.type === "contact")
     {
-        this.service = new Service.ContactSensor(this.name);
+        this.service = new Service.ContactSensor(this.sensorName);
         
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.sensorName + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.ContactSensorState).updateValue(newState ? Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
         }).bind(this);
         
@@ -209,11 +209,11 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     }
     else if(this.type === "motion")
     {
-        this.service = new Service.MotionSensor(this.name);
+        this.service = new Service.MotionSensor(this.sensorName);
         
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.sensorName + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(newState);
         }).bind(this);
         
@@ -221,11 +221,11 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     }
     else if(this.type === "temperature")
     {
-        this.service = new Service.TemperatureSensor(this.name);
+        this.service = new Service.TemperatureSensor(this.sensorName);
         
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.sensorName + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(newState);
         }).bind(this);
         
@@ -236,22 +236,22 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     }
     else if(this.type === "humidity")
     {        
-        this.service = new Service.HumiditySensor(this.name);
+        this.service = new Service.HumiditySensor(this.sensorName);
         
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(newState);
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.sensorName + "' geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(newState);
         }).bind(this);
         
         this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).on('get', this.getState.bind(this));
     }
     else if(this.type === "rain")
     {        
-        this.service = new Service.LeakSensor(this.name);
+        this.service = new Service.LeakSensor(this.sensorName);
         
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.sensorName + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.LeakDetected).updateValue(newState);
         }).bind(this);
         
@@ -259,11 +259,11 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     }
     else if(this.type === "light")
     {
-        this.service = new Service.LightSensor(this.name);
+        this.service = new Service.LightSensor(this.sensorName);
       
         this.changeHandler = (function(newState)
         {
-            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(parseFloat(newState));
+            log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.sensorName + "' geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(parseFloat(newState));
         }).bind(this);
     
         this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).on('get', this.getState.bind(this));
@@ -271,7 +271,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     /*
     else if(this.type === "occupancy")
     {
-        this.service = new Service.OccupancySensor(this.name);
+        this.service = new Service.OccupancySensor(this.sensorName);
         
         this.changeHandler = (function(newState)
         {
@@ -282,7 +282,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     }
     else if(this.type === "smoke")
     {
-        this.service = new Service.SmokeSensor(this.name);
+        this.service = new Service.SmokeSensor(this.sensorName);
         
         this.changeHandler = (function(newState)
         {
@@ -294,7 +294,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     }
     else if(this.type === "airquality")
     {
-        this.service = new Service.AirQualitySensor(this.name);
+        this.service = new Service.AirQualitySensor(this.sensorName);
         
         this.changeHandler = (function(newState)
         {
@@ -331,7 +331,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         }
         else
         {
-            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "'");
+            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.sensorName + "' ist '" + state + "'");
         }
 
         if(this.type === "contact")
@@ -374,7 +374,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.mac = switchConfig["mac"];
     this.type = switchConfig["type"];
     this.id = switchConfig["id"];
-    this.name = switchConfig["name"];
+    this.sensorName = switchConfig["name"];
     this.onURL = switchConfig["on_url"] || "";
     this.onMethod = switchConfig["on_method"] || "GET";
     this.onBody = switchConfig["on_body"] || "";
@@ -386,11 +386,11 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.offForm = switchConfig["off_form"] || "";
     this.offHeaders = switchConfig["off_headers"] || "{}";
 
-    this.service = new Service.Switch(this.name);
+    this.service = new Service.Switch(this.sensorName);
     
     this.changeHandler = (function(newState)
     {
-        log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+        log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.sensorName + "' geändert zu '" + newState + "' ( " + this.mac + " )");
         this.service.getCharacteristic(Characteristic.On).updateValue(newState);
     }).bind(this);
     
@@ -411,7 +411,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         }
         else
         {
-            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.name + "' ist '" + state + "'");
+            log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + this.sensorName + "' ist '" + state + "'");
         }
 
         callback(null, state);
