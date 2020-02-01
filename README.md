@@ -36,19 +36,29 @@ A plugin to control and to create HTTP devices.
                 "type": "light"
             },
             {
-                "mac": "sensor1",
+                "mac": "EC:FA:BC:59:3F:3C",
                 "name": "Leak",
                 "type": "leak"
             },
             {
-                "mac": "sensor2",
+                "mac": "sensor1",
                 "name": "Motion",
                 "type": "motion"
             },
             {
-                "mac": "sensor3",
+                "mac": "sensor2",
                 "name": "Contact",
                 "type": "contact"
+            },
+            {
+                "mac": "sensor3",
+                "name": "Smoke",
+                "type": "smoke"
+            },
+            {
+                "mac": "sensor4",
+                "name": "Occupancy",
+                "type": "occupancy"
             }
         ],
         "switches": [
@@ -100,4 +110,6 @@ A plugin to control and to create HTTP devices.
 - Leak Sensor
 - Motion Sensor
 - Contact Sensor
+- Smoke Sensor
+- Occupancy Sensor
 - Switch

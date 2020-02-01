@@ -268,7 +268,6 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     
         this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).on('get', this.getState.bind(this));
     }
-    /*
     else if(this.type === "occupancy")
     {
         this.service = new Service.OccupancySensor(this.name);
@@ -292,6 +291,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         
         this.service.getCharacteristic(Characteristic.SmokeDetected).on('get', this.getState.bind(this));
     }
+    /*
     else if(this.type === "airquality")
     {
         this.service = new Service.AirQualitySensor(this.name);
@@ -347,7 +347,6 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             callback(null, state ? Characteristic.LEAK_DETECTED : Characteristic.LEAK_NOT_DETECTED);
         }
-        /*
         else if(this.type === "smoke")
         {
             callback(null, state ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);
@@ -356,7 +355,6 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
         }
-        */
         else if(this.type === "light")
         {
             callback(null, parseFloat(state));
