@@ -141,7 +141,7 @@ SynTexWebHookPlatform.prototype = {
                         }
                         else
                         {
-                            var id = this.mac;
+                            var id = urlParams.mac;
     
                             if(urlParams.type)
                             {
