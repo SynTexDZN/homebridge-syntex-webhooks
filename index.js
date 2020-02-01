@@ -141,7 +141,14 @@ SynTexWebHookPlatform.prototype = {
                         }
                         else
                         {
-                            storage.load(urlParams.mac, (err, obj) => {    
+                            var id = this.mac;
+    
+                            if(urlParams.type)
+                            {
+                                id += '-' + urlParams.type[0];
+                            }
+                            
+                            storage.load(id, (err, obj) => {    
 
                                 if(obj && !err)
                                 {    
@@ -300,7 +307,14 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {    
     var state = null;
     
-    storage.load(this.mac, (err, obj) => {    
+    var id = this.mac;
+    
+    if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
+    {
+        id += '-' + this.type[0];
+    }
+    
+    storage.load(id, (err, obj) => {    
           
         if(obj && !err)
         {    
@@ -539,7 +553,7 @@ async function updateDevice(obj)
         if(obj.type)
         {
             var device = {
-                id: obj.mac,
+                id: obj.mac + '-' + obj.type[0],
                 value: obj.value,
                 type: obj.type
             };
