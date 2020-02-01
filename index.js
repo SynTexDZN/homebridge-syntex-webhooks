@@ -24,7 +24,7 @@ function SynTexWebHookPlatform(slog, sconfig, api)
     this.sensors = sconfig["sensors"] || [];
     this.switches = sconfig["switches"] || [];
     
-    this.cacheDirectory = sconfig["cache_directory"] || "./.node-persist/devices";
+    this.cacheDirectory = sconfig["cache_directory"] || "./SynTex";
     this.port = sconfig["port"] || 1710;
     
     log = slog;
@@ -372,7 +372,6 @@ SynTexWebHookSensorAccessory.prototype.getServices = function()
 {
     return [this.service];
 };
-
 
 function SynTexWebHookSwitchAccessory(switchConfig)
 {
