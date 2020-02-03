@@ -10,7 +10,8 @@
     "node": ">=9.11.2"
   },
   "dependencies": {
-    "json-fs-store": "^1.0.1"
+    "json-fs-store": "^1.0.1",
+    "request": "^2.88.0"
   },
   "keywords": [
     "syntex",
