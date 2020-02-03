@@ -4,6 +4,8 @@ var url = require('url');
 var store = require('json-fs-store');
 var Service, Characteristic;
 
+//test
+
 module.exports = function(homebridge)
 {
     Service = homebridge.hap.Service;
