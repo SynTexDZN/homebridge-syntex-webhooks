@@ -516,7 +516,7 @@ async function updateDevice(obj)
 
             if(err)
             {
-                log('\x1b[31m%s\x1b[0m', "[ERROR]", obj.mac + ".json konnte nicht aktualisiert werden!");
+                log('\x1b[31m%s\x1b[0m', "[ERROR]", obj.mac + ".json konnte nicht aktualisiert werden!", err);
                 resolve(false);
             }
             else
