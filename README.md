@@ -16,7 +16,7 @@ A plugin to control and to create HTTP devices.
 ```
 "platforms": [
     {
-        "platform": "SynTexWebhooks",
+        "platform": "SynTexWebHooks",
         "port": 1710,
         "cache_directory": "./SynTex/",
         "sensors": [
