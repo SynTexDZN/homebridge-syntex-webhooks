@@ -29,7 +29,7 @@
   "homepage": "https://github.com/SynTexDZN/homebridge-syntex-webhooks#readme",
   "repository": {
     "type": "git",
-    "url": "git@github.com:SynTexDZN/homebridge-syntex-webhooks.git"
+    "url": "git://github.com/SynTexDZN/homebridge-syntex-webhooks.git"
   },
   "bugs": {
     "url": "https://github.com/SynTexDZN/homebridge-syntex-webhooks/issues"
