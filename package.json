@@ -33,5 +33,8 @@
   },
   "bugs": {
     "url": "https://github.com/SynTexDZN/homebridge-syntex-webhooks/issues"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }
