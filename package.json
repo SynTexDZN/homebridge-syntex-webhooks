@@ -1,10 +1,11 @@
 {
-  "name": "homebridge-syntex-webhooks",
-  "version": "2.0.3",
+  "name": "@syntexdzn/homebridge-syntex-webhooks",
+  "version": "2.0.2",
   "description": "A webhook plugin for HTTP devices",
   "main": "index.js",
-  "author": "SynTex",
-  "license": "ISC",
+  "author": {
+    "name": "SynTexDZN"
+  },
   "engines": {
     "homebridge": ">=0.3.0",
     "node": ">=9.11.2"
@@ -34,7 +35,5 @@
   "bugs": {
     "url": "https://github.com/SynTexDZN/homebridge-syntex-webhooks/issues"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  }
+  "license": "ISC"
 }
