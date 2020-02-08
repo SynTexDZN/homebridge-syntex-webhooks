@@ -59,67 +59,45 @@ SynTexWebHookPlatform.prototype = {
             var urlPath = urlParts.pathname;
             var body = [];
             
-            request.on('error', (function(err)
-            {
-                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Reason: ", err);
-                
-            }).bind(this)).on('data', function(chunk)
-            {
-                body.push(chunk);
-                
-            }).on('end', (function()
-            {
-                body = Buffer.concat(body).toString();
+            body = Buffer.concat(body).toString();
 
-                response.statusCode = 200;
-                response.setHeader('Content-Type', 'application/json');
-                response.setHeader('Access-Control-Allow-Origin', 'http://syntex.local');
-                
-                if(urlPath == '/devices')
+            response.statusCode = 200;
+            response.setHeader('Content-Type', 'application/json');
+            response.setHeader('Access-Control-Allow-Origin', 'http://syntex.local:1711');
+
+            if(urlPath == '/devices')
+            {
+                if(urlParams.mac)
                 {
-                    if(urlParams.mac)
+                    if(urlParams.value)
                     {
-                        if(urlParams.value)
+                        if(urlParams.type)
                         {
-                            if(urlParams.type)
-                            {
-                                var device = {
-                                    mac: urlParams.mac,
-                                    value: urlParams.value,
-                                    type: urlParams.type
-                                };
-                            }
-                            else
-                            {
-                                var device = {
-                                    mac: urlParams.mac,
-                                    value: urlParams.value
-                                };
-                            }
-                            
-                            updateDevice(device).then(function(res) {
-                                
-                                for(var i = 0; i < accessories.length; i++)
-                                {
-                                    var accessory = accessories[i];
+                            var device = {
+                                mac: urlParams.mac,
+                                value: urlParams.value,
+                                type: urlParams.type
+                            };
+                        }
+                        else
+                        {
+                            var device = {
+                                mac: urlParams.mac,
+                                value: urlParams.value
+                            };
+                        }
 
-                                    if(accessory.mac === urlParams.mac)
+                        updateDevice(device).then(function(res) {
+
+                            for(var i = 0; i < accessories.length; i++)
+                            {
+                                var accessory = accessories[i];
+
+                                if(accessory.mac === urlParams.mac)
+                                {
+                                    if(urlParams.type)
                                     {
-                                        if(urlParams.type)
-                                        {
-                                            if(accessory.type === urlParams.type)
-                                            {
-                                                if(urlParams.value == 'true' || urlParams.value == 'false')
-                                                {
-                                                    accessory.changeHandler((urlParams.value === 'true'));
-                                                }
-                                                else
-                                                {
-                                                    accessory.changeHandler(urlParams.value);
-                                                }
-                                            }
-                                        }
-                                        else
+                                        if(accessory.type === urlParams.type)
                                         {
                                             if(urlParams.value == 'true' || urlParams.value == 'false')
                                             {
@@ -131,54 +109,65 @@ SynTexWebHookPlatform.prototype = {
                                             }
                                         }
                                     }
+                                    else
+                                    {
+                                        if(urlParams.value == 'true' || urlParams.value == 'false')
+                                        {
+                                            accessory.changeHandler((urlParams.value === 'true'));
+                                        }
+                                        else
+                                        {
+                                            accessory.changeHandler(urlParams.value);
+                                        }
+                                    }
                                 }
-                            });
-                                               
-                            response.write("Success");
-                            response.end();
+                            }
+                        });
+
+                        response.write("Success");
+                        response.end();
+                    }
+                    else
+                    {
+                        if(urlParams.type)
+                        {
+                            var device = {
+                                mac: urlParams.mac,
+                                type: urlParams.type
+                            };
                         }
                         else
                         {
-                            if(urlParams.type)
+                            var device = {
+                                mac: urlParams.mac
+                            };
+                        }
+
+                        readDevice(device).then(function(res) {
+
+                            if(!res)
                             {
-                                var device = {
-                                    mac: urlParams.mac,
-                                    type: urlParams.type
-                                };
+                                response.write("Es wurde kein passendes Gerät gefunden!");
+                                response.end();
+
+                                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + urlParams.mac + ")");
                             }
                             else
                             {
-                                var device = {
-                                    mac: urlParams.mac
-                                };
+                                response.write(res);
+                                response.end();
+
+                                log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + urlParams.mac + "' ist '" + res + "'");
                             }
-                            
-                            readDevice(device).then(function(res) {
-                                
-                                if(!res)
-                                {
-                                    response.write("Es wurde kein passendes Gerät gefunden!");
-                                    response.end();
-
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + urlParams.mac + ")");
-                                }
-                                else
-                                {
-                                    response.write(res);
-                                    response.end();
-
-                                    log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + urlParams.mac + "' ist '" + res + "'");
-                                }
-                            });
-                        }
+                        });
                     }
                 }
-                else if(urlPath == '/ping')
-                {
-                    response.write("");
-                    response.end();
-                }
-            }).bind(this));
+            }
+            else if(urlPath == '/ping')
+            {
+                response.write("");
+                response.end();
+            }
             
         }).bind(this);
 
