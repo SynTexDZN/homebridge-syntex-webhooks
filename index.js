@@ -2,6 +2,7 @@ var request = require('request');
 var http = require('http');
 var url = require('url');
 var store = require('json-fs-store');
+var convert = require('color-convert');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
@@ -514,8 +515,8 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
     */
 
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
-    //this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
-    this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this))/*.on('set', this.setHue.bind(this))*/;
+    this.service.addCharacteristic(new Characteristic.Brightness())/*.on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this))*/;
+    this.service.addCharacteristic(new Characteristic.Hue())/*.on('get', this.getHue.bind(this))*/.on('set', this.setHue.bind(this));
     this.service.addCharacteristic(new Characteristic.Saturation())/*.on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this))*/;
 }
 
@@ -562,6 +563,33 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 
         callback(null, state);
     });
+};
+
+SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
+{
+    var rgb = convert.hsv.rgb([level, 100, 100]);
+
+    var theRequest = {
+        method : "GET",
+        url : "http://192.168.188.155/color?r=" + rgb[0] + "&g=" + rgb[1] + "&b=" + rgb[2],
+        timeout : 5000
+    };
+
+    request(theRequest, (function(err, response, body)
+    {
+        var statusCode = response && response.statusCode ? response.statusCode : -1;
+        
+        log("Anfrage zu '%s' wurde mit dem Status Code '%s' beendet: '%s'", urlToCall, statusCode, body, err);
+        
+        if(!err && statusCode == 200)
+        {
+            callback(null);
+        }
+        else
+        {
+            callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+        }
+    }).bind(this));
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
