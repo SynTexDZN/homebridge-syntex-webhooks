@@ -569,7 +569,7 @@ SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
     log("LEVEL", level);
 
     var h = level, s = 100, l = 100;
-    var r, g, b;
+    var r = 0, g = 0, b = 0;
 
     s /= 100;
     l /= 100;
@@ -577,9 +577,6 @@ SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
     let c = (1 - Math.abs(2 * l - 1)) * s,
         x = c * (1 - Math.abs((h / 60) % 2 - 1)),
         m = l - c/2,
-        r = 0,
-        g = 0,
-        b = 0;
 
     if (0 <= h && h < 60) {
         r = c; g = x; b = 0;
