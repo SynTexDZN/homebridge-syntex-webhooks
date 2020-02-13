@@ -539,6 +539,11 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
     });
 };
 
+SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
+{
+    callback(null);
+};
+
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
     var device = {
