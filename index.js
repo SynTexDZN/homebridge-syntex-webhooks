@@ -188,7 +188,6 @@ SynTexWebHookPlatform.prototype = {
 function SynTexWebHookSensorAccessory(sensorConfig)
 {
     this.mac = sensorConfig["mac"];
-    this.id = sensorConfig["id"];
     this.name = sensorConfig["name"];
     this.type = sensorConfig["type"];
 
@@ -372,7 +371,6 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 {
     this.mac = switchConfig["mac"];
     this.type = switchConfig["type"];
-    this.id = switchConfig["id"];
     this.name = switchConfig["name"];
     this.onURL = switchConfig["on_url"] || "";
     this.onMethod = switchConfig["on_method"] || "GET";
@@ -493,7 +491,6 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
 {
     this.mac = switchConfig["mac"];
     this.type = switchConfig["type"];
-    this.id = switchConfig["id"];
     this.name = switchConfig["name"];
     this.onURL = switchConfig["on_url"] || "";
     this.onMethod = switchConfig["on_method"] || "GET";
@@ -516,6 +513,7 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
     
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
     this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
+    this.service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
