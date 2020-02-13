@@ -539,6 +539,11 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
     });
 };
 
+SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
+{
+    return [this.service];
+};
+
 async function updateDevice(obj)
 {
     return new Promise(resolve => {
