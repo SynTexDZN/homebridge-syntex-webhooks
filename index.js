@@ -513,7 +513,7 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
     }).bind(this);
     */
 
-    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    //this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
     //this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
     this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this))/*.on('set', this.setHue.bind(this))*/;
     //this.service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
