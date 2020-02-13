@@ -12,6 +12,7 @@ module.exports = function(homebridge)
     homebridge.registerPlatform("homebridge-syntex-webhooks", "SynTexWebHooks", SynTexWebHookPlatform);
     homebridge.registerAccessory("homebridge-syntex-webhooks", "SynTexWebHookSensor", SynTexWebHookSensorAccessory);
     homebridge.registerAccessory("homebridge-syntex-webhooks", "SynTexWebHookSwitch", SynTexWebHookSwitchAccessory);
+    homebridge.registerAccessory("homebridge-syntex-webhooks", "SynTexWebHookStripeRGB", SynTexWebHookStripeRGBAccessory);
 };
 
 var log;
@@ -23,6 +24,7 @@ function SynTexWebHookPlatform(slog, sconfig, api)
     var url = require('url');
     this.sensors = sconfig["sensors"] || [];
     this.switches = sconfig["switches"] || [];
+    this.lights = sconfig["lights"] || [];
     
     this.cacheDirectory = sconfig["cache_directory"] || "./SynTex";
     this.port = sconfig["port"] || 1710;
@@ -48,6 +50,12 @@ SynTexWebHookPlatform.prototype = {
         {
             var Switch = new SynTexWebHookSwitchAccessory(this.switches[i]);
             accessories.push(Switch);
+        }
+
+        for (var i = 0; i < this.lights.length; i++)
+        {
+            var Light = new SynTexWebHookSwitchAccessory(this.lights[i]);
+            accessories.push(Light);
         }
         
         callback(accessories);
@@ -479,6 +487,55 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
 SynTexWebHookSwitchAccessory.prototype.getServices = function()
 {
     return [this.service];
+};
+
+function SynTexWebHookStripeRGBAccessory(switchConfig)
+{
+    this.mac = switchConfig["mac"];
+    this.type = switchConfig["type"];
+    this.id = switchConfig["id"];
+    this.name = switchConfig["name"];
+    this.onURL = switchConfig["on_url"] || "";
+    this.onMethod = switchConfig["on_method"] || "GET";
+    this.onBody = switchConfig["on_body"] || "";
+    this.onForm = switchConfig["on_form"] || "";
+    this.onHeaders = switchConfig["on_headers"] || "{}";
+    this.offURL = switchConfig["off_url"] || "";
+    this.offMethod = switchConfig["off_method"] || "GET";
+    this.offBody = switchConfig["off_body"] || "";
+    this.offForm = switchConfig["off_form"] || "";
+    this.offHeaders = switchConfig["off_headers"] || "{}";
+
+    this.service = new Service.Lightbulb(this.name);
+
+    this.changeHandler = (function(newState)
+    {
+        log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+    }).bind(this);
+    
+    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
+}
+
+SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
+{
+    var device = {
+        mac: this.mac,
+        name: this.name
+    };
+    
+    var name = this.name;
+    var mac = this.mac;
+
+    readDevice(device).then(function(res) {
+        
+        state = 210;
+        
+        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + name + "' ist '" + state + "'");
+
+        callback(null, state);
+    });
 };
 
 async function updateDevice(obj)
