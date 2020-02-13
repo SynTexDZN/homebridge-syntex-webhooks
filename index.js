@@ -513,11 +513,31 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
     }).bind(this);
     */
 
-    //this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
     //this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
     this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this))/*.on('set', this.setHue.bind(this))*/;
     //this.service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
 }
+
+SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
+{
+    var device = {
+        mac: this.mac,
+        name: this.name
+    };
+    
+    var name = this.name;
+    var mac = this.mac;
+
+    readDevice(device).then(function(res) {
+        
+        state = (res == 'true' || res);
+        
+        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + name + "' ist '" + state + "'");
+
+        callback(null, state);
+    });
+};
 
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
