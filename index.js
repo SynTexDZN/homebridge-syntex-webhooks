@@ -595,7 +595,7 @@ SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
     {
         var statusCode = response && response.statusCode ? response.statusCode : -1;
         
-        log("Anfrage zu '%s' wurde mit dem Status Code '%s' beendet: '%s'", urlToCall, statusCode, body, err);
+        log("Anfrage zu '%s' wurde mit dem Status Code '%s' beendet: '%s'", 'URL', statusCode, body, err);
         
         if(!err && statusCode == 200)
         {
@@ -603,7 +603,7 @@ SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
         }
         else
         {
-            callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+            callback(err || new Error("Request to 'URL' was not succesful."));
         }
     }).bind(this));
 };
