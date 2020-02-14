@@ -506,7 +506,7 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
     this.hue = 0;
     this.saturation = 100;
     this.brightness = 100;
-    this.power = 100;
+    this.power = true;
 
     this.service = new Service.Lightbulb(this.name);
 
