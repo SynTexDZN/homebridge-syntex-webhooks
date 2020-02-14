@@ -526,12 +526,12 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
 
 SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 {
-    callback(this.brightness);
+    callback(null, this.brightness);
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 {
-    callback(this.saturation);
+    callback(null, this.saturation);
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
@@ -555,7 +555,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
     });
     */
 
-    callback(this.power);
+    callback(null, this.power);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
