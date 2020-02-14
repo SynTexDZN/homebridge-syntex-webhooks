@@ -554,6 +554,16 @@ SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback,
     callback(null);
 };
 
+SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
+{
+    callback(null);
+};
+
+SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
+{
+    callback(null);
+};
+
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
     var device = {
