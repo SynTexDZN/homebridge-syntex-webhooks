@@ -622,7 +622,7 @@ function setRGB(hue, saturation, brightness)
     log("SATURATION", saturation);
     log("BRIGHTNESS", brightness);
 
-    var h = hue, s = saturation * 2, l = brightness / 2;
+    var h = hue, s = saturation * 2, l = brightness / 4;
     var r = 0, g = 0, b = 0;
 
     s /= 100;
