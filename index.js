@@ -561,18 +561,21 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
 {
     this.power = powerOn;
+    setRGB(this.hue, this.saturation, this.brightness);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
 {
     this.saturation = level;
+    setRGB(this.hue, this.saturation, this.brightness);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
 {
     this.brightness = level;
+    setRGB(this.hue, this.saturation, this.brightness);
     callback(null);
 };
 
@@ -603,12 +606,23 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
 {
-    log("HUE", level);
-    log("BRIGHTNESS", this.brightness);
-    log("SATURATION", this.saturation);
     this.hue = level;
+    setRGB(this.hue, this.saturation, this.brightness);
+    callback(null);
+};
 
-    var h = level, s = this.saturation, l = this.brightness / 2;
+SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
+{
+    return [this.service];
+};
+
+function setRGB(hue, saturation, brightness)
+{
+    log("HUE", hue);
+    log("SATURATION", saturation);
+    log("BRIGHTNESS", brightness);
+
+    var h = hue, s = saturation * 2, l = brightness / 2;
     var r = 0, g = 0, b = 0;
 
     s /= 100;
@@ -651,22 +665,8 @@ SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
         var statusCode = response && response.statusCode ? response.statusCode : -1;
         
         log("Anfrage zu '%s' wurde mit dem Status Code '%s' beendet: '%s'", 'URL', statusCode, body, err);
-        
-        if(!err && statusCode == 200)
-        {
-            callback(null);
-        }
-        else
-        {
-            callback(err || new Error("Request to 'URL' was not succesful."));
-        }
     }).bind(this));
-};
-
-SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
-{
-    return [this.service];
-};
+}
 
 async function updateDevice(obj)
 {
