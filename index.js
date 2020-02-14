@@ -578,6 +578,10 @@ SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callba
 
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
+    log(this.hue);
+    callback(null, this.hue);
+    
+    /*
     var device = {
         mac: this.mac,
         name: this.name
@@ -592,9 +596,9 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
         
         log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + name + "' ist '" + state + "'");
 
-        log(this.hue);
-        callback(null, this.hue);
+        callback(null, state);
     });
+    */
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
