@@ -506,6 +506,7 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
     this.hue = 0;
     this.saturation = 100;
     this.brightness = 100;
+    this.power = 100;
 
     this.service = new Service.Lightbulb(this.name);
 
@@ -535,6 +536,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 {
+    /*
     var device = {
         mac: this.mac,
         name: this.name
@@ -551,10 +553,14 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 
         callback(null, state);
     });
+    */
+
+    callback(this.power);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
 {
+    this.power = powerOn;
     callback(null);
 };
 
@@ -572,8 +578,6 @@ SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callba
 
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
-    this.hue = level;
-
     var device = {
         mac: this.mac,
         name: this.name
