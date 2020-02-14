@@ -606,7 +606,7 @@ SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
     log("LEVEL", level);
     this.hue = level;
 
-    var h = level, s = 100, l = 50;
+    var h = level, s = this.saturation, l = 50;
     var r = 0, g = 0, b = 0;
 
     s /= 100;
