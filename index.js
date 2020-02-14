@@ -503,6 +503,10 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
     this.offForm = switchConfig["off_form"] || "";
     this.offHeaders = switchConfig["off_headers"] || "{}";
 
+    this.hue = 0;
+    this.saturation = 100;
+    this.brightness = 100;
+
     this.service = new Service.Lightbulb(this.name);
 
     /*
@@ -521,12 +525,12 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
 
 SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 {
-    callback(100);
+    callback(this.brightness);
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 {
-    callback(100);
+    callback(this.saturation);
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
@@ -556,16 +560,20 @@ SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback,
 
 SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
 {
+    this.saturation = level;
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
 {
+    this.brightness = level;
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
+    this.hue = level;
+
     var device = {
         mac: this.mac,
         name: this.name
@@ -580,13 +588,14 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
         
         log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + name + "' ist '" + state + "'");
 
-        callback(null, state);
+        callback(null, this.hue);
     });
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
 {
     log("LEVEL", level);
+    this.hue = level;
 
     var h = level, s = 100, l = 50;
     var r = 0, g = 0, b = 0;
