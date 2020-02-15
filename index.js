@@ -530,7 +530,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
             }
             else
             {
-                callback(null, (res.split('/')[0] == 'true' || false));
+                callback(null, (res.split(':')[0] == 'true' || false));
             }
         });
     }
@@ -560,7 +560,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
             else
             {
                 log('CALLBACK: res.split');
-                callback(null, (res.split('/')[1] || 0));
+                callback(null, (res.split(':')[1] || 0));
             }
         });
     }
@@ -587,7 +587,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
             }
             else
             {
-                callback(null, (res.split('/')[2] || 100));
+                callback(null, (res.split(':')[2] || 100));
             }
         });
     }
@@ -614,7 +614,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
             }
             else
             {
-                callback(null, (res.split('/')[3] || 50));
+                callback(null, (res.split(':')[3] || 50));
             }
         });
     }
