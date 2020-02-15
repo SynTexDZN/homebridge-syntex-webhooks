@@ -10,6 +10,8 @@ A plugin to control and to create HTTP devices.
 
 # Example Config
 **INFO:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
+- `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
+- `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
 - For the mac address you can use either a `real mac address` or another `unique text`
 - Every device needs these configurations: `mac`, `name` and `type`
 
@@ -85,6 +87,14 @@ A plugin to control and to create HTTP devices.
                 "name": "Dummy",
                 "type": "switch"
             }
+        ],
+        "lights": [
+            {
+                "mac": "light1",
+                "ip": "192.168.1.1"
+                "name": "Dummy Light",
+                "type": "rgb"
+            }
         ]
     }
 ]
@@ -94,8 +104,9 @@ A plugin to control and to create HTTP devices.
 1. Open `http://`  **Bridge IP**  `/devices?mac=`  **Device Mac**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device Mac`
 3. For the `New Value` you can type these patterns:
-- For boolean devices: `true` / `false`
-- For numeric devices: `10` / `12.4`
+- For boolean devices: `true` / `false` ( *leak, motion, contact, smoke, occupancy, switch* )
+- For numeric devices: `10` / `12.4` ( *temperature, humidity, light* )
+- For RGB lights devices: `true:210:78:50` ( *power state, hue, saturation, brightness* )
 
 
 # See HTTP Device Values
@@ -112,4 +123,5 @@ A plugin to control and to create HTTP devices.
 - Contact Sensor
 - Smoke Sensor
 - Occupancy Sensor
-- Switch
+- Switch / Relais
+- RGB Lights
