@@ -495,46 +495,13 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.type = lightConfig["type"];
     this.name = lightConfig["name"];
 
-    this.hue = 0;
-    this.saturation = 100;
-    this.brightness = 50;
-
-    /*
-
-    var device = {
-        mac: this.mac,
-        name: this.name
-    };
-
-    readDevice(device).then(function(res) {
-        
-        if(!res)
-        {
-            this.power = true;
-            this.hue = 0;
-            this.saturation = 100;
-            this.brightness = 50;
-        }
-        else
-        {
-            this.power = res.split('/')[0];
-            this.hue = res.split('/')[1];
-            this.saturation = res.split('/')[2];
-            this.brightness = res.split('/')[3];
-        }
-    });
-
-    */
-
     this.service = new Service.Lightbulb(this.name);
 
-    /*
     this.changeHandler = (function(newState)
     {
         log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+        /* this.service.getCharacteristic(Characteristic.On).updateValue(newState); */
     }).bind(this);
-    */
 
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
     this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
