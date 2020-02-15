@@ -323,6 +323,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     
     var name = this.name;
     var mac = this.mac;
+    var type = this.type;
 
     readDevice(device).then(function(state) {
         
@@ -335,23 +336,23 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + name + "' ist '" + state + "'");
         }
 
-        if(this.type === "contact")
+        if(type === "contact")
         {
             callback(null, state ? Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
         }
-        else if(this.type === "rain")
+        else if(type === "rain")
         {
             callback(null, state ? Characteristic.LEAK_DETECTED : Characteristic.LEAK_NOT_DETECTED);
         }
-        else if(this.type === "smoke")
+        else if(type === "smoke")
         {
             callback(null, state ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);
         }
-        else if(this.type === "occupancy")
+        else if(type === "occupancy")
         {
             callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
         }
-        else if(this.type === "light")
+        else if(type === "light")
         {
             log('LIGHT');
 
