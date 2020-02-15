@@ -550,6 +550,11 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
     }
     else
     {
+        var device = {
+            mac: this.mac,
+            name: this.name
+        };
+
         readDevice(device).then(function(res) {
         
             if(!res)
