@@ -540,6 +540,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
     if(this.hue)
     {
+        log('CALLBACK: this.hue');
         callback(null, this.hue);
     }
     else
@@ -553,10 +554,12 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
         
             if(!res)
             {
+                log('CALLBACK: 0');
                 callback(null, 0);
             }
             else
             {
+                log('CALLBACK: res.split');
                 callback(null, (res.split('/')[1] || 0));
             }
         });
