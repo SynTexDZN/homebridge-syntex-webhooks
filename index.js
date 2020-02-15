@@ -563,7 +563,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
             }
             else
             {
-                this.power = (res.split('/')[0] == 'true' || false);
+                callback(null, (res.split('/')[0] == 'true' || false));
             }
         });
     }
