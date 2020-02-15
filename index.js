@@ -488,22 +488,14 @@ SynTexWebHookSwitchAccessory.prototype.getServices = function()
     return [this.service];
 };
 
-function SynTexWebHookStripeRGBAccessory(switchConfig)
+function SynTexWebHookStripeRGBAccessory(lightConfig)
 {
-    this.mac = switchConfig["mac"];
-    this.type = switchConfig["type"];
-    this.name = switchConfig["name"];
-    this.onURL = switchConfig["on_url"] || "";
-    this.onMethod = switchConfig["on_method"] || "GET";
-    this.onBody = switchConfig["on_body"] || "";
-    this.onForm = switchConfig["on_form"] || "";
-    this.onHeaders = switchConfig["on_headers"] || "{}";
-    this.offURL = switchConfig["off_url"] || "";
-    this.offMethod = switchConfig["off_method"] || "GET";
-    this.offBody = switchConfig["off_body"] || "";
-    this.offForm = switchConfig["off_form"] || "";
-    this.offHeaders = switchConfig["off_headers"] || "{}";
+    this.mac = lightConfig["mac"];
+    this.ip = lightConfig["ip"];
+    this.type = lightConfig["type"];
+    this.name = lightConfig["name"];
 
+    // Replace with values read from storage
     this.hue = 0;
     this.saturation = 100;
     this.brightness = 100;
@@ -520,19 +512,9 @@ function SynTexWebHookStripeRGBAccessory(switchConfig)
     */
 
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
-    this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
     this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
     this.service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
-}
-
-SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
-{
-    callback(null, this.brightness);
-}
-
-SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
-{
-    callback(null, this.saturation);
+    this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
@@ -559,65 +541,55 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
     callback(null, this.power);
 };
 
+SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
+{
+    callback(null, this.hue);
+};
+
+SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
+{
+    callback(null, this.saturation);
+}
+
+SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
+{
+    callback(null, this.brightness);
+}
+
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
 {
     this.power = powerOn;
 
     if(powerOn)
     {
-        setRGB(this.hue, this.saturation, this.brightness);
+        setRGB(this.ip, this.hue, this.saturation, this.brightness);
     }
     else
     {
-        setRGB(this.hue, this.saturation, 0);
+        setRGB(this.ip, this.hue, this.saturation, 0);
     }
     
+    callback(null);
+};
+
+SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
+{
+    this.hue = level;
+    setRGB(this.ip, this.hue, this.saturation, this.brightness);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
 {
     this.saturation = level;
-    setRGB(this.hue, this.saturation, this.brightness);
+    setRGB(this.ip, this.hue, this.saturation, this.brightness);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
 {
     this.brightness = level;
-    setRGB(this.hue, this.saturation, this.brightness);
-    callback(null);
-};
-
-SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
-{
-    log(this.hue);
-    callback(null, this.hue);
-    
-    /*
-    var device = {
-        mac: this.mac,
-        name: this.name
-    };
-    
-    var name = this.name;
-    var mac = this.mac;
-
-    readDevice(device).then(function(res) {
-        
-        state = 210;
-        
-        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + name + "' ist '" + state + "'");
-
-        callback(null, state);
-    });
-    */
-};
-
-SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
-{
-    this.hue = level;
-    setRGB(this.hue, this.saturation, this.brightness);
+    setRGB(this.ip, this.hue, this.saturation, this.brightness);
     callback(null);
 };
 
@@ -626,12 +598,8 @@ SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
     return [this.service];
 };
 
-function setRGB(hue, saturation, brightness)
+function setRGB(ip, hue, saturation, brightness)
 {
-    log("HUE", hue);
-    log("SATURATION", saturation);
-    log("BRIGHTNESS", brightness);
-
     var h = hue, s = saturation * 2, l = brightness / 4;
     var r = 0, g = 0, b = 0;
 
@@ -642,17 +610,28 @@ function setRGB(hue, saturation, brightness)
         x = c * (1 - Math.abs((h / 60) % 2 - 1)),
         m = l - c/2;
 
-    if (0 <= h && h < 60) {
+    if(0 <= h && h < 60)
+    {
         r = c; g = x; b = 0;
-    } else if (60 <= h && h < 120) {
+    }
+    else if(60 <= h && h < 120)
+    {
         r = x; g = c; b = 0;
-    } else if (120 <= h && h < 180) {
+    }
+    else if(120 <= h && h < 180)
+    {
         r = 0; g = c; b = x;
-    } else if (180 <= h && h < 240) {
+    }
+    else if(180 <= h && h < 240)
+    {
         r = 0; g = x; b = c;
-    } else if (240 <= h && h < 300) {
+    }
+    else if(240 <= h && h < 300)
+    {
         r = x; g = 0; b = c;
-    } else if (300 <= h && h < 360) {
+    }
+    else if(300 <= h && h < 360)
+    {
         r = c; g = 0; b = x;
     }
 
@@ -660,20 +639,15 @@ function setRGB(hue, saturation, brightness)
     g = Math.round((g + m) * 255);
     b = Math.round((b + m) * 255);
 
-    log('R:', r);
-    log('G:', g);
-    log('B:', b);
-
     var theRequest = {
         method : "GET",
-        url : "http://192.168.188.155/color?r=" + r + "&g=" + g + "&b=" + b,
-        timeout : 5000
+        url : "http://" + ip + "/color?r=" + r + "&g=" + g + "&b=" + b,
+        timeout : 10000
     };
 
     request(theRequest, (function(err, response, body)
     {
         var statusCode = response && response.statusCode ? response.statusCode : -1;
-        
         log("Anfrage zu '%s' wurde mit dem Status Code '%s' beendet: '%s'", 'URL', statusCode, body, err);
     }).bind(this));
 }
