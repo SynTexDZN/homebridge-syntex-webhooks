@@ -119,6 +119,8 @@ SynTexWebHookPlatform.prototype = {
                                     }
                                     else
                                     {
+                                        log('VALUE', urlParams.value);
+
                                         if(urlParams.value == 'true' || urlParams.value == 'false')
                                         {
                                             accessory.changeHandler((urlParams.value === 'true'));
