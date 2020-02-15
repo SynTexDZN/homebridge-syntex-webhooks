@@ -554,7 +554,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
         
             if(!res)
             {
-                callback(null, true);
+                callback(null, false);
             }
             else
             {
