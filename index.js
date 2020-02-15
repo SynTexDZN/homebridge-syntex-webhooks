@@ -495,11 +495,28 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.type = lightConfig["type"];
     this.name = lightConfig["name"];
 
-    // Replace with values read from storage
-    this.hue = 0;
-    this.saturation = 100;
-    this.brightness = 100;
-    this.power = true;
+    var device = {
+        mac: this.mac,
+        name: this.name
+    };
+
+    readDevice(device).then(function(res) {
+        
+        if(!res)
+        {
+            super.power = true;
+            super.hue = 0;
+            super.saturation = 100;
+            super.brightness = 50;
+        }
+        else
+        {
+            super.power = res.split('/')[0];
+            super.hue = res.split('/')[1];
+            super.saturation = res.split('/')[2];
+            super.brightness = res.split('/')[3];
+        }
+    });
 
     this.service = new Service.Lightbulb(this.name);
 
@@ -519,25 +536,6 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 {
-    /*
-    var device = {
-        mac: this.mac,
-        name: this.name
-    };
-    
-    var name = this.name;
-    var mac = this.mac;
-
-    readDevice(device).then(function(res) {
-        
-        state = (res == 'true' || res);
-        
-        log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + name + "' ist '" + state + "'");
-
-        callback(null, state);
-    });
-    */
-
     callback(null, this.power);
 };
 
