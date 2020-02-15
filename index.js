@@ -351,12 +351,17 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
         }
-        /*
         else if(this.type === "light")
         {
-            callback(null, parseFloat(state));
+            if(state.includes('.'))
+            {
+                callback(null, parseFloat(state.split('.')[0]));
+            }
+            else
+            {
+                callback(null, parseFloat(state));
+            }
         }
-        */
         else
         {
             callback(null, state);
