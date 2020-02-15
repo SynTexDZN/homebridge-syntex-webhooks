@@ -353,12 +353,16 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         }
         else if(this.type === "light")
         {
+            log('LIGHT');
+
             if(state.includes('.'))
             {
+                log('HAS DOT');
                 callback(null, parseFloat(state.split('.')[0]));
             }
             else
             {
+                log('NO DOT');
                 callback(null, parseFloat(state));
             }
         }
