@@ -571,17 +571,83 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
-    callback(null, this.hue);
+    if(this.hue)
+    {
+        callback(null, this.hue);
+    }
+    else
+    {
+        var device = {
+            mac: this.mac,
+            name: this.name
+        };
+
+        readDevice(device).then(function(res) {
+        
+            if(!res)
+            {
+                callback(null, 0);
+            }
+            else
+            {
+                callback(null, (res.split('/')[1] || 0));
+            }
+        });
+    }
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 {
-    callback(null, this.saturation);
+    if(this.saturation)
+    {
+        callback(null, this.saturation);
+    }
+    else
+    {
+        var device = {
+            mac: this.mac,
+            name: this.name
+        };
+
+        readDevice(device).then(function(res) {
+        
+            if(!res)
+            {
+                callback(null, 100);
+            }
+            else
+            {
+                callback(null, (res.split('/')[2] || 100));
+            }
+        });
+    }
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 {
-    callback(null, this.brightness);
+    if(this.brightness)
+    {
+        callback(null, this.brightness);
+    }
+    else
+    {
+        var device = {
+            mac: this.mac,
+            name: this.name
+        };
+
+        readDevice(device).then(function(res) {
+        
+            if(!res)
+            {
+                callback(null, 50);
+            }
+            else
+            {
+                callback(null, (res.split('/')[3] || 50));
+            }
+        });
+    }
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
