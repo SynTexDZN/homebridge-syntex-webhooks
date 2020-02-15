@@ -488,17 +488,43 @@ SynTexWebHookSwitchAccessory.prototype.getServices = function()
     return [this.service];
 };
 
-async function SynTexWebHookStripeRGBAccessory(lightConfig)
+function SynTexWebHookStripeRGBAccessory(lightConfig)
 {
     this.mac = lightConfig["mac"];
     this.ip = lightConfig["ip"];
     this.type = lightConfig["type"];
     this.name = lightConfig["name"];
 
+    this.hue = 0;
+    this.saturation = 100;
+    this.brightness = 50;
+
+    /*
+
     var device = {
         mac: this.mac,
         name: this.name
     };
+
+    readDevice(device).then(function(res) {
+        
+        if(!res)
+        {
+            this.power = true;
+            this.hue = 0;
+            this.saturation = 100;
+            this.brightness = 50;
+        }
+        else
+        {
+            this.power = res.split('/')[0];
+            this.hue = res.split('/')[1];
+            this.saturation = res.split('/')[2];
+            this.brightness = res.split('/')[3];
+        }
+    });
+
+    */
 
     this.service = new Service.Lightbulb(this.name);
 
@@ -514,28 +540,28 @@ async function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
     this.service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
     this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
-
-    var res = await readDevice(device);
-
-    if(!res)
-    {
-        this.power = true;
-        this.hue = 0;
-        this.saturation = 100;
-        this.brightness = 50;
-    }
-    else
-    {
-        this.power = res.split('/')[0];
-        this.hue = res.split('/')[1];
-        this.saturation = res.split('/')[2];
-        this.brightness = res.split('/')[3];
-    }
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 {
-    callback(null, this.power);
+    if(this.power)
+    {
+        callback(null, this.power);
+    }
+    else
+    {
+        readDevice(device).then(function(res) {
+        
+            if(!res)
+            {
+                callback(null, true);
+            }
+            else
+            {
+                this.power = res.split('/')[0];
+            }
+        });
+    }
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
