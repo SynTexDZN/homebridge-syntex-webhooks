@@ -500,21 +500,21 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
         name: this.name
     };
 
-    readDevice(device).then(function(res) {
+    readDevice(device).then(function(res, this) {
         
         if(!res)
         {
-            super.power = true;
-            super.hue = 0;
-            super.saturation = 100;
-            super.brightness = 50;
+            this.power = true;
+            this.hue = 0;
+            this.saturation = 100;
+            this.brightness = 50;
         }
         else
         {
-            super.power = res.split('/')[0];
-            super.hue = res.split('/')[1];
-            super.saturation = res.split('/')[2];
-            super.brightness = res.split('/')[3];
+            this.power = res.split('/')[0];
+            this.hue = res.split('/')[1];
+            this.saturation = res.split('/')[2];
+            this.brightness = res.split('/')[3];
         }
     });
 
