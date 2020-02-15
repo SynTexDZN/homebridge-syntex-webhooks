@@ -488,7 +488,7 @@ SynTexWebHookSwitchAccessory.prototype.getServices = function()
     return [this.service];
 };
 
-function SynTexWebHookStripeRGBAccessory(lightConfig)
+async function SynTexWebHookStripeRGBAccessory(lightConfig)
 {
     this.mac = lightConfig["mac"];
     this.ip = lightConfig["ip"];
@@ -500,23 +500,22 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
         name: this.name
     };
 
-    readDevice(device).then(function(res, this) {
+    var res = await readDevice(device);
         
-        if(!res)
-        {
-            this.power = true;
-            this.hue = 0;
-            this.saturation = 100;
-            this.brightness = 50;
-        }
-        else
-        {
-            this.power = res.split('/')[0];
-            this.hue = res.split('/')[1];
-            this.saturation = res.split('/')[2];
-            this.brightness = res.split('/')[3];
-        }
-    });
+    if(!res)
+    {
+        this.power = true;
+        this.hue = 0;
+        this.saturation = 100;
+        this.brightness = 50;
+    }
+    else
+    {
+        this.power = res.split('/')[0];
+        this.hue = res.split('/')[1];
+        this.saturation = res.split('/')[2];
+        this.brightness = res.split('/')[3];
+    }
 
     this.service = new Service.Lightbulb(this.name);
 
