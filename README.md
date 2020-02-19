@@ -14,6 +14,7 @@ A plugin to control and to create HTTP devices.
 - `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
 - For the mac address you can use either a `real mac address` or another `unique text`
 - Every device needs these configurations: `mac`, `name` and `type`
+- For lights GET parameters are added to the URL ( *Pattern: [ url ]?r=0&b=0&b=0* )
 
 ```
 "platforms": [
@@ -91,9 +92,10 @@ A plugin to control and to create HTTP devices.
         "lights": [
             {
                 "mac": "light1",
-                "ip": "192.168.1.1"
                 "name": "Dummy Light",
-                "type": "rgb"
+                "type": "rgb",
+                "url": "http://192.168.178.163/color",
+                "url_method": "GET"
             }
         ]
     }

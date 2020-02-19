@@ -502,9 +502,10 @@ SynTexWebHookSwitchAccessory.prototype.getServices = function()
 function SynTexWebHookStripeRGBAccessory(lightConfig)
 {
     this.mac = lightConfig["mac"];
-    this.ip = lightConfig["ip"];
     this.type = lightConfig["type"];
     this.name = lightConfig["name"];
+    this.url = lightConfig["url"];
+    this.urlMethod = lightConfig["url_method"];
 
     this.service = new Service.Lightbulb(this.name);
 
@@ -637,11 +638,11 @@ SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback,
 
     if(powerOn)
     {
-        setRGB(this.ip, this.hue, this.saturation, this.brightness);
+        setRGB(this.url, this.hue, this.saturation, this.brightness);
     }
     else
     {
-        setRGB(this.ip, this.hue, this.saturation, 0);
+        setRGB(this.url, this.hue, this.saturation, 0);
     }
     
     callback(null);
@@ -650,21 +651,21 @@ SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback,
 SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
 {
     this.hue = level;
-    setRGB(this.ip, this.hue, this.saturation, this.brightness);
+    setRGB(this.url, this.hue, this.saturation, this.brightness);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
 {
     this.saturation = level;
-    setRGB(this.ip, this.hue, this.saturation, this.brightness);
+    setRGB(this.url, this.hue, this.saturation, this.brightness);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
 {
     this.brightness = level;
-    setRGB(this.ip, this.hue, this.saturation, this.brightness);
+    setRGB(this.url, this.hue, this.saturation, this.brightness);
     callback(null);
 };
 
@@ -673,7 +674,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
     return [this.service];
 };
 
-function setRGB(ip, hue, saturation, brightness)
+function setRGB(url, hue, saturation, brightness)
 {
     var h = hue, s = saturation * 2, l = brightness / 4;
     var r = 0, g = 0, b = 0;
@@ -716,7 +717,7 @@ function setRGB(ip, hue, saturation, brightness)
 
     var theRequest = {
         method : "GET",
-        url : "http://" + ip + "/color?r=" + r + "&g=" + g + "&b=" + b,
+        url : url + "?r=" + r + "&g=" + g + "&b=" + b,
         timeout : 10000
     };
 
