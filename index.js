@@ -724,10 +724,12 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         {
             var serviceName = this.service[index].getCharacteristic(Characteristic.Name).value;
 
+            log('SERVICE NAME', serviceName);
+
             if (serviceName === buttonName)
             {
                log("Pressing '%s' with event '%i'", buttonName, event)
-               this.service[index].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(event, undefined, CONTEXT_FROM_WEBHOOK);
+               this.service[index].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(event);
             }
         }
     }).bind(this);
