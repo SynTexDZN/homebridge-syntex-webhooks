@@ -62,7 +62,7 @@ SynTexWebHookPlatform.prototype = {
 
         for (var i = 0; i < this.statelessSwitches.length; i++)
         {
-            var StatelessSwitch = new SynTexWebHookStripeRGBAccessory(this.statelessSwitches[i]);
+            var StatelessSwitch = new SynTexWebHookStatelessSwitchAccessory(this.statelessSwitches[i]);
             accessories.push(StatelessSwitch);
         }
         
