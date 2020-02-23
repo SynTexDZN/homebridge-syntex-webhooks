@@ -153,8 +153,6 @@ SynTexWebHookPlatform.prototype = {
 
                             if(accessory.mac === urlParams.mac)
                             {
-                                log('EVENT', urlParams.event);
-
                                 accessory.changeHandler(accessory.name, urlParams.event);
 
                                 response.write("Success");
@@ -726,7 +724,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         {
             if(i == event)
             {
-               log("'%s': Taste Nr.%i wurde gedrückt!", buttonName, event);
+               log("'%s': Taste %i wurde gedrückt!", buttonName, event + 1);
                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(0);
             }
         }
