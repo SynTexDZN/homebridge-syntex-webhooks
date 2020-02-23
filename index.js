@@ -701,21 +701,20 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
     this.mac = statelessSwitchConfig["mac"];
     this.type = "statelessswitch";
     this.name = statelessSwitchConfig["name"];
-    this.buttons = statelessSwitchConfig["buttons"] || [];
+    this.buttons = statelessSwitchConfig["buttons"] || 0;
     this.service = [];
 
-    for (var index = 0; index < this.buttons.length; index++)
+    for (var i = 0; i < this.buttons; i++)
     {
-        var single_press = this.buttons[index]["single_press"] == undefined ? true : this.buttons[index]["single_press"];
-        var double_press = this.buttons[index]["double_press"] == undefined ? true : this.buttons[index]["double_press"];
-        var long_press = this.buttons[index]["long_press"] == undefined ? true : this.buttons[index]["long_press"];
-        var button = new Service.StatelessProgrammableSwitch(this.buttons[index].name, '' + index);
+        var button = new Service.StatelessProgrammableSwitch(this.buttons[i].name, 'TEST' + i);
+        var single_press = this.buttons[i]["single_press"] == undefined ? true : this.buttons[i]["single_press"];
         
-        button.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(GetStatelessSwitchProps(single_press, double_press, long_press));
-        button.getCharacteristic(Characteristic.ServiceLabelIndex).setValue(index + 1);
+        button.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(GetStatelessSwitchProps(single_press));
+        button.getCharacteristic(Characteristic.ServiceLabelIndex).setValue(i + 1);
 
         this.service.push(button);
     }
+
     this.changeHandler = (function(buttonName, event)
     {
         log('BUTTON NAME', buttonName);
@@ -726,7 +725,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
 
             log('SERVICE NAME', serviceName);
 
-            if (serviceName === buttonName)
+            if (index === event)
             {
                log("Pressing '%s' with event '%i'", buttonName, event)
                this.service[index].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(event);
@@ -735,60 +734,14 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
     }).bind(this);
 };
   
-function GetStatelessSwitchProps(single_press, double_press, long_press)
+function GetStatelessSwitchProps(single_press)
 {
     var props;
 
-    if (single_press && !double_press && !long_press)
-    {
-        props = {
-            minValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
-            maxValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS
-        };
-    }
-    if (single_press && double_press && !long_press)
-    {
-        props = {
-            minValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
-            maxValue : Characteristic.ProgrammableSwitchEvent.DOUBLE_PRESS
-        };
-    }
-    if (single_press && !double_press && long_press)
-    {
-        props = {
-            minValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
-            maxValue : Characteristic.ProgrammableSwitchEvent.LONG_PRESS,
-            validValues : [ Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS, Characteristic.ProgrammableSwitchEvent.LONG_PRESS ]
-        };
-    }
-    if (!single_press && double_press && !long_press)
-    {
-        props = {
-            minValue : Characteristic.ProgrammableSwitchEvent.DOUBLE_PRESS,
-            maxValue : Characteristic.ProgrammableSwitchEvent.DOUBLE_PRESS
-        };
-    }
-    if (!single_press && double_press && long_press)
-    {
-        props = {
-            minValue : Characteristic.ProgrammableSwitchEvent.DOUBLE_PRESS,
-            maxValue : Characteristic.ProgrammableSwitchEvent.LONG_PRESS
-        };
-    }
-    if (!single_press && !double_press && long_press)
-    {
-        props = {
-            minValue : Characteristic.ProgrammableSwitchEvent.LONG_PRESS,
-            maxValue : Characteristic.ProgrammableSwitchEvent.LONG_PRESS
-        };
-    }
-    if (single_press && double_press && long_press)
-    {
-        props = {
-            minValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
-            maxValue : Characteristic.ProgrammableSwitchEvent.LONG_PRESS
-        };
-    }
+    props = {
+        minValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
+        maxValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS
+    };
 
     return props;
 }
