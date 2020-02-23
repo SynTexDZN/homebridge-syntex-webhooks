@@ -696,9 +696,8 @@ SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
     return [this.service];
 };
 
-function SynTexWebHookStatelessSwitchAccessory(log, statelessSwitchConfig, storage)
+function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
 {
-    this.log = log;
     this.mac = statelessSwitchConfig["mac"];
     this.type = "statelessswitch";
     this.name = statelessSwitchConfig["name"];
@@ -714,7 +713,7 @@ function SynTexWebHookStatelessSwitchAccessory(log, statelessSwitchConfig, stora
         
         button.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(GetStatelessSwitchProps(single_press, double_press, long_press));
         button.getCharacteristic(Characteristic.ServiceLabelIndex).setValue(index + 1);
-        
+
         this.service.push(button);
     }
     this.changeHandler = (function(buttonName, event)
@@ -725,7 +724,7 @@ function SynTexWebHookStatelessSwitchAccessory(log, statelessSwitchConfig, stora
 
             if (serviceName === buttonName)
             {
-               this.log("Pressing '%s' with event '%i'", buttonName, event)
+               log("Pressing '%s' with event '%i'", buttonName, event)
                this.service[index].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(event, undefined, CONTEXT_FROM_WEBHOOK);
             }
         }
