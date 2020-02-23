@@ -155,7 +155,7 @@ SynTexWebHookPlatform.prototype = {
                             {
                                 log('EVENT', urlParams.event);
 
-                                accessory.changeHandler(urlParams.mac, urlParams.event);
+                                accessory.changeHandler(accessory.name, urlParams.event);
 
                                 response.write("Success");
                                 response.end();
@@ -702,16 +702,19 @@ SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
 function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
 {
     this.mac = statelessSwitchConfig["mac"];
-    this.type = "statelessswitch";
     this.name = statelessSwitchConfig["name"];
     this.buttons = statelessSwitchConfig["buttons"] || 0;
     this.service = [];
 
-    for (var i = 0; i < this.buttons; i++)
+    for(var i = 0; i < this.buttons; i++)
     {
         var button = new Service.StatelessProgrammableSwitch(this.mac + i, '' + i);
-        
-        button.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(GetStatelessSwitchProps());
+        var props = {
+            minValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
+            maxValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS
+        };
+
+        button.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(props);
         button.getCharacteristic(Characteristic.ServiceLabelIndex).setValue(i + 1);
 
         this.service.push(button);
@@ -719,40 +722,16 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
 
     this.changeHandler = (function(buttonName, event)
     {
-        log('EVENT', event);
-
-        for (var index = 0; index < this.service.length; index++)
+        for(var i = 0; i < this.service.length; i++)
         {
-            var serviceName = this.service[index].getCharacteristic(Characteristic.Name).value;
-
-            log('INDEX', index);
-
-            log('==?', index == event);
-            log('===?', index === event);
-
-            if(index == event)
+            if(i == event)
             {
-               log("Pressing '%s' with event '%i'", buttonName, event)
-               //this.service[index].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(event);
-               //this.service[index].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(0);
-               this.service[index].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(0);
-               //this.service[index].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(2);
+               log("'%s': Taste Nr.%i wurde gedrückt!", buttonName, event);
+               this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(0);
             }
         }
     }).bind(this);
 };
-  
-function GetStatelessSwitchProps()
-{
-    var props;
-
-    props = {
-        minValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
-        maxValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS
-    };
-
-    return props;
-}
   
 SynTexWebHookStatelessSwitchAccessory.prototype.getServices = function()
 {
