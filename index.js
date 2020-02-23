@@ -147,6 +147,9 @@ SynTexWebHookPlatform.prototype = {
                     }
                     else if(urlParams.event)
                     {
+                        response.write("Success");
+                        response.end();
+
                         for(var i = 0; i < accessories.length; i++)
                         {
                             var accessory = accessories[i];
@@ -154,9 +157,6 @@ SynTexWebHookPlatform.prototype = {
                             if(accessory.mac === urlParams.mac)
                             {
                                 accessory.changeHandler(accessory.name, urlParams.event);
-
-                                response.write("Success");
-                                response.end();
                             }
                         }
                     }
