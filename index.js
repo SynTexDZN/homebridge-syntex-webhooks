@@ -716,13 +716,13 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
 
     this.changeHandler = (function(buttonName, event)
     {
-        log('BUTTON NAME', buttonName);
+        log('EVENT', event);
 
         for (var index = 0; index < this.service.length; index++)
         {
             var serviceName = this.service[index].getCharacteristic(Characteristic.Name).value;
 
-            log('SERVICE NAME', serviceName);
+            log('INDEX', index);
 
             if (index === event)
             {
