@@ -79,7 +79,7 @@ SynTexWebHookPlatform.prototype = {
 
             response.statusCode = 200;
             response.setHeader('Content-Type', 'application/json');
-            response.setHeader('Access-Control-Allow-Origin', 'http://syntex.local');
+            response.setHeader('Access-Control-Allow-Origin', '*');
 
             if(urlPath == '/devices')
             {
