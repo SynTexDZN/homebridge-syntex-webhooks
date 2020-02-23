@@ -706,7 +706,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
 
     for (var i = 0; i < this.buttons; i++)
     {
-        var button = new Service.StatelessProgrammableSwitch(this.buttons[i].name, 'TEST' + i);
+        var button = new Service.StatelessProgrammableSwitch(this.mac + i, 'TEST' + i);
         var single_press = this.buttons[i]["single_press"] == undefined ? true : this.buttons[i]["single_press"];
         
         button.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(GetStatelessSwitchProps(single_press));
