@@ -62,7 +62,10 @@ function saveLog(log)
 {
     if(inWork)
     {
-        que.push(log);
+        if(!que.includes(log))
+        {
+            que.push(log);
+        }
 
         console.log("QUEEEEE", que);
     }
