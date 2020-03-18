@@ -68,7 +68,7 @@ function saveLog(log)
 
                 if(err)
                 {
-                    logger.log('error', obj.mac + ".json konnte nicht aktualisiert werden!" + err);
+                    logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
                     resolve(false);
                 }
                 else
@@ -91,7 +91,7 @@ function saveLog(log)
 
                 if(err)
                 {
-                    logger.log('error', obj.mac + ".json konnte nicht aktualisiert werden!" + err);
+                    logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
                     resolve(false);
                 }
                 else
