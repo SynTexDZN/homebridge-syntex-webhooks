@@ -64,7 +64,7 @@ function saveLog(log)
     {
         que.push(log);
 
-        console.log("QUEEEEE");
+        console.log("QUEEEEE", log);
     }
     else
     {
@@ -74,7 +74,7 @@ function saveLog(log)
         {
             que.splice(1, 0, log);
 
-            console.log("QUEEEEE DELETED");
+            console.log("QUEEEEE DELETED", log);
         }
 
         var d = new Date();
@@ -103,7 +103,7 @@ function saveLog(log)
 
                     if(que.length != 0)
                     {
-                        console.log("QUEEEEE STARTED");
+                        console.log("QUEEEEE STARTED", log);
                         saveLog(que[0]);
                     }
                 });
@@ -134,7 +134,7 @@ function saveLog(log)
 
                     if(que.length != 0)
                     {
-                        console.log("QUEEEEE STARTED");
+                        console.log("QUEEEEE STARTED", log);
                         saveLog(que[0]);
                     }
                 });
