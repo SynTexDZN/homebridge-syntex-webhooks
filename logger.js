@@ -69,11 +69,11 @@ function saveLog(log)
                 if(err)
                 {
                     logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
-                    resolve(false);
+                    //resolve(false);
                 }
                 else
                 {
-                    resolve(true);
+                    //resolve(true);
                 }
             });
         }
@@ -92,11 +92,11 @@ function saveLog(log)
                 if(err)
                 {
                     logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
-                    resolve(false);
+                    //resolve(false);
                 }
                 else
                 {
-                    resolve(true);
+                    //resolve(true);
                 }
             });
         }
