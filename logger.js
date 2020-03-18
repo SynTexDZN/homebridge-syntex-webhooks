@@ -64,7 +64,7 @@ function saveLog(log)
     {
         que.push(log);
 
-        console.log("QUEEEEE", log);
+        console.log("QUEEEEE", que);
     }
     else
     {
