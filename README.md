@@ -22,6 +22,7 @@ A plugin to control and to create HTTP devices.
         "platform": "SynTexWebHooks",
         "port": 1710,
         "cache_directory": "./SynTex/",
+        "log_directory": "./SynTex/log",
         "sensors": [
             {
                 "mac": "EC:FA:BC:59:3F:3C",
