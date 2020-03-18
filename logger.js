@@ -47,58 +47,85 @@ logger.log = function(level, message)
             color = '[' + prefix + '] \x1b[31m%s\x1b[0m', "[ERROR]";
         }
 
+        var d = new Date();
+        var time = d.getHours() + ":" + d.getMinutes + ":" + d.getSeconds + ":";
+
         console.log(color, "[" + level.toUpperCase() + "]", message);
-        saveLog("[" + level.toUpperCase() + "] " + message);
+        saveLog(time + " > [" + level.toUpperCase() + "] " + message);
     }
 }
 
+var inWork = false;
+var que = [];
+
 function saveLog(log)
 {
-    var d = new Date();
+    if(inWork)
+    {
+        que.push(log);
 
-    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+        console.log("QUEEEEE");
+    }
+    /*
+    else if(que.length != 0)
+    {
+        log = 
+    }
+    */
+    else
+    {
+        inWork = true;
 
-    logs.load(date, (err, device) => {    
+        var d = new Date();
 
-        if(device && !err)
-        {    
-            device.logs[device.logs.length] = log;
+        var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
 
-            logs.add(device, (err) => {
+        logs.load(date, (err, device) => {    
 
-                if(err)
-                {
-                    logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
-                    //resolve(false);
-                }
-                else
-                {
-                    //resolve(true);
-                }
-            });
-        }
+            if(device && !err)
+            {    
+                device.logs[device.logs.length] = log;
 
-        if(err || !device)
-        {
-            var entry = {
-                id: date,
-                logs: [
-                    log
-                ]
-            };
+                logs.add(device, (err) => {
 
-            logs.add(entry, (err) => {
+                    inWork = false;
 
-                if(err)
-                {
-                    logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
-                    //resolve(false);
-                }
-                else
-                {
-                    //resolve(true);
-                }
-            });
-        }
-    });
+                    if(err)
+                    {
+                        logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
+                        //resolve(false);
+                    }
+                    else
+                    {
+                        //resolve(true);
+                    }
+                });
+            }
+
+            if(err || !device)
+            {
+                var entry = {
+                    id: date,
+                    logs: [
+                        log
+                    ]
+                };
+
+                logs.add(entry, (err) => {
+
+                    inWork = false;
+
+                    if(err)
+                    {
+                        logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
+                        //resolve(false);
+                    }
+                    else
+                    {
+                        //resolve(true);
+                    }
+                });
+            }
+        });
+    }
 }
