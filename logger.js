@@ -72,7 +72,7 @@ function saveLog(log)
 
         if(que.includes(log))
         {
-            que.splice(0, 1, log);
+            que.splice(1, 0, log);
 
             console.log("QUEEEEE DELETED");
         }
