@@ -32,7 +32,7 @@ function SynTexWebHookPlatform(slog, sconfig, api)
     this.cacheDirectory = sconfig["cache_directory"] || "./SynTex";
     this.port = sconfig["port"] || 1710;
     
-    logger.create(slog);
+    logger.create("SynTexWebHooks", "error");
 
     //log = slog;
     config = store(api.user.storagePath());
