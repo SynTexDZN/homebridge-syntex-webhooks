@@ -2,7 +2,7 @@ var request = require('request');
 var http = require('http');
 var url = require('url');
 var store = require('json-fs-store');
-var logger = require('logger');
+var logger = require('./logger');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
