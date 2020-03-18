@@ -17,11 +17,10 @@ module.exports = function(homebridge)
     homebridge.registerAccessory("homebridge-syntex-webhooks", "SynTexWebHookStatelessSwitch", SynTexWebHookStatelessSwitchAccessory);
 };
 
-//var log;
 var config;
 var storage;
 
-function SynTexWebHookPlatform(slog, sconfig, api)
+function SynTexWebHookPlatform(log, sconfig, api)
 {
     var url = require('url');
     this.sensors = sconfig["sensors"] || [];
@@ -35,7 +34,6 @@ function SynTexWebHookPlatform(slog, sconfig, api)
     
     logger.create("SynTexWebHooks", this.logDirectory);
 
-    //log = slog;
     config = store(api.user.storagePath());
     storage = store(this.cacheDirectory);
 }
