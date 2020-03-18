@@ -56,7 +56,7 @@ function saveLog(log)
 {
     var d = new Date();
 
-    var date = d.getDate() + "." + d.getMonth() + "." + d.getFullYear();
+    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
 
     logs.load(date, (err, device) => {    
 
