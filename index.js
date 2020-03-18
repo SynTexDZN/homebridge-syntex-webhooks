@@ -30,9 +30,10 @@ function SynTexWebHookPlatform(slog, sconfig, api)
     this.statelessSwitches = sconfig["statelessswitches"] || [];
     
     this.cacheDirectory = sconfig["cache_directory"] || "./SynTex";
+    this.logDirectory = sconfig["log_directory"] || "./SynTex/log";
     this.port = sconfig["port"] || 1710;
     
-    logger.create("SynTexWebHooks");
+    logger.create("SynTexWebHooks", this.logDirectory);
 
     //log = slog;
     config = store(api.user.storagePath());
