@@ -1,10 +1,9 @@
 var logger = exports, prefix;
-logger.debugLevel;
+logger.debugLevel = 'error';
 
-logger.create = function(pluginName, debugLevel)
+logger.create = function(pluginName)
 {
     prefix = pluginName;
-    logger.debugLevel = debugLevel;
 };
 
 logger.log = function(level, message)
