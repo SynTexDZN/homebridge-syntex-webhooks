@@ -1,10 +1,6 @@
-var logger = exports, prefix;
+var logger = exports;
+var prefix = 'SynTexWebHooks';
 logger.debugLevel = 'error';
-
-logger.create = function(pluginName)
-{
-    prefix = pluginName;
-};
 
 logger.log = function(level, message)
 {
