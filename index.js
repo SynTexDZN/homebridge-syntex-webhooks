@@ -724,7 +724,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         {
             if(i == event)
             {
-               log("'%s': Taste %i wurde gedrückt!", buttonName, (i + 1));
+               log("'" + buttonName + "': Taste " + i + " wurde gedrückt! :D");
                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(0);
             }
         }
