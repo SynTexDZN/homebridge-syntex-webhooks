@@ -182,14 +182,14 @@ SynTexWebHookPlatform.prototype = {
                                 response.write("Es wurde kein passendes Gerät gefunden!");
                                 response.end();
 
-                                logger.log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + urlParams.mac + ")");
+                                logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + urlParams.mac + ")");
                             }
                             else
                             {
                                 response.write(res);
                                 response.end();
 
-                                logger.log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + urlParams.mac + "' ist '" + res + "'");
+                                logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + res + "'");
                             }
                         });
                     }
@@ -205,7 +205,7 @@ SynTexWebHookPlatform.prototype = {
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
-        logger.log('\x1b[33m%s\x1b[0m', "[INFO]", "Data Link Server läuft auf Port ", "'" + this.port + "'");
+        logger.log('info', "Data Link Server läuft auf Port ", "'" + this.port + "'");
     }
 }
 
@@ -221,7 +221,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         
         this.changeHandler = (function(newState)
         {
-            logger.log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.ContactSensorState).updateValue(newState ? Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
         }).bind(this);
         
@@ -233,7 +233,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         
         this.changeHandler = (function(newState)
         {
-            logger.log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(newState);
         }).bind(this);
         
@@ -245,7 +245,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         
         this.changeHandler = (function(newState)
         {
-            logger.log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(newState);
         }).bind(this);
         
@@ -260,7 +260,8 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         
         this.changeHandler = (function(newState)
         {
-            logger.log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(newState);
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(newState);
         }).bind(this);
         
         this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).on('get', this.getState.bind(this));
@@ -271,7 +272,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         
         this.changeHandler = (function(newState)
         {
-            logger.log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.LeakDetected).updateValue(newState);
         }).bind(this);
         
@@ -283,7 +284,8 @@ function SynTexWebHookSensorAccessory(sensorConfig)
       
         this.changeHandler = (function(newState)
         {
-            logger.log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )"); this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(parseFloat(newState));
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(parseFloat(newState));
         }).bind(this);
     
         this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).on('get', this.getState.bind(this));
@@ -294,6 +296,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         
         this.changeHandler = (function(newState)
         {
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(newState ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED, undefined, CONTEXT_FROM_WEBHOOK);
         }).bind(this);
         
@@ -305,7 +308,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         
         this.changeHandler = (function(newState)
         {
-            logger.log("Change HomeKit state for smoke sensor to '%s'.", newState);
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.SmokeDetected).updateValue(newState ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED, undefined, CONTEXT_FROM_WEBHOOK);
         }).bind(this);
         
@@ -318,7 +321,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         
         this.changeHandler = (function(newState)
         {
-            logger.log("Change HomeKit value for air quality sensor to '%s'.", newState);
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
             this.service.getCharacteristic(Characteristic.AirQuality).updateValue(newState, undefined, CONTEXT_FROM_WEBHOOK);
         }).bind(this);
         
@@ -353,11 +356,11 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
         if(!state)
         {
-            logger.log('\x1b[31m%s\x1b[0m', "[ERROR]", "Es wurde kein passendes Gerät gefunden! (" + mac + ")");
+            logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + mac + ")");
         }
         else
         {
-            logger.log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + name + "' ist '" + state + "'");
+            logger.log('read', "HomeKit Status für '" + name + "' ist '" + state + "'");
         }
 
         if(state == 'true')
@@ -421,7 +424,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     
     this.changeHandler = (function(newState)
     {
-        logger.log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
         this.service.getCharacteristic(Characteristic.On).updateValue(newState);
     }).bind(this);
     
@@ -442,7 +445,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         
         state = (res == 'true' || res);
         
-        logger.log('\x1b[36m%s\x1b[0m', "[READ]", "HomeKit Status für '" + name + "' ist '" + state + "'");
+        logger.log('read', "HomeKit Status für '" + name + "' ist '" + state + "'");
 
         callback(null, state);
     });
@@ -498,7 +501,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
         {
             var statusCode = response && response.statusCode ? response.statusCode : -1;
             
-            logger.log("Anfrage zu '%s' wurde mit dem Status Code '%s' beendet: '%s'", urlToCall, statusCode, body, err);
+            logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'" + err);
             
             if(!err && statusCode == 200)
             {
@@ -533,7 +536,7 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
     this.changeHandler = (function(newState)
     {
-        logger.log('\x1b[36m%s\x1b[0m', "[UPDATE]", "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
         /* this.service.getCharacteristic(Characteristic.On).updateValue(newState); */
     }).bind(this);
 
@@ -574,7 +577,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
     if(this.hue)
     {
-        logger.log('CALLBACK: this.hue');
+        logger.log('info', 'CALLBACK: this.hue');
         callback(null, this.hue);
     }
     else
@@ -588,12 +591,12 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
         
             if(!res)
             {
-                logger.log('CALLBACK: 0');
+                logger.log('info', 'CALLBACK: 0');
                 callback(null, 0);
             }
             else
             {
-                logger.log('CALLBACK: res.split');
+                logger.log('info', 'CALLBACK: res.split');
                 callback(null, (res.split(':')[1] || 0));
             }
         });
@@ -723,7 +726,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         {
             if(i == event)
             {
-               logger.log("'" + buttonName + "': Event " + i + " wurde ausgeführt!");
+               logger.log('success', "'" + buttonName + "': Event " + i + " wurde ausgeführt!");
                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(0);
             }
         }
@@ -785,7 +788,7 @@ function setRGB(url, hue, saturation, brightness)
     request(theRequest, (function(err, response, body)
     {
         var statusCode = response && response.statusCode ? response.statusCode : -1;
-        logger.log("Anfrage zu '%s' wurde mit dem Status Code '%s' beendet: '%s'", 'URL', statusCode, body, err);
+        logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'" + err);
     }).bind(this));
 }
 
@@ -813,7 +816,7 @@ async function updateDevice(obj)
 
             if(err)
             {
-                logger.log('\x1b[31m%s\x1b[0m', "[ERROR]", obj.mac + ".json konnte nicht aktualisiert werden!", err);
+                logger.log('error', obj.mac + ".json konnte nicht aktualisiert werden!" + err);
                 resolve(false);
             }
             else

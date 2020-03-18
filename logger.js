@@ -1,11 +1,9 @@
 var logger = exports;
 logger.debugLevel = 'info';
 
-logger.log = function(message)
+logger.log = function(level, message)
 {
-    var level = 'info';
-
-    var levels = ['info', 'warn', 'error'];
+    var levels = ['success', 'update', 'read', 'info', 'warn', 'error'];
 
     if(levels.indexOf(level) <= levels.indexOf(logger.debugLevel))
     {
@@ -14,6 +12,29 @@ logger.log = function(message)
             message = JSON.stringify(message);
         };
 
-        console.log(level + ': ' + message);
+        if(level == 'success')
+        {
+            console.log('\x1b[32m%s\x1b[0m', "[SUCCESS]", message);
+        }
+        else if(level == 'update')
+        {
+            console.log('\x1b[36m%s\x1b[0m', "[UPDATE]", message);
+        }
+        else if(level == 'read')
+        {
+            console.log('\x0b[36m%s\x1b[0m', "[READ]", message);
+        }
+        else if(level == 'info')
+        {
+            console.log('\x1b[33m%s\x1b[0m', "[INFO]", message);
+        }
+        else if(level == 'warn')
+        {
+            console.log('\x0b[33m%s\x1b[0m', "[WARN]", message);
+        }
+        else
+        {
+            console.log('\x1b[31m%s\x1b[0m', "[ERROR]", message);
+        }
     }
 }
