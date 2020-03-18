@@ -1,8 +1,10 @@
 var logger = exports;
 logger.debugLevel = 'info';
 
-logger.log = function(level, message)
+logger.log = function(message)
 {
+    var level = 'info';
+
     var levels = ['info', 'warn', 'error'];
 
     if(levels.indexOf(level) <= levels.indexOf(logger.debugLevel))
