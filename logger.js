@@ -20,35 +20,35 @@ logger.log = function(level, message)
             message = JSON.stringify(message);
         };
 
-        var log = "";
+        var color = "";
 
         if(level == 'success')
         {
-            log = '[' + prefix + '] \x1b[32m%s\x1b[0m', "[SUCCESS]", message;
+            color = '[' + prefix + '] \x1b[32m%s\x1b[0m', "[SUCCESS]";
         }
         else if(level == 'update')
         {
-            log = '[' + prefix + '] \x1b[36m%s\x1b[0m', "[UPDATE]", message;
+            color = '[' + prefix + '] \x1b[36m%s\x1b[0m', "[UPDATE]";
         }
         else if(level == 'read')
         {
-            log = '[' + prefix + '] \x0b[36m%s\x1b[0m', "[READ]", message;
+            color = '[' + prefix + '] \x0b[36m%s\x1b[0m', "[READ]";
         }
         else if(level == 'info')
         {
-            log = '[' + prefix + '] \x1b[33m%s\x1b[0m', "[INFO]", message;
+            color = '[' + prefix + '] \x1b[33m%s\x1b[0m', "[INFO]";
         }
         else if(level == 'warn')
         {
-            log = '[' + prefix + '] \x0b[33m%s\x1b[0m', "[WARN]", message;
+            color = '[' + prefix + '] \x0b[33m%s\x1b[0m', "[WARN]";
         }
         else
         {
-            log = '[' + prefix + '] \x1b[31m%s\x1b[0m', "[ERROR]", message;
+            color = '[' + prefix + '] \x1b[31m%s\x1b[0m', "[ERROR]";
         }
 
-        console.log(log);
-        saveLog(log);
+        console.log(color, "[" + level.toUpperCase() + "]", message);
+        saveLog("[" + level.toUpperCase() + "] " + message);
     }
 }
 
