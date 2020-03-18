@@ -62,7 +62,7 @@ function saveLog(log)
 
         if(device && !err)
         {    
-            device.logs[device.logs.size()] = log;
+            device.logs[device.logs.length] = log;
 
             logs.add(device, (err) => {
 
