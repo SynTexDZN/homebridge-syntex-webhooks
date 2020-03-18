@@ -1,7 +1,7 @@
 var logger = exports, log;
 logger.debugLevel = 'error';
 
-logger.create = function(pluginName, slog)
+logger.create = function(slog)
 {
     log = slog;
 };
