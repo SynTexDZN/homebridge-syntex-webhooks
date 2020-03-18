@@ -2,6 +2,7 @@ var request = require('request');
 var http = require('http');
 var url = require('url');
 var store = require('json-fs-store');
+var logger = require('logger');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
@@ -31,7 +32,7 @@ function SynTexWebHookPlatform(slog, sconfig, api)
     this.cacheDirectory = sconfig["cache_directory"] || "./SynTex";
     this.port = sconfig["port"] || 1710;
     
-    log = slog;
+    log = logger;
     config = store(api.user.storagePath());
     storage = store(this.cacheDirectory);
 }
