@@ -127,8 +127,6 @@ SynTexWebHookPlatform.prototype = {
                                     }
                                     else
                                     {
-                                        log('VALUE', urlParams.value);
-
                                         if(urlParams.value == 'true' || urlParams.value == 'false')
                                         {
                                             accessory.changeHandler((urlParams.value == 'true' || false));
@@ -724,7 +722,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         {
             if(i == event)
             {
-               log("'" + buttonName + "': Taste " + i + " wurde gedrückt! :D");
+               log("'" + buttonName + "': Event " + i + " wurde ausgeführt!");
                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(0);
             }
         }
