@@ -21,7 +21,7 @@ module.exports = function(homebridge)
 var config;
 var storage;
 
-function SynTexWebHookPlatform(log, sconfig, api)
+function SynTexWebHookPlatform(slog, sconfig, api)
 {
     var url = require('url');
     this.sensors = sconfig["sensors"] || [];
@@ -32,7 +32,7 @@ function SynTexWebHookPlatform(log, sconfig, api)
     this.cacheDirectory = sconfig["cache_directory"] || "./SynTex";
     this.port = sconfig["port"] || 1710;
     
-    logger.create(log);
+    logger.create(slog);
 
     //log = slog;
     config = store(api.user.storagePath());

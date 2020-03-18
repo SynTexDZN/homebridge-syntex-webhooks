@@ -4,7 +4,7 @@ logger.debugLevel = 'error';
 logger.create = function(slog)
 {
     log = slog;
-};
+}
 
 logger.log = function(level, message)
 {
