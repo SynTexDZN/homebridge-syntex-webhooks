@@ -207,7 +207,7 @@ SynTexWebHookPlatform.prototype = {
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
-        logger.log('info', "Data Link Server läuft auf Port ", "'" + this.port + "'");
+        logger.log('info', "Data Link Server läuft auf Port " + "'" + this.port + "'");
     }
 }
 
