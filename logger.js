@@ -66,15 +66,16 @@ function saveLog(log)
 
         console.log("QUEEEEE");
     }
-    /*
-    else if(que.length != 0)
-    {
-        log = 
-    }
-    */
     else
     {
         inWork = true;
+
+        if(que.includes(log))
+        {
+            que.splice(0, 1, log);
+
+            console.log("QUEEEEE DELETED");
+        }
 
         var d = new Date();
 
@@ -98,6 +99,12 @@ function saveLog(log)
                     else
                     {
                         //resolve(true);
+                    }
+
+                    if(que.length != 0)
+                    {
+                        console.log("QUEEEEE STARTED");
+                        saveLog(que[0]);
                     }
                 });
             }
@@ -123,6 +130,12 @@ function saveLog(log)
                     else
                     {
                         //resolve(true);
+                    }
+
+                    if(que.length != 0)
+                    {
+                        console.log("QUEEEEE STARTED");
+                        saveLog(que[0]);
                     }
                 });
             }
