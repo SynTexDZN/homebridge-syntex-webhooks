@@ -48,7 +48,7 @@ logger.log = function(level, message)
         }
 
         var d = new Date();
-        var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":";
+        var time = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
 
         console.log(color, "[" + level.toUpperCase() + "]", message);
         saveLog(time + " > [" + level.toUpperCase() + "] " + message);
