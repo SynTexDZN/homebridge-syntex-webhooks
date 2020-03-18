@@ -66,8 +66,6 @@ function saveLog(log)
         {
             que.push(log);
         }
-
-        console.log("QUEEEEE", que);
     }
     else
     {
@@ -76,8 +74,6 @@ function saveLog(log)
         if(que.includes(log))
         {
             que.shift();
-
-            console.log("QUEEEEE DELETED", log);
         }
 
         var d = new Date();
@@ -97,16 +93,10 @@ function saveLog(log)
                     if(err)
                     {
                         logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
-                        //resolve(false);
-                    }
-                    else
-                    {
-                        //resolve(true);
                     }
 
                     if(que.length != 0)
                     {
-                        console.log("QUEEEEE STARTED", log);
                         saveLog(que[0]);
                     }
                 });
@@ -128,16 +118,10 @@ function saveLog(log)
                     if(err)
                     {
                         logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
-                        //resolve(false);
-                    }
-                    else
-                    {
-                        //resolve(true);
                     }
 
                     if(que.length != 0)
                     {
-                        console.log("QUEEEEE STARTED", log);
                         saveLog(que[0]);
                     }
                 });
