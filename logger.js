@@ -32,7 +32,7 @@ logger.log = function(level, message)
         }
         else if(level == 'read')
         {
-            color = '\x0b[36m';
+            color = '\x0b[33m';
         }
         else if(level == 'info')
         {
