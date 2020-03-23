@@ -24,33 +24,33 @@ logger.log = function(level, message)
 
         if(level == 'success')
         {
-            color = '[' + prefix + '] \x1b[32m%s\x1b[0m';
+            color = '\x1b[32m';
         }
         else if(level == 'update')
         {
-            color = '[' + prefix + '] \x1b[36m%s\x1b[0m';
+            color = '\x1b[36m';
         }
         else if(level == 'read')
         {
-            color = '[' + prefix + '] \x0b[36m%s\x1b[0m';
+            color = '\x0b[36m';
         }
         else if(level == 'info')
         {
-            color = '[' + prefix + '] \x1b[33m%s\x1b[0m';
+            color = '\x1b[33m';
         }
         else if(level == 'warn')
         {
-            color = '[' + prefix + '] \x0b[33m%s\x1b[0m';
+            color = '\x0b[33m';
         }
         else
         {
-            color = '[' + prefix + '] \x1b[31m%s\x1b[0m';
+            color = '\x1b[31m';
         }
 
         var d = new Date();
         var time = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
 
-        console.log(color, "[" + level.toUpperCase() + "]", message);
+        console.log('[' + prefix + ']', color + '[' + level.toUpperCase() + ']', '\x1b[0m' + message);
         saveLog(time + " > [" + level.toUpperCase() + "] " + message);
     }
 }
