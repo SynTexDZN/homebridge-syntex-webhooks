@@ -24,19 +24,19 @@ logger.log = function(level, message)
 
         if(level == 'success')
         {
-            color = '\x1b[32m';
+            color = '\x1b[92m';
         }
         else if(level == 'update')
         {
-            color = '\x1b[36m';
+            color = '\x1b[96m';
         }
         else if(level == 'read')
         {
-            color = '\x1b[96m';
+            color = '\x1b[36m';
         }
         else if(level == 'info')
         {
-            color = '\x1b[33m';
+            color = '\x1b[93m';
         }
         else if(level == 'warn')
         {
