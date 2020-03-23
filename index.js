@@ -203,6 +203,33 @@ SynTexWebHookPlatform.prototype = {
                 response.write(pjson.version);
                 response.end();
             }
+            else if(urlPath == '/update')
+            {
+                const { exec } = require("child_process");
+                
+                exec("sudo npm install homebridge-syntex-webhooks@latest -g", (error, stdout, stderr) => {
+
+                    if(error || stderr.includes('ERR!'))
+                    {
+                        response.write('Error');
+                        response.end();
+                        
+                        logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
+                    }
+                    else
+                    {
+                        response.write('Success');
+                        response.end();
+                        
+                        logger.log('success', "Die Homebridge wurde aktualisiert!");
+                        
+                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+
+                            logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                        });
+                    }
+                });
+            }
             else if(urlPath == '/ping')
             {
                 response.write("");
