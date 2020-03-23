@@ -50,7 +50,7 @@ logger.log = function(level, message)
         var d = new Date();
         var time = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
 
-        console.log('[' + prefix + ']', color + '[' + level.toUpperCase() + ']', '\x1b[0m' + message);
+        console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
         saveLog(time + " > [" + level.toUpperCase() + "] " + message);
     }
 }
