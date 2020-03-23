@@ -196,6 +196,13 @@ SynTexWebHookPlatform.prototype = {
                     }
                 }
             }
+            else if(urlPath == '/version')
+            {
+                var pjson = require('./package.json');
+
+                response.write(pjson.version);
+                response.end();
+            }
             else if(urlPath == '/ping')
             {
                 response.write("");
