@@ -536,14 +536,16 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
         {
             var statusCode = response && response.statusCode ? response.statusCode : -1;
             
-            logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'" + err);
-            
             if(!err && statusCode == 200)
             {
+                logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'" );
+
                 callback(null);
             }
             else
             {
+                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + err);
+
                 callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
             }
         }).bind(this));
@@ -823,7 +825,15 @@ function setRGB(url, hue, saturation, brightness)
     request(theRequest, (function(err, response, body)
     {
         var statusCode = response && response.statusCode ? response.statusCode : -1;
-        logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'" + err);
+
+        if(!err && statusCode == 200)
+        {
+            logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'" );
+        }
+        else
+        {
+            logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + err);
+        }
     }).bind(this));
 }
 
