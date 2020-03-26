@@ -178,7 +178,7 @@ SynTexWebHookPlatform.prototype = {
 
                         readDevice(device).then(function(res) {
 
-                            if(!res)
+                            if(res == null)
                             {
                                 response.write("Es wurde kein passendes Gerät gefunden!");
                                 response.end();
@@ -187,7 +187,7 @@ SynTexWebHookPlatform.prototype = {
                             }
                             else
                             {
-                                response.write(res);
+                                response.write(res.toString());
                                 response.end();
 
                                 logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + res + "'");
@@ -389,7 +389,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
     readDevice(device).then(function(state) {
 
-        if(!state)
+        if(state == null)
         {
             logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + mac + ")");
         }
@@ -478,7 +478,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 
     readDevice(device).then(function(res) {
         
-        state = (res == 'true' || res);
+        state = (res == 'true' || 'false');
         
         logger.log('read', "HomeKit Status für '" + name + "' ist '" + state + "'");
 
@@ -596,7 +596,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 
         readDevice(device).then(function(res) {
         
-            if(!res)
+            if(res == null)
             {
                 callback(null, false);
             }
@@ -624,7 +624,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 
         readDevice(device).then(function(res) {
         
-            if(!res)
+            if(res == null)
             {
                 logger.log('info', 'CALLBACK: 0');
                 callback(null, 0);
@@ -653,7 +653,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 
         readDevice(device).then(function(res) {
         
-            if(!res)
+            if(res == null)
             {
                 callback(null, 100);
             }
@@ -680,7 +680,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 
         readDevice(device).then(function(res) {
         
-            if(!res)
+            if(res == null)
             {
                 callback(null, 50);
             }
@@ -882,7 +882,7 @@ async function readDevice(obj)
 
             if(err || !device)
             {
-                resolve(false);
+                resolve(null);
             }
         });
     });
