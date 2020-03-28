@@ -400,45 +400,35 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
         }
-        /*
-        if(state == 'true')
-        {
-            state = true;
-        }
-        else if(state == 'false')
-        {
-            state = false;
-        }
-        */
-        if(device.type === "contact")
+
+        if(device.type === "contact" || device.type === "rain" || device.type === "smoke" || device.type === "occupancy")
         {
             state = (state == 'true' || false);
-
+        }
+        else if(device.type === "light" || device.type === "temperature")
+        {
+            state = !isNaN(parseFloat(state)) ? parseFloat(state) : 0;
+        }
+        else if(device.type === "humidity")
+        {
+            state = !isNaN(state) ? state : 0;
+        }
+        
+        if(device.type === "contact")
+        {
             callback(null, state ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
         }
         else if(device.type === "rain")
         {
-            state = (state == 'true' || false);
-
             callback(null, state ? Characteristic.LEAK_DETECTED : Characteristic.LEAK_NOT_DETECTED);
         }
         else if(device.type === "smoke")
         {
-            state = (state == 'true' || false);
-
             callback(null, state ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);
         }
         else if(device.type === "occupancy")
         {
-            state = (state == 'true' || false);
-
             callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
-        }
-        else if(device.type === "light")
-        {
-            state = !isNaN(parseFloat(state)) ? parseFloat(state) : 0;
-
-            callback(null, state);
         }
         else
         {
