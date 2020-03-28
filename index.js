@@ -486,7 +486,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         }
         else
         {
-            logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + mac + ")");
+            logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + device.mac + ")");
 
             callback(null, false);
         }
