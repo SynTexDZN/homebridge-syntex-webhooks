@@ -390,19 +390,15 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         };
     }
     
-    var name = this.name;
-    var mac = this.mac;
-    var type = this.type;
-
     readDevice(device).then(function(state) {
 
         if(state == null)
         {
-            logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + mac + ")");
+            logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + device.mac + ")");
         }
         else
         {
-            logger.log('read', "HomeKit Status für '" + name + "' ist '" + state + "'");
+            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
         }
 
         if(state == 'true')
@@ -414,23 +410,23 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             state = false;
         }
 
-        if(type === "contact")
+        if(device.type === "contact")
         {
             callback(null, state ? Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
         }
-        else if(type === "rain")
+        else if(device.type === "rain")
         {
             callback(null, state ? Characteristic.LEAK_DETECTED : Characteristic.LEAK_NOT_DETECTED);
         }
-        else if(type === "smoke")
+        else if(device.type === "smoke")
         {
             callback(null, state ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);
         }
-        else if(type === "occupancy")
+        else if(device.type === "occupancy")
         {
             callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
         }
-        else if(type === "light")
+        else if(device.type === "light")
         {
             callback(null, parseFloat(state));
         }
@@ -480,16 +476,22 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         name: this.name
     };
     
-    var name = this.name;
-    var mac = this.mac;
-
-    readDevice(device).then(function(res) {
+    readDevice(device).then(function(state) {
         
-        state = (res == 'true' || false);
-        
-        logger.log('read', "HomeKit Status für '" + name + "' ist '" + state + "'");
+        if(state != null)
+        {
+            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
 
-        callback(null, state);
+            callback(null, res);
+        }
+        else
+        {
+            logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + mac + ")");
+
+            callback(null, false);
+        }
+
+        //state = (res == 'true' || false);
     });
 };
 
