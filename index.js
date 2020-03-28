@@ -412,23 +412,33 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
         if(device.type === "contact")
         {
+            state = (state == 'true' || false);
+
             callback(null, state ? Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
         }
         else if(device.type === "rain")
         {
+            state = (state == 'true' || false);
+
             callback(null, state ? Characteristic.LEAK_DETECTED : Characteristic.LEAK_NOT_DETECTED);
         }
         else if(device.type === "smoke")
         {
+            state = (state == 'true' || false);
+
             callback(null, state ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);
         }
         else if(device.type === "occupancy")
         {
+            state = (state == 'true' || false);
+
             callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
         }
         else if(device.type === "light")
         {
-            callback(null, parseFloat(state));
+            state = !isNaN(parseFloat(state)) ? parseFloat(state) : 0;
+
+            callback(null, state);
         }
         else
         {
@@ -462,7 +472,6 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     
     this.changeHandler = (function(newState)
     {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
         this.service.getCharacteristic(Characteristic.On).updateValue(newState);
     }).bind(this);
     
@@ -516,6 +525,8 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
         mac: this.mac,
         value: powerOn.toString()
     };
+
+    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + device.value + "' ( " + this.mac + " )");
 
     updateDevice(device);
     
