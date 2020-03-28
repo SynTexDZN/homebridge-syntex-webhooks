@@ -237,12 +237,6 @@ SynTexWebHookPlatform.prototype = {
                     }
                 });
             }
-            else if(urlPath == '/ping')
-            {
-                response.write("");
-                response.end();
-            }
-            
         }).bind(this);
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
@@ -374,20 +368,14 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
+    var device = {
+        mac: this.mac,
+        name: this.name
+    };
+
     if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
     {
-        var device = {
-            mac: this.mac,
-            type: this.type,
-            name: this.name
-        };
-    }
-    else
-    {
-        var device = {
-            mac: this.mac,
-            name: this.name
-        };
+        device.name = this.name;
     }
     
     readDevice(device).then(function(state) {
