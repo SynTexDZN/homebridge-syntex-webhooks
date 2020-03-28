@@ -830,9 +830,9 @@ function setRGB(url, hue, saturation, brightness)
         r = c; g = 0; b = x;
     }
 
-    r = Math.abs(Math.round((r + m) * 255));
-    g = Math.abs(Math.round((g + m) * 255));
-    b = Math.abs(Math.round((b + m) * 255));
+    r = Math.round((r + m) * 255);
+    g = Math.round((g + m) * 255);
+    b = Math.round((b + m) * 255);
 
     var theRequest = {
         method : "GET",
