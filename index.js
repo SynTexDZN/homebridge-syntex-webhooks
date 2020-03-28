@@ -780,7 +780,7 @@ function getHSL(r, g, b)
         h /= 6;
     }
 
-    logger.log(h + "-" + s + "-" + l);
+    logger.log('info', h + "-" + s + "-" + l);
 
     return [h, s, l];
 }
