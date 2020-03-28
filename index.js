@@ -502,6 +502,15 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
     var urlBody = this.onBody;
     var urlForm = this.onForm;
     var urlHeaders = this.onHeaders;
+
+    if(powerOn == 'true')
+    {
+        powerOn = true;
+    }
+    else if(powerOn == 'false')
+    {
+        powerOn = false;
+    }
     
     if(!powerOn)
     {
@@ -541,6 +550,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
                 theRequest.body = urlBody;
             }
         }
+
         request(theRequest, (function(err, response, body)
         {
             var statusCode = response && response.statusCode ? response.statusCode : -1;
