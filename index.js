@@ -482,7 +482,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         {
             logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
 
-            callback(null, res);
+            callback(null, state);
         }
         else
         {
