@@ -588,6 +588,9 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
         
             if(state != null)
             {
+                logger.log('info', state);
+                logger.log('info', state.split(':')[0] == 'true');
+
                 callback(null, (state.split(':')[0] == 'true' || false));
             }
             else
@@ -785,8 +788,8 @@ function getHSL(r, g, b)
 
     s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
         
-    s = +(s * 100).toFixed(1);
-    l = +(l * 100).toFixed(1);
+    s = +(s * 100).toFixed(1) / 2;
+    l = +(l * 100).toFixed(1) * 4;
 
     logger.log('info', "HSL: " + h + "-" + s + "-" + l);
 
