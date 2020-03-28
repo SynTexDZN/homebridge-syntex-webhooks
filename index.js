@@ -480,6 +480,8 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         
         if(state != null)
         {
+            state = (res == 'true' || false);
+
             logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
 
             callback(null, state);
@@ -490,8 +492,6 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 
             callback(null, false);
         }
-
-        //state = (res == 'true' || false);
     });
 };
 
@@ -502,15 +502,6 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
     var urlBody = this.onBody;
     var urlForm = this.onForm;
     var urlHeaders = this.onHeaders;
-
-    if(powerOn == 'true')
-    {
-        powerOn = true;
-    }
-    else if(powerOn == 'false')
-    {
-        powerOn = false;
-    }
     
     if(!powerOn)
     {
@@ -523,7 +514,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
     
     var device = {
         mac: this.mac,
-        value: powerOn
+        value: powerOn.toString()
     };
 
     updateDevice(device);
