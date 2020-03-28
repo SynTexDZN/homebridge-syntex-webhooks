@@ -375,7 +375,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
     if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
     {
-        device['name'] = this.name;
+        device.type = this.type
     }
     
     readDevice(device).then(function(state) {
