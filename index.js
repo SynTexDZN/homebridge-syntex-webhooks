@@ -685,16 +685,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
 {
     this.power = powerOn;
-
-    if(powerOn)
-    {
-        setRGB(this.url, this.hue, this.saturation, this.brightness);
-    }
-    else
-    {
-        setRGB(this.url, this.hue, this.saturation, 0);
-    }
-    
+    setRGB(this.url, this.hue, this.saturation, powerOn ? this.brightness : 0);
     callback(null);
 };
 
