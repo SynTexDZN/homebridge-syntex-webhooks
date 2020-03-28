@@ -756,6 +756,8 @@ SynTexWebHookStatelessSwitchAccessory.prototype.getServices = function()
 
 function getHSL(r, g, b)
 {
+    logger.log('info', "RGB: " + r + "-" + g + "-" + b);
+
     r /= 255, g /= 255, b /= 255;
 
     var max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -780,7 +782,7 @@ function getHSL(r, g, b)
         h /= 6;
     }
 
-    logger.log('info', h + "-" + s + "-" + l);
+    logger.log('info', "HSL: " + h + "-" + s + "-" + l);
 
     return [h, s, l];
 }
