@@ -89,20 +89,14 @@ SynTexWebHookPlatform.prototype = {
                 {
                     if(urlParams.value)
                     {
+                        var device = {
+                            mac: urlParams.mac,
+                            value: urlParams.value
+                        };
+
                         if(urlParams.type)
                         {
-                            var device = {
-                                mac: urlParams.mac,
-                                value: urlParams.value,
-                                type: urlParams.type
-                            };
-                        }
-                        else
-                        {
-                            var device = {
-                                mac: urlParams.mac,
-                                value: urlParams.value
-                            };
+                            device.type = urlParams.type;
                         }
 
                         updateDevice(device).then(function(res) {
@@ -162,18 +156,13 @@ SynTexWebHookPlatform.prototype = {
                     }
                     else
                     {
+                        var device = {
+                            mac: urlParams.mac
+                        };
+
                         if(urlParams.type)
                         {
-                            var device = {
-                                mac: urlParams.mac,
-                                type: urlParams.type
-                            };
-                        }
-                        else
-                        {
-                            var device = {
-                                mac: urlParams.mac
-                            };
+                            device.type = urlParams.type;
                         }
 
                         readDevice(device).then(function(res) {
@@ -595,15 +584,15 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
             name: this.name
         };
 
-        readDevice(device).then(function(res) {
+        readDevice(device).then(function(state) {
         
-            if(res == null)
+            if(state != null)
             {
-                callback(null, false);
+                callback(null, (state.split(':')[0] == 'true' || false));
             }
             else
             {
-                callback(null, (res.split(':')[0] == 'true' || false));
+                callback(null, false);
             }
         });
     }
@@ -840,20 +829,15 @@ async function updateDevice(obj)
 {
     return new Promise(resolve => {
         
+        var device = {
+            id: obj.mac,
+            value: obj.value
+        };
+
         if(obj.type)
         {
-            var device = {
-                id: obj.mac + '-' + obj.type[0].toUpperCase(),
-                value: obj.value,
-                type: obj.type
-            };
-        }
-        else
-        {
-            var device = {
-                id: obj.mac,
-                value: obj.value
-            };
+            device.id = obj.mac + '-' + obj.type[0].toUpperCase();
+            device.type = obj.type;
         }
 
         storage.add(device, (err) => {
