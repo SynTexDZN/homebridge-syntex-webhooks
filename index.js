@@ -400,7 +400,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
         }
-
+        /*
         if(state == 'true')
         {
             state = true;
@@ -409,12 +409,12 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             state = false;
         }
-
+        */
         if(device.type === "contact")
         {
             state = (state == 'true' || false);
 
-            callback(null, state ? Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
+            callback(null, state ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
         }
         else if(device.type === "rain")
         {
