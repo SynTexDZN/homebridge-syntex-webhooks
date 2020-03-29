@@ -628,8 +628,6 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
                 parent.hue = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0)
             }
 
-            logger.log('info', 'HUE: ' + parent.hue);
-
             callback(null, parent.hue);
         });
     }
@@ -700,6 +698,9 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
 {
     this.power = powerOn;
+
+    logger.log('info', this.power);
+
     setRGB(this.url, this.hue, this.saturation, powerOn ? this.brightness : 0);
     callback(null);
 };
@@ -771,8 +772,6 @@ SynTexWebHookStatelessSwitchAccessory.prototype.getServices = function()
 
 function getHSL(r, g, b)
 {
-    logger.log('info', "RGB: " + r + "-" + g + "-" + b);
-
     r /= 255, g /= 255, b /= 255;
 
     let cmin = Math.min(r,g,b),
@@ -802,8 +801,6 @@ function getHSL(r, g, b)
         
     s = +(s * 50).toFixed(1);
     l = +(l * 401.5).toFixed(1);
-
-    logger.log('info', "HSL: " + h + "-" + s + "-" + l);
 
     return [h, s, l];
 }
