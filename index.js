@@ -618,13 +618,11 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
         this.hue = 150;
 
         var parent = this;
-        var hue = this.hue;
 
         readDevice(device).then(function(res) {
         
             logger.log('info', parent);
-            logger.log('info', hue);
-            logger.log('info', parent.this.hue);
+            logger.log('info', parent.hue);
 
             if(res == null)
             {
