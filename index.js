@@ -801,6 +801,8 @@ function getHSL(r, g, b)
 
 function setRGB(url, hue, saturation, brightness)
 {
+    logger.log('warn', hue + '-' + saturation + '-' + brightness);
+
     var h = hue, s = saturation * 2, l = brightness / 4;
     var r = 0, g = 0, b = 0;
 
