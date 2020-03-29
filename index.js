@@ -584,19 +584,20 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
             name: this.name
         };
 
+        var parent = this;
+
         readDevice(device).then(function(state) {
         
-            if(state != null)
+            if(state == null)
             {
-                logger.log('info', state);
-                logger.log('info', state.split(':')[0] == 'true');
-
-                callback(null, (state.split(':')[0] == 'true' || false));
+                parent.power = false;
             }
             else
             {
-                callback(null, false);
+                parent.power = (state.split(':')[0] == 'true' || false);
             }
+
+            callback(null, parent.power);
         });
     }
 };
@@ -647,16 +648,20 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
             name: this.name
         };
 
+        var parent = this;
+
         readDevice(device).then(function(res) {
         
             if(res == null)
             {
-                callback(null, 100);
+                parent.saturation = 100;
             }
             else
             {
-                callback(null, (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[1] || 100));
+                parent.saturation = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[1] || 100);
             }
+
+            callback(null, parent.saturation);
         });
     }
 }
@@ -673,17 +678,21 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
             mac: this.mac,
             name: this.name
         };
+        
+        var parent = this;
 
         readDevice(device).then(function(res) {
         
             if(res == null)
             {
-                callback(null, 50);
+                parent.brightness = 50;
             }
             else
             {
-                callback(null, (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[2] || 50));
+                parent.brightness = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[2] || 50);
             }
+
+            callback(null, parent.brightness);
         });
     }
 }
