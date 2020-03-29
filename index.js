@@ -615,6 +615,8 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
             name: this.name
         };
 
+        this.hue = 150;
+
         var parent = this;
         var hue = this.hue;
 
