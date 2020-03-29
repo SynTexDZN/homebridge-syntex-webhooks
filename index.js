@@ -799,7 +799,7 @@ function getHSL(r, g, b)
 
     s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
         
-    s = +(s * 50).toFixed(1);
+    s = +(s * 49.8).toFixed(1);
     l = +(l * 401.5).toFixed(1);
 
     return [h, s, l];
