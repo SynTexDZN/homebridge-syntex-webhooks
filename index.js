@@ -605,7 +605,6 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
     if(this.hue)
     {
-        logger.log('info', 'CALLBACK: this.hue');
         callback(null, this.hue);
     }
     else
@@ -615,25 +614,20 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
             name: this.name
         };
 
-        this.hue = 150;
-
         var parent = this;
 
         readDevice(device).then(function(res) {
         
-            logger.log('info', parent);
-            logger.log('info', parent.hue);
-
             if(res == null)
             {
-                logger.log('info', 'CALLBACK: 0');
-                callback(null, 0);
+                parent.hue = 0;
             }
             else
             {
-                logger.log('info', 'CALLBACK: res.split');
-                callback(null, (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0));
+                parent.hue = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0)
             }
+
+            callback(null, parent.hue);
         });
     }
 };
