@@ -788,8 +788,8 @@ function getHSL(r, g, b)
 
     s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
         
-    s = +(s * 100).toFixed(1) / 2;
-    l = +(l * 100).toFixed(1) * 4;
+    s = +(s * 50).toFixed(1);
+    l = +(l * 400).toFixed(1);
 
     logger.log('info', "HSL: " + h + "-" + s + "-" + l);
 
