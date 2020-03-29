@@ -597,6 +597,8 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
                 parent.power = (state.split(':')[0] == 'true' || false);
             }
 
+            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+
             callback(null, parent.power);
         });
     }
@@ -698,9 +700,6 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
 {
     this.power = powerOn;
-
-    logger.log('info', this.power);
-
     setRGB(this.url, this.hue, this.saturation, powerOn ? this.brightness : 0);
     callback(null);
 };
@@ -807,8 +806,6 @@ function getHSL(r, g, b)
 
 function setRGB(url, hue, saturation, brightness)
 {
-    logger.log('warn', hue + '-' + saturation + '-' + brightness);
-
     var h = hue, s = saturation * 2, l = brightness / 4;
     var r = 0, g = 0, b = 0;
 
