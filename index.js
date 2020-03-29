@@ -627,6 +627,8 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
                 parent.hue = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0)
             }
 
+            logger.log('info', 'HUE: ' + parent.hue);
+
             callback(null, parent.hue);
         });
     }
