@@ -150,7 +150,7 @@ SynTexWebHookPlatform.prototype = {
 
                             if(accessory.mac === urlParams.mac)
                             {
-                                accessory.changeHandler(accessory.name, urlParams.event);
+                                accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
                             }
                         }
                     }
@@ -751,14 +751,14 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         this.service.push(button);
     }
 
-    this.changeHandler = (function(buttonName, event)
+    this.changeHandler = (function(buttonName, event, value)
     {
         for(var i = 0; i < this.service.length; i++)
         {
             if(i == event)
             {
                logger.log('success', "'" + buttonName + "': Event " + i + " wurde ausgeführt!");
-               this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(0);
+               this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
             }
         }
     }).bind(this);
