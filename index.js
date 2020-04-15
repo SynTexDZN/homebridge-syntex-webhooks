@@ -742,7 +742,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         var button = new Service.StatelessProgrammableSwitch(this.mac + i, '' + i);
         var props = {
             minValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
-            maxValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS
+            maxValue : Characteristic.ProgrammableSwitchEvent.DOUBLE_PRESS
         };
 
         button.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(props);
@@ -758,7 +758,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
             if(i == event)
             {
                logger.log('success', "'" + buttonName + "': Event " + i + " wurde ausgeführt!");
-               this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(1);
+               this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(0);
             }
         }
     }).bind(this);
