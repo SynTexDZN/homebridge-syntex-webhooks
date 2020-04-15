@@ -758,7 +758,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
             if(i == event)
             {
                logger.log('success', "'" + buttonName + "': Event " + i + " wurde ausgeführt!");
-               this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(0);
+               this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(1);
             }
         }
     }).bind(this);
