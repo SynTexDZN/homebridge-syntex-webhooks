@@ -87,7 +87,22 @@ SynTexWebHookPlatform.prototype = {
             {
                 if(urlParams.mac)
                 {
-                    if(urlParams.value)
+                    if(urlParams.event)
+                    {
+                        response.write("Success");
+                        response.end();
+
+                        for(var i = 0; i < accessories.length; i++)
+                        {
+                            var accessory = accessories[i];
+
+                            if(accessory.mac === urlParams.mac)
+                            {
+                                accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
+                            }
+                        }
+                    }
+                    else if(urlParams.value)
                     {
                         var device = {
                             mac: urlParams.mac,
@@ -138,21 +153,6 @@ SynTexWebHookPlatform.prototype = {
 
                         response.write("Success");
                         response.end();
-                    }
-                    else if(urlParams.event)
-                    {
-                        response.write("Success");
-                        response.end();
-
-                        for(var i = 0; i < accessories.length; i++)
-                        {
-                            var accessory = accessories[i];
-
-                            if(accessory.mac === urlParams.mac)
-                            {
-                                accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
-                            }
-                        }
                     }
                     else
                     {
