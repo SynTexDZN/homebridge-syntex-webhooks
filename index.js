@@ -172,7 +172,7 @@ SynTexWebHookPlatform.prototype = {
                                 response.write("Es wurde kein passendes Gerät gefunden!");
                                 response.end();
 
-                                logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + urlParams.mac + ")");
+                                logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + urlParams.mac + " )");
                             }
                             else
                             {
@@ -230,7 +230,7 @@ SynTexWebHookPlatform.prototype = {
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
-        logger.log('info', "Data Link Server läuft auf Port " + "'" + this.port + "'");
+        logger.log('info', "Data Link Server läuft auf Port '" + this.port + "'");
     }
 }
 
@@ -371,7 +371,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
         if(state == null)
         {
-            logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + device.mac + ")");
+            logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + device.mac + " )");
         }
         else
         {
@@ -464,7 +464,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         }
         else
         {
-            logger.log('error', "Es wurde kein passendes Gerät gefunden! (" + device.mac + ")");
+            logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + device.mac + " )");
 
             callback(null, false);
         }
@@ -526,7 +526,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
             
             if(!err && statusCode == 200)
             {
-                logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'" );
+                logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
 
                 callback(null);
             }
@@ -857,7 +857,7 @@ function setRGB(url, hue, saturation, brightness)
 
         if(!err && statusCode == 200)
         {
-            logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'" );
+            logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
         }
         else
         {
@@ -885,7 +885,7 @@ async function updateDevice(obj)
 
             if(err)
             {
-                logger.log('error', obj.mac + ".json konnte nicht aktualisiert werden!" + err);
+                logger.log('error', obj.mac + ".json konnte nicht aktualisiert werden! " + err);
                 resolve(false);
             }
             else

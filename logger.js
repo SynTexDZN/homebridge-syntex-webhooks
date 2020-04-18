@@ -92,7 +92,7 @@ function saveLog(log)
 
                     if(err)
                     {
-                        logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
+                        logger.log('error', date + ".json konnte nicht aktualisiert werden! " + err);
                     }
 
                     if(que.length != 0)
@@ -117,7 +117,7 @@ function saveLog(log)
 
                     if(err)
                     {
-                        logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
+                        logger.log('error', date + ".json konnte nicht aktualisiert werden! " + err);
                     }
 
                     if(que.length != 0)
