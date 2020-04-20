@@ -22,7 +22,6 @@ var storage;
 
 function SynTexWebHookPlatform(log, sconfig, api)
 {
-    var url = require('url');
     this.sensors = sconfig["sensors"] || [];
     this.switches = sconfig["switches"] || [];
     this.lights = sconfig["lights"] || [];
@@ -32,7 +31,7 @@ function SynTexWebHookPlatform(log, sconfig, api)
     this.logDirectory = sconfig["log_directory"] || "./SynTex/log";
     this.port = sconfig["port"] || 1710;
     
-    logger.create("SynTexWebHooks", this.logDirectory);
+    logger.create("SynTexWebHooks", this.logDirectory, api.user.storagePath());
 
     config = store(api.user.storagePath());
     storage = store(this.cacheDirectory);
@@ -72,49 +71,27 @@ SynTexWebHookPlatform.prototype = {
         
         var createServerCallback = (function(request, response)
         {
-            var urlParts = url.parse(request.url, true);
-            var urlParams = urlParts.query;
-            var urlPath = urlParts.pathname;
-            var body = [];
-            
-            body = Buffer.concat(body).toString();
-
-            response.statusCode = 200;
-            response.setHeader('Content-Type', 'application/json');
-            response.setHeader('Access-Control-Allow-Origin', '*');
-
-            if(urlPath == '/devices')
+            try
             {
-                if(urlParams.mac)
+                var urlParts = url.parse(request.url, true);
+                var urlParams = urlParts.query;
+                var urlPath = urlParts.pathname;
+                var body = [];
+                
+                body = Buffer.concat(body).toString();
+
+                response.statusCode = 200;
+                response.setHeader('Content-Type', 'application/json');
+                response.setHeader('Access-Control-Allow-Origin', '*');
+
+                if(urlPath == '/devices')
                 {
-                    if(urlParams.event)
+                    if(urlParams.mac)
                     {
-                        response.write("Success");
-                        response.end();
-
-                        for(var i = 0; i < accessories.length; i++)
+                        if(urlParams.event)
                         {
-                            var accessory = accessories[i];
-
-                            if(accessory.mac === urlParams.mac)
-                            {
-                                accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
-                            }
-                        }
-                    }
-                    else if(urlParams.value)
-                    {
-                        var device = {
-                            mac: urlParams.mac,
-                            value: urlParams.value
-                        };
-
-                        if(urlParams.type)
-                        {
-                            device.type = urlParams.type;
-                        }
-
-                        updateDevice(device).then(function(res) {
+                            response.write("Success");
+                            response.end();
 
                             for(var i = 0; i < accessories.length; i++)
                             {
@@ -122,109 +99,159 @@ SynTexWebHookPlatform.prototype = {
 
                                 if(accessory.mac === urlParams.mac)
                                 {
-                                    if(urlParams.type)
+                                    accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
+                                }
+                            }
+                        }
+                        else if(urlParams.value)
+                        {
+                            var device = {
+                                mac: urlParams.mac,
+                                value: urlParams.value
+                            };
+
+                            if(urlParams.type)
+                            {
+                                device.type = urlParams.type;
+                            }
+
+                            updateDevice(device).then(function(res) {
+
+                                try
+                                {
+                                    for(var i = 0; i < accessories.length; i++)
                                     {
-                                        if(accessory.type === urlParams.type)
+                                        var accessory = accessories[i];
+
+                                        if(accessory.mac === urlParams.mac)
                                         {
-                                            if(urlParams.value == 'true' || urlParams.value == 'false')
+                                            if(urlParams.type)
                                             {
-                                                accessory.changeHandler((urlParams.value === 'true'));
+                                                if(accessory.type === urlParams.type)
+                                                {
+                                                    if(urlParams.value == 'true' || urlParams.value == 'false')
+                                                    {
+                                                        accessory.changeHandler((urlParams.value === 'true'));
+                                                    }
+                                                    else
+                                                    {
+                                                        accessory.changeHandler(urlParams.value);
+                                                    }
+                                                }
                                             }
                                             else
                                             {
-                                                accessory.changeHandler(urlParams.value);
+                                                if(urlParams.value == 'true' || urlParams.value == 'false')
+                                                {
+                                                    accessory.changeHandler((urlParams.value == 'true' || false));
+                                                }
+                                                else
+                                                {
+                                                    accessory.changeHandler(urlParams.value);
+                                                }
                                             }
                                         }
                                     }
+                                }
+                                catch(e)
+                                {
+                                    logger.err(e);
+                                }
+                            });
+
+                            response.write("Success");
+                            response.end();
+                        }
+                        else
+                        {
+                            var device = {
+                                mac: urlParams.mac
+                            };
+
+                            if(urlParams.type)
+                            {
+                                device.type = urlParams.type;
+                            }
+
+                            readDevice(device).then(function(res) {
+
+                                try
+                                {
+                                    if(res == null)
+                                    {
+                                        response.write("Es wurde kein passendes Gerät gefunden!");
+                                        response.end();
+
+                                        logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + urlParams.mac + " )");
+                                    }
                                     else
                                     {
-                                        if(urlParams.value == 'true' || urlParams.value == 'false')
-                                        {
-                                            accessory.changeHandler((urlParams.value == 'true' || false));
-                                        }
-                                        else
-                                        {
-                                            accessory.changeHandler(urlParams.value);
-                                        }
+                                        response.write(res.toString());
+                                        response.end();
+
+                                        logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + res + "'");
                                     }
                                 }
-                            }
-                        });
-
-                        response.write("Success");
-                        response.end();
-                    }
-                    else
-                    {
-                        var device = {
-                            mac: urlParams.mac
-                        };
-
-                        if(urlParams.type)
-                        {
-                            device.type = urlParams.type;
+                                catch(e)
+                                {
+                                    logger.err(e);
+                                }
+                            });
                         }
+                    }
+                }
+                else if(urlPath == '/version')
+                {
+                    var pjson = require('./package.json');
 
-                        readDevice(device).then(function(res) {
+                    response.write(pjson.version);
+                    response.end();
+                }
+                else if(urlPath == '/update')
+                {
+                    var version = 'latest';
 
-                            if(res == null)
+                    if(urlParams.version)
+                    {
+                        version = urlParams.version;
+                    }
+
+                    const { exec } = require("child_process");
+                    
+                    exec("sudo npm install homebridge-syntex-webhooks@" + version + " -g", (error, stdout, stderr) => {
+
+                        try
+                        {
+                            if(error || stderr.includes('ERR!'))
                             {
-                                response.write("Es wurde kein passendes Gerät gefunden!");
+                                response.write('Error');
                                 response.end();
-
-                                logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + urlParams.mac + " )");
+                                
+                                logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
                             }
                             else
                             {
-                                response.write(res.toString());
+                                response.write('Success');
                                 response.end();
+                                
+                                logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
+                                
+                                exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
 
-                                logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + res + "'");
+                                    logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                                });
                             }
-                        });
-                    }
+                        }
+                        catch(e)
+                        {
+                            logger.err(e);
+                        }
+                    });
                 }
             }
-            else if(urlPath == '/version')
+            catch(e)
             {
-                var pjson = require('./package.json');
-
-                response.write(pjson.version);
-                response.end();
-            }
-            else if(urlPath == '/update')
-            {
-                var version = 'latest';
-
-                if(urlParams.version)
-                {
-                    version = urlParams.version;
-                }
-
-                const { exec } = require("child_process");
-                
-                exec("sudo npm install homebridge-syntex-webhooks@" + version + " -g", (error, stdout, stderr) => {
-
-                    if(error || stderr.includes('ERR!'))
-                    {
-                        response.write('Error');
-                        response.end();
-                        
-                        logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
-                    }
-                    else
-                    {
-                        response.write('Success');
-                        response.end();
-                        
-                        logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
-                        
-                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-
-                            logger.log('warn', "Die Homebridge wird neu gestartet ..");
-                        });
-                    }
-                });
+                logger.err(e);
             }
         }).bind(this);
 
@@ -369,47 +396,54 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     
     readDevice(device).then(function(state) {
 
-        if(state == null)
+        try
         {
-            logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + device.mac + " )");
-        }
-        else
-        {
-            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
-        }
+            if(state == null)
+            {
+                logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + device.mac + " )");
+            }
+            else
+            {
+                logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+            }
 
-        if(device.type === "contact" || device.type === "rain" || device.type === "smoke" || device.type === "occupancy")
-        {
-            state = (state == 'true' || false);
+            if(device.type === "contact" || device.type === "rain" || device.type === "smoke" || device.type === "occupancy")
+            {
+                state = (state == 'true' || false);
+            }
+            else if(device.type === "light" || device.type === "temperature")
+            {
+                state = !isNaN(parseFloat(state)) ? parseFloat(state) : 0;
+            }
+            else if(device.type === "humidity")
+            {
+                state = !isNaN(state) ? state : 0;
+            }
+            
+            if(device.type === "contact")
+            {
+                callback(null, state ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
+            }
+            else if(device.type === "rain")
+            {
+                callback(null, state ? Characteristic.LEAK_DETECTED : Characteristic.LEAK_NOT_DETECTED);
+            }
+            else if(device.type === "smoke")
+            {
+                callback(null, state ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);
+            }
+            else if(device.type === "occupancy")
+            {
+                callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
+            }
+            else
+            {
+                callback(null, state);
+            }
         }
-        else if(device.type === "light" || device.type === "temperature")
+        catch(e)
         {
-            state = !isNaN(parseFloat(state)) ? parseFloat(state) : 0;
-        }
-        else if(device.type === "humidity")
-        {
-            state = !isNaN(state) ? state : 0;
-        }
-        
-        if(device.type === "contact")
-        {
-            callback(null, state ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
-        }
-        else if(device.type === "rain")
-        {
-            callback(null, state ? Characteristic.LEAK_DETECTED : Characteristic.LEAK_NOT_DETECTED);
-        }
-        else if(device.type === "smoke")
-        {
-            callback(null, state ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);
-        }
-        else if(device.type === "occupancy")
-        {
-            callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
-        }
-        else
-        {
-            callback(null, state);
+            logger.err(e);
         }
     });
 };
@@ -454,19 +488,26 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
     
     readDevice(device).then(function(state) {
         
-        if(state != null)
+        try
         {
-            state = (state == 'true' || false);
+            if(state != null)
+            {
+                state = (state == 'true' || false);
 
-            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+                logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
 
-            callback(null, state);
+                callback(null, state);
+            }
+            else
+            {
+                logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + device.mac + " )");
+
+                callback(null, false);
+            }
         }
-        else
+        catch(e)
         {
-            logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + device.mac + " )");
-
-            callback(null, false);
+            logger.err(e);
         }
     });
 };
@@ -588,18 +629,25 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 
         readDevice(device).then(function(state) {
         
-            if(state == null)
+            try
             {
-                parent.power = false;
+                if(state == null)
+                {
+                    parent.power = false;
+                }
+                else
+                {
+                    parent.power = (state.split(':')[0] == 'true' || false);
+                }
+
+                logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+
+                callback(null, parent.power);
             }
-            else
+            catch(e)
             {
-                parent.power = (state.split(':')[0] == 'true' || false);
+                logger.err(e);
             }
-
-            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
-
-            callback(null, parent.power);
         });
     }
 };
@@ -620,17 +668,24 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
         var parent = this;
 
         readDevice(device).then(function(res) {
-        
-            if(res == null)
-            {
-                parent.hue = 0;
-            }
-            else
-            {
-                parent.hue = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0)
-            }
 
-            callback(null, parent.hue);
+            try
+            {
+                if(res == null)
+                {
+                    parent.hue = 0;
+                }
+                else
+                {
+                    parent.hue = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0)
+                }
+
+                callback(null, parent.hue);
+            }
+            catch(e)
+            {
+                logger.err(e);
+            }
         });
     }
 };
@@ -651,17 +706,24 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
         var parent = this;
 
         readDevice(device).then(function(res) {
-        
-            if(res == null)
-            {
-                parent.saturation = 100;
-            }
-            else
-            {
-                parent.saturation = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[1] || 100);
-            }
 
-            callback(null, parent.saturation);
+            try
+            {
+                if(res == null)
+                {
+                    parent.saturation = 100;
+                }
+                else
+                {
+                    parent.saturation = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[1] || 100);
+                }
+
+                callback(null, parent.saturation);
+            }
+            catch(e)
+            {
+                logger.err(e);
+            }
         });
     }
 }
@@ -682,17 +744,24 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
         var parent = this;
 
         readDevice(device).then(function(res) {
-        
-            if(res == null)
-            {
-                parent.brightness = 50;
-            }
-            else
-            {
-                parent.brightness = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[2] || 50);
-            }
 
-            callback(null, parent.brightness);
+            try
+            {
+                if(res == null)
+                {
+                    parent.brightness = 50;
+                }
+                else
+                {
+                    parent.brightness = (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[2] || 50);
+                }
+
+                callback(null, parent.brightness);
+            }
+            catch(e)
+            {
+                logger.err(e);
+            }
         });
     }
 }

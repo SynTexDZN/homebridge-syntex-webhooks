@@ -1,12 +1,14 @@
 var logger = exports, prefix;
 var store = require('json-fs-store');
-var logs;
+var conf;
+logger.logs;
 logger.debugLevel = 'success';
 
-logger.create = function(pluginName, logDirectory)
+logger.create = function(pluginName, logDirectory, config)
 {
     prefix = pluginName;
-    logs = store(logDirectory);
+    conf = store(config);
+    logger.logs = store(logDirectory);
 };
 
 logger.log = function(level, message)
@@ -55,6 +57,116 @@ logger.log = function(level, message)
     }
 }
 
+logger.err = function(error)
+{
+    var s = (error.stack.split('\n')[1].split('\n')[0].match(/\//g) || []).length;
+    logger.log('error', 'Code Fehler: ' + error.message + " ( '" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + "' bei Zeile '" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + "' )");
+}
+
+logger.find = function(pluginName, date, param)
+{
+    return new Promise(resolve => {
+
+        getLogPath(pluginName).then(function(res) {
+
+            if(res != null)
+            {
+                store(res).load(date, (err, obj) => {    
+
+                    if(obj && !err)
+                    {    
+                        var logs = [];
+
+                        for(var i = 1; i < obj.logs.length + 1; i++)
+                        {
+                            if(obj.logs[obj.logs.length - i].includes(param))
+                            {
+                                logs[logs.length] = obj.logs[obj.logs.length - i];
+                            }
+                        }
+        
+                        if(logs[0] != null)
+                        {
+                            resolve(logs);
+                        }
+                        else
+                        {
+                            resolve(null);
+                        }
+                    }
+        
+                    if(err || !obj)
+                    {
+                        resolve(null);
+                    }
+                });
+            }
+            else
+            {
+                resolve(null);
+            }
+        });
+    });
+}
+
+logger.load = function(pluginName, date)
+{
+    return new Promise(resolve => {
+        
+        getLogPath(pluginName).then(function(res) {
+
+            if(res != null)
+            {
+                store(res).load(date, (err, obj) => {    
+
+                    if(obj && !err)
+                    {    
+                        resolve(obj);
+                    }
+        
+                    if(err || !obj)
+                    {
+                        resolve(null);
+                    }
+                });
+            }
+            else
+            {
+                resolve(null);
+            }
+        });
+    });
+}
+
+async function getLogPath(pluginName)
+{
+    return new Promise(resolve => {
+        
+        conf.load('config', (err, obj) => {    
+
+            if(obj && !err)
+            {                            
+                obj.id = 'config';
+
+                for(const i in obj.platforms)
+                {
+                    if(obj.platforms[i].platform === pluginName)
+                    {
+                        resolve(obj.platforms[i].log_directory);
+                    }
+                }
+
+                resolve(null);
+            }
+
+            if(err || !obj)
+            {
+                resolve(null);
+            }
+        });
+    });
+}
+
 var inWork = false;
 var que = [];
 
@@ -80,13 +192,13 @@ function saveLog(log)
 
         var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
 
-        logs.load(date, (err, device) => {    
+        logger.logs.load(date, (err, device) => {    
 
             if(device && !err)
             {    
                 device.logs[device.logs.length] = log;
 
-                logs.add(device, (err) => {
+                logger.logs.add(device, (err) => {
 
                     inWork = false;
 
@@ -111,7 +223,7 @@ function saveLog(log)
                     ]
                 };
 
-                logs.add(entry, (err) => {
+                logger.logs.add(entry, (err) => {
 
                     inWork = false;
 
