@@ -417,7 +417,8 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             }
             else if(device.type === "humidity")
             {
-                state = !isNaN(state) ? state : 0;
+                state = null;
+                //state = !isNaN(parseInt(state)) ? parseInt(state) : 0;
             }
             
             if(device.type === "contact")
