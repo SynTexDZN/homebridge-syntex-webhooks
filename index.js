@@ -90,9 +90,6 @@ SynTexWebHookPlatform.prototype = {
                     {
                         if(urlParams.event)
                         {
-                            response.write("Success");
-                            response.end();
-
                             for(var i = 0; i < accessories.length; i++)
                             {
                                 var accessory = accessories[i];
@@ -102,6 +99,9 @@ SynTexWebHookPlatform.prototype = {
                                     accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
                                 }
                             }
+
+                            response.write("Success");
+                            response.end();
                         }
                         else if(urlParams.value)
                         {
@@ -125,27 +125,13 @@ SynTexWebHookPlatform.prototype = {
 
                                         if(accessory.mac === urlParams.mac)
                                         {
-                                            if(urlParams.type)
-                                            {
-                                                if(accessory.type === urlParams.type)
-                                                {
-                                                    if(urlParams.value == 'true' || urlParams.value == 'false')
-                                                    {
-                                                        accessory.changeHandler((urlParams.value === 'true'));
-                                                    }
-                                                    else
-                                                    {
-                                                        accessory.changeHandler(urlParams.value);
-                                                    }
-                                                }
-                                            }
-                                            else
+                                            if(!urlParams.type || accessory.type === urlParams.type)
                                             {
                                                 if(urlParams.value == 'true' || urlParams.value == 'false')
                                                 {
-                                                    accessory.changeHandler((urlParams.value == 'true' || false));
+                                                    accessory.changeHandler(urlParams.value == 'true');
                                                 }
-                                                else
+                                                else if(!isNaN(urlParams.value))
                                                 {
                                                     accessory.changeHandler(urlParams.value);
                                                 }
@@ -157,10 +143,10 @@ SynTexWebHookPlatform.prototype = {
                                 {
                                     logger.err(e);
                                 }
-                            });
 
-                            response.write("Success");
-                            response.end();
+                                response.write("Success");
+                                response.end();
+                            });
                         }
                         else
                         {
@@ -419,13 +405,9 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             }
             else if(type === "humidity")
             {
-                state = null;
-                //state = !isNaN(parseInt(state)) ? parseInt(state) : 0;
+                state = !isNaN(parseInt(state)) ? parseInt(state) : 0;
             }
 
-            logger.log('warn', type);
-            logger.log('warn', state);
-            
             if(type === "contact")
             {
                 callback(null, state ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
@@ -442,14 +424,9 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             {
                 callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
             }
-            else if(state != null)
-            {
-                logger.log('warn', 'XXX');
-                callback(null, state);
-            }
             else
             {
-                callback();
+                callback(null, state);
             }
         }
         catch(e)
@@ -957,7 +934,7 @@ async function updateDevice(obj)
 
         if(obj.type)
         {
-            device.id = obj.mac + '-' + obj.type[0].toUpperCase();
+            device.id += '-' + obj.type[0].toUpperCase();
             device.type = obj.type;
         }
 
