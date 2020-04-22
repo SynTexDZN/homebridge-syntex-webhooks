@@ -389,6 +389,8 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         name: this.name
     };
 
+    var type = this.type;
+
     if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
     {
         device.type = this.type
@@ -407,35 +409,35 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
                 logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
             }
 
-            if(device.type === "contact" || device.type === "rain" || device.type === "smoke" || device.type === "occupancy")
+            if(type === "contact" || type === "rain" || type === "smoke" || type === "occupancy")
             {
                 state = (state == 'true' || false);
             }
-            else if(device.type === "light" || device.type === "temperature")
+            else if(type === "light" || type === "temperature")
             {
                 state = !isNaN(parseFloat(state)) ? parseFloat(state) : 0;
             }
-            else if(device.type === "humidity")
+            else if(type === "humidity")
             {
                 state = null;
                 //state = !isNaN(parseInt(state)) ? parseInt(state) : 0;
             }
 
-            logger.log('warn', device.type);
+            logger.log('warn', type);
             
-            if(device.type === "contact")
+            if(type === "contact")
             {
                 callback(null, state ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
             }
-            else if(device.type === "rain")
+            else if(type === "rain")
             {
                 callback(null, state ? Characteristic.LEAK_DETECTED : Characteristic.LEAK_NOT_DETECTED);
             }
-            else if(device.type === "smoke")
+            else if(type === "smoke")
             {
                 callback(null, state ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);
             }
-            else if(device.type === "occupancy")
+            else if(type === "occupancy")
             {
                 callback(null, state ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
             }
