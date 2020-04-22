@@ -447,6 +447,10 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
                 logger.log('warn', 'XXX');
                 callback(null, state);
             }
+            else
+            {
+                callback();
+            }
         }
         catch(e)
         {
