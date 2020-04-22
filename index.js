@@ -420,6 +420,8 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
                 state = null;
                 //state = !isNaN(parseInt(state)) ? parseInt(state) : 0;
             }
+
+            logger.log('warn', device.type);
             
             if(device.type === "contact")
             {
@@ -439,6 +441,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             }
             else if(state != null)
             {
+                logger.log('warn', state);
                 callback(null, state);
             }
         }
