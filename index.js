@@ -407,7 +407,11 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
                 logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
             }
 
-            if(type === "motion" || type === "contact" || type === "rain" || type === "smoke" || type === "occupancy")
+            if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy")
+            {
+                state = (state == 'false' || false);
+            }
+            else if(type === "contact")
             {
                 state = (state == 'true' || false);
             }
