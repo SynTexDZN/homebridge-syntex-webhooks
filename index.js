@@ -185,7 +185,7 @@ SynTexWebHookPlatform.prototype = {
                             {
                                 if(state == null)
                                 {
-                                    logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + urlParams.mac + " )");
+                                    logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + urlParams.mac + " )");
                                 }
                                 else
                                 {
@@ -296,7 +296,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         this.changeHandler = (function(newState)
         {
             logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(newState);
+            this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(parseFloat(newState));
         }).bind(this);
         
         this.service.getCharacteristic(Characteristic.CurrentTemperature).setProps({
@@ -311,7 +311,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         this.changeHandler = (function(newState)
         {
             logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(newState);
+            this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(parseInt(newState));
         }).bind(this);
         
         this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).on('get', this.getState.bind(this));
@@ -347,7 +347,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         this.changeHandler = (function(newState)
         {
             logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(newState ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED, undefined, CONTEXT_FROM_WEBHOOK);
+            this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(newState);
         }).bind(this);
         
         this.service.getCharacteristic(Characteristic.OccupancyDetected).on('get', this.getState.bind(this));
@@ -359,7 +359,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         this.changeHandler = (function(newState)
         {
             logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.SmokeDetected).updateValue(newState ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED, undefined, CONTEXT_FROM_WEBHOOK);
+            this.service.getCharacteristic(Characteristic.SmokeDetected).updateValue(newState);
         }).bind(this);
         
         this.service.getCharacteristic(Characteristic.SmokeDetected).on('get', this.getState.bind(this));
@@ -400,26 +400,26 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             if(state == null)
             {
-                logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + device.mac + " )");
+                logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
             }
             else
             {
                 logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
             }
 
-            if(type === "contact" || type === "rain" || type === "smoke" || type === "occupancy")
+            if(type === "motion" || type === "contact" || type === "rain" || type === "smoke" || type === "occupancy")
             {
                 state = (state == 'true' || false);
             }
             else if(type === "light" || type === "temperature")
             {
-                state = !isNaN(parseFloat(state)) ? parseFloat(state) : 0;
+                state = !isNaN(state) ? parseFloat(state) : 0;
             }
             else if(type === "humidity")
             {
-                state = !isNaN(parseInt(state)) ? parseInt(state) : 0;
+                state = !isNaN(state) ? parseInt(state) : 0;
             }
-
+            /*
             if(type === "contact")
             {
                 callback(null, state ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED);
@@ -440,10 +440,15 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             {
                 callback(null, state);
             }
+            */
         }
         catch(e)
         {
             logger.err(e);
+        }
+        finally
+        {
+            callback(null, state);
         }
     });
 };
@@ -490,20 +495,18 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         
         try
         {
-            if(state != null)
+            if(state == null)
+            {
+                logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
+            }
+            else
             {
                 state = (state == 'true' || false);
 
                 logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
-
-                callback(null, state);
             }
-            else
-            {
-                logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + device.mac + " )");
 
-                callback(null, false);
-            }
+            callback(null, state == null ? false : state);
         }
         catch(e)
         {
