@@ -84,106 +84,122 @@ SynTexWebHookPlatform.prototype = {
                 response.setHeader('Content-Type', 'application/json');
                 response.setHeader('Access-Control-Allow-Origin', '*');
 
-                if(urlPath == '/devices')
+                if(urlPath == '/devices' && urlParams.mac)
                 {
-                    if(urlParams.mac)
+                    if(urlParams.event)
                     {
-                        if(urlParams.event)
+                        var found = false;
+                        
+                        for(var i = 0; i < accessories.length; i++)
                         {
-                            for(var i = 0; i < accessories.length; i++)
+                            if(accessories[i].mac === urlParams.mac)
                             {
-                                var accessory = accessories[i];
+                                accessories[i].changeHandler(accessories[i].name, urlParams.event, urlParams.value ? urlParams.value : 0);
 
-                                if(accessory.mac === urlParams.mac)
-                                {
-                                    accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
-                                }
+                                found = true;
                             }
-
-                            response.write("Success");
-                            response.end();
                         }
-                        else if(urlParams.value)
+
+                        if(!found)
                         {
-                            var device = {
-                                mac: urlParams.mac,
-                                value: urlParams.value
-                            };
+                            logger.log('error', "Es wurde kein passendes Event gefunden! ( " + urlParams.mac + " )");
+                        }
 
-                            if(urlParams.type)
+                        response.write(found ? "Success" : "Error");
+                        response.end();
+                    }
+                    else if(urlParams.value)
+                    {
+                        var device = {
+                            mac: urlParams.mac,
+                            value: urlParams.value
+                        };
+
+                        if(urlParams.type)
+                        {
+                            device.type = urlParams.type;
+                        }
+
+                        updateDevice(device).then(function(res) {
+
+                            var found = false;
+                            
+                            try
                             {
-                                device.type = urlParams.type;
-                            }
-
-                            updateDevice(device).then(function(res) {
-
-                                try
+                                for(var i = 0; i < accessories.length; i++)
                                 {
-                                    for(var i = 0; i < accessories.length; i++)
-                                    {
-                                        var accessory = accessories[i];
+                                    var accessory = accessories[i];
 
-                                        if(accessory.mac === urlParams.mac)
+                                    if(accessory.mac === urlParams.mac)
+                                    {
+                                        if(!urlParams.type || accessory.type === urlParams.type)
                                         {
-                                            if(!urlParams.type || accessory.type === urlParams.type)
+                                            if(urlParams.value == 'true' || urlParams.value == 'false')
                                             {
-                                                if(urlParams.value == 'true' || urlParams.value == 'false')
-                                                {
-                                                    accessory.changeHandler(urlParams.value == 'true');
-                                                }
-                                                else if(!isNaN(urlParams.value))
-                                                {
-                                                    accessory.changeHandler(urlParams.value);
-                                                }
+                                                accessory.changeHandler(urlParams.value == 'true');
                                             }
+                                            else if(!isNaN(urlParams.value))
+                                            {
+                                                accessory.changeHandler(urlParams.value);
+                                            }
+                                            else
+                                            {
+                                                logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
+                                            }
+
+                                            found = true;
                                         }
                                     }
                                 }
-                                catch(e)
+
+                                if(!found)
                                 {
-                                    logger.err(e);
+                                    logger.log('error', "Es wurde kein passendes Gerät in HomeKit gefunden! ( " + urlParams.mac + " )");
                                 }
-
-                                response.write("Success");
-                                response.end();
-                            });
-                        }
-                        else
-                        {
-                            var device = {
-                                mac: urlParams.mac
-                            };
-
-                            if(urlParams.type)
-                            {
-                                device.type = urlParams.type;
                             }
+                            catch(e)
+                            {
+                                logger.err(e);
+                            }
+                            finally
+                            {
+                                response.write(found ? "Success" : "Error");
+                                response.end();
+                            }
+                        });
+                    }
+                    else
+                    {
+                        var device = {
+                            mac: urlParams.mac
+                        };
 
-                            readDevice(device).then(function(res) {
-
-                                try
-                                {
-                                    if(res == null)
-                                    {
-                                        response.write("Es wurde kein passendes Gerät gefunden!");
-                                        response.end();
-
-                                        logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + urlParams.mac + " )");
-                                    }
-                                    else
-                                    {
-                                        response.write(res.toString());
-                                        response.end();
-
-                                        logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + res + "'");
-                                    }
-                                }
-                                catch(e)
-                                {
-                                    logger.err(e);
-                                }
-                            });
+                        if(urlParams.type)
+                        {
+                            device.type = urlParams.type;
                         }
+
+                        readDevice(device).then(function(state) {
+
+                            try
+                            {
+                                if(state == null)
+                                {
+                                    logger.log('error', "Es wurde kein passendes Gerät gefunden! ( " + urlParams.mac + " )");
+                                }
+                                else
+                                {
+                                    logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + state + "'");
+                                }
+
+                                response.write(state == null ? "Error" : state.toString());
+                                response.end();
+                            }
+                            catch(e)
+                            {
+                                logger.err(e);
+                            }
+                        });
                     }
                 }
                 else if(urlPath == '/version')
@@ -195,12 +211,7 @@ SynTexWebHookPlatform.prototype = {
                 }
                 else if(urlPath == '/update')
                 {
-                    var version = 'latest';
-
-                    if(urlParams.version)
-                    {
-                        version = urlParams.version;
-                    }
+                    var version = urlParams.version ? urlParams.version : 'latest';
 
                     const { exec } = require("child_process");
                     
@@ -211,14 +222,12 @@ SynTexWebHookPlatform.prototype = {
                             if(error || stderr.includes('ERR!'))
                             {
                                 response.write('Error');
-                                response.end();
                                 
                                 logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
                             }
                             else
                             {
                                 response.write('Success');
-                                response.end();
                                 
                                 logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
                                 
@@ -227,6 +236,8 @@ SynTexWebHookPlatform.prototype = {
                                     logger.log('warn', "Die Homebridge wird neu gestartet ..");
                                 });
                             }
+
+                            response.end();
                         }
                         catch(e)
                         {
@@ -239,6 +250,7 @@ SynTexWebHookPlatform.prototype = {
             {
                 logger.err(e);
             }
+            
         }).bind(this);
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
