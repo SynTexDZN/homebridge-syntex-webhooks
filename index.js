@@ -409,11 +409,11 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
             if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy")
             {
-                state = (state == 'false' || false);
+                state = (state == 'true' || false);
             }
             else if(type === "contact")
             {
-                state = (state == 'true' || false);
+                state = (state == 'false' || false);
             }
             else if(type === "light" || type === "temperature")
             {
