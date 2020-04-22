@@ -424,6 +424,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             }
 
             logger.log('warn', type);
+            logger.log('warn', state);
             
             if(type === "contact")
             {
@@ -443,7 +444,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             }
             else if(state != null)
             {
-                logger.log('warn', state);
+                logger.log('warn', 'XXX');
                 callback(null, state);
             }
         }
