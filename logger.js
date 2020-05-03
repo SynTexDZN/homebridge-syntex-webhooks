@@ -146,8 +146,6 @@ async function getLogPath(pluginName)
 
             if(obj && !err)
             {                            
-                obj.id = 'config';
-
                 for(const i in obj.platforms)
                 {
                     if(obj.platforms[i].platform === pluginName)
