@@ -305,7 +305,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         characteristic = Characteristic.SmokeDetected;
     }
 
-    if(type == 'temperature')
+    if(this.type == 'temperature')
     {
         this.service.getCharacteristic(Characteristic.CurrentTemperature).setProps({
             minValue : -100,
