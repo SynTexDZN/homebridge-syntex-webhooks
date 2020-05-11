@@ -272,37 +272,37 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     else if(this.type === "motion")
     {
         service = new Service.MotionSensor(this.name);
-        characteristic = Characteristic.MotionDetected);
+        characteristic = Characteristic.MotionDetected;
     }
     else if(this.type === "temperature")
     {
         service = new Service.TemperatureSensor(this.name);
-        characteristic = Characteristic.CurrentTemperature);
+        characteristic = Characteristic.CurrentTemperature;
     }
     else if(this.type === "humidity")
     {        
         service = new Service.HumiditySensor(this.name);
-        characteristic = Characteristic.CurrentRelativeHumidity);
+        characteristic = Characteristic.CurrentRelativeHumidity;
     }
     else if(this.type === "rain")
     {        
         service = new Service.LeakSensor(this.name);
-        characteristic = Characteristic.LeakDetected);
+        characteristic = Characteristic.LeakDetected;
     }
     else if(this.type === "light")
     {
         service = new Service.LightSensor(this.name);
-        characteristic = Characteristic.CurrentAmbientLightLevel);
+        characteristic = Characteristic.CurrentAmbientLightLevel;
     }
     else if(this.type === "occupancy")
     {
         service = new Service.OccupancySensor(this.name);
-        characteristic = Characteristic.OccupancyDetected);
+        characteristic = Characteristic.OccupancyDetected;
     }
     else if(this.type === "smoke")
     {
         service = new Service.SmokeSensor(this.name);
-        characteristic = Characteristic.SmokeDetected);
+        characteristic = Characteristic.SmokeDetected;
     }
 
     if(type == 'temperature')
