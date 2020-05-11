@@ -438,23 +438,21 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     */
 }
 
-SynTexWebHookSensorAccessory.prototype.getState = function(callback)
+SynTexWebHookSensorAccessory.prototype.getState = async function(callback)
 {        
     var device = {
         mac: this.mac,
         name: this.name
     };
 
+    var type = this.type;
+
     if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
     {
         device.type = this.type
     }
-
-    var type = this.type;
-
-    return new Promise(async function(resolve) {
-
-        var state = await readDevice(device);
+    
+    readDevice(device).then(function(state) {
 
         if(state == null)
         {
@@ -465,24 +463,24 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
         }
 
-        if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy")
+        if(this.type === "motion" || this.type === "rain" || this.type === "smoke" || this.type === "occupancy")
         {
             state = (state == 'true' || false);
         }
-        else if(type === "contact")
+        else if(this.type === "contact")
         {
             state = (state == 'false' || false);
         }
-        else if(type === "light" || type === "temperature")
+        else if(this.type === "light" || this.type === "temperature")
         {
             state = !isNaN(state) ? parseFloat(state) : 0;
         }
-        else if(type === "humidity")
+        else if(this.type === "humidity")
         {
             state = !isNaN(state) ? parseInt(state) : 0;
         }
-        
-        resolve(null, state);
+            
+        callback(null, state);
     });
 };
 
