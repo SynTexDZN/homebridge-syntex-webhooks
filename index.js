@@ -272,7 +272,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     else if(this.type === "humidity")
     {        
         this.service = new Service.HumiditySensor(this.name);
-        characteristic = Characteristic.CurrentRelativeHumidity);
+        characteristic = Characteristic.CurrentRelativeHumidity;
     }
     else if(this.type === "rain")
     {        
