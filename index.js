@@ -263,7 +263,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     this.mac = sensorConfig["mac"];
     this.name = sensorConfig["name"];
     this.type = sensorConfig["type"];
-
+/*
     var service, characteristic;
 
     if(this.type === "contact")
@@ -324,7 +324,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     }).bind(this);
 
     this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
-    /*
+    */
     if(this.type === "contact")
     {
         this.service = new Service.ContactSensor(this.name);
