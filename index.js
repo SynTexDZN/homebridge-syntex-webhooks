@@ -449,7 +449,9 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     {
         device.type = this.type
     }
-    
+
+    var type = this.type;
+
     return new Promise(async function(resolve) {
 
         var state = await readDevice(device);
@@ -463,19 +465,19 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
         }
 
-        if(this.type === "motion" || this.type === "rain" || this.type === "smoke" || this.type === "occupancy")
+        if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy")
         {
             state = (state == 'true' || false);
         }
-        else if(this.type === "contact")
+        else if(type === "contact")
         {
             state = (state == 'false' || false);
         }
-        else if(this.type === "light" || this.type === "temperature")
+        else if(type === "light" || type === "temperature")
         {
             state = !isNaN(state) ? parseFloat(state) : 0;
         }
-        else if(this.type === "humidity")
+        else if(type === "humidity")
         {
             state = !isNaN(state) ? parseInt(state) : 0;
         }
