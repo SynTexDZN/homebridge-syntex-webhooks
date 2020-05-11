@@ -440,18 +440,18 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
+    var device = {
+        mac: this.mac,
+        name: this.name
+    };
+
+    if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
+    {
+        device.type = this.type
+    }
+    
     return new Promise(async function(resolve) {
 
-        var device = {
-            mac: this.mac,
-            name: this.name
-        };
-
-        if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
-        {
-            device.type = this.type
-        }
-        
         var state = await readDevice(device);
 
         if(state == null)
