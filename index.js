@@ -247,6 +247,71 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     this.name = sensorConfig["name"];
     this.type = sensorConfig["type"];
 
+    var characteristic;
+
+    if(this.type === "contact")
+    {
+        this.service = new Service.ContactSensor(this.name);
+        characteristic = Characteristic.ContactSensorState;
+    }
+    else if(this.type === "motion")
+    {
+        this.service = new Service.MotionSensor(this.name);
+        characteristic = Characteristic.MotionDetected;
+    }
+    else if(this.type === "temperature")
+    {
+        this.service = new Service.TemperatureSensor(this.name);
+        characteristic = Characteristic.CurrentTemperature;
+        
+        this.service.getCharacteristic(Characteristic.CurrentTemperature).setProps({
+            minValue : -100,
+            maxValue : 140
+        }).on('get', this.getState.bind(this));
+    }
+    else if(this.type === "humidity")
+    {        
+        this.service = new Service.HumiditySensor(this.name);
+        characteristic = Characteristic.CurrentRelativeHumidity);
+    }
+    else if(this.type === "rain")
+    {        
+        this.service = new Service.LeakSensor(this.name);
+        characteristic = Characteristic.LeakDetected;
+    }
+    else if(this.type === "light")
+    {
+        this.service = new Service.LightSensor(this.name);
+        characteristic = Characteristic.CurrentAmbientLightLevel;
+    }
+    else if(this.type === "occupancy")
+    {
+        this.service = new Service.OccupancySensor(this.name);
+        characteristic = Characteristic.OccupancyDetected;
+    }
+    else if(this.type === "smoke")
+    {
+        this.service = new Service.SmokeSensor(this.name);
+        characteristic = Characteristic.SmokeDetected;
+    }
+    /*
+    else if(this.type === "airquality")
+    {
+        this.service = new Service.AirQualitySensor(this.name);
+        characteristic = Characteristic.AirQuality;
+    }
+    */
+
+   this.changeHandler = (function(newState)
+   {
+       logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+       this.service.getCharacteristic(characteristic).updateValue(newState);
+   }).bind(this);
+   
+   this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
+
+   /*
+
     if(this.type === "contact")
     {
         this.service = new Service.ContactSensor(this.name);
