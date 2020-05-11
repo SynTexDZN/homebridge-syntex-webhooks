@@ -438,49 +438,50 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     */
 }
 
-SynTexWebHookSensorAccessory.prototype.getState = async function(callback)
+SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
-    var device = {
-        mac: this.mac,
-        name: this.name
-    };
+    return new Promise(async function(resolve) {
 
-    var type = this.type;
+        var device = {
+            mac: this.mac,
+            name: this.name
+        };
 
-    if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
-    {
-        device.type = this.type
-    }
-    
-    var state = await readDevice(device);
+        if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
+        {
+            device.type = this.type
+        }
+        
+        var state = await readDevice(device);
 
-    if(state == null)
-    {
-        logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
-    }
-    else
-    {
-        logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
-    }
+        if(state == null)
+        {
+            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
+        }
+        else
+        {
+            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+        }
 
-    if(this.type === "motion" || this.type === "rain" || this.type === "smoke" || this.type === "occupancy")
-    {
-        state = (state == 'true' || false);
-    }
-    else if(this.type === "contact")
-    {
-        state = (state == 'false' || false);
-    }
-    else if(this.type === "light" || this.type === "temperature")
-    {
-        state = !isNaN(state) ? parseFloat(state) : 0;
-    }
-    else if(this.type === "humidity")
-    {
-        state = !isNaN(state) ? parseInt(state) : 0;
-    }
-     
-    callback(null, state);
+        if(this.type === "motion" || this.type === "rain" || this.type === "smoke" || this.type === "occupancy")
+        {
+            state = (state == 'true' || false);
+        }
+        else if(this.type === "contact")
+        {
+            state = (state == 'false' || false);
+        }
+        else if(this.type === "light" || this.type === "temperature")
+        {
+            state = !isNaN(state) ? parseFloat(state) : 0;
+        }
+        else if(this.type === "humidity")
+        {
+            state = !isNaN(state) ? parseInt(state) : 0;
+        }
+        
+        resolve(null, state);
+    });
 };
 
 SynTexWebHookSensorAccessory.prototype.getServices = function()
