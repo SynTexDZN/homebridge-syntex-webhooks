@@ -120,51 +120,43 @@ SynTexWebHookPlatform.prototype = {
                             device.type = urlParams.type;
                         }
 
-                        var res = await updateDevice(device);
+                        await updateDevice(device);
+
                         var found = false;
                         
-                        try
+                        for(var i = 0; i < accessories.length; i++)
                         {
-                            for(var i = 0; i < accessories.length; i++)
+                            var accessory = accessories[i];
+
+                            if(accessory.mac === urlParams.mac)
                             {
-                                var accessory = accessories[i];
-
-                                if(accessory.mac === urlParams.mac)
+                                if(!urlParams.type || accessory.type === urlParams.type)
                                 {
-                                    if(!urlParams.type || accessory.type === urlParams.type)
+                                    if(urlParams.value == 'true' || urlParams.value == 'false')
                                     {
-                                        if(urlParams.value == 'true' || urlParams.value == 'false')
-                                        {
-                                            accessory.changeHandler(urlParams.value == 'true');
-                                        }
-                                        else if(!isNaN(urlParams.value))
-                                        {
-                                            accessory.changeHandler(urlParams.value);
-                                        }
-                                        else
-                                        {
-                                            logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
-                                        }
-
-                                        found = true;
+                                        accessory.changeHandler(urlParams.value == 'true');
                                     }
+                                    else if(!isNaN(urlParams.value))
+                                    {
+                                        accessory.changeHandler(urlParams.value);
+                                    }
+                                    else
+                                    {
+                                        logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
+                                    }
+
+                                    found = true;
                                 }
                             }
+                        }
 
-                            if(!found)
-                            {
-                                logger.log('error', "Es wurde kein passendes Gerät in HomeKit gefunden! ( " + urlParams.mac + " )");
-                            }
-                        }
-                        catch(e)
+                        if(!found)
                         {
-                            logger.err(e);
+                            logger.log('error', "Es wurde kein passendes Gerät in HomeKit gefunden! ( " + urlParams.mac + " )");
                         }
-                        finally
-                        {
-                            response.write(found ? "Success" : "Error");
-                            response.end();
-                        }
+                         
+                        response.write(found ? "Success" : "Error");
+                        response.end();
                     }
                     else
                     {
@@ -179,24 +171,17 @@ SynTexWebHookPlatform.prototype = {
 
                         var state = await readDevice(device);
 
-                        try
+                        if(state == null)
                         {
-                            if(state == null)
-                            {
-                                logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + urlParams.mac + " )");
-                            }
-                            else
-                            {
-                                logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + state + "'");
-                            }
+                            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + urlParams.mac + " )");
+                        }
+                        else
+                        {
+                            logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + state + "'");
+                        }
 
-                            response.write(state == null ? "Error" : state.toString());
-                            response.end();
-                        }
-                        catch(e)
-                        {
-                            logger.err(e);
-                        }
+                        response.write(state == null ? "Error" : state.toString());
+                        response.end();
                     }
                 }
                 else if(urlPath == '/version')
