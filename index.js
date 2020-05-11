@@ -120,51 +120,53 @@ SynTexWebHookPlatform.prototype = {
                             device.type = urlParams.type;
                         }
 
-                        var res = await updateDevice(device);
-                        var found = false;
+                        updateDevice(device).then(function(res) {
+
+                            var found = false;
                         
-                        try
-                        {
-                            for(var i = 0; i < accessories.length; i++)
+                            try
                             {
-                                var accessory = accessories[i];
-
-                                if(accessory.mac === urlParams.mac)
+                                for(var i = 0; i < accessories.length; i++)
                                 {
-                                    if(!urlParams.type || accessory.type === urlParams.type)
-                                    {
-                                        if(urlParams.value == 'true' || urlParams.value == 'false')
-                                        {
-                                            accessory.changeHandler(urlParams.value == 'true');
-                                        }
-                                        else if(!isNaN(urlParams.value))
-                                        {
-                                            accessory.changeHandler(urlParams.value);
-                                        }
-                                        else
-                                        {
-                                            logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
-                                        }
+                                    var accessory = accessories[i];
 
-                                        found = true;
+                                    if(accessory.mac === urlParams.mac)
+                                    {
+                                        if(!urlParams.type || accessory.type === urlParams.type)
+                                        {
+                                            if(urlParams.value == 'true' || urlParams.value == 'false')
+                                            {
+                                                accessory.changeHandler(urlParams.value == 'true');
+                                            }
+                                            else if(!isNaN(urlParams.value))
+                                            {
+                                                accessory.changeHandler(urlParams.value);
+                                            }
+                                            else
+                                            {
+                                                logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
+                                            }
+
+                                            found = true;
+                                        }
                                     }
                                 }
-                            }
 
-                            if(!found)
-                            {
-                                logger.log('error', "Es wurde kein passendes Gerät in HomeKit gefunden! ( " + urlParams.mac + " )");
+                                if(!found)
+                                {
+                                    logger.log('error', "Es wurde kein passendes Gerät in HomeKit gefunden! ( " + urlParams.mac + " )");
+                                }
                             }
-                        }
-                        catch(e)
-                        {
-                            logger.err(e);
-                        }
-                        finally
-                        {
-                            response.write(found ? "Success" : "Error");
-                            response.end();
-                        }
+                            catch(e)
+                            {
+                                logger.err(e);
+                            }
+                            finally
+                            {
+                                response.write(found ? "Success" : "Error");
+                                response.end();
+                            }
+                        });
                     }
                     else
                     {
@@ -522,20 +524,21 @@ SynTexWebHookSwitchAccessory.prototype.getState = async function(callback)
         name: this.name
     };
     
-    var state = await readDevice(device);
-        
-    if(state == null)
-    {
-        logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
-    }
-    else
-    {
-        state = (state == 'true' || false);
+    readDevice(device).then(function(state) {
 
-        logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
-    }
-    
-    callback(null, state == null ? false : state);
+        if(state == null)
+        {
+            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
+        }
+        else
+        {
+            state = (state == 'true' || false);
+
+            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+        }
+        
+        callback(null, state == null ? false : state);
+    });
 };
 
 SynTexWebHookSwitchAccessory.prototype.setState = async function(powerOn, callback, context)
@@ -553,53 +556,54 @@ SynTexWebHookSwitchAccessory.prototype.setState = async function(powerOn, callba
 
     logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + device.value + "' ( " + this.mac + " )");
 
-    var state = await updateDevice(device);
+    updateDevice(device).then(function(state) {
 
-    if(urlToCall != "")
-    {
-        var theRequest = {
-            method : urlMethod,
-            url : urlToCall,
-            timeout : 5000,
-            headers: JSON.parse(urlHeaders)
-        };
-        
-        if(urlMethod === "POST" || urlMethod === "PUT")
+        if(urlToCall != "")
         {
-            if(urlForm)
-            {
-                //logger.log("Adding Form " + urlForm);
-                theRequest.form = JSON.parse(urlForm);
-            }
-            else if(urlBody)
-            {
-                //logger.log("Adding Body " + urlBody);
-                theRequest.body = urlBody;
-            }
-        }
-
-        request(theRequest, (function(err, response, body)
-        {
-            var statusCode = response && response.statusCode ? response.statusCode : -1;
+            var theRequest = {
+                method : urlMethod,
+                url : urlToCall,
+                timeout : 5000,
+                headers: JSON.parse(urlHeaders)
+            };
             
-            if(!err && statusCode == 200)
+            if(urlMethod === "POST" || urlMethod === "PUT")
             {
-                logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
-
-                callback(null);
+                if(urlForm)
+                {
+                    //logger.log("Adding Form " + urlForm);
+                    theRequest.form = JSON.parse(urlForm);
+                }
+                else if(urlBody)
+                {
+                    //logger.log("Adding Body " + urlBody);
+                    theRequest.body = urlBody;
+                }
             }
-            else
+
+            request(theRequest, (function(err, response, body)
             {
-                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + err);
+                var statusCode = response && response.statusCode ? response.statusCode : -1;
+                
+                if(!err && statusCode == 200)
+                {
+                    logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
 
-                callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
-            }
-        }).bind(this));
-    }
-    else
-    {
-        callback(null);
-    }
+                    callback(null);
+                }
+                else
+                {
+                    logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + err);
+
+                    callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+                }
+            }).bind(this));
+        }
+        else
+        {
+            callback(null);
+        }
+    });
 };
 
 SynTexWebHookSwitchAccessory.prototype.getServices = function()
@@ -644,20 +648,21 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = async function(callback)
 
         var parent = this;
 
-        var state = await readDevice(device);
-        
-        if(state == null)
-        {
-            parent.power = false;
-        }
-        else
-        {
-            parent.power = (state.split(':')[0] == 'true' || false);
-        }
+        readDevice(device).then(function(state) {
 
-        logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+            if(state == null)
+            {
+                parent.power = false;
+            }
+            else
+            {
+                parent.power = (state.split(':')[0] == 'true' || false);
+            }
 
-        callback(null, parent.power);
+            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+
+            callback(null, parent.power);
+        });
     }
 };
 
@@ -676,14 +681,15 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = async function(callback)
 
         var parent = this;
 
-        var res = readDevice(device);
+        readDevice(device).then(function(res) {
 
-        if(res == null)
-        {
-            parent.hue = (res == null) ? 0 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0);
-        }
-             
-        callback(null, parent.hue);
+            if(res == null)
+            {
+                parent.hue = (res == null) ? 0 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0);
+            }
+                
+            callback(null, parent.hue);
+        });
     }
 };
 
@@ -702,20 +708,21 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = async function(callbac
 
         var parent = this;
 
-        var res = await readDevice(device);
+        readDevice(device).then(function(res) {
 
-        try
-        {
-            parent.saturation = (res == null) ? 100 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[1] || 100);
-        }
-        catch(e)
-        {
-            logger.err(e);
-        }
-        finally
-        {
-            callback(null, parent.saturation);
-        }
+            try
+            {
+                parent.saturation = (res == null) ? 100 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[1] || 100);
+            }
+            catch(e)
+            {
+                logger.err(e);
+            }
+            finally
+            {
+                callback(null, parent.saturation);
+            }
+        });
     }
 }
 
@@ -734,20 +741,21 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = async function(callbac
         
         var parent = this;
 
-        var res = await readDevice(device);
+        readDevice(device).then(function(res) {
 
-        try
-        {
-            parent.brightness = (res == null) ? 50 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[2] || 50);
-        }
-        catch(e)
-        {
-            logger.err(e);
-        }
-        finally
-        {
-            callback(null, parent.brightness);
-        }
+            try
+            {
+                parent.brightness = (res == null) ? 50 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[2] || 50);
+            }
+            catch(e)
+            {
+                logger.err(e);
+            }
+            finally
+            {
+                callback(null, parent.brightness);
+            }
+        });
     }
 }
 
