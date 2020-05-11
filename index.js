@@ -302,13 +302,24 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     }
     */
 
-   this.changeHandler = (function(newState)
-   {
-       logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-       this.service.getCharacteristic(characteristic).updateValue(newState);
-   }).bind(this);
-   
-   this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
+    if(this.type === "contact")
+    {
+        this.changeHandler = (function(newState)
+        {
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            this.service.getCharacteristic(characteristic).updateValue(newState ? false : true);
+        }).bind(this);
+    }
+    else
+    {
+        this.changeHandler = (function(newState)
+        {
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+            this.service.getCharacteristic(characteristic).updateValue(newState);
+        }).bind(this);
+    }
+
+    this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
 
    /*
 
