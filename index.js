@@ -440,7 +440,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     */
 }
 
-SynTexWebHookSensorAccessory.prototype.getState = async function(callback)
+SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
     var device = {
         mac: this.mac,
@@ -517,7 +517,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 }
 
-SynTexWebHookSwitchAccessory.prototype.getState = async function(callback)
+SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
     var device = {
         mac: this.mac,
@@ -541,7 +541,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = async function(callback)
     });
 };
 
-SynTexWebHookSwitchAccessory.prototype.setState = async function(powerOn, callback, context)
+SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, context)
 {
     var urlToCall = powerOn ? this.onURL : this.offURL;
     var urlMethod = powerOn ? this.onMethod : this.offMethod;
@@ -633,7 +633,7 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
 }
 
-SynTexWebHookStripeRGBAccessory.prototype.getState = async function(callback)
+SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 {
     if(this.power)
     {
@@ -666,7 +666,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = async function(callback)
     }
 };
 
-SynTexWebHookStripeRGBAccessory.prototype.getHue = async function(callback)
+SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
     if(this.hue)
     {
@@ -693,7 +693,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = async function(callback)
     }
 };
 
-SynTexWebHookStripeRGBAccessory.prototype.getSaturation = async function(callback)
+SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 {
     if(this.saturation)
     {
@@ -726,7 +726,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = async function(callbac
     }
 }
 
-SynTexWebHookStripeRGBAccessory.prototype.getBrightness = async function(callback)
+SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 {
     if(this.brightness)
     {
