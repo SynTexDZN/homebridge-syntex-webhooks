@@ -308,7 +308,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     {
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
 
-        logger.log('warn', type);
+        logger.log('warn', this.type);
 
         if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact")
         {
