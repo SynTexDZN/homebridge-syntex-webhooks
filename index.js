@@ -315,30 +315,31 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     {
         device.type = this.type
     }
+
+    callback(null, new Promise(resolve => {
+
+        readDevice(device).then(function(state) {
+
+            if(state == null)
+            {
+                logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
+            }
+            else
+            {
+                logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+            }
     
-    readDevice(device).then(function(state) {
-
-        if(state == null)
-        {
-            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
-        }
-        else
-        {
-            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
-        }
-
-        state = validateUpdate(this.type, state);
-
-        console.log(this.type);
-
-        callback(null, state);
-
-    }).catch(function(e) {
-
-        logger.err(e);
-
-        callback(null);
-    });
+            state = validateUpdate(this.type, state);
+    
+            resolve(state);
+    
+        }.bind(this)).catch(function(e) {
+    
+            logger.err(e);
+    
+            resolve(null);
+        });
+    }));
 };
 
 SynTexWebHookSensorAccessory.prototype.getServices = function()
