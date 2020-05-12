@@ -311,41 +311,44 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
-    var device = {
-        mac: this.mac,
-        name: this.name
-    };
+    return new Promise(resolve => {
 
-    var type = this.type;
-
-    if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
-    {
-        device.type = this.type
-    }
+        var device = {
+            mac: this.mac,
+            name: this.name
+        };
     
-    readDevice(device).then(function(state) {
-
-        try
+        var type = this.type;
+    
+        if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
         {
-            if(state == null)
+            device.type = this.type
+        }
+        
+        readDevice(device).then(function(state) {
+    
+            try
             {
-                logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
+                if(state == null)
+                {
+                    logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
+                }
+                else
+                {
+                    logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+                }
+    
+                state = validateUpdate(type, state);
             }
-            else
+            catch(e)
             {
-                logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+                logger.err(e);
             }
-
-            state = validateUpdate(type, state);
-        }
-        catch(e)
-        {
-            logger.err(e);
-        }
-        finally
-        {
-            callback(null, state);
-        }
+            finally
+            {
+                resolve(null, state);
+            }
+        });
     });
 };
 
