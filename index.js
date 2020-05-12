@@ -318,7 +318,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         device.type = this.type
     }
     
-    readDevice(device).then(function(state) {
+    readDevice(device).bind(this).then(function(state) {
 
         if(state == null)
         {
@@ -333,7 +333,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
         callback(null, state);
 
-    }).bind(this).catch(function(e) {
+    }).catch(function(e) {
 
         logger.err(e);
     });
