@@ -316,7 +316,7 @@ SynTexWebHookSensorAccessory.prototype.getState = async function(callback)
         device.type = this.type
     }
     
-    var test = readDevice(device).then(function(state) {
+    var test = await readDevice(device).then(function(state) {
 
         if(state == null)
         {
