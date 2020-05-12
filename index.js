@@ -333,7 +333,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
         callback(null, state);
 
-    }).catch(function(e) {
+    }).bind(this).catch(function(e) {
 
         logger.err(e);
     });
@@ -454,7 +454,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
 
                     callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
                 }
-                
+
             }).bind(this));
         }
         else
