@@ -329,7 +329,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
         }
 
-        state = validateUpdate(type, state);
+        state = validateUpdate(this.type, state);
 
         callback(null, state);
 
