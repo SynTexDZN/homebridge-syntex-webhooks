@@ -217,10 +217,10 @@ SynTexWebHookPlatform.prototype = {
                 });
             }
             
-        }).bind(this).catch(function(e) {
+        }).catch(function(e) {
 
             logger.err(e);
-        });;
+        }).bind(this);
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
