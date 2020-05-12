@@ -309,7 +309,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
 }
 
-SynTexWebHookSensorAccessory.prototype.getState = function(callback)
+SynTexWebHookSensorAccessory.prototype.getState = function(callback, reject)
 {        
     try
     {
@@ -343,13 +343,13 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         }).catch(function(e) {
 
             logger.err(e);
-            callback(null);
+            reject();
         });
     }
     catch(e)
     {
         logger.err(e);
-        callback(null);
+        reject();
     }
 };
 
