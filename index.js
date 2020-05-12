@@ -788,7 +788,7 @@ function setRGB(url, hue, saturation, brightness)
     }).bind(this));
 }
 
-async function updateDevice(obj)
+function updateDevice(obj)
 {
     return new Promise(resolve => {
         
@@ -818,7 +818,7 @@ async function updateDevice(obj)
     });
 }
 
-async function readDevice(obj)
+function readDevice(obj)
 {
     return new Promise(resolve => {
         
