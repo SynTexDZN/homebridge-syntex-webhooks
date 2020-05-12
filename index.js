@@ -203,21 +203,16 @@ SynTexWebHookPlatform.prototype = {
                         {
                             if(error || stderr.includes('ERR!'))
                             {
-                                response.write('Error');
-                                
                                 logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
                             }
                             else
                             {
-                                response.write('Success');
-                                
                                 logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
                                 
-                                exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-
-                                    logger.log('warn', "Die Homebridge wird neu gestartet ..");
-                                });
+                                exec("sudo systemctl restart homebridge", (error, stdout, stderr) => logger.log('warn', "Die Homebridge wird neu gestartet .."));
                             }
+
+                            response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
 
                             response.end();
                         }
@@ -341,7 +336,6 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     }).catch(function(e) {
 
         logger.err(e);
-        callback(null);
     });
 };
 
