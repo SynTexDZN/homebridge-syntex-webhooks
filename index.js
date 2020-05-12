@@ -311,7 +311,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
-    return new Promise(resolve => {
+    callback(new Promise(resolve => {
 
         var device = {
             mac: this.mac,
@@ -349,7 +349,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
                 resolve(null, state);
             }
         });
-    });
+    }));
 };
 
 SynTexWebHookSensorAccessory.prototype.getServices = function()
