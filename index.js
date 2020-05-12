@@ -199,23 +199,26 @@ SynTexWebHookPlatform.prototype = {
                     
                     exec("sudo npm install homebridge-syntex-webhooks@" + version + " -g", (error, stdout, stderr) => {
 
-                        if(error || stderr.includes('ERR!'))
+                        try
                         {
-                            logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
+                            if(error || stderr.includes('ERR!'))
+                            {
+                                logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
+                            }
+                            else
+                            {
+                                logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
+                                
+                                exec("sudo systemctl restart homebridge", (error, stdout, stderr) => logger.log('warn', "Die Homebridge wird neu gestartet .."));
+                            }
+
+                            response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
+                            response.end();
                         }
-                        else
+                        catch(e)
                         {
-                            logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
-                            
-                            exec("sudo systemctl restart homebridge", (error, stdout, stderr) => logger.log('warn', "Die Homebridge wird neu gestartet .."));
+                            logger.err(e);
                         }
-
-                        response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
-                        response.end();
-                        
-                    }).catch(function(e) {
-
-                        logger.err(e);
                     });
                 }
             }
@@ -779,7 +782,7 @@ function setRGB(url, hue, saturation, brightness)
         {
             logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + err);
         }
-
+        
     }).bind(this));
 }
 
