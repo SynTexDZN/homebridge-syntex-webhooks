@@ -308,17 +308,15 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     {
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
 
-        logger.log('warn', this.type);
-
-        if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact")
+        if(this.type === "motion" || this.type === "rain" || this.type === "smoke" || this.type === "occupancy" || this.type === "contact")
         {
             this.service.getCharacteristic(characteristic).updateValue(state);
         }
-        else if(type === "light" || type === "temperature")
+        else if(this.type === "light" || this.type === "temperature")
         {
             this.service.getCharacteristic(characteristic).updateValue(!isNaN(state) ? parseFloat(state) : 0);
         }
-        else if(type === "humidity")
+        else if(this.type === "humidity")
         {
             this.service.getCharacteristic(characteristic).updateValue(!isNaN(state) ? parseInt(state) : 0);
         }
