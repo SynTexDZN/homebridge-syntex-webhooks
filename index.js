@@ -209,7 +209,7 @@ SynTexWebHookPlatform.prototype = {
                             {
                                 logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
                                 logger.log('warn', "Die Homebridge wird neu gestartet ..");
-                                
+
                                 exec("sudo systemctl restart homebridge");
                             }
 
@@ -454,6 +454,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
 
                     callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
                 }
+                
             }).bind(this));
         }
         else
