@@ -349,7 +349,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
                 resolve(callback(null, state));
             }
         });
-    }));
+    });
 };
 
 SynTexWebHookSensorAccessory.prototype.getServices = function()
