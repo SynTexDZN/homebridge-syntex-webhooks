@@ -329,16 +329,18 @@ SynTexWebHookSensorAccessory.prototype.getState = async function(callback)
 
         state = validateUpdate(this.type, state);
 
-        callback(null, state);
+        return state;
 
     }.bind(this)).catch(function(e) {
 
         logger.err(e);
 
-        callback(null);
+        return null;
     });
 
     console.log(test);
+
+    callback(null, test);
 };
 
 SynTexWebHookSensorAccessory.prototype.getServices = function()
