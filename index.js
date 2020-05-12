@@ -397,7 +397,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
             }
             else
             {
-                state = (state == 'true' || false);
+                state = validateUpdate('relais', state);
 
                 logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
             }
@@ -881,7 +881,7 @@ async function readDevice(obj)
 
 function validateUpdate(type, state)
 {
-    if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact")
+    if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact" || type == "relais")
     {
         return (state == 'true' || state == true ? true : false);
     }
