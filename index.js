@@ -892,7 +892,7 @@ function validateUpdate(type, state)
     }
     else if(type === "light" || type === "temperature")
     {
-        if(!isNaN(state))
+        if(isNaN(state))
         {
             logger.log('error', 'Konvertierungsfehler!');
         }
@@ -901,11 +901,11 @@ function validateUpdate(type, state)
     }
     else if(type === "humidity" || type === "airquality")
     {
-        if(!isNaN(state))
+        if(isNaN(state))
         {
             logger.log('error', 'Konvertierungsfehler!');
         }
-        
+
         return !isNaN(state) ? parseInt(state) : 0;
     }
     else
