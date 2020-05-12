@@ -294,50 +294,19 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         this.service = new Service.SmokeSensor(this.name);
         characteristic = Characteristic.SmokeDetected;
     }
-    /*
     else if(this.type === "airquality")
     {
         this.service = new Service.AirQualitySensor(this.name);
         characteristic = Characteristic.AirQuality;
     }
-    */
-
-    var type = this.type;
 
     this.changeHandler = (function(state)
     {
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
-
-        if(this.type === "motion" || this.type === "rain" || this.type === "smoke" || this.type === "occupancy" || this.type === "contact")
-        {
-            this.service.getCharacteristic(characteristic).updateValue(state);
-        }
-        else if(this.type === "light" || this.type === "temperature")
-        {
-            this.service.getCharacteristic(characteristic).updateValue(!isNaN(state) ? parseFloat(state) : 0);
-        }
-        else if(this.type === "humidity")
-        {
-            this.service.getCharacteristic(characteristic).updateValue(!isNaN(state) ? parseInt(state) : 0);
-        }
+        this.service.getCharacteristic(characteristic).updateValue(validateUpdate(this.type, state));
     }).bind(this);
     
-
     this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
-    /*
-    else if(this.type === "airquality")
-    {
-        this.service = new Service.AirQualitySensor(this.name);
-        
-        this.changeHandler = (function(newState)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.AirQuality).updateValue(newState, undefined, CONTEXT_FROM_WEBHOOK);
-        }).bind(this);
-        
-        this.service.getCharacteristic(Characteristic.AirQuality).on('get', this.getState.bind(this));
-    }
-    */
 }
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
@@ -367,18 +336,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
                 logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
             }
 
-            if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact")
-            {
-                state = (state == 'true' || false);
-            }
-            else if(type === "light" || type === "temperature")
-            {
-                state = !isNaN(state) ? parseFloat(state) : 0;
-            }
-            else if(type === "humidity")
-            {
-                state = !isNaN(state) ? parseInt(state) : 0;
-            }
+            state = validateUpdate(type, state);
         }
         catch(e)
         {
@@ -919,4 +877,24 @@ async function readDevice(obj)
             }
         });
     });
+}
+
+function validateUpdate(type, state)
+{
+    if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact")
+    {
+        return (state == 'true' || state == true ? true : false);
+    }
+    else if(type === "light" || type === "temperature")
+    {
+        return !isNaN(state) ? parseFloat(state) : 0;
+    }
+    else if(type === "humidity" || type === "airquality")
+    {
+        return !isNaN(state) ? parseInt(state) : 0;
+    }
+    else
+    {
+        return state;
+    }
 }
