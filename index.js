@@ -71,155 +71,159 @@ SynTexWebHookPlatform.prototype = {
         
         var createServerCallback = (async function(request, response)
         {
-            var urlParts = url.parse(request.url, true);
-            var urlParams = urlParts.query;
-            var urlPath = urlParts.pathname;
-            var body = [];
-            
-            body = Buffer.concat(body).toString();
-
-            response.statusCode = 200;
-            response.setHeader('Content-Type', 'application/json');
-            response.setHeader('Access-Control-Allow-Origin', '*');
-
-            if(urlPath == '/devices' && urlParams.mac)
+            try
             {
-                if(urlParams.event)
+                var urlParts = url.parse(request.url, true);
+                var urlParams = urlParts.query;
+                var urlPath = urlParts.pathname;
+                var body = [];
+                
+                body = Buffer.concat(body).toString();
+
+                response.statusCode = 200;
+                response.setHeader('Content-Type', 'application/json');
+                response.setHeader('Access-Control-Allow-Origin', '*');
+
+                if(urlPath == '/devices' && urlParams.mac)
                 {
-                    var found = false;
-                    
-                    for(var i = 0; i < accessories.length; i++)
+                    if(urlParams.event)
                     {
-                        if(accessories[i].mac === urlParams.mac)
+                        var found = false;
+                        
+                        for(var i = 0; i < accessories.length; i++)
                         {
-                            accessories[i].changeHandler(accessories[i].name, urlParams.event, urlParams.value ? urlParams.value : 0);
-
-                            found = true;
-                        }
-                    }
-
-                    if(!found)
-                    {
-                        logger.log('error', "Es wurde kein passendes Event gefunden! ( " + urlParams.mac + " )");
-                    }
-
-                    response.write(found ? "Success" : "Error");
-                    response.end();
-                }
-                else if(urlParams.value)
-                {
-                    var device = {
-                        mac: urlParams.mac,
-                        value: urlParams.value
-                    };
-
-                    if(urlParams.type)
-                    {
-                        device.type = urlParams.type;
-                    }
-
-                    await updateDevice(device);
-
-                    var found = false;
-                    
-                    for(var i = 0; i < accessories.length; i++)
-                    {
-                        var accessory = accessories[i];
-
-                        if(accessory.mac === urlParams.mac)
-                        {
-                            if(!urlParams.type || accessory.type === urlParams.type)
+                            if(accessories[i].mac === urlParams.mac)
                             {
-                                if(urlParams.value == 'true' || urlParams.value == 'false')
-                                {
-                                    accessory.changeHandler(urlParams.value == 'true');
-                                }
-                                else if(!isNaN(urlParams.value))
-                                {
-                                    accessory.changeHandler(urlParams.value);
-                                }
-                                else
-                                {
-                                    logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
-                                }
+                                accessories[i].changeHandler(accessories[i].name, urlParams.event, urlParams.value ? urlParams.value : 0);
 
                                 found = true;
                             }
                         }
-                    }
 
-                    if(!found)
-                    {
-                        logger.log('error', "Es wurde kein passendes Gerät in HomeKit gefunden! ( " + urlParams.mac + " )");
+                        if(!found)
+                        {
+                            logger.log('error', "Es wurde kein passendes Event gefunden! ( " + urlParams.mac + " )");
+                        }
+
+                        response.write(found ? "Success" : "Error");
+                        response.end();
                     }
+                    else if(urlParams.value)
+                    {
+                        var device = {
+                            mac: urlParams.mac,
+                            value: urlParams.value
+                        };
+
+                        if(urlParams.type)
+                        {
+                            device.type = urlParams.type;
+                        }
+
+                        await updateDevice(device);
+
+                        var found = false;
                         
-                    response.write(found ? "Success" : "Error");
-                    response.end();
+                        for(var i = 0; i < accessories.length; i++)
+                        {
+                            var accessory = accessories[i];
+
+                            if(accessory.mac === urlParams.mac)
+                            {
+                                if(!urlParams.type || accessory.type === urlParams.type)
+                                {
+                                    if(urlParams.value == 'true' || urlParams.value == 'false')
+                                    {
+                                        accessory.changeHandler(urlParams.value == 'true');
+                                    }
+                                    else if(!isNaN(urlParams.value))
+                                    {
+                                        accessory.changeHandler(urlParams.value);
+                                    }
+                                    else
+                                    {
+                                        logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
+                                    }
+
+                                    found = true;
+                                }
+                            }
+                        }
+
+                        if(!found)
+                        {
+                            logger.log('error', "Es wurde kein passendes Gerät in HomeKit gefunden! ( " + urlParams.mac + " )");
+                        }
+                         
+                        response.write(found ? "Success" : "Error");
+                        response.end();
+                    }
+                    else
+                    {
+                        var device = {
+                            mac: urlParams.mac
+                        };
+
+                        if(urlParams.type)
+                        {
+                            device.type = urlParams.type;
+                        }
+
+                        var state = await readDevice(device);
+
+                        if(state == null)
+                        {
+                            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + urlParams.mac + " )");
+                        }
+                        else
+                        {
+                            logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + state + "'");
+                        }
+
+                        response.write(state == null ? "Error" : state.toString());
+                        response.end();
+                    }
                 }
-                else
+                else if(urlPath == '/version')
                 {
-                    var device = {
-                        mac: urlParams.mac
-                    };
+                    var pjson = require('./package.json');
 
-                    if(urlParams.type)
-                    {
-                        device.type = urlParams.type;
-                    }
-
-                    var state = await readDevice(device);
-
-                    if(state == null)
-                    {
-                        logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + urlParams.mac + " )");
-                    }
-                    else
-                    {
-                        logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + state + "'");
-                    }
-
-                    response.write(state == null ? "Error" : state.toString());
+                    response.write(pjson.version);
                     response.end();
                 }
-            }
-            else if(urlPath == '/version')
-            {
-                var pjson = require('./package.json');
+                else if(urlPath == '/update')
+                {
+                    var version = urlParams.version ? urlParams.version : 'latest';
 
-                response.write(pjson.version);
-                response.end();
-            }
-            else if(urlPath == '/update')
-            {
-                var version = urlParams.version ? urlParams.version : 'latest';
-
-                const { exec } = require("child_process");
-                
-                exec("sudo npm install homebridge-syntex-webhooks@" + version + " -g", (error, stdout, stderr) => {
-
-                    if(error || stderr.includes('ERR!'))
-                    {
-                        logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
-                    }
-                    else
-                    {
-                        logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
-                        
-                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => logger.log('warn', "Die Homebridge wird neu gestartet .."));
-                    }
-
-                    response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
-                    response.end();
+                    const { exec } = require("child_process");
                     
-                }).catch(function(e) {
+                    exec("sudo npm install homebridge-syntex-webhooks@" + version + " -g", (error, stdout, stderr) => {
 
-                    logger.err(e);
-                });
+                        if(error || stderr.includes('ERR!'))
+                        {
+                            logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
+                        }
+                        else
+                        {
+                            logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
+                            
+                            exec("sudo systemctl restart homebridge", (error, stdout, stderr) => logger.log('warn', "Die Homebridge wird neu gestartet .."));
+                        }
+
+                        response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
+                        response.end();
+                        
+                    }).catch(function(e) {
+
+                        logger.err(e);
+                    });
+                }
+            }
+            catch(e)
+            {
+                logger.err(e);
             }
             
-        }).catch(function(e) {
-
-            logger.err(e);
         }).bind(this);
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
