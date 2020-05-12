@@ -312,7 +312,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
         if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact")
         {
-            this.service.getCharacteristic(characteristic).updateValue((state == 'true' || false));
+            this.service.getCharacteristic(characteristic).updateValue(state);
         }
         else if(type === "light" || type === "temperature")
         {
