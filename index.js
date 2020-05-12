@@ -883,14 +883,29 @@ function validateUpdate(type, state)
 {
     if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact" || type == "relais")
     {
+        if(state != true && state != false && state != 'true' && state != 'false')
+        {
+            logger.log('error', 'Konvertierungsfehler!');
+        }
+
         return (state == 'true' || state == true ? true : false);
     }
     else if(type === "light" || type === "temperature")
     {
+        if(!isNaN(state))
+        {
+            logger.log('error', 'Konvertierungsfehler!');
+        }
+
         return !isNaN(state) ? parseFloat(state) : 0;
     }
     else if(type === "humidity" || type === "airquality")
     {
+        if(!isNaN(state))
+        {
+            logger.log('error', 'Konvertierungsfehler!');
+        }
+        
         return !isNaN(state) ? parseInt(state) : 0;
     }
     else
