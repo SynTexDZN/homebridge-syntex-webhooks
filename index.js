@@ -339,15 +339,17 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             state = validateUpdate(type, state);
 
             callback(null, state);
-            
-        }).catch(function(e)
-        {
+
+        }).catch(function(e) {
+
             logger.err(e);
+            callback(null);
         });
     }
     catch(e)
     {
         logger.err(e);
+        callback(null);
     }
 };
 
