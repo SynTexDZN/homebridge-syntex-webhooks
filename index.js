@@ -304,7 +304,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
 }
 
-SynTexWebHookSensorAccessory.prototype.getState = async function(callback)
+SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
     var device = {
         mac: this.mac,
@@ -316,7 +316,7 @@ SynTexWebHookSensorAccessory.prototype.getState = async function(callback)
         device.type = this.type
     }
     
-    var test = await readDevice(device).then(function(state) {
+    readDevice(device).then(function(state) {
 
         if(state == null)
         {
@@ -329,18 +329,14 @@ SynTexWebHookSensorAccessory.prototype.getState = async function(callback)
 
         state = validateUpdate(this.type, state);
 
-        return state;
+        callback(null, state);
 
     }.bind(this)).catch(function(e) {
 
         logger.err(e);
 
-        return null;
+        callback(null);
     });
-
-    console.log(test);
-
-    callback(null, test);
 };
 
 SynTexWebHookSensorAccessory.prototype.getServices = function()
