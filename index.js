@@ -857,14 +857,7 @@ async function readDevice(obj)
 {
     return new Promise(resolve => {
         
-        var id = obj.mac;
-    
-        if(obj.type)
-        {
-            id += '-' + obj.type[0].toUpperCase();
-        }
-
-        storage.load(id, (err, device) => {    
+        storage.load(obj.type ? obj.mac + '-' + obj.type[0].toUpperCase() : obj.mac, (err, device) => {    
 
             if(device && !err)
             {    
@@ -886,6 +879,8 @@ function validateUpdate(type, state)
         if(state != true && state != false && state != 'true' && state != 'false')
         {
             logger.log('error', 'Konvertierungsfehler!');
+
+            return null;
         }
 
         return (state == 'true' || state == true ? true : false);
@@ -897,7 +892,7 @@ function validateUpdate(type, state)
             logger.log('error', 'Konvertierungsfehler!');
         }
 
-        return !isNaN(state) ? parseFloat(state) : 0;
+        return !isNaN(state) ? parseFloat(state) : null;
     }
     else if(type === "humidity" || type === "airquality")
     {
@@ -906,7 +901,7 @@ function validateUpdate(type, state)
             logger.log('error', 'Konvertierungsfehler!');
         }
 
-        return !isNaN(state) ? parseInt(state) : 0;
+        return !isNaN(state) ? parseInt(state) : null;
     }
     else
     {
