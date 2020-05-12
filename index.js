@@ -301,127 +301,31 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         characteristic = Characteristic.AirQuality;
     }
     */
-    /*
-    if(this.type === "contact")
+
+    var type = this.type;
+
+    this.changeHandler = (function(state)
     {
-        this.changeHandler = (function(newState)
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
+
+        logger.log('warn', type);
+
+        if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact")
         {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(characteristic).updateValue(newState ? false : true);
-        }).bind(this);
-    }
-    else
-    {*/
-    this.changeHandler = (function(newState)
-    {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-        this.service.getCharacteristic(characteristic).updateValue(newState);
+            this.service.getCharacteristic(characteristic).updateValue((state == 'true' || false));
+        }
+        else if(type === "light" || type === "temperature")
+        {
+            this.service.getCharacteristic(characteristic).updateValue(!isNaN(state) ? parseFloat(state) : 0);
+        }
+        else if(type === "humidity")
+        {
+            this.service.getCharacteristic(characteristic).updateValue(!isNaN(state) ? parseInt(state) : 0);
+        }
     }).bind(this);
     
 
     this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
-
-   /*
-
-    if(this.type === "contact")
-    {
-        this.service = new Service.ContactSensor(this.name);
-        
-        this.changeHandler = (function(newState)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.ContactSensorState).updateValue(newState ? Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
-        }).bind(this);
-        
-        this.service.getCharacteristic(Characteristic.ContactSensorState).on('get', this.getState.bind(this));
-    }
-    else if(this.type === "motion")
-    {
-        this.service = new Service.MotionSensor(this.name);
-        
-        this.changeHandler = (function(newState)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(newState);
-        }).bind(this);
-        
-        this.service.getCharacteristic(Characteristic.MotionDetected).on('get', this.getState.bind(this));
-    }
-    else if(this.type === "temperature")
-    {
-        this.service = new Service.TemperatureSensor(this.name);
-        
-        this.changeHandler = (function(newState)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(parseFloat(newState));
-        }).bind(this);
-        
-        this.service.getCharacteristic(Characteristic.CurrentTemperature).setProps({
-            minValue : -100,
-            maxValue : 140
-        }).on('get', this.getState.bind(this));
-    }
-    else if(this.type === "humidity")
-    {        
-        this.service = new Service.HumiditySensor(this.name);
-        
-        this.changeHandler = (function(newState)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(parseInt(newState));
-        }).bind(this);
-        
-        this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).on('get', this.getState.bind(this));
-    }
-    else if(this.type === "rain")
-    {        
-        this.service = new Service.LeakSensor(this.name);
-        
-        this.changeHandler = (function(newState)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.LeakDetected).updateValue(newState);
-        }).bind(this);
-        
-        this.service.getCharacteristic(Characteristic.LeakDetected).on('get', this.getState.bind(this));
-    }
-    else if(this.type === "light")
-    {
-        this.service = new Service.LightSensor(this.name);
-      
-        this.changeHandler = (function(newState)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(parseFloat(newState));
-        }).bind(this);
-    
-        this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).on('get', this.getState.bind(this));
-    }
-    else if(this.type === "occupancy")
-    {
-        this.service = new Service.OccupancySensor(this.name);
-        
-        this.changeHandler = (function(newState)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(newState);
-        }).bind(this);
-        
-        this.service.getCharacteristic(Characteristic.OccupancyDetected).on('get', this.getState.bind(this));
-    }
-    else if(this.type === "smoke")
-    {
-        this.service = new Service.SmokeSensor(this.name);
-        
-        this.changeHandler = (function(newState)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(Characteristic.SmokeDetected).updateValue(newState);
-        }).bind(this);
-        
-        this.service.getCharacteristic(Characteristic.SmokeDetected).on('get', this.getState.bind(this));
-    }
     /*
     else if(this.type === "airquality")
     {
@@ -469,12 +373,6 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
             {
                 state = (state == 'true' || false);
             }
-            /*
-            else if(type === "contact")
-            {
-                state = (state == 'false' || false);
-            }
-            */
             else if(type === "light" || type === "temperature")
             {
                 state = !isNaN(state) ? parseFloat(state) : 0;
