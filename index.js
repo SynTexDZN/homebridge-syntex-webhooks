@@ -301,7 +301,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         characteristic = Characteristic.AirQuality;
     }
     */
-
+    /*
     if(this.type === "contact")
     {
         this.changeHandler = (function(newState)
@@ -311,13 +311,13 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         }).bind(this);
     }
     else
+    {*/
+    this.changeHandler = (function(newState)
     {
-        this.changeHandler = (function(newState)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(characteristic).updateValue(newState);
-        }).bind(this);
-    }
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+        this.service.getCharacteristic(characteristic).updateValue(newState);
+    }).bind(this);
+    
 
     this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
 
@@ -465,14 +465,16 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
                 logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
             }
 
-            if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy")
+            if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact")
             {
                 state = (state == 'true' || false);
             }
+            /*
             else if(type === "contact")
             {
                 state = (state == 'false' || false);
             }
+            */
             else if(type === "light" || type === "temperature")
             {
                 state = !isNaN(state) ? parseFloat(state) : 0;
