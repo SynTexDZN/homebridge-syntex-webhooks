@@ -309,48 +309,40 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
 }
 
-SynTexWebHookSensorAccessory.prototype.getState = function(callback, reject)
+SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
-    try
+    var device = {
+        mac: this.mac,
+        name: this.name
+    };
+
+    var type = this.type;
+
+    if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
     {
-        var device = {
-            mac: this.mac,
-            name: this.name
-        };
+        device.type = this.type
+    }
     
-        var type = this.type;
-    
-        if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
+    readDevice(device).then(function(state) {
+
+        if(state == null)
         {
-            device.type = this.type
+            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
         }
-        
-        readDevice(device).then(function(state) {
-    
-            if(state == null)
-            {
-                logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
-            }
-            else
-            {
-                logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
-            }
+        else
+        {
+            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+        }
 
-            state = validateUpdate(type, state);
+        state = validateUpdate(type, state);
 
-            callback(null, state);
+        callback(null, state);
 
-        }).catch(function(e) {
+    }).catch(function(e) {
 
-            logger.err(e);
-            reject();
-        });
-    }
-    catch(e)
-    {
         logger.err(e);
-        reject();
-    }
+        callback(null);
+    });
 };
 
 SynTexWebHookSensorAccessory.prototype.getServices = function()
