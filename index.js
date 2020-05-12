@@ -304,7 +304,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
 }
 
-SynTexWebHookSensorAccessory.prototype.getState = function(callback)
+SynTexWebHookSensorAccessory.prototype.getState = async function(callback)
 {        
     var device = {
         mac: this.mac,
