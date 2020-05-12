@@ -311,8 +311,6 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         name: this.name
     };
 
-    var type = this.type;
-
     if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
     {
         device.type = this.type
@@ -335,7 +333,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
         callback(null, state);
 
-    }.bind(this)).catch(function(e) {
+    }).catch(function(e) {
 
         logger.err(e);
 
