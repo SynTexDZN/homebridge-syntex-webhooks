@@ -48,6 +48,8 @@ function setDevice(mac, type, value)
             }
         }
 
+        console.log(devices);
+
         if(!found)
         {
             devices.push({
