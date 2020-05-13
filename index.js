@@ -34,7 +34,7 @@ function SynTexWebHookPlatform(log, sconfig, api)
     
     logger.create("SynTexWebHooks", this.logDirectory, api.user.storagePath());
 
-    DeviceManager.SETUP(logger);
+    DeviceManager.SETUP(logger, this.cacheDirectory);
 
     config = store(api.user.storagePath());
     storage = store(this.cacheDirectory);

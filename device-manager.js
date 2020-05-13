@@ -1,5 +1,5 @@
-var logger, devices = [];
-var storage = require('json-fs-store');
+var logger, storage, devices = [];
+var store = require('json-fs-store');
 
 function getDevice(mac, type)
 {
@@ -118,9 +118,10 @@ function readDevice(obj)
     });
 }
 
-function SETUP(log)
+function SETUP(log, storagePath)
 {
     logger = log;
+    storage = store(storagePath);
 }
 
 module.exports = {
