@@ -13,7 +13,7 @@ function getDevice(mac, type)
             {
                 found = true;
 
-                logger.log('warn', 'LOAD FROM ARRAY ' + mac + ' ' + type + ' ' + value);
+                logger.log('warn', 'LOAD FROM ARRAY ' + mac + ' ' + type + ' ' + devices[i].value);
 
                 resolve(devices[i].value);
             }
@@ -30,7 +30,7 @@ function getDevice(mac, type)
             
             devices.push(device);
 
-            logger.log('warn', 'LOAD FROM FILESYSTEM ' + mac + ' ' + type + ' ' + value);
+            logger.log('warn', 'LOAD FROM FILESYSTEM ' + mac + ' ' + type + ' ' + device.value);
     
             resolve(device.value);
         }
