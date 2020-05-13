@@ -107,7 +107,7 @@ function readDevice(obj)
 
         var id = obj.mac;
 
-        if(type == 'rain' || type == 'light' || type == 'temperature' || type == 'humidity')
+        if(obj.type == 'rain' || obj.type == 'light' || obj.type == 'temperature' || obj.type == 'humidity')
         {
             id += '-' + obj.type[0].toUpperCase()
         }
