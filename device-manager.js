@@ -38,7 +38,7 @@ function setDevice(mac, type, value)
 
         var found = false;
 
-        for(var i = 0; i > devices.length; i++)
+        for(var i = 0; i < devices.length; i++)
         {
             if(devices[i].mac == mac && devices[i].type == type)
             {
