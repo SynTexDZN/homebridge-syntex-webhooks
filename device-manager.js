@@ -26,7 +26,7 @@ function getDevice(mac, type)
                 type: type,
             };
 
-            device.value = await readDevice(device);
+            device.value = await readDevice(mac, type);
             
             devices.push(device);
 
@@ -109,7 +109,7 @@ function readDevice(mac, type)
 
         if(type == 'rain' || type == 'light' || type == 'temperature' || type == 'humidity')
         {
-            id += '-' + type[0].toUpperCase()
+            id += '-' + type[0].toUpperCase();
         }
         
         storage.load(id, (err, device) => {    
