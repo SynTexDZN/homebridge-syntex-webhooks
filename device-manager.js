@@ -19,7 +19,7 @@ function getDevice(mac, type)
 
         if(!found)
         {
-            var value = await readDevice(mac, type);
+            var value = await readFS(mac, type);
             
             devices.push({
                 mac: mac,
@@ -48,8 +48,6 @@ function setDevice(mac, type, value)
             }
         }
 
-        console.log(devices);
-
         if(!found)
         {
             devices.push({
@@ -59,13 +57,13 @@ function setDevice(mac, type, value)
             });
         }
 
-        await updateDevice(mac, type, value);
+        await writeFS(mac, type, value);
 
         resolve();
     });
 }
 
-function updateDevice(mac, type, value)
+function writeFS(mac, type, value)
 {
     return new Promise(resolve => {
         
@@ -92,7 +90,7 @@ function updateDevice(mac, type, value)
     });
 }
 
-function readDevice(mac, type)
+function readFS(mac, type)
 {
     return new Promise(resolve => {
 
