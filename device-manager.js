@@ -71,13 +71,13 @@ function updateDevice(mac, type, value)
         
         var device = {
             id: mac,
-            value: value
+            value: value,
+            type: type
         };
 
         if(type == 'rain' || type == 'light' || type == 'temperature' || type == 'humidity')
         {
             device.id += '-' + type[0].toUpperCase();
-            device.type = type;
         }
 
         storage.add(device, (err) => {
