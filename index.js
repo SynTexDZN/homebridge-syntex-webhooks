@@ -113,18 +113,6 @@ SynTexWebHookPlatform.prototype = {
                     }
                     else if(urlParams.value)
                     {
-                        var device = {
-                            mac: urlParams.mac,
-                            value: urlParams.value
-                        };
-
-                        if(urlParams.type)
-                        {
-                            device.type = urlParams.type;
-                        }
-
-                        await updateDevice(device);
-
                         var found = false;
                         
                         for(var i = 0; i < accessories.length; i++)
@@ -147,6 +135,8 @@ SynTexWebHookPlatform.prototype = {
                                     {
                                         logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
                                     }
+
+                                    await DeviceManager.setDevice(urlParams.mac, urlParams.type, urlParams.value);
 
                                     found = true;
                                 }
@@ -392,7 +382,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
 
     logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + device.value + "' ( " + this.mac + " )");
 
-    updateDevice(device).then(function(state) {
+    DeviceManager.setDevice(this.mac, this.type, powerOn.toString()).then(function(state) {
 
         if(urlToCall != "")
         {
@@ -441,7 +431,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
             callback(null);
         }
 
-    }).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
         logger.err(e);
     });
