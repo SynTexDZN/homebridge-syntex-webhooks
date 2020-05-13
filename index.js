@@ -136,7 +136,7 @@ SynTexWebHookPlatform.prototype = {
                                         logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
                                     }
 
-                                    await DeviceManager.setDevice(urlParams.mac, urlParams.type, urlParams.value);
+                                    DeviceManager.setDevice(urlParams.mac, urlParams.type, urlParams.value);
 
                                     found = true;
                                 }
@@ -382,59 +382,54 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
 
     logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + device.value + "' ( " + this.mac + " )");
 
-    DeviceManager.setDevice(this.mac, this.type, powerOn.toString()).then(function(state) {
+    DeviceManager.setDevice(this.mac, this.type, powerOn.toString());
 
-        if(urlToCall != "")
+    if(urlToCall != "")
+    {
+        var theRequest = {
+            method : urlMethod,
+            url : urlToCall,
+            timeout : 5000,
+            headers: JSON.parse(urlHeaders)
+        };
+        
+        if(urlMethod === "POST" || urlMethod === "PUT")
         {
-            var theRequest = {
-                method : urlMethod,
-                url : urlToCall,
-                timeout : 5000,
-                headers: JSON.parse(urlHeaders)
-            };
-            
-            if(urlMethod === "POST" || urlMethod === "PUT")
+            if(urlForm)
             {
-                if(urlForm)
-                {
-                    //logger.log("Adding Form " + urlForm);
-                    theRequest.form = JSON.parse(urlForm);
-                }
-                else if(urlBody)
-                {
-                    //logger.log("Adding Body " + urlBody);
-                    theRequest.body = urlBody;
-                }
+                //logger.log("Adding Form " + urlForm);
+                theRequest.form = JSON.parse(urlForm);
+            }
+            else if(urlBody)
+            {
+                //logger.log("Adding Body " + urlBody);
+                theRequest.body = urlBody;
+            }
+        }
+
+        request(theRequest, (function(err, response, body)
+        {
+            var statusCode = response && response.statusCode ? response.statusCode : -1;
+            
+            if(!err && statusCode == 200)
+            {
+                logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
+
+                callback(null);
+            }
+            else
+            {
+                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + err);
+
+                callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
             }
 
-            request(theRequest, (function(err, response, body)
-            {
-                var statusCode = response && response.statusCode ? response.statusCode : -1;
-                
-                if(!err && statusCode == 200)
-                {
-                    logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
-
-                    callback(null);
-                }
-                else
-                {
-                    logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + err);
-
-                    callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
-                }
-
-            }).bind(this));
-        }
-        else
-        {
-            callback(null);
-        }
-
-    }.bind(this)).catch(function(e) {
-
-        logger.err(e);
-    });
+        }).bind(this));
+    }
+    else
+    {
+        callback(null);
+    }
 };
 
 SynTexWebHookSwitchAccessory.prototype.getServices = function()

@@ -66,7 +66,7 @@ function setDevice(mac, type, value)
             devices.push(device);
         }
 
-        await updateDevice(device);
+        await updateDevice(mac, type, value);
 
         logger.log('warn', 'SAVED IN FILESYSTEM');
 
@@ -74,26 +74,26 @@ function setDevice(mac, type, value)
     });
 }
 
-function updateDevice(obj)
+function updateDevice(mac, type, value)
 {
     return new Promise(resolve => {
         
         var device = {
-            id: obj.mac,
-            value: obj.value
+            id: mac,
+            value: value
         };
 
-        if(obj.type)
+        if(type == 'rain' || type == 'light' || type == 'temperature' || type == 'humidity')
         {
-            device.id += '-' + obj.type[0].toUpperCase();
-            device.type = obj.type;
+            device.id += '-' + type[0].toUpperCase();
+            device.type = type;
         }
 
         storage.add(device, (err) => {
 
             if(err)
             {
-                logger.log('error', obj.mac + ".json konnte nicht aktualisiert werden! " + err);
+                logger.log('error', mac + ".json konnte nicht aktualisiert werden! " + err);
             }
 
             resolve(err ? false : true);
@@ -101,15 +101,15 @@ function updateDevice(obj)
     });
 }
 
-function readDevice(obj)
+function readDevice(mac, type)
 {
     return new Promise(resolve => {
 
-        var id = obj.mac;
+        var id = mac;
 
-        if(obj.type == 'rain' || obj.type == 'light' || obj.type == 'temperature' || obj.type == 'humidity')
+        if(type == 'rain' || type == 'light' || type == 'temperature' || type == 'humidity')
         {
-            id += '-' + obj.type[0].toUpperCase()
+            id += '-' + type[0].toUpperCase()
         }
         
         storage.load(id, (err, device) => {    
