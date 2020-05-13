@@ -1,4 +1,4 @@
-var devices, logger;
+var logger, devices = [];
 var storage = require('json-fs-store');
 
 function getDevice(mac, type)
