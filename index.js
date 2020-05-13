@@ -721,63 +721,14 @@ function setRGB(url, hue, saturation, brightness)
         
     }).bind(this));
 }
-/*
-function updateDevice(obj)
-{
-    return new Promise(resolve => {
-        
-        var device = {
-            id: obj.mac,
-            value: obj.value
-        };
 
-        if(obj.type)
-        {
-            device.id += '-' + obj.type[0].toUpperCase();
-            device.type = obj.type;
-        }
-
-        storage.add(device, (err) => {
-
-            if(err)
-            {
-                logger.log('error', obj.mac + ".json konnte nicht aktualisiert werden! " + err);
-                resolve(false);
-            }
-            else
-            {
-                resolve(true);
-            }
-        });
-    });
-}
-
-function DeviceManager.getDevice(obj)
-{
-    return new Promise(resolve => {
-        
-        storage.load(obj.type ? obj.mac + '-' + obj.type[0].toUpperCase() : obj.mac, (err, device) => {    
-
-            if(device && !err)
-            {    
-                resolve(device.value);
-            }
-
-            if(err || !device)
-            {
-                resolve(null);
-            }
-        });
-    });
-}
-*/
 function validateUpdate(type, state)
 {
     if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact" || type == "relais")
     {
         if(state != true && state != false && state != 'true' && state != 'false')
         {
-            logger.log('error', 'Konvertierungsfehler!');
+            logger.log('warn', 'Konvertierungsfehler!');
 
             return null;
         }
@@ -788,7 +739,7 @@ function validateUpdate(type, state)
     {
         if(isNaN(state))
         {
-            logger.log('error', 'Konvertierungsfehler!');
+            logger.log('warn', 'Konvertierungsfehler!');
         }
 
         return !isNaN(state) ? parseFloat(state) : null;
@@ -797,7 +748,7 @@ function validateUpdate(type, state)
     {
         if(isNaN(state))
         {
-            logger.log('error', 'Konvertierungsfehler!');
+            logger.log('warn', 'Konvertierungsfehler!');
         }
 
         return !isNaN(state) ? parseInt(state) : null;
