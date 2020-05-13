@@ -13,26 +13,21 @@ function getDevice(mac, type)
             {
                 found = true;
 
-                logger.log('warn', 'LOAD FROM ARRAY ' + mac + ' ' + type + ' ' + devices[i].value);
-
                 resolve(devices[i].value);
             }
         }
 
         if(!found)
         {
-            var device = {
+            var value = await readDevice(mac, type);
+            
+            devices.push({
                 mac: mac,
                 type: type,
-            };
+                value: value
+            });
 
-            device.value = await readDevice(mac, type);
-            
-            devices.push(device);
-
-            logger.log('warn', 'LOAD FROM FILESYSTEM ' + mac + ' ' + type + ' ' + device.value);
-    
-            resolve(device.value);
+            resolve(value);
         }
     });
 }
@@ -53,22 +48,16 @@ function setDevice(mac, type, value)
             }
         }
 
-        var device = {
-            mac: mac,
-            type: type,
-            value: value
-        };
-
         if(!found)
         {
-            logger.log('warn', 'SAVED IN ARRAY');
-
-            devices.push(device);
+            devices.push({
+                mac: mac,
+                type: type,
+                value: value
+            });
         }
 
         await updateDevice(mac, type, value);
-
-        logger.log('warn', 'SAVED IN FILESYSTEM');
 
         resolve();
     });

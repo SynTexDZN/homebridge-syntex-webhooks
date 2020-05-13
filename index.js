@@ -308,8 +308,6 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
     }.bind(this)).catch(function(e) {
 
         logger.err(e);
-
-        callback(null);
     });
 };
 
