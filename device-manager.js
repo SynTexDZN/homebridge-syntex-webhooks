@@ -24,8 +24,9 @@ function getDevice(mac, type)
             var device = {
                 mac: mac,
                 type: type,
-                value: await readDevice(device)
             };
+
+            device.value = await readDevice(device);
             
             devices.push(device);
 
