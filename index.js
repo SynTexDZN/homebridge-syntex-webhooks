@@ -3,6 +3,7 @@ var http = require('http');
 var url = require('url');
 var store = require('json-fs-store');
 var logger = require('./logger');
+var DeviceManager = require('./device-manager');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
@@ -32,6 +33,8 @@ function SynTexWebHookPlatform(log, sconfig, api)
     this.port = sconfig["port"] || 1710;
     
     logger.create("SynTexWebHooks", this.logDirectory, api.user.storagePath());
+
+    DeviceManager.SETUP(logger);
 
     config = store(api.user.storagePath());
     storage = store(this.cacheDirectory);
@@ -160,16 +163,7 @@ SynTexWebHookPlatform.prototype = {
                     }
                     else
                     {
-                        var device = {
-                            mac: urlParams.mac
-                        };
-
-                        if(urlParams.type)
-                        {
-                            device.type = urlParams.type;
-                        }
-
-                        var state = await readDevice(device);
+                        var state = await DeviceManager.getDevice(urlParams.mac, urlParams.type);
 
                         if(state == null)
                         {
@@ -306,25 +300,15 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
-    var device = {
-        mac: this.mac,
-        name: this.name
-    };
-
-    if(this.type == 'rain' || this.type == 'light' || this.type == 'temperature' || this.type == 'humidity')
-    {
-        device.type = this.type
-    }
-    
-    readDevice(device).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.type).then(function(state) {
 
         if(state == null)
         {
-            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
+            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + this.mac + " )");
         }
         else
         {
-            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
         }
 
         state = validateUpdate(this.type, state);
@@ -372,27 +356,22 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
-    var device = {
-        mac: this.mac,
-        name: this.name
-    };
-    
-    readDevice(device).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.type).then(function(state) {
         
         if(state == null)
         {
-            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + device.mac + " )");
+            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + this.mac + " )");
         }
         else
         {
             state = validateUpdate('relais', state);
 
-            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
         }
          
         callback(null, state == null ? false : state);
 
-    }).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
         logger.err(e);
     });
@@ -503,29 +482,22 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
     }
     else
     {
-        var device = {
-            mac: this.mac,
-            name: this.name
-        };
-
-        var parent = this;
-
-        readDevice(device).then(function(state) {
+        DeviceManager.getDevice(this.mac, this.type).then(function(state) {
         
             if(state == null)
             {
-                parent.power = false;
+                this.power = false;
             }
             else
             {
-                parent.power = (state.split(':')[0] == 'true' || false);
+                this.power = (state.split(':')[0] == 'true' || false);
             }
 
-            logger.log('read', "HomeKit Status für '" + device.name + "' ist '" + state + "'");
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
 
-            callback(null, parent.power);
+            callback(null, this.power);
 
-        }).catch(function(e) {
+        }.bind(this)).catch(function(e) {
 
             logger.err(e);
         });
@@ -540,23 +512,16 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
     }
     else
     {
-        var device = {
-            mac: this.mac,
-            name: this.name
-        };
-
-        var parent = this;
-
-        readDevice(device).then(function(res) {
+        DeviceManager.getDevice(this.mac, this.type).then(function(res) {
 
             if(res == null)
             {
-                parent.hue = (res == null) ? 0 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0);
+                this.hue = (res == null) ? 0 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0);
             }
              
-            callback(null, parent.hue);
+            callback(null, this.hue);
 
-        }).catch(function(e) {
+        }.bind(this)).catch(function(e) {
 
             logger.err(e);
         });
@@ -571,19 +536,12 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
     }
     else
     {
-        var device = {
-            mac: this.mac,
-            name: this.name
-        };
+        DeviceManager.getDevice(this.mac, this.type).then(function(res) {
 
-        var parent = this;
+            this.saturation = (res == null) ? 100 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[1] || 100);
+            callback(null, this.saturation);
 
-        readDevice(device).then(function(res) {
-
-            parent.saturation = (res == null) ? 100 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[1] || 100);
-            callback(null, parent.saturation);
-
-        }).catch(function(e) {
+        }.bind(this)).catch(function(e) {
 
             logger.err(e);
         });
@@ -598,19 +556,12 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
     }
     else
     {
-        var device = {
-            mac: this.mac,
-            name: this.name
-        };
-        
-        var parent = this;
+        DeviceManager.getDevice(this.mac, this.type).then(function(res) {
 
-        readDevice(device).then(function(res) {
+            this.brightness = (res == null) ? 50 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[2] || 50);
+            callback(null, this.brightness);
 
-            parent.brightness = (res == null) ? 50 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[2] || 50);
-            callback(null, parent.brightness);
-
-        }).catch(function(e) {
+        }.bind(this)).catch(function(e) {
 
             logger.err(e);
         });
@@ -787,7 +738,7 @@ function setRGB(url, hue, saturation, brightness)
         
     }).bind(this));
 }
-
+/*
 function updateDevice(obj)
 {
     return new Promise(resolve => {
@@ -818,7 +769,7 @@ function updateDevice(obj)
     });
 }
 
-function readDevice(obj)
+function DeviceManager.getDevice(obj)
 {
     return new Promise(resolve => {
         
@@ -836,7 +787,7 @@ function readDevice(obj)
         });
     });
 }
-
+*/
 function validateUpdate(type, state)
 {
     if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact" || type == "relais")
