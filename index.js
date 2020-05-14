@@ -286,7 +286,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
             logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
             this.service.getCharacteristic(characteristic).updateValue(state);
         }
-        
+
     }).bind(this);
     
     this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
@@ -300,12 +300,10 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + this.mac + " )");
         }
-        else
+        else if(state = validateUpdate(this.type, state) != null)
         {
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
         }
-
-        state = validateUpdate(this.type, state);
 
         callback(null, state);
 
@@ -354,14 +352,12 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         {
             logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + this.mac + " )");
         }
-        else
+        else if(state = validateUpdate(this.type, state) != null)
         {
-            state = validateUpdate('relais', state);
-
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
         }
          
-        callback(null, state == null ? false : state);
+        callback(null, state);
 
     }.bind(this)).catch(function(e) {
 
