@@ -13,7 +13,7 @@ logger.create = function(pluginName, logDirectory, config)
 
 logger.log = function(level, message)
 {
-    var levels = ['success', 'update', 'read', 'info', 'warn', 'error'];
+    var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
 
     if(levels.indexOf(level) >= levels.indexOf(logger.debugLevel))
     {
@@ -44,6 +44,10 @@ logger.log = function(level, message)
         {
             color = '\x1b[93m';
         }
+        else if(level == 'debug')
+        {
+            color = '\x1b[35m';
+        }
         else
         {
             color = '\x1b[31m';
@@ -65,76 +69,68 @@ logger.err = function(error)
 
 logger.find = function(pluginName, date, param)
 {
-    return new Promise(resolve => {
+    return new Promise(async function(resolve) {
 
-        getLogPath(pluginName).then(function(res) {
+        var logPath = await getLogPath(pluginName);
 
-            if(res != null)
-            {
-                store(res).load(date, (err, obj) => {    
+        if(logPath != null)
+        {
+            store(logPath).load(date, (err, obj) => {    
 
-                    if(obj && !err)
-                    {    
-                        var logs = [];
+                var logs = [];
 
-                        for(var i = 1; i < obj.logs.length + 1; i++)
-                        {
-                            if(obj.logs[obj.logs.length - i].includes(param))
-                            {
-                                logs[logs.length] = obj.logs[obj.logs.length - i];
-                            }
-                        }
-        
-                        if(logs[0] != null)
-                        {
-                            resolve(logs);
-                        }
-                        else
-                        {
-                            resolve(null);
-                        }
-                    }
-        
-                    if(err || !obj)
+                if(obj && !err)
+                {    
+                    for(var i = 1; i < obj.logs.length + 1; i++)
                     {
-                        resolve(null);
+                        if(obj.logs[obj.logs.length - i].includes(param))
+                        {
+                            logs[logs.length] = obj.logs[obj.logs.length - i];
+                        }
                     }
-                });
-            }
-            else
-            {
-                resolve(null);
-            }
-        });
+                }
+
+                if(logs[0] != null)
+                {
+                    resolve(logs);
+                }
+                else
+                {
+                    resolve(null);
+                }
+            });
+        }
+        else
+        {
+            resolve(null);
+        }
     });
 }
 
 logger.load = function(pluginName, date)
 {
-    return new Promise(resolve => {
+    return new Promise(async function(resolve) {
         
-        getLogPath(pluginName).then(function(res) {
+        var logPath = await getLogPath(pluginName);
 
-            if(res != null)
-            {
-                store(res).load(date, (err, obj) => {    
+        if(logPath != null)
+        {
+            store(logPath).load(date, (err, obj) => {    
 
-                    if(obj && !err)
-                    {    
-                        resolve(obj);
-                    }
-        
-                    if(err || !obj)
-                    {
-                        resolve(null);
-                    }
-                });
-            }
-            else
-            {
-                resolve(null);
-            }
-        });
+                if(obj && !err)
+                {    
+                    resolve(obj);
+                }
+                else
+                {
+                    resolve(null);
+                }
+            });
+        }
+        else
+        {
+            resolve(null);
+        }
     });
 }
 
@@ -153,14 +149,9 @@ async function getLogPath(pluginName)
                         resolve(obj.platforms[i].log_directory);
                     }
                 }
-
-                resolve(null);
             }
 
-            if(err || !obj)
-            {
-                resolve(null);
-            }
+            resolve(null);
         });
     });
 }
@@ -211,8 +202,7 @@ function saveLog(log)
                     }
                 });
             }
-
-            if(err || !device)
+            else
             {
                 var entry = {
                     id: date,
