@@ -281,7 +281,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
     this.changeHandler = (function(state)
     {
-        if((state = validateUpdate(this.type, state)) != null)
+        if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
             logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
             this.service.getCharacteristic(characteristic).updateValue(state);
@@ -300,7 +300,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + this.mac + " )");
         }
-        else if((state = validateUpdate(this.type, state)) != null)
+        else if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
         }
@@ -352,7 +352,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         {
             logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + this.mac + " )");
         }
-        else if((state = validateUpdate(this.type, state)) != null)
+        else if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
         }
@@ -715,13 +715,13 @@ function setRGB(url, hue, saturation, brightness)
     }).bind(this));
 }
 
-function validateUpdate(type, state)
+function validateUpdate(mac, type, state)
 {
     if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact" || type == "relais")
     {
         if(state != true && state != false && state != 'true' && state != 'false')
         {
-            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine boolsche Variable");
+            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine boolsche Variable! ( " + mac + " )");
 
             return null;
         }
@@ -732,7 +732,7 @@ function validateUpdate(type, state)
     {
         if(isNaN(state))
         {
-            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable");
+            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable! ( " + mac + " )");
         }
 
         return !isNaN(state) ? parseFloat(state) : null;
@@ -741,7 +741,7 @@ function validateUpdate(type, state)
     {
         if(isNaN(state))
         {
-            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable");
+            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable! ( " + mac + " )");
         }
 
         return !isNaN(state) ? parseInt(state) : null;
