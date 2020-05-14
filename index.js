@@ -281,8 +281,12 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
     this.changeHandler = (function(state)
     {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
-        this.service.getCharacteristic(characteristic).updateValue(validateUpdate(this.type, state));
+        if(state = validateUpdate(this.type, state) != null)
+        {
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
+            this.service.getCharacteristic(characteristic).updateValue(state);
+        }
+        
     }).bind(this);
     
     this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
@@ -728,7 +732,7 @@ function validateUpdate(type, state)
     {
         if(state != true && state != false && state != 'true' && state != 'false')
         {
-            logger.log('warn', 'Konvertierungsfehler!');
+            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine boolsche Variable");
 
             return null;
         }
@@ -739,7 +743,7 @@ function validateUpdate(type, state)
     {
         if(isNaN(state))
         {
-            logger.log('warn', 'Konvertierungsfehler!');
+            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable");
         }
 
         return !isNaN(state) ? parseFloat(state) : null;
@@ -748,7 +752,7 @@ function validateUpdate(type, state)
     {
         if(isNaN(state))
         {
-            logger.log('warn', 'Konvertierungsfehler!');
+            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable");
         }
 
         return !isNaN(state) ? parseInt(state) : null;
