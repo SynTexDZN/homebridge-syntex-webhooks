@@ -466,15 +466,8 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
     else
     {
         DeviceManager.getDevice(this.mac, this.type).then(function(state) {
-        
-            if(state == null)
-            {
-                this.power = false;
-            }
-            else
-            {
-                this.power = (state.split(':')[0] == 'true' || false);
-            }
+
+            this.power = state == null ? false : (state.split(':')[0] == 'true' || false);
 
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
 
@@ -495,11 +488,11 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
     }
     else
     {
-        DeviceManager.getDevice(this.mac, this.type).then(function(res) {
+        DeviceManager.getDevice(this.mac, this.type).then(function(state) {
 
-            if(res == null)
+            if(state == null)
             {
-                this.hue = (res == null) ? 0 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[0] || 0);
+                this.hue = (state == null) ? 0 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[0] || 0);
             }
              
             callback(null, this.hue);
@@ -519,9 +512,9 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
     }
     else
     {
-        DeviceManager.getDevice(this.mac, this.type).then(function(res) {
+        DeviceManager.getDevice(this.mac, this.type).then(function(state) {
 
-            this.saturation = (res == null) ? 100 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[1] || 100);
+            this.saturation = (state == null) ? 100 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[1] || 100);
             callback(null, this.saturation);
 
         }.bind(this)).catch(function(e) {
@@ -539,9 +532,9 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
     }
     else
     {
-        DeviceManager.getDevice(this.mac, this.type).then(function(res) {
+        DeviceManager.getDevice(this.mac, this.type).then(function(state) {
 
-            this.brightness = (res == null) ? 50 : (getHSL(res.split(':')[1], res.split(':')[2], res.split(':')[3])[2] || 50);
+            this.brightness = (state == null) ? 50 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[2] || 50);
             callback(null, this.brightness);
 
         }.bind(this)).catch(function(e) {
