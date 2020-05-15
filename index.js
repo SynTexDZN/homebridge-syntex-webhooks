@@ -321,7 +321,7 @@ SynTexWebHookSensorAccessory.prototype.getServices = function()
 function SynTexWebHookSwitchAccessory(switchConfig)
 {
     this.mac = switchConfig["mac"];
-    this.type = 'relais';
+    this.type = switchConfig["type"];
     this.name = switchConfig["name"];
     this.onURL = switchConfig["on_url"] || "";
     this.onMethod = switchConfig["on_method"] || "GET";
@@ -372,13 +372,8 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
     var urlBody = powerOn ? this.onBody : this.offBody;
     var urlForm = powerOn ? this.onForm : this.offForm;
     var urlHeaders = powerOn ? this.onHeaders : this.offHeaders;
-    
-    var device = {
-        mac: this.mac,
-        value: powerOn.toString()
-    };
 
-    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + device.value + "' ( " + this.mac + " )");
+    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + " )");
 
     DeviceManager.setDevice(this.mac, this.type, powerOn.toString());
 
@@ -717,7 +712,7 @@ function setRGB(url, hue, saturation, brightness)
 
 function validateUpdate(mac, type, state)
 {
-    if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact" || type == "relais")
+    if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact" || type == "switch" || type == "relais")
     {
         if(state != true && state != false && state != 'true' && state != 'false')
         {
