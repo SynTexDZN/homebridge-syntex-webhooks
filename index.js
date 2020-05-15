@@ -321,7 +321,7 @@ SynTexWebHookSensorAccessory.prototype.getServices = function()
 function SynTexWebHookSwitchAccessory(switchConfig)
 {
     this.mac = switchConfig["mac"];
-    this.type = switchConfig["type"];
+    this.type = 'relais';
     this.name = switchConfig["name"];
     this.onURL = switchConfig["on_url"] || "";
     this.onMethod = switchConfig["on_method"] || "GET";
