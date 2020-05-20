@@ -89,79 +89,71 @@ SynTexWebHookPlatform.prototype = {
 
                 if(urlPath == '/devices' && urlParams.mac)
                 {
-                    if(urlParams.event)
-                    {
-                        var found = false;
+                    var accessory = null;
                         
-                        for(var i = 0; i < accessories.length; i++)
+                    for(var i = 0; i < accessories.length; i++)
+                    {
+                        if(accessories[i].mac === urlParams.mac)
                         {
-                            if(accessories[i].mac === urlParams.mac)
+                            if(!urlParams.type || accessories[i].type === urlParams.type)
                             {
-                                accessories[i].changeHandler(accessories[i].name, urlParams.event, urlParams.value ? urlParams.value : 0);
-
-                                found = true;
+                                accessory = accessories[i];
                             }
                         }
+                    }
 
-                        if(!found)
+                    if(urlParams.event)
+                    {
+                        if(accessory != null)
+                        {
+                            accessories[i].changeHandler(accessories[i].name, urlParams.event, urlParams.value ? urlParams.value : 0);
+                        }
+                        else
                         {
                             logger.log('error', "Es wurde kein passendes Event gefunden! ( " + urlParams.mac + " )");
                         }
 
-                        response.write(found ? "Success" : "Error");
+                        response.write(accessory != null ? "Success" : "Error");
                         response.end();
                     }
                     else if(urlParams.value)
                     {
-                        var found = false;
-                        
-                        for(var i = 0; i < accessories.length; i++)
+                        if(accessory != null)
                         {
-                            var accessory = accessories[i];
-
-                            if(accessory.mac === urlParams.mac)
+                            if(urlParams.value == 'true' || urlParams.value == 'false')
                             {
-                                if(!urlParams.type || accessory.type === urlParams.type)
-                                {
-                                    if(urlParams.value == 'true' || urlParams.value == 'false')
-                                    {
-                                        accessory.changeHandler(urlParams.value == 'true');
-                                    }
-                                    else if(!isNaN(urlParams.value))
-                                    {
-                                        accessory.changeHandler(urlParams.value);
-                                    }
-                                    else
-                                    {
-                                        logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
-                                    }
-
-                                    DeviceManager.setDevice(urlParams.mac, accessory.type, urlParams.value);
-
-                                    found = true;
-                                }
+                                accessory.changeHandler(urlParams.value == 'true');
                             }
-                        }
+                            else if(!isNaN(urlParams.value))
+                            {
+                                accessory.changeHandler(urlParams.value);
+                            }
+                            else
+                            {
+                                logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
+                            }
 
-                        if(!found)
+                            DeviceManager.setDevice(urlParams.mac, accessory.type, urlParams.value);
+                        }
+                        else
                         {
                             logger.log('error', "Es wurde kein passendes Gerät in HomeKit gefunden! ( " + urlParams.mac + " )");
                         }
                          
-                        response.write(found ? "Success" : "Error");
+                        response.write(accessory != null ? "Success" : "Error");
                         response.end();
                     }
                     else
                     {
                         var state = await DeviceManager.getDevice(urlParams.mac, urlParams.type);
 
-                        if(state == null)
+                        if(state != null && accessory != null)
                         {
-                            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + urlParams.mac + " )");
+                            logger.log('read', "HomeKit Status für '" + accessory.name + "' ist '" + state + "' ( " + urlParams.mac + " )");
                         }
                         else
                         {
-                            logger.log('read', "HomeKit Status für '" + urlParams.mac + "' ist '" + state + "'");
+                            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + urlParams.mac + " )");
                         }
 
                         response.write(state == null ? "Error" : state.toString());
@@ -302,7 +294,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         }
         else if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
         }
 
         callback(null, state);
@@ -354,7 +346,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         }
         else if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
         }
          
         callback(null, state);
@@ -464,7 +456,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 
             this.power = state == null ? false : (state.split(':')[0] == 'true' || false);
 
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "'");
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
 
             callback(null, this.power);
 
@@ -599,7 +591,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         {
             if(i == event)
             {
-               logger.log('success', "'" + buttonName + "': Event " + i + " wurde ausgeführt! ( " + (value == 1 ? "An" : "Aus") + " )");
+               logger.log('success', "'" + buttonName + "': Event " + i + " wurde ausgeführt! ( " + this.mac + " )");
                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
             }
         }
