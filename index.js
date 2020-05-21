@@ -271,11 +271,8 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
     this.changeHandler = (function(state)
     {
-        if((state = validateUpdate(this.mac, this.type, state)) != null)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
-            this.service.getCharacteristic(characteristic).updateValue(state);
-        }
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
+        this.service.getCharacteristic(characteristic).updateValue(state);
 
     }).bind(this);
     
