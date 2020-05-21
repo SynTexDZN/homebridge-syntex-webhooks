@@ -106,7 +106,7 @@ SynTexWebHookPlatform.prototype = {
                     {
                         if(accessory != null)
                         {
-                            accessories[i].changeHandler(accessories[i].name, urlParams.event, urlParams.value ? urlParams.value : 0);
+                            accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
                         }
                         else
                         {
@@ -120,13 +120,11 @@ SynTexWebHookPlatform.prototype = {
                     {
                         if(accessory != null)
                         {
-                            if(urlParams.value == 'true' || urlParams.value == 'false')
+                            var state = null;
+
+                            if((state = validateUpdate(urlParams.mac, accessory.type, urlParams.value)) != null)
                             {
-                                accessory.changeHandler(urlParams.value == 'true');
-                            }
-                            else if(!isNaN(urlParams.value))
-                            {
-                                accessory.changeHandler(urlParams.value);
+                                accessory.changeHandler(state);
                             }
                             else
                             {
