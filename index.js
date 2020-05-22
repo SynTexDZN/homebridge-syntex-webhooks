@@ -199,7 +199,7 @@ SynTexWebHookPlatform.prototype = {
     }
 }
 
-async function SynTexWebHookSensorAccessory(sensorConfig)
+function SynTexWebHookSensorAccessory(sensorConfig)
 {
     this.mac = sensorConfig["mac"];
     this.name = sensorConfig["name"];
@@ -208,7 +208,7 @@ async function SynTexWebHookSensorAccessory(sensorConfig)
     DeviceManager.getDevice(this).then(function(state) {
 
         this.value = validateUpdate(this.mac, this.type, state);
-        
+
     }.bind(this));
 
     var characteristic;
