@@ -217,10 +217,10 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     {
         if(sensors[i].type == this.type)
         {
+            var characteristic = sensors[i].characteristic;
+            
             this.service = sensors[i].service;
             this.service.getCharacteristic(sensors[i].characteristic).on('get', this.getState.bind(this));
-
-            var characteristic = sensors[i].characteristic;
 
             this.changeHandler = (function(state)
             {
