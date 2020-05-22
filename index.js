@@ -102,50 +102,40 @@ SynTexWebHookPlatform.prototype = {
                         }
                     }
 
-                    if(urlParams.event)
+                    if(accessory == null)
                     {
-                        if(accessory != null)
-                        {
-                            accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
-                        }
-                        else
-                        {
-                            logger.log('error', "Es wurde kein passendes Event gefunden! ( " + urlParams.mac + " )");
-                        }
+                        logger.log('error', "Es wurde kein passendes " + (urlParams.event ? 'Event' : 'Gerät') + " in der Config gefunden! ( " + urlParams.mac + " )");
 
-                        response.write(accessory != null ? "Success" : "Error");
-                        response.end();
+                        response.write("Error");
+                    }
+                    else if(urlParams.event)
+                    {
+                        accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
+
+                        response.write("Success");
                     }
                     else if(urlParams.value)
                     {
-                        if(accessory != null)
+                        var state = null;
+
+                        if((state = validateUpdate(urlParams.mac, accessory.type, urlParams.value)) != null)
                         {
-                            var state = null;
-
-                            if((state = validateUpdate(urlParams.mac, accessory.type, urlParams.value)) != null)
-                            {
-                                accessory.changeHandler(state);
-                            }
-                            else
-                            {
-                                logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
-                            }
-
-                            DeviceManager.setDevice(urlParams.mac, accessory.type, urlParams.value);
+                            accessory.changeHandler(state);
                         }
                         else
                         {
-                            logger.log('error', "Es wurde kein passendes Gerät in HomeKit gefunden! ( " + urlParams.mac + " )");
+                            logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
                         }
+
+                        DeviceManager.setDevice(urlParams.mac, accessory.type, urlParams.value);
                          
-                        response.write(accessory != null ? "Success" : "Error");
-                        response.end();
+                        response.write(state != null ? "Success" : "Error");
                     }
                     else
                     {
                         var state = await DeviceManager.getDevice(urlParams.mac, urlParams.type);
 
-                        if(state != null && accessory != null)
+                        if(state != null)
                         {
                             logger.log('read', "HomeKit Status für '" + accessory.name + "' ist '" + state + "' ( " + urlParams.mac + " )");
                         }
@@ -154,15 +144,14 @@ SynTexWebHookPlatform.prototype = {
                             logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + urlParams.mac + " )");
                         }
 
-                        response.write(state == null ? "Error" : state.toString());
-                        response.end();
+                        response.write(state != null ? state.toString() : "Error");
                     }
+
+                    response.end();
                 }
                 else if(urlPath == '/version')
                 {
-                    var pjson = require('./package.json');
-
-                    response.write(pjson.version);
+                    response.write(require('./package.json').version);
                     response.end();
                 }
                 else if(urlPath == '/update')
