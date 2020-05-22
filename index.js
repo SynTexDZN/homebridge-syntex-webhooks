@@ -191,7 +191,7 @@ SynTexWebHookPlatform.prototype = {
 
 function SynTexWebHookSensorAccessory(sensorConfig)
 {
-    var sensors;
+    var sensors = [];
 
     this.mac = sensorConfig["mac"];
     this.name = sensorConfig["name"];
