@@ -1,4 +1,4 @@
-var logger, storage, devices;
+var logger, storage, accessories;
 var store = require('json-fs-store');
 
 function getDevice(accessory)
@@ -7,19 +7,21 @@ function getDevice(accessory)
 
         var found = false;
 
-        for(var i = 0; i < devices.length; i++)
+        for(var i = 0; i < accessories.length; i++)
         {
-            if(devices[i].value && devices[i].mac == accessory.mac && devices[i].type == accessory.type)
+            if(accessories[i].mac == accessory.mac && accessories[i].type == accessory.type)
             {
                 found = true;
 
-                resolve(devices[i].value);
+                resolve(accessories[i].value);
             }
         }
 
         if(!found)
         {
             accessory.value = await readFS(accessory.mac, accessory.type);
+
+            accessories.push(accessory);
 
             resolve(accessory.value);
         }
@@ -34,11 +36,11 @@ function setDevice(mac, type, value)
 
         var found = false;
 
-        for(var i = 0; i < devices.length; i++)
+        for(var i = 0; i < accessories.length; i++)
         {
-            if(devices[i].mac == mac && devices[i].type == type)
+            if(accessories[i].mac == mac && accessories[i].type == type)
             {
-                devices[i].value = value;
+                accessories[i].value = value;
 
                 found = true;
             }
@@ -46,7 +48,7 @@ function setDevice(mac, type, value)
 
         if(!found)
         {
-            devices.push({
+            accessories.push({
                 mac: mac,
                 type: type,
                 value: value
@@ -104,11 +106,10 @@ function readFS(mac, type)
     });
 }
 
-function SETUP(log, storagePath, accessories)
+function SETUP(log, storagePath)
 {
     logger = log;
     storage = store(storagePath);
-    devices = accessories;
 }
 
 module.exports = {
