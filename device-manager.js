@@ -5,8 +5,6 @@ function getDevice(accessory)
 {
     return new Promise(async function(resolve) {
 
-        console.log(accessory.mac);
-
         var found = false;
 
         for(var i = 0; i < devices.length; i++)
@@ -21,15 +19,9 @@ function getDevice(accessory)
 
         if(!found)
         {
-            var value = await readFS(accessory.mac, accessory.type);
-            
-            devices.push({
-                mac: accessory.mac,
-                type: accessory.type,
-                value: value
-            });
+            accessory.value = await readFS(accessory.mac, accessory.type);
 
-            resolve(value);
+            resolve(accessory.value);
         }
     });
 }
@@ -110,10 +102,11 @@ function readFS(mac, type)
     });
 }
 
-function SETUP(log, storagePath)
+function SETUP(log, storagePath, accessories)
 {
     logger = log;
     storage = store(storagePath);
+    devices = accessories;
 }
 
 module.exports = {

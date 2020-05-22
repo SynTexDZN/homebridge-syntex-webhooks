@@ -34,8 +34,6 @@ function SynTexWebHookPlatform(log, sconfig, api)
     
     logger.create("SynTexWebHooks", this.logDirectory, api.user.storagePath());
 
-    DeviceManager.SETUP(logger, this.cacheDirectory);
-
     config = store(api.user.storagePath());
     storage = store(this.cacheDirectory);
 }
@@ -70,6 +68,8 @@ SynTexWebHookPlatform.prototype = {
             accessories.push(StatelessSwitch);
         }
         
+        DeviceManager.SETUP(logger, this.cacheDirectory, accessories);
+
         callback(accessories);
         
         var createServerCallback = (async function(request, response)
