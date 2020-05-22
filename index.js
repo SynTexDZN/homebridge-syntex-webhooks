@@ -192,7 +192,7 @@ SynTexWebHookPlatform.prototype = {
 function SynTexWebHookSensorAccessory(sensorConfig)
 {
     var characteristic;
-    
+
     this.mac = sensorConfig["mac"];
     this.name = sensorConfig["name"];
     this.type = sensorConfig["type"];
@@ -292,7 +292,6 @@ SynTexWebHookSensorAccessory.prototype.getServices = function()
 
 function SynTexWebHookSwitchAccessory(switchConfig)
 {
-    this.service = new Service.Switch(this.name);
     this.mac = switchConfig["mac"];
     this.type = switchConfig["type"];
     this.name = switchConfig["name"];
@@ -306,6 +305,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.offBody = switchConfig["off_body"] || "";
     this.offForm = switchConfig["off_form"] || "";
     this.offHeaders = switchConfig["off_headers"] || "{}";
+    this.service = new Service.Switch(this.name);
 
     DeviceManager.getDevice(this).then(function(state) {
 
@@ -410,11 +410,11 @@ SynTexWebHookSwitchAccessory.prototype.getServices = function()
 
 function SynTexWebHookStripeRGBAccessory(lightConfig)
 {
-    this.service = new Service.Lightbulb(this.name);
     this.mac = lightConfig["mac"];
     this.type = lightConfig["type"];
     this.name = lightConfig["name"];
     this.url = lightConfig["url"];
+    this.service = new Service.Lightbulb(this.name);
 
     DeviceManager.getDevice(this).then(function(state) {
 
