@@ -219,15 +219,15 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         {
             this.service = sensors[i].service;
             this.service.getCharacteristic(sensors[i].characteristic).on('get', this.getState.bind(this));
+
+            this.changeHandler = (function(state)
+            {
+                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
+                this.service.getCharacteristic(sensors[i].characteristic).updateValue(state);
+
+            }).bind(this);
         }
     }
-
-    this.changeHandler = (function(state)
-    {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
-        this.service.getCharacteristic(characteristic).updateValue(state);
-
-    }).bind(this);
 
     if(this.type === "temperature")
     {
