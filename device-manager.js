@@ -1,4 +1,4 @@
-var logger, storage, accessories;
+var logger, storage, accessories = [];
 var store = require('json-fs-store');
 
 function getDevice(accessory)
