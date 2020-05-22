@@ -88,14 +88,12 @@ function readFS(mac, type)
 {
     return new Promise(resolve => {
 
-        var id = mac;
-
         if(type == 'rain' || type == 'light' || type == 'temperature' || type == 'humidity')
         {
-            id += '-' + type[0].toUpperCase();
+            mac += '-' + type[0].toUpperCase();
         }
         
-        storage.load(id, (err, device) => {    
+        storage.load(mac, (err, device) => {    
 
             resolve(device && !err ? device.value : null);
         });

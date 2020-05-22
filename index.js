@@ -1,7 +1,6 @@
 var request = require('request');
 var http = require('http');
 var url = require('url');
-var store = require('json-fs-store');
 var logger = require('./logger');
 var DeviceManager = require('./device-manager');
 var Service, Characteristic;
@@ -18,9 +17,6 @@ module.exports = function(homebridge)
     homebridge.registerAccessory("homebridge-syntex-webhooks", "SynTexWebHookStatelessSwitch", SynTexWebHookStatelessSwitchAccessory);
 };
 
-var config;
-var storage;
-
 function SynTexWebHookPlatform(log, sconfig, api)
 {
     this.sensors = sconfig["sensors"] || [];
@@ -35,9 +31,6 @@ function SynTexWebHookPlatform(log, sconfig, api)
     logger.create("SynTexWebHooks", this.logDirectory, api.user.storagePath());
 
     DeviceManager.SETUP(logger, this.cacheDirectory);
-
-    config = store(api.user.storagePath());
-    storage = store(this.cacheDirectory);
 }
 
 SynTexWebHookPlatform.prototype = {
@@ -46,25 +39,25 @@ SynTexWebHookPlatform.prototype = {
     {
         var accessories = [];
         
-        for (var i = 0; i < this.sensors.length; i++)
+        for(var i = 0; i < this.sensors.length; i++)
         {
             var Sensor = new SynTexWebHookSensorAccessory(this.sensors[i]);
             accessories.push(Sensor);
         }
         
-        for (var i = 0; i < this.switches.length; i++)
+        for(var i = 0; i < this.switches.length; i++)
         {
             var Switch = new SynTexWebHookSwitchAccessory(this.switches[i]);
             accessories.push(Switch);
         }
 
-        for (var i = 0; i < this.lights.length; i++)
+        for(var i = 0; i < this.lights.length; i++)
         {
             var Light = new SynTexWebHookStripeRGBAccessory(this.lights[i]);
             accessories.push(Light);
         }
 
-        for (var i = 0; i < this.statelessSwitches.length; i++)
+        for(var i = 0; i < this.statelessSwitches.length; i++)
         {
             var StatelessSwitch = new SynTexWebHookStatelessSwitchAccessory(this.statelessSwitches[i]);
             accessories.push(StatelessSwitch);
@@ -93,12 +86,9 @@ SynTexWebHookPlatform.prototype = {
                         
                     for(var i = 0; i < accessories.length; i++)
                     {
-                        if(accessories[i].mac === urlParams.mac)
+                        if(accessories[i].mac === urlParams.mac && (!urlParams.type || accessories[i].type === urlParams.type))
                         {
-                            if(!urlParams.type || accessories[i].type === urlParams.type)
-                            {
-                                accessory = accessories[i];
-                            }
+                            accessory = accessories[i];
                         }
                     }
 
@@ -201,16 +191,6 @@ SynTexWebHookPlatform.prototype = {
 
 function SynTexWebHookSensorAccessory(sensorConfig)
 {
-    this.mac = sensorConfig["mac"];
-    this.name = sensorConfig["name"];
-    this.type = sensorConfig["type"];
-
-    DeviceManager.getDevice(this).then(function(state) {
-
-        this.value = validateUpdate(this.mac, this.type, state);
-
-    }.bind(this));
-
     var characteristic;
 
     if(this.type === "contact")
@@ -263,6 +243,16 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         this.service = new Service.AirQualitySensor(this.name);
         characteristic = Characteristic.AirQuality;
     }
+    
+    this.mac = sensorConfig["mac"];
+    this.name = sensorConfig["name"];
+    this.type = sensorConfig["type"];
+
+    DeviceManager.getDevice(this).then(function(state) {
+
+        this.value = validateUpdate(this.mac, this.type, state);
+
+    }.bind(this));
 
     this.changeHandler = (function(state)
     {
@@ -302,6 +292,7 @@ SynTexWebHookSensorAccessory.prototype.getServices = function()
 
 function SynTexWebHookSwitchAccessory(switchConfig)
 {
+    this.service = new Service.Switch(this.name);
     this.mac = switchConfig["mac"];
     this.type = switchConfig["type"];
     this.name = switchConfig["name"];
@@ -322,11 +313,10 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 
     }.bind(this));
 
-    this.service = new Service.Switch(this.name);
-    
     this.changeHandler = (function(newState)
     {
         this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+
     }).bind(this);
     
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
@@ -400,7 +390,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
             }
             else
             {
-                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + err);
+                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
 
                 callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
             }
@@ -420,19 +410,17 @@ SynTexWebHookSwitchAccessory.prototype.getServices = function()
 
 function SynTexWebHookStripeRGBAccessory(lightConfig)
 {
+    this.service = new Service.Lightbulb(this.name);
     this.mac = lightConfig["mac"];
     this.type = lightConfig["type"];
     this.name = lightConfig["name"];
     this.url = lightConfig["url"];
-    this.urlMethod = lightConfig["url_method"];
 
     DeviceManager.getDevice(this).then(function(state) {
 
         this.value = validateUpdate(this.mac, this.type, state);
 
     }.bind(this));
-
-    this.service = new Service.Lightbulb(this.name);
 
     this.changeHandler = (function(newState)
     {
@@ -450,7 +438,14 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 {
     DeviceManager.getDevice(this).then(function(state) {
 
-        logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
+        if(state == null)
+        {
+            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + this.mac + " )");
+        }
+        else
+        {
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
+        }
 
         callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
 
@@ -464,7 +459,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
     DeviceManager.getDevice(this).then(function(state) {
 
-        callback(null, (state == null) ? 0 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[0] || 0));
+        callback(null, (state == null) ? 0 : (getHSL(state)[0] || 0));
 
     }.bind(this)).catch(function(e) {
 
@@ -476,7 +471,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 {
     DeviceManager.getDevice(this).then(function(state) {
 
-        callback(null, (state == null) ? 100 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[1] || 100));
+        callback(null, (state == null) ? 100 : (getHSL(state)[1] || 100));
 
     }.bind(this)).catch(function(e) {
 
@@ -488,7 +483,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 {
     DeviceManager.getDevice(this).then(function(state) {
 
-        callback(null, (state == null) ? 50 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[2] || 50));
+        callback(null, (state == null) ? 50 : (getHSL(state)[2] || 50));
 
     }.bind(this)).catch(function(e) {
 
@@ -557,6 +552,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
             if(i == event)
             {
                logger.log('success', "'" + buttonName + "': Event " + i + " wurde ausgeführt! ( " + this.mac + " )");
+
                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
             }
         }
@@ -569,9 +565,9 @@ SynTexWebHookStatelessSwitchAccessory.prototype.getServices = function()
     return this.service;
 };
 
-function getHSL(r, g, b)
+function getHSL(state)
 {
-    r /= 255, g /= 255, b /= 255;
+    var r = state.split(':')[1] / 255, g = state.split(':')[2] / 255, b = state.split(':')[3] / 255;
 
     let cmin = Math.min(r,g,b),
         cmax = Math.max(r,g,b),
@@ -661,7 +657,7 @@ function setRGB(accessory)
         }
         else
         {
-            logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + err);
+            logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
         }
         
     }).bind(this));
