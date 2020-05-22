@@ -5,6 +5,9 @@ function getDevice(mac, type)
 {
     return new Promise(async function(resolve) {
 
+        console.log(this);
+        console.log(this.mac);
+
         var found = false;
 
         for(var i = 0; i < devices.length; i++)
