@@ -204,7 +204,12 @@ async function SynTexWebHookSensorAccessory(sensorConfig)
     this.mac = sensorConfig["mac"];
     this.name = sensorConfig["name"];
     this.type = sensorConfig["type"];
-    this.value = await DeviceManager.getDevice(this);
+
+    DeviceManager.getDevice(this).then(function(state) {
+
+        this.value = validateUpdate(this.mac, this.type, state);
+        
+    }.bind(this));
 
     var characteristic;
 

@@ -24,7 +24,7 @@ function getDevice(accessory)
             resolve(accessory.value);
         }
 
-        console.log(found, accessory.value, accessory);
+        console.log(found, accessory.value);
     });
 }
 
