@@ -191,68 +191,36 @@ SynTexWebHookPlatform.prototype = {
 
 function SynTexWebHookSensorAccessory(sensorConfig)
 {
-    var characteristic;
+    var sensors;
 
     this.mac = sensorConfig["mac"];
     this.name = sensorConfig["name"];
     this.type = sensorConfig["type"];
 
-    if(this.type === "contact")
-    {
-        this.service = new Service.ContactSensor(this.name);
-        characteristic = Characteristic.ContactSensorState;
-    }
-    else if(this.type === "motion")
-    {
-        this.service = new Service.MotionSensor(this.name);
-        characteristic = Characteristic.MotionDetected;
-    }
-    else if(this.type === "temperature")
-    {
-        this.service = new Service.TemperatureSensor(this.name);
-        characteristic = Characteristic.CurrentTemperature;
-        
-        this.service.getCharacteristic(Characteristic.CurrentTemperature).setProps({
-            minValue : -100,
-            maxValue : 140
-        }).on('get', this.getState.bind(this));
-    }
-    else if(this.type === "humidity")
-    {        
-        this.service = new Service.HumiditySensor(this.name);
-        characteristic = Characteristic.CurrentRelativeHumidity;
-    }
-    else if(this.type === "rain")
-    {        
-        this.service = new Service.LeakSensor(this.name);
-        characteristic = Characteristic.LeakDetected;
-    }
-    else if(this.type === "light")
-    {
-        this.service = new Service.LightSensor(this.name);
-        characteristic = Characteristic.CurrentAmbientLightLevel;
-    }
-    else if(this.type === "occupancy")
-    {
-        this.service = new Service.OccupancySensor(this.name);
-        characteristic = Characteristic.OccupancyDetected;
-    }
-    else if(this.type === "smoke")
-    {
-        this.service = new Service.SmokeSensor(this.name);
-        characteristic = Characteristic.SmokeDetected;
-    }
-    else if(this.type === "airquality")
-    {
-        this.service = new Service.AirQualitySensor(this.name);
-        characteristic = Characteristic.AirQuality;
-    }
-    
     DeviceManager.getDevice(this).then(function(state) {
 
         this.value = validateUpdate(this.mac, this.type, state);
 
     }.bind(this));
+
+    sensors.push({type : 'contact', service : new Service.ContactSensor(this.name), characteristic : Characteristic.ContactSensorState});
+    sensors.push({type : 'motion', service : new Service.MotionSensor(this.name), characteristic : Characteristic.MotionDetected});
+    sensors.push({type : 'temperature', service : new Service.TemperatureSensor(this.name), characteristic : Characteristic.CurrentTemperature});
+    sensors.push({type : 'humidity', service : new Service.HumiditySensor(this.name), characteristic : Characteristic.CurrentRelativeHumidity});
+    sensors.push({type : 'rain', service : new Service.LeakSensor(this.name), characteristic : Characteristic.LeakDetected});
+    sensors.push({type : 'light', service : new Service.LightSensor(this.name), characteristic : Characteristic.CurrentAmbientLightLevel});
+    sensors.push({type : 'occupancy', service : new Service.OccupancySensor(this.name), characteristic : Characteristic.OccupancyDetected});
+    sensors.push({type : 'smoke', service : new Service.SmokeSensor(this.name), characteristic : Characteristic.SmokeDetected});
+    sensors.push({type : 'airquality', service : new Service.AirQualitySensor(this.name), characteristic : Characteristic.AirQuality});
+
+    for(var i = 0; i < sensors.length; i++)
+    {
+        if(sensors[i].type == this.type)
+        {
+            this.service = sensors[i].service;
+            this.service.getCharacteristic(sensors[i].characteristic).on('get', this.getState.bind(this));
+        }
+    }
 
     this.changeHandler = (function(state)
     {
@@ -260,8 +228,14 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         this.service.getCharacteristic(characteristic).updateValue(state);
 
     }).bind(this);
-    
-    this.service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
+
+    if(this.type === "temperature")
+    {
+        this.service.getCharacteristic(Characteristic.CurrentTemperature).setProps({
+            minValue : -100,
+            maxValue : 140
+        }).on('get', this.getState.bind(this));
+    }
 }
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
