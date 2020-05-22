@@ -9,7 +9,7 @@ function getDevice(accessory)
 
         for(var i = 0; i < devices.length; i++)
         {
-            if(devices[i].mac == accessory.mac && devices[i].type == accessory.type)
+            if(devices[i].value && devices[i].mac == accessory.mac && devices[i].type == accessory.type)
             {
                 found = true;
 
