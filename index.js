@@ -437,7 +437,7 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.changeHandler = (function(newState)
     {
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-        /* this.service.getCharacteristic(Characteristic.On).updateValue(newState); */
+        
     }).bind(this);
 
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
@@ -498,25 +498,29 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
 {
-    setRGB(this.url, this.hue, this.saturation, powerOn ? this.brightness : 0);
+    this.power = powerOn;
+    setRGB(this);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
 {
-    setRGB(this.url, level, this.saturation, this.brightness);
+    this.hue = level;
+    setRGB(this);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
 {
-    setRGB(this.url, this.hue, level, this.brightness);
+    this.saturation = level;
+    setRGB(this);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
 {
-    setRGB(this.url, this.hue, this.saturation, level);
+    this.brightness = level;
+    setRGB(this);
     callback(null);
 };
 
@@ -602,7 +606,7 @@ function getHSL(r, g, b)
 
 function setRGB(accessory)
 {
-    var h = accessory.hue, s = accessory.saturation * 2, l = accessory.brightness / 4;
+    var h = accessory.hue, s = accessory.saturation * 2, l = accessory.powerOn ? accessory.brightness / 4 : 0;
     var r = 0, g = 0, b = 0;
 
     s /= 100;
