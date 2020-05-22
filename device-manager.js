@@ -1,12 +1,12 @@
 var logger, storage, devices = [];
 var store = require('json-fs-store');
 
-function getDevice(mac, type)
+function getDevice(mac, type, t)
 {
     return new Promise(async function(resolve) {
 
-        console.log(this);
-        console.log(this.mac);
+        console.log(t);
+        console.log(t.mac);
 
         var found = false;
 
