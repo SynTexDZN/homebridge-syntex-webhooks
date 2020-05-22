@@ -127,7 +127,7 @@ SynTexWebHookPlatform.prototype = {
                             logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
                         }
 
-                        DeviceManager.setDevice(urlParams.mac, accessory.type, urlParams.value);
+                        DeviceManager.setDevice(accessory, urlParams.value);
                          
                         response.write(state != null ? "Success" : "Error");
                     }
@@ -316,6 +316,12 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.offForm = switchConfig["off_form"] || "";
     this.offHeaders = switchConfig["off_headers"] || "{}";
 
+    DeviceManager.getDevice(this).then(function(state) {
+
+        this.value = validateUpdate(this.mac, this.type, state);
+
+    }.bind(this));
+
     this.service = new Service.Switch(this.name);
     
     this.changeHandler = (function(newState)
@@ -357,7 +363,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
 
     logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + " )");
 
-    DeviceManager.setDevice(this.mac, this.type, powerOn.toString());
+    DeviceManager.setDevice(this, powerOn.toString());
 
     if(urlToCall != "")
     {
@@ -420,6 +426,12 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.url = lightConfig["url"];
     this.urlMethod = lightConfig["url_method"];
 
+    DeviceManager.getDevice(this).then(function(state) {
+
+        this.value = validateUpdate(this.mac, this.type, state);
+
+    }.bind(this));
+
     this.service = new Service.Lightbulb(this.name);
 
     this.changeHandler = (function(newState)
@@ -436,116 +448,75 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 {
-    if(this.power)
-    {
-        callback(null, this.power);
-    }
-    else
-    {
-        DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice(this).then(function(state) {
 
-            this.power = state == null ? false : (state.split(':')[0] == 'true' || false);
+        logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
 
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
+        callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
 
-            callback(null, this.power);
+    }.bind(this)).catch(function(e) {
 
-        }.bind(this)).catch(function(e) {
-
-            logger.err(e);
-        });
-    }
+        logger.err(e);
+    });
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
-    if(this.hue)
-    {
-        callback(null, this.hue);
-    }
-    else
-    {
-        DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice(this).then(function(state) {
 
-            if(state == null)
-            {
-                this.hue = (state == null) ? 0 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[0] || 0);
-            }
-             
-            callback(null, this.hue);
+        callback(null, (state == null) ? 0 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[0] || 0));
 
-        }.bind(this)).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
-            logger.err(e);
-        });
-    }
+        logger.err(e);
+    });
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 {
-    if(this.saturation)
-    {
-        callback(null, this.saturation);
-    }
-    else
-    {
-        DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice(this).then(function(state) {
 
-            this.saturation = (state == null) ? 100 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[1] || 100);
-            callback(null, this.saturation);
+        callback(null, (state == null) ? 100 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[1] || 100));
 
-        }.bind(this)).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
-            logger.err(e);
-        });
-    }
+        logger.err(e);
+    });
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 {
-    if(this.brightness)
-    {
-        callback(null, this.brightness);
-    }
-    else
-    {
-        DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice(this).then(function(state) {
 
-            this.brightness = (state == null) ? 50 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[2] || 50);
-            callback(null, this.brightness);
+        callback(null, (state == null) ? 50 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[2] || 50));
 
-        }.bind(this)).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
-            logger.err(e);
-        });
-    }
+        logger.err(e);
+    });
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
 {
-    this.power = powerOn;
     setRGB(this.url, this.hue, this.saturation, powerOn ? this.brightness : 0);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
 {
-    this.hue = level;
-    setRGB(this.url, this.hue, this.saturation, this.brightness);
+    setRGB(this.url, level, this.saturation, this.brightness);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
 {
-    this.saturation = level;
-    setRGB(this.url, this.hue, this.saturation, this.brightness);
+    setRGB(this.url, this.hue, level, this.brightness);
     callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
 {
-    this.brightness = level;
-    setRGB(this.url, this.hue, this.saturation, this.brightness);
+    setRGB(this.url, this.hue, this.saturation, level);
     callback(null);
 };
 
@@ -629,9 +600,9 @@ function getHSL(r, g, b)
     return [h, s, l];
 }
 
-function setRGB(url, hue, saturation, brightness)
+function setRGB(accessory)
 {
-    var h = hue, s = saturation * 2, l = brightness / 4;
+    var h = accessory.hue, s = accessory.saturation * 2, l = accessory.brightness / 4;
     var r = 0, g = 0, b = 0;
 
     s /= 100;
@@ -672,7 +643,7 @@ function setRGB(url, hue, saturation, brightness)
 
     var theRequest = {
         method : "GET",
-        url : url + "?r=" + r + "&g=" + g + "&b=" + b,
+        url : accessory.url + "?r=" + r + "&g=" + g + "&b=" + b,
         timeout : 10000
     };
 
