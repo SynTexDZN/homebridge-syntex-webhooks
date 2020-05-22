@@ -192,6 +192,10 @@ SynTexWebHookPlatform.prototype = {
 function SynTexWebHookSensorAccessory(sensorConfig)
 {
     var characteristic;
+    
+    this.mac = sensorConfig["mac"];
+    this.name = sensorConfig["name"];
+    this.type = sensorConfig["type"];
 
     if(this.type === "contact")
     {
@@ -244,10 +248,6 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         characteristic = Characteristic.AirQuality;
     }
     
-    this.mac = sensorConfig["mac"];
-    this.name = sensorConfig["name"];
-    this.type = sensorConfig["type"];
-
     DeviceManager.getDevice(this).then(function(state) {
 
         this.value = validateUpdate(this.mac, this.type, state);
