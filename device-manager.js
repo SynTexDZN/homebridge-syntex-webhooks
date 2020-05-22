@@ -1,18 +1,17 @@
 var logger, storage, devices = [];
 var store = require('json-fs-store');
 
-function getDevice(mac, type, t)
+function getDevice(accessory)
 {
     return new Promise(async function(resolve) {
 
-        console.log(t);
-        console.log(t.mac);
+        console.log(accessory.mac);
 
         var found = false;
 
         for(var i = 0; i < devices.length; i++)
         {
-            if(devices[i].mac == mac && devices[i].type == type)
+            if(devices[i].mac == accessory.mac && devices[i].type == accessory.type)
             {
                 found = true;
 
@@ -22,11 +21,11 @@ function getDevice(mac, type, t)
 
         if(!found)
         {
-            var value = await readFS(mac, type);
+            var value = await readFS(accessory.mac, accessory.type);
             
             devices.push({
-                mac: mac,
-                type: type,
+                mac: accessory.mac,
+                type: accessory.type,
                 value: value
             });
 

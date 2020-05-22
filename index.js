@@ -133,7 +133,7 @@ SynTexWebHookPlatform.prototype = {
                     }
                     else
                     {
-                        var state = await DeviceManager.getDevice(urlParams.mac, urlParams.type);
+                        var state = await DeviceManager.getDevice(accessory);
 
                         if(state != null)
                         {
@@ -270,7 +270,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
-    DeviceManager.getDevice(this.mac, this.type, this).then(function(state) {
+    DeviceManager.getDevice(this).then(function(state) {
 
         if(state == null)
         {
@@ -322,7 +322,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
-    DeviceManager.getDevice(this.mac, this.type).then(function(state) {
+    DeviceManager.getDevice(this).then(function(state) {
         
         if(state == null)
         {
@@ -436,7 +436,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
     }
     else
     {
-        DeviceManager.getDevice(this.mac, this.type).then(function(state) {
+        DeviceManager.getDevice(this).then(function(state) {
 
             this.power = state == null ? false : (state.split(':')[0] == 'true' || false);
 
@@ -459,7 +459,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
     }
     else
     {
-        DeviceManager.getDevice(this.mac, this.type).then(function(state) {
+        DeviceManager.getDevice(this).then(function(state) {
 
             if(state == null)
             {
@@ -483,7 +483,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
     }
     else
     {
-        DeviceManager.getDevice(this.mac, this.type).then(function(state) {
+        DeviceManager.getDevice(this).then(function(state) {
 
             this.saturation = (state == null) ? 100 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[1] || 100);
             callback(null, this.saturation);
@@ -503,7 +503,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
     }
     else
     {
-        DeviceManager.getDevice(this.mac, this.type).then(function(state) {
+        DeviceManager.getDevice(this).then(function(state) {
 
             this.brightness = (state == null) ? 50 : (getHSL(state.split(':')[1], state.split(':')[2], state.split(':')[3])[2] || 50);
             callback(null, this.brightness);
