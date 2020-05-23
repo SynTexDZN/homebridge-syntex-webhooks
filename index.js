@@ -420,6 +420,11 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
     logger.log('debug', this);
     logger.log('debug', this.service.getCharacteristic(Characteristic.Hue));
+
+    this.service.getCharacteristic(Characteristic.On).value = true;
+    this.service.getCharacteristic(Characteristic.Hue).value = 15;
+    this.service.getCharacteristic(Characteristic.Saturation).value = 100;
+    this.service.getCharacteristic(Characteristic.Brightness).value = 50;
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
