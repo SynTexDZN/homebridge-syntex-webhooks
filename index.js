@@ -392,16 +392,18 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
     DeviceManager.getDevice(this).then(function(state) {
 
+        logger.log('debug', state);
+
         this.value = validateUpdate(this.mac, this.type, state);
         this.power = state.split(':')[0];
         this.hue = getHSL(state)[0] || 0;
         this.saturation = getHSL(state)[1] || 100;
         this.brightness = getHSL(state)[2] || 50;
 
-        logger.log('debug', this.value)
-        logger.log('debug', this.power)
-        logger.log('debug', this.hue)
-        logger.log('debug', this.saturation)
+        logger.log('debug', this.value);
+        logger.log('debug', this.power);
+        logger.log('debug', this.hue);
+        logger.log('debug', this.saturation);
         logger.log('debug', this.brightness);
 
         this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
