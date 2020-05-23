@@ -393,6 +393,10 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     DeviceManager.getDevice(this).then(function(state) {
 
         this.value = validateUpdate(this.mac, this.type, state);
+        this.power = state.split(':')[0];
+        this.hue = state.split(':')[1];
+        this.saturation = state.split(':')[2];
+        this.brightness = state.split(':')[3];
 
     }.bind(this));
 
@@ -576,7 +580,7 @@ function getHSL(state)
 
 function setRGB(accessory)
 {
-    var h = accessory.hue || accessory.value.split(':')[1], s = accessory.saturation * 2 || accessory.value.split(':')[2] * 2, l = accessory.brightness / 4 || (accessory.value.split(':')[0] == 'true' ? accessory.value.split(':')[3] / 4 : 0);
+    var h = accessory.hue, s = accessory.saturation * 2, l = accessory.power ? accessory.brightness / 4 : 0);
     var r = 0, g = 0, b = 0;
 
     logger.log('debug', accessory.value);
