@@ -578,14 +578,14 @@ function getHSL(state)
 
 function setRGB(accessory)
 {
-    var h = accessory.hue, s = accessory.saturation * 2, l = accessory.powerOn ? accessory.brightness / 4 : 0;
+    var h = accessory.value.split(':')[1], s = accessory.value.split(':')[2] * 2, l = accessory.value.split(':')[0] == 'true' ? accessory.value.split(':')[3] / 4 : 0;
     var r = 0, g = 0, b = 0;
 
-    logger.log('debug', accessory.powerOn);
+    logger.log('debug', accessory.value);
+    logger.log('debug', accessory.power);
     logger.log('debug', accessory.hue);
     logger.log('debug', accessory.saturation);
     logger.log('debug', accessory.brightness);
-    logger.log('debug', accessory.hue);
 
     s /= 100;
     l /= 100;
