@@ -390,6 +390,17 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.url = lightConfig["url"];
     this.service = new Service.Lightbulb(this.name);
     
+    this.changeHandler = (function(newState)
+    {
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+        
+    }).bind(this);
+
+    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
+    this.service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
+    this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
+
     DeviceManager.getDevice(this).then(function(state) {
 
         logger.log('debug', state);
@@ -405,20 +416,6 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
         this.service.getCharacteristic(Characteristic.Saturation).value = getHSL(state)[1] || 100;
         this.service.getCharacteristic(Characteristic.Brightness).value = getHSL(state)[2] || 50;
     }.bind(this));
-    
-    this.changeHandler = (function(newState)
-    {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
-        
-    }).bind(this);
-
-    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
-    this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
-    this.service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
-    this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
-
-    logger.log('debug', this);
-    logger.log('debug', this.service.getCharacteristic(Characteristic.Hue));
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
