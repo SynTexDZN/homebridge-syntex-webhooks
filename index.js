@@ -410,11 +410,12 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
         this.hue = getHSL(state)[0] || 0;
         this.saturation = getHSL(state)[1] || 100;
         this.brightness = getHSL(state)[2] || 50;
-        */
+        
         this.service.getCharacteristic(Characteristic.On).value = state.split(':')[0];
         this.service.getCharacteristic(Characteristic.Hue).value = getHSL(state)[0] || 0;
         this.service.getCharacteristic(Characteristic.Saturation).value = getHSL(state)[1] || 100;
-        this.service.getCharacteristic(Characteristic.Brightness).value = getHSL(state)[2] || 50;
+        this.service.getCharacteristic(Characteristic.Brightness).value = getHSL(state)[2] || 50;*/
+        this.service.getCharacteristic(Characteristic.On).value = true;
     }.bind(this));
 }
 
