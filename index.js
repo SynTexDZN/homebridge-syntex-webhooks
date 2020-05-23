@@ -329,8 +329,6 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
 
     logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + " )");
 
-    //DeviceManager.setDevice(this, powerOn.toString() + ':' + this.value.split(':')[1] + ':' + this.value.split(':')[2] + ':' + this.value.split(':')[3]);
-
     if(urlToCall != "")
     {
         var theRequest = {
@@ -622,6 +620,8 @@ function setRGB(accessory)
     r = Math.round((r + m) * 255);
     g = Math.round((g + m) * 255);
     b = Math.round((b + m) * 255);
+
+    DeviceManager.setDevice(this, accessory.value.split(':')[0] + ':' + accessory.value.split(':')[1] + ':' + accessory.value.split(':')[2] + ':' + accessory.value.split(':')[3]);
 
     var theRequest = {
         method : "GET",
