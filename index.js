@@ -621,7 +621,7 @@ function setRGB(accessory)
     g = Math.round((g + m) * 255);
     b = Math.round((b + m) * 255);
 
-    DeviceManager.setDevice(this, accessory.value.split(':')[0] + ':' + accessory.value.split(':')[1] + ':' + accessory.value.split(':')[2] + ':' + accessory.value.split(':')[3]);
+    DeviceManager.setDevice(this, accessory.power || accessory.value.split(':')[0] + ':' + r + ':' + g + ':' + b);
 
     var theRequest = {
         method : "GET",
