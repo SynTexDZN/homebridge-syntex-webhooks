@@ -581,7 +581,11 @@ function setRGB(accessory)
     var h = accessory.hue, s = accessory.saturation * 2, l = accessory.powerOn ? accessory.brightness / 4 : 0;
     var r = 0, g = 0, b = 0;
 
-    logger.log('debug', accessory);
+    logger.log('debug', accessory.powerOn);
+    logger.log('debug', accessory.hue);
+    logger.log('debug', accessory.saturation);
+    logger.log('debug', accessory.brightness);
+    logger.log('debug', accessory.hue);
 
     s /= 100;
     l /= 100;
