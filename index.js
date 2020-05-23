@@ -218,7 +218,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         if(sensors[i].type == this.type)
         {
             var characteristic = sensors[i].characteristic;
-            
+
             this.service = sensors[i].service;
             this.service.getCharacteristic(sensors[i].characteristic).on('get', this.getState.bind(this));
 
@@ -329,7 +329,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
 
     logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + " )");
 
-    DeviceManager.setDevice(this, powerOn.toString());
+    DeviceManager.setDevice(this, powerOn.toString() + ':' + this.value.split(':')[1] + ':' + this.value.split(':')[2] + ':' + this.value.split(':')[3]);
 
     if(urlToCall != "")
     {
