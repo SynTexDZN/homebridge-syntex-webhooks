@@ -415,7 +415,8 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
         this.service.getCharacteristic(Characteristic.Hue).value = getHSL(state)[0] || 0;
         this.service.getCharacteristic(Characteristic.Saturation).value = getHSL(state)[1] || 100;
         this.service.getCharacteristic(Characteristic.Brightness).value = getHSL(state)[2] || 50;*/
-        this.service.getCharacteristic(Characteristic.On).value = true;
+        //this.service.getCharacteristic(Characteristic.On).value = true;
+        this.service.getCharacteristic(Characteristic.Hue).value = 210;
     }.bind(this));
 }
 
