@@ -622,26 +622,36 @@ function setRGB(accessory)
     g = Math.round((g + m) * 255);
     b = Math.round((b + m) * 255);
 
-    var theRequest = {
-        method : "GET",
-        url : accessory.url + "?r=" + r + "&g=" + g + "&b=" + b,
-        timeout : 10000
-    };
+    lightRequest(accessory, r, g, b);
+}
 
-    request(theRequest, (function(err, response, body)
-    {
-        var statusCode = response && response.statusCode ? response.statusCode : -1;
+function lightRequest(accessory, r, g, b)
+{
+    return new Promise(resolve => {
 
-        if(!err && statusCode == 200)
+        var theRequest = {
+            method : "GET",
+            url : accessory.url + "?r=" + r + "&g=" + g + "&b=" + b,
+            timeout : 10000
+        };
+
+        request(theRequest, (function(err, response, body)
         {
-            logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
-        }
-        else
-        {
-            logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
-        }
-        
-    }));
+            var statusCode = response && response.statusCode ? response.statusCode : -1;
+
+            if(!err && statusCode == 200)
+            {
+                logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
+            }
+            else
+            {
+                logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
+            }
+
+            resolve();
+            
+        }));
+    });
 }
 
 function validateUpdate(mac, type, state)
