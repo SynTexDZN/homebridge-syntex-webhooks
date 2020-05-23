@@ -580,9 +580,9 @@ function setRGB(accessory)
     var r = 0, g = 0, b = 0;
 
     logger.log('debug', accessory.value);
-    logger.log('debug', h);
-    logger.log('debug', s);
-    logger.log('debug', l);
+    logger.log('debug', 'hue ' + h);
+    logger.log('debug', 'saturation ' + s);
+    logger.log('debug', 'brightness ' + l);
 
     s /= 100;
     l /= 100;
@@ -620,9 +620,9 @@ function setRGB(accessory)
     g = Math.round((g + m) * 255);
     b = Math.round((b + m) * 255);
 
-    logger.log('debug', r);
-    logger.log('debug', g);
-    logger.log('debug', b);
+    logger.log('debug', 'r ' + r);
+    logger.log('debug', 'g ' + g);
+    logger.log('debug', 'b ' + b);
 
     DeviceManager.setDevice(this, accessory.power || accessory.value.split(':')[0] + ':' + r + ':' + g + ':' + b);
 
