@@ -472,32 +472,32 @@ SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback,
 {
     logger.log('debug', 'setState');
     this.power = powerOn;
-    setRGB(this);
     callback(null);
+    setRGB(this);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
 {
     logger.log('debug', 'setHue');
     this.hue = level;
-    setRGB(this);
     callback(null);
+    setRGB(this);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
 {
     logger.log('debug', 'setSaturation');
     this.saturation = level;
-    //setRGB(this);
     callback(null);
+    setRGB(this);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
 {
     logger.log('debug', 'setBrightness');
     this.brightness = level;
-    //setRGB(this);
     callback(null);
+    setRGB(this);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
