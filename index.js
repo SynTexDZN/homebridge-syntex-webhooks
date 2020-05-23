@@ -41,26 +41,22 @@ SynTexWebHookPlatform.prototype = {
         
         for(var i = 0; i < this.sensors.length; i++)
         {
-            var Sensor = new SynTexWebHookSensorAccessory(this.sensors[i]);
-            accessories.push(Sensor);
+            accessories.push(new SynTexWebHookSensorAccessory(this.sensors[i]));
         }
         
         for(var i = 0; i < this.switches.length; i++)
         {
-            var Switch = new SynTexWebHookSwitchAccessory(this.switches[i]);
-            accessories.push(Switch);
+            accessories.push(new SynTexWebHookSwitchAccessory(this.switches[i]));
         }
 
         for(var i = 0; i < this.lights.length; i++)
         {
-            var Light = new SynTexWebHookStripeRGBAccessory(this.lights[i]);
-            accessories.push(Light);
+            accessories.push(new SynTexWebHookStripeRGBAccessory(this.lights[i]));
         }
 
         for(var i = 0; i < this.statelessSwitches.length; i++)
         {
-            var StatelessSwitch = new SynTexWebHookStatelessSwitchAccessory(this.statelessSwitches[i]);
-            accessories.push(StatelessSwitch);
+            accessories.push(new SynTexWebHookStatelessSwitchAccessory(this.statelessSwitches[i]));
         }
         
         callback(accessories);
@@ -281,6 +277,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.offBody = switchConfig["off_body"] || "";
     this.offForm = switchConfig["off_form"] || "";
     this.offHeaders = switchConfig["off_headers"] || "{}";
+
     this.service = new Service.Switch(this.name);
 
     DeviceManager.getDevice(this).then(function(state) {
@@ -388,7 +385,17 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.type = lightConfig["type"];
     this.name = lightConfig["name"];
     this.url = lightConfig["url"];
+
     this.service = new Service.Lightbulb(this.name);
+
+    DeviceManager.getDevice(this).then(function(state) {
+
+        this.power = state.split(':')[0] == 'true';
+        this.hue = getHSL(state)[0] || 0;
+        this.saturation = getHSL(state)[1] || 100;
+        this.brightness = getHSL(state)[2] || 50;
+
+    }.bind(this));
     
     this.changeHandler = (function(newState)
     {
@@ -400,15 +407,6 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
     this.service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
     this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
-
-    DeviceManager.getDevice(this).then(function(state) {
-
-        this.power = state.split(':')[0] == 'true';
-        this.hue = getHSL(state)[0] || 0;
-        this.saturation = getHSL(state)[1] || 100;
-        this.brightness = getHSL(state)[2] || 50;
-
-    }.bind(this));
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
@@ -470,7 +468,6 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
 {
-    logger.log('debug', 'setState');
     this.power = powerOn;
     setRGB(this);
     callback(null);
@@ -478,7 +475,6 @@ SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback,
 
 SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
 {
-    logger.log('debug', 'setHue');
     this.hue = level;
     setRGB(this);
     callback(null);
@@ -486,7 +482,6 @@ SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
 {
-    logger.log('debug', 'setSaturation');
     this.saturation = level;
     setRGB(this);
     callback(null);
@@ -494,7 +489,6 @@ SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callba
 
 SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
 {
-    logger.log('debug', 'setBrightness');
     this.brightness = level;
     setRGB(this);
     callback(null);
@@ -622,36 +616,26 @@ function setRGB(accessory)
     g = Math.round((g + m) * 255);
     b = Math.round((b + m) * 255);
 
-    lightRequest(accessory, r, g, b);
-}
+    var theRequest = {
+        method : "GET",
+        url : accessory.url + "?r=" + r + "&g=" + g + "&b=" + b,
+        timeout : 10000
+    };
 
-function lightRequest(accessory, r, g, b)
-{
-    return new Promise(resolve => {
+    request(theRequest, (function(err, response, body)
+    {
+        var statusCode = response && response.statusCode ? response.statusCode : -1;
 
-        var theRequest = {
-            method : "GET",
-            url : accessory.url + "?r=" + r + "&g=" + g + "&b=" + b,
-            timeout : 10000
-        };
-
-        request(theRequest, (function(err, response, body)
+        if(!err && statusCode == 200)
         {
-            var statusCode = response && response.statusCode ? response.statusCode : -1;
-
-            if(!err && statusCode == 200)
-            {
-                logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
-            }
-            else
-            {
-                logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
-            }
-
-            resolve();
-            
-        }));
-    });
+            logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
+        }
+        else
+        {
+            logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
+        }
+        
+    }));
 }
 
 function validateUpdate(mac, type, state)
