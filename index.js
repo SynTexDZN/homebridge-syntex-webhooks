@@ -394,9 +394,9 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
         this.value = validateUpdate(this.mac, this.type, state);
         this.power = state.split(':')[0];
-        this.hue = state.split(':')[1];
-        this.saturation = state.split(':')[2];
-        this.brightness = state.split(':')[3];
+        this.hue = getHSL(state)[0] || 0;
+        this.saturation = getHSL(state)[1] || 100;
+        this.brightness = getHSL(state)[2] || 50;
 
     }.bind(this));
 
@@ -628,7 +628,7 @@ function setRGB(accessory)
     logger.log('debug', 'g ' + g);
     logger.log('debug', 'b ' + b);
 
-    DeviceManager.setDevice(this, accessory.power || accessory.value.split(':')[0] + ':' + r + ':' + g + ':' + b);
+    //DeviceManager.setDevice(accessory, accessory.power + ':' + r + ':' + g + ':' + b);
 
     var theRequest = {
         method : "GET",
