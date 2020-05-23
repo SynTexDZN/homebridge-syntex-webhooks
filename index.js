@@ -389,24 +389,23 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.name = lightConfig["name"];
     this.url = lightConfig["url"];
     this.service = new Service.Lightbulb(this.name);
-    /*
+    
     DeviceManager.getDevice(this).then(function(state) {
 
         logger.log('debug', state);
-
+        /*
         this.value = validateUpdate(this.mac, this.type, state);
         this.power = state.split(':')[0];
         this.hue = getHSL(state)[0] || 0;
         this.saturation = getHSL(state)[1] || 100;
         this.brightness = getHSL(state)[2] || 50;
-
-        logger.log('debug', this.value);
-        logger.log('debug', this.power);
-        logger.log('debug', this.hue);
-        logger.log('debug', this.saturation);
-        logger.log('debug', this.brightness);
+        */
+        this.service.getCharacteristic(Characteristic.On).value = state.split(':')[0];
+        this.service.getCharacteristic(Characteristic.Hue).value = getHSL(state)[0] || 0;
+        this.service.getCharacteristic(Characteristic.Saturation).value = getHSL(state)[1] || 100;
+        this.service.getCharacteristic(Characteristic.Brightness).value = getHSL(state)[2] || 50;
     }.bind(this));
-    */
+    
     this.changeHandler = (function(newState)
     {
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
@@ -420,11 +419,6 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
     logger.log('debug', this);
     logger.log('debug', this.service.getCharacteristic(Characteristic.Hue));
-
-    this.service.getCharacteristic(Characteristic.On).value = true;
-    this.service.getCharacteristic(Characteristic.Hue).value = 15;
-    this.service.getCharacteristic(Characteristic.Saturation).value = 100;
-    this.service.getCharacteristic(Characteristic.Brightness).value = 50;
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
