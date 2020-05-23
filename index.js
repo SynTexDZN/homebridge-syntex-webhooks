@@ -1,9 +1,9 @@
+var Service, Characteristic;
 var request = require('request');
 var http = require('http');
 var url = require('url');
 var logger = require('./logger');
 var DeviceManager = require('./device-manager');
-var Service, Characteristic;
 
 module.exports = function(homebridge)
 {
@@ -544,25 +544,25 @@ function getHSL(state)
 {
     var r = state.split(':')[1] / 255, g = state.split(':')[2] / 255, b = state.split(':')[3] / 255;
 
-    let cmin = Math.min(r,g,b),
-        cmax = Math.max(r,g,b),
+    let cmin = Math.min(r, g, b),
+        cmax = Math.max(r, g, b),
         delta = cmax - cmin,
         h = 0,
         s = 0,
         l = 0;
     
-    if (delta == 0)
+    if(delta == 0)
         h = 0;
-    else if (cmax == r)
+    else if(cmax == r)
         h = ((g - b) / delta) % 6;
-    else if (cmax == g)
+    else if(cmax == g)
         h = (b - r) / delta + 2;
     else
         h = (r - g) / delta + 4;
 
     h = Math.round(h * 60);
     
-    if (h < 0)
+    if(h < 0)
         h += 360;
 
     l = (cmax + cmin) / 2;
