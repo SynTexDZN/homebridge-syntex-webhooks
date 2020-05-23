@@ -421,6 +421,8 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 {
+    logger.log('debug', 'getState');
+
     DeviceManager.getDevice(this).then(function(state) {
 
         if(state == null)
@@ -442,6 +444,8 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
+    logger.log('debug', 'getHue');
+
     DeviceManager.getDevice(this).then(function(state) {
 
         callback(null, (state == null) ? 0 : (getHSL(state)[0] || 0));
@@ -454,6 +458,8 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 {
+    logger.log('debug', 'getSaturation');
+
     DeviceManager.getDevice(this).then(function(state) {
 
         callback(null, (state == null) ? 100 : (getHSL(state)[1] || 100));
@@ -466,6 +472,8 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 {
+    logger.log('debug', 'getBrightness');
+
     DeviceManager.getDevice(this).then(function(state) {
 
         callback(null, (state == null) ? 50 : (getHSL(state)[2] || 50));
