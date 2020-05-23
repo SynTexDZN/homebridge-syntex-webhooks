@@ -488,7 +488,7 @@ SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callba
 {
     logger.log('debug', 'setSaturation');
     this.saturation = level;
-    setRGB(this);
+    //setRGB(this);
     callback(null);
 };
 
@@ -496,7 +496,7 @@ SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callba
 {
     logger.log('debug', 'setBrightness');
     this.brightness = level;
-    setRGB(this);
+    //setRGB(this);
     callback(null);
 };
 
