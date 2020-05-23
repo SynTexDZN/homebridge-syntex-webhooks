@@ -329,7 +329,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
 
     logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + " )");
 
-    DeviceManager.setDevice(this, powerOn.toString() + ':' + this.value.split(':')[1] + ':' + this.value.split(':')[2] + ':' + this.value.split(':')[3]);
+    //DeviceManager.setDevice(this, powerOn.toString() + ':' + this.value.split(':')[1] + ':' + this.value.split(':')[2] + ':' + this.value.split(':')[3]);
 
     if(urlToCall != "")
     {
