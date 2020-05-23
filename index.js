@@ -472,32 +472,32 @@ SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback,
 {
     logger.log('debug', 'setState');
     this.power = powerOn;
-    callback(null);
     setRGB(this);
+    callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
 {
     logger.log('debug', 'setHue');
     this.hue = level;
-    callback(null);
     setRGB(this);
+    callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
 {
     logger.log('debug', 'setSaturation');
     this.saturation = level;
-    callback(null);
     setRGB(this);
+    callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
 {
     logger.log('debug', 'setBrightness');
     this.brightness = level;
-    callback(null);
     setRGB(this);
+    callback(null);
 };
 
 SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
@@ -641,7 +641,7 @@ function setRGB(accessory)
             logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
         }
         
-    }).bind(this));
+    }));
 }
 
 function validateUpdate(mac, type, state)
