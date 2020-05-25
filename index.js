@@ -4,6 +4,7 @@ var http = require('http');
 var url = require('url');
 var logger = require('./logger');
 var DeviceManager = require('./device-manager');
+var restart = true;
 
 module.exports = function(homebridge)
 {
@@ -31,6 +32,8 @@ function SynTexWebHookPlatform(log, sconfig, api)
     logger.create("SynTexWebHooks", this.logDirectory, api.user.storagePath());
 
     DeviceManager.SETUP(logger, this.cacheDirectory);
+
+    restart = false;
 }
 
 SynTexWebHookPlatform.prototype = {
@@ -129,6 +132,11 @@ SynTexWebHookPlatform.prototype = {
                 else if(urlPath == '/version')
                 {
                     response.write(require('./package.json').version);
+                    response.end();
+                }
+                else if(urlPath == '/check-restart')
+                {
+                    response.write(restart.toString());
                     response.end();
                 }
                 else if(urlPath == '/update')
