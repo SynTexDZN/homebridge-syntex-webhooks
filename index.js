@@ -121,15 +121,6 @@ SynTexWebHookPlatform.prototype = {
                     {
                         var state = await DeviceManager.getDevice(accessory);
 
-                        if(state != null)
-                        {
-                            logger.log('read', "HomeKit Status für '" + accessory.name + "' ist '" + state + "' ( " + urlParams.mac + " )");
-                        }
-                        else
-                        {
-                            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + urlParams.mac + " )");
-                        }
-
                         response.write(state != null ? state.toString() : "Error");
                     }
 
