@@ -156,6 +156,9 @@ SynTexWebHookPlatform.prototype = {
                             else
                             {
                                 logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
+
+                                restart = true;
+
                                 logger.log('warn', "Die Homebridge wird neu gestartet ..");
 
                                 exec("sudo systemctl restart homebridge");
