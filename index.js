@@ -392,7 +392,7 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.mac = lightConfig["mac"];
     this.type = lightConfig["type"];
     this.name = lightConfig["name"];
-    this.url = lightConfig["url"];
+    this.url = lightConfig["url"] || '';
 
     this.service = new Service.Lightbulb(this.name);
 
@@ -585,69 +585,75 @@ function getHSL(state)
 
 function setRGB(accessory)
 {
-    var h = accessory.hue, s = accessory.saturation * 2, l = accessory.power ? accessory.brightness / 4 : 0;
-    var r = 0, g = 0, b = 0;
-
-    s /= 100;
-    l /= 100;
-
-    let c = (1 - Math.abs(2 * l - 1)) * s,
-        x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-        m = l - c/2;
-
-    if(0 <= h && h < 60)
+    if(accessory.power + ':' + r + ':' + g + ':' + b != accessory.value)
     {
-        r = c; g = x; b = 0;
-    }
-    else if(60 <= h && h < 120)
-    {
-        r = x; g = c; b = 0;
-    }
-    else if(120 <= h && h < 180)
-    {
-        r = 0; g = c; b = x;
-    }
-    else if(180 <= h && h < 240)
-    {
-        r = 0; g = x; b = c;
-    }
-    else if(240 <= h && h < 300)
-    {
-        r = x; g = 0; b = c;
-    }
-    else if(300 <= h && h < 360)
-    {
-        r = c; g = 0; b = x;
-    }
+        var h = accessory.hue, s = accessory.saturation * 2, l = accessory.power ? accessory.brightness / 4 : 0;
+        var r = 0, g = 0, b = 0;
 
-    r = Math.round((r + m) * 255);
-    g = Math.round((g + m) * 255);
-    b = Math.round((b + m) * 255);
+        s /= 100;
+        l /= 100;
 
-    logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + accessory.power + ':' + r + ':' + g + ':' + b + "' ( " + accessory.mac + " )");
+        let c = (1 - Math.abs(2 * l - 1)) * s,
+            x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+            m = l - c/2;
 
-    var theRequest = {
-        method : "GET",
-        url : accessory.url + "?r=" + r + "&g=" + g + "&b=" + b,
-        timeout : 10000
-    };
-
-    request(theRequest, (function(err, response, body)
-    {
-        var statusCode = response && response.statusCode ? response.statusCode : -1;
-
-        if(!err && statusCode == 200)
+        if(0 <= h && h < 60)
         {
-            logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
-
-            DeviceManager.setDevice(accessory, accessory.power + ':' + r + ':' + g + ':' + b);
+            r = c; g = x; b = 0;
         }
-        else
+        else if(60 <= h && h < 120)
         {
-            logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
+            r = x; g = c; b = 0;
         }
+        else if(120 <= h && h < 180)
+        {
+            r = 0; g = c; b = x;
+        }
+        else if(180 <= h && h < 240)
+        {
+            r = 0; g = x; b = c;
+        }
+        else if(240 <= h && h < 300)
+        {
+            r = x; g = 0; b = c;
+        }
+        else if(300 <= h && h < 360)
+        {
+            r = c; g = 0; b = x;
+        }
+
+        r = Math.round((r + m) * 255);
+        g = Math.round((g + m) * 255);
+        b = Math.round((b + m) * 255);
+
+        logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + accessory.power + ':' + r + ':' + g + ':' + b + "' ( " + accessory.mac + " )");
+
+        if(accessory.url != '')
+        {
+            var theRequest = {
+                method : "GET",
+                url : accessory.url + "?r=" + r + "&g=" + g + "&b=" + b,
+                timeout : 10000
+            };
         
-    }));
+            request(theRequest, (function(err, response, body)
+            {
+                var statusCode = response && response.statusCode ? response.statusCode : -1;
+        
+                if(!err && statusCode == 200)
+                {
+                    logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
+        
+                    DeviceManager.setDevice(accessory, accessory.power + ':' + r + ':' + g + ':' + b);
+                }
+                else
+                {
+                    logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
+                }
+                
+            }));
+        }
+    }
 }
 
 function validateUpdate(mac, type, state)
