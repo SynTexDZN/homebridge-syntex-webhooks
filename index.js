@@ -624,6 +624,8 @@ function setRGB(accessory)
     g = Math.round((g + m) * 255);
     b = Math.round((b + m) * 255);
 
+    logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + accessory.power + ':' + r + ':' + g + ':' + b + "' ( " + accessory.mac + " )");
+
     var theRequest = {
         method : "GET",
         url : accessory.url + "?r=" + r + "&g=" + g + "&b=" + b,
