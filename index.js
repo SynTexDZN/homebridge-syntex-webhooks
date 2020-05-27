@@ -361,6 +361,8 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
             {
                 logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
 
+                DeviceManager.setDevice(this, powerOn);
+
                 callback(null);
             }
             else
