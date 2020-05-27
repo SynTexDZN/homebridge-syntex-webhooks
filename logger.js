@@ -22,7 +22,7 @@ logger.log = function(level, message)
             message = JSON.stringify(message);
         };
 
-        var color = "";
+        var color = '';
 
         if(level == 'success')
         {
@@ -54,10 +54,10 @@ logger.log = function(level, message)
         }
 
         var d = new Date();
-        var time = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+        var time = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
 
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
-        saveLog(time + " > [" + level.toUpperCase() + "] " + message);
+        saveLog(time + ' > [' + level.toUpperCase() + '] ' + message);
     }
 }
 
@@ -179,7 +179,7 @@ function saveLog(log)
 
         var d = new Date();
 
-        var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+        var date = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
 
         logger.logs.load(date, (err, device) => {    
 
@@ -193,7 +193,7 @@ function saveLog(log)
 
                     if(err)
                     {
-                        logger.log('error', date + ".json konnte nicht aktualisiert werden! " + err);
+                        logger.log('error', date + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     if(que.length != 0)
@@ -217,7 +217,7 @@ function saveLog(log)
 
                     if(err)
                     {
-                        logger.log('error', date + ".json konnte nicht aktualisiert werden! " + err);
+                        logger.log('error', date + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     if(que.length != 0)

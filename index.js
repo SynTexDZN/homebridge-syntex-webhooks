@@ -11,25 +11,25 @@ module.exports = function(homebridge)
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
 
-    homebridge.registerPlatform("homebridge-syntex-webhooks", "SynTexWebHooks", SynTexWebHookPlatform);
-    homebridge.registerAccessory("homebridge-syntex-webhooks", "SynTexWebHookSensor", SynTexWebHookSensorAccessory);
-    homebridge.registerAccessory("homebridge-syntex-webhooks", "SynTexWebHookSwitch", SynTexWebHookSwitchAccessory);
-    homebridge.registerAccessory("homebridge-syntex-webhooks", "SynTexWebHookStripeRGB", SynTexWebHookStripeRGBAccessory);
-    homebridge.registerAccessory("homebridge-syntex-webhooks", "SynTexWebHookStatelessSwitch", SynTexWebHookStatelessSwitchAccessory);
+    homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
+    homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSensor', SynTexWebHookSensorAccessory);
+    homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSwitch', SynTexWebHookSwitchAccessory);
+    homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStripeRGB', SynTexWebHookStripeRGBAccessory);
+    homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStatelessSwitch', SynTexWebHookStatelessSwitchAccessory);
 };
 
 function SynTexWebHookPlatform(log, sconfig, api)
 {
-    this.sensors = sconfig["sensors"] || [];
-    this.switches = sconfig["switches"] || [];
-    this.lights = sconfig["lights"] || [];
-    this.statelessSwitches = sconfig["statelessswitches"] || [];
+    this.sensors = sconfig['sensors'] || [];
+    this.switches = sconfig['switches'] || [];
+    this.lights = sconfig['lights'] || [];
+    this.statelessSwitches = sconfig['statelessswitches'] || [];
     
-    this.cacheDirectory = sconfig["cache_directory"] || "./SynTex";
-    this.logDirectory = sconfig["log_directory"] || "./SynTex/log";
-    this.port = sconfig["port"] || 1710;
+    this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
+    this.logDirectory = sconfig['log_directory'] || './SynTex/log';
+    this.port = sconfig['port'] || 1710;
     
-    logger.create("SynTexWebHooks", this.logDirectory, api.user.storagePath());
+    logger.create('SynTexWebHooks', this.logDirectory, api.user.storagePath());
 
     DeviceManager.SETUP(logger, this.cacheDirectory);
 
@@ -93,15 +93,15 @@ SynTexWebHookPlatform.prototype = {
 
                     if(accessory == null)
                     {
-                        logger.log('error', "Es wurde kein passendes " + (urlParams.event ? 'Event' : 'Gerät') + " in der Config gefunden! ( " + urlParams.mac + " )");
+                        logger.log('error', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.mac + ' )');
 
-                        response.write("Error");
+                        response.write('Error');
                     }
                     else if(urlParams.event)
                     {
                         accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
 
-                        response.write("Success");
+                        response.write('Success');
                     }
                     else if(urlParams.value)
                     {
@@ -113,18 +113,18 @@ SynTexWebHookPlatform.prototype = {
                         }
                         else
                         {
-                            logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + " )");
+                            logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + ' )');
                         }
 
                         DeviceManager.setDevice(accessory, urlParams.value);
                          
-                        response.write(state != null ? "Success" : "Error");
+                        response.write(state != null ? 'Success' : 'Error');
                     }
                     else
                     {
                         var state = await DeviceManager.getDevice(accessory);
 
-                        response.write(state != null ? state.toString() : "Error");
+                        response.write(state != null ? state.toString() : 'Error');
                     }
 
                     response.end();
@@ -143,15 +143,15 @@ SynTexWebHookPlatform.prototype = {
                 {
                     var version = urlParams.version ? urlParams.version : 'latest';
 
-                    const { exec } = require("child_process");
+                    const { exec } = require('child_process');
                     
-                    exec("sudo npm install homebridge-syntex-webhooks@" + version + " -g", (error, stdout, stderr) => {
+                    exec('sudo npm install homebridge-syntex-webhooks@' + version + ' -g', (error, stdout, stderr) => {
 
                         try
                         {
                             if(error || stderr.includes('ERR!'))
                             {
-                                logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden! " + (error || stderr));
+                                logger.log('warn', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
                             }
                             else
                             {
@@ -159,9 +159,9 @@ SynTexWebHookPlatform.prototype = {
 
                                 restart = true;
 
-                                logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                                logger.log('warn', 'Die Homebridge wird neu gestartet ..');
 
-                                exec("sudo systemctl restart homebridge");
+                                exec('sudo systemctl restart homebridge');
                             }
 
                             response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
@@ -181,7 +181,7 @@ SynTexWebHookPlatform.prototype = {
             
         }).bind(this);
 
-        http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
+        http.createServer(createServerCallback).listen(this.port, '0.0.0.0');
            
         logger.log('info', "Data Link Server läuft auf Port '" + this.port + "'");
     }
@@ -191,9 +191,9 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 {
     var sensors = [];
 
-    this.mac = sensorConfig["mac"];
-    this.name = sensorConfig["name"];
-    this.type = sensorConfig["type"];
+    this.mac = sensorConfig['mac'];
+    this.name = sensorConfig['name'];
+    this.type = sensorConfig['type'];
 
     DeviceManager.getDevice(this).then(function(state) {
 
@@ -222,14 +222,14 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
             this.changeHandler = (function(state)
             {
-                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + " )");
+                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
                 this.service.getCharacteristic(characteristic).updateValue(state);
 
             }).bind(this);
         }
     }
 
-    if(this.type === "temperature")
+    if(this.type === 'temperature')
     {
         this.service.getCharacteristic(Characteristic.CurrentTemperature).setProps({
             minValue : -100,
@@ -244,11 +244,11 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
         if(state == null)
         {
-            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + this.mac + " )");
+            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
         }
         else if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
         }
 
         callback(null, state);
@@ -266,19 +266,19 @@ SynTexWebHookSensorAccessory.prototype.getServices = function()
 
 function SynTexWebHookSwitchAccessory(switchConfig)
 {
-    this.mac = switchConfig["mac"];
-    this.type = switchConfig["type"];
-    this.name = switchConfig["name"];
-    this.onURL = switchConfig["on_url"] || "";
-    this.onMethod = switchConfig["on_method"] || "GET";
-    this.onBody = switchConfig["on_body"] || "";
-    this.onForm = switchConfig["on_form"] || "";
-    this.onHeaders = switchConfig["on_headers"] || "{}";
-    this.offURL = switchConfig["off_url"] || "";
-    this.offMethod = switchConfig["off_method"] || "GET";
-    this.offBody = switchConfig["off_body"] || "";
-    this.offForm = switchConfig["off_form"] || "";
-    this.offHeaders = switchConfig["off_headers"] || "{}";
+    this.mac = switchConfig['mac'];
+    this.type = switchConfig['type'];
+    this.name = switchConfig['name'];
+    this.onURL = switchConfig['on_url'] || '';
+    this.onMethod = switchConfig['on_method'] || 'GET';
+    this.onBody = switchConfig['on_body'] || '';
+    this.onForm = switchConfig['on_form'] || '';
+    this.onHeaders = switchConfig['on_headers'] || '{}';
+    this.offURL = switchConfig['off_url'] || '';
+    this.offMethod = switchConfig['off_method'] || 'GET';
+    this.offBody = switchConfig['off_body'] || '';
+    this.offForm = switchConfig['off_form'] || '';
+    this.offHeaders = switchConfig['off_headers'] || '{}';
 
     this.service = new Service.Switch(this.name);
 
@@ -305,11 +305,11 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         
         if(state == null)
         {
-            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + this.mac + " )");
+            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
         }
         else if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
         }
          
         callback(null, state);
@@ -328,9 +328,9 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
     var urlForm = powerOn ? this.onForm : this.offForm;
     var urlHeaders = powerOn ? this.onHeaders : this.offHeaders;
 
-    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + " )");
+    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
 
-    if(urlToCall != "")
+    if(urlToCall != '')
     {
         var theRequest = {
             method : urlMethod,
@@ -339,16 +339,16 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
             headers: JSON.parse(urlHeaders)
         };
         
-        if(urlMethod === "POST" || urlMethod === "PUT")
+        if(urlMethod === 'POST' || urlMethod === 'PUT')
         {
             if(urlForm)
             {
-                //logger.log("Adding Form " + urlForm);
+                //logger.log('Adding Form ' + urlForm);
                 theRequest.form = JSON.parse(urlForm);
             }
             else if(urlBody)
             {
-                //logger.log("Adding Body " + urlBody);
+                //logger.log('Adding Body ' + urlBody);
                 theRequest.body = urlBody;
             }
         }
@@ -389,10 +389,10 @@ SynTexWebHookSwitchAccessory.prototype.getServices = function()
 
 function SynTexWebHookStripeRGBAccessory(lightConfig)
 {
-    this.mac = lightConfig["mac"];
-    this.type = lightConfig["type"];
-    this.name = lightConfig["name"];
-    this.url = lightConfig["url"] || '';
+    this.mac = lightConfig['mac'];
+    this.type = lightConfig['type'];
+    this.name = lightConfig['name'];
+    this.url = lightConfig['url'] || '';
 
     this.service = new Service.Lightbulb(this.name);
 
@@ -407,7 +407,7 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     
     this.changeHandler = (function(newState)
     {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + " )");
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + newState + "' ( " + this.mac + ' )');
         
     }).bind(this);
 
@@ -423,11 +423,11 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 
         if(state == null)
         {
-            logger.log('error', "Es wurde kein passendes Gerät in der Storage gefunden! ( " + this.mac + " )");
+            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
         }
         else
         {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + " )");
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
         }
 
         callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
@@ -509,9 +509,9 @@ SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
 
 function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
 {
-    this.mac = statelessSwitchConfig["mac"];
-    this.name = statelessSwitchConfig["name"];
-    this.buttons = statelessSwitchConfig["buttons"] || 0;
+    this.mac = statelessSwitchConfig['mac'];
+    this.name = statelessSwitchConfig['name'];
+    this.buttons = statelessSwitchConfig['buttons'] || 0;
     this.service = [];
 
     for(var i = 0; i < this.buttons; i++)
@@ -534,7 +534,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         {
             if(i == event)
             {
-               logger.log('success', "'" + buttonName + "': Event " + i + " wurde ausgeführt! ( " + this.mac + " )");
+               logger.log('success', "'" + buttonName + "': Event " + i + " wurde ausgeführt! ( " + this.mac + ' )');
 
                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
             }
@@ -624,20 +624,17 @@ function setRGB(accessory)
     g = Math.round((g + m) * 255);
     b = Math.round((b + m) * 255);
 
-    logger.log('debug', accessory.power + ':' + r + ':' + g + ':' + b);
-    logger.log('debug', accessory.fetch);
-
-    if(accessory.power + ':' + r + ':' + g + ':' + b != accessory.fetch)
+    if(accessory.fetch != accessory.power + ':' + r + ':' + g + ':' + b)
     {
         accessory.fetch = accessory.power + ':' + r + ':' + g + ':' + b;
 
-        logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + accessory.power + ':' + r + ':' + g + ':' + b + "' ( " + accessory.mac + " )");
+        logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + accessory.fetch + "' ( " + accessory.mac + ' )');
 
         if(accessory.url != '')
         {
             var theRequest = {
-                method : "GET",
-                url : accessory.url + "?r=" + r + "&g=" + g + "&b=" + b,
+                method : 'GET',
+                url : accessory.url + '?r=' + r + '&g=' + g + '&b=' + b,
                 timeout : 10000
             };
         
@@ -649,7 +646,7 @@ function setRGB(accessory)
                 {
                     logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
         
-                    DeviceManager.setDevice(accessory, accessory.power + ':' + r + ':' + g + ':' + b);
+                    DeviceManager.setDevice(accessory, accessory.fetch);
                 }
                 else
                 {
@@ -663,31 +660,31 @@ function setRGB(accessory)
 
 function validateUpdate(mac, type, state)
 {
-    if(type === "motion" || type === "rain" || type === "smoke" || type === "occupancy" || type === "contact" || type == "switch" || type == "relais")
+    if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
     {
         if(state != true && state != false && state != 'true' && state != 'false')
         {
-            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine boolsche Variable! ( " + mac + " )");
+            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine boolsche Variable! ( " + mac + ' )');
 
             return null;
         }
 
         return (state == 'true' || state == true ? true : false);
     }
-    else if(type === "light" || type === "temperature")
+    else if(type === 'light' || type === 'temperature')
     {
         if(isNaN(state))
         {
-            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable! ( " + mac + " )");
+            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable! ( " + mac + ' )');
         }
 
         return !isNaN(state) ? parseFloat(state) : null;
     }
-    else if(type === "humidity" || type === "airquality")
+    else if(type === 'humidity' || type === 'airquality')
     {
         if(isNaN(state))
         {
-            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable! ( " + mac + " )");
+            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable! ( " + mac + ' )');
         }
 
         return !isNaN(state) ? parseInt(state) : null;

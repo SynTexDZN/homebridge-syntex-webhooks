@@ -76,7 +76,7 @@ function writeFS(mac, type, value)
 
             if(err)
             {
-                logger.log('error', mac + ".json konnte nicht aktualisiert werden! " + err);
+                logger.log('error', mac + '.json konnte nicht aktualisiert werden! ' + err);
             }
 
             resolve(err ? false : true);
