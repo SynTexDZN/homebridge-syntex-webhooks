@@ -624,6 +624,9 @@ function setRGB(accessory)
     g = Math.round((g + m) * 255);
     b = Math.round((b + m) * 255);
 
+    console.log('debug', accessory.power + ':' + r + ':' + g + ':' + b);
+    console.log('debug', accessory.value);
+
     if(accessory.power + ':' + r + ':' + g + ':' + b != accessory.value)
     {
         logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + accessory.power + ':' + r + ':' + g + ':' + b + "' ( " + accessory.mac + " )");
