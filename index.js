@@ -300,6 +300,8 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
     DeviceManager.getDevice(this).then(function(state) {
+
+        logger.log('debug', state);
         
         if(state == null)
         {
