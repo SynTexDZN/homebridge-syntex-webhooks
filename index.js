@@ -376,6 +376,8 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
     }
     else
     {
+        DeviceManager.setDevice(this, powerOn);
+        
         callback(null);
     }
 };
