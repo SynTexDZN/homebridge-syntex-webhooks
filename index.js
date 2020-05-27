@@ -377,7 +377,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
     else
     {
         DeviceManager.setDevice(this, powerOn);
-        
+
         callback(null);
     }
 };
@@ -637,6 +637,8 @@ function setRGB(accessory)
         if(!err && statusCode == 200)
         {
             logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
+
+            DeviceManager.setDevice(accessory, accessory.power + ':' + r + ':' + g + ':' + b);
         }
         else
         {
