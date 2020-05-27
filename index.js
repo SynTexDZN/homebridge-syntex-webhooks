@@ -301,8 +301,6 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
     DeviceManager.getDevice(this).then(function(state) {
 
-        logger.log('debug', state);
-        
         if(state == null)
         {
             logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
