@@ -184,7 +184,9 @@ function saveLog(log)
             {    
                 device.logs[device.logs.length] = log;
 
-                logger.logs.add(device, (err) => {
+                logger.logs.add(device, async function(err) {
+
+                    await removeExpired();
 
                     inWork = false;
 
@@ -258,6 +260,8 @@ function removeExpired()
                         {
                             logs.splice(logs.indexOf(obj.logs[obj.logs.length - i]), 1);
                         }
+
+                        resolve(true);
                     }
                 }
                 else
