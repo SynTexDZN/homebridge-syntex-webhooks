@@ -8,6 +8,7 @@ logger.create = function(pluginName, logDirectory, config)
 {
     prefix = pluginName;
     conf = store(config);
+    logger.log('debug', logDirectory);
     logger.logs = store(logDirectory);
 };
 
@@ -116,7 +117,7 @@ logger.load = function(pluginName)
 
         if(logPath != null)
         {
-            store(logPath).load(prefix, (err, obj) => {    
+            store(logPath).load(pluginName, (err, obj) => {    
 
                 if(obj && !err)
                 {    
