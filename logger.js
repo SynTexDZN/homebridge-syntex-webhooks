@@ -233,7 +233,7 @@ function removeExpired()
 {
     return new Promise(async function(resolve) {
         
-        var logPath = await getLogPath(pluginName);
+        var logPath = await getLogPath(prefix);
 
         if(logPath != null)
         {
