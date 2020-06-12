@@ -160,7 +160,7 @@ function getLogPath(pluginName)
 var inWork = false;
 var que = [];
 
-function saveLog(log)
+async function saveLog(log)
 {
     if(inWork)
     {
@@ -186,7 +186,7 @@ function saveLog(log)
             {    
                 device.logs[device.logs.length] = log;
 
-                logger.logs.add(device, async function(err) {
+                logger.logs.add(device, function(err) {
 
                     inWork = false;
 
