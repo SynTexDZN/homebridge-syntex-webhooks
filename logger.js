@@ -173,6 +173,8 @@ function saveLog(log)
     {
         inWork = true;
 
+        await removeExpired();
+
         if(que.includes(log))
         {
             que.shift();
@@ -185,8 +187,6 @@ function saveLog(log)
                 device.logs[device.logs.length] = log;
 
                 logger.logs.add(device, async function(err) {
-
-                    await removeExpired();
 
                     inWork = false;
 
