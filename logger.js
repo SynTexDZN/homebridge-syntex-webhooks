@@ -233,46 +233,35 @@ function removeExpired()
 {
     return new Promise(async function(resolve) {
         
-        var logPath = await getLogPath(prefix);
+        logger.logs.load(prefix, (err, obj) => {    
 
-        if(logPath != null)
-        {
-            store(logPath).load(prefix, (err, obj) => {    
+            if(obj && !err)
+            {    
+                for(var i = 1; i < obj.logs.length + 1; i++)
+                {
+                    var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+                    var time = obj.logs[obj.logs.length - i].split(' >')[0];
+                    var lastWeekDay = weekDays.indexOf(new Date().getDay()) - 1;
 
-                if(obj && !err)
-                {    
-                    for(var i = 1; i < obj.logs.length + 1; i++)
+                    if(lastWeekDay < 0)
                     {
-                        var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-                        var time = obj.logs[obj.logs.length - i].split(' >')[0];
-                        var lastWeekDay = weekDays.indexOf(new Date().getDay()) - 1;
+                        lastWeekDay = 6;
+                    }
 
-                        if(lastWeekDay < 0)
-                        {
-                            lastWeekDay = 6;
-                        }
-
-                        if(time.split(' ')[0] == weekDays[lastWeekDay] && new Date() - new Date().setHours(time.split(':')[0], time.split(':')[1], time.split(':')[2]) > 0)
-                        {
-                            obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
-                        }
-                        else if(time.split(' ')[0] != weekDays[new Date().getDay()])
-                        {
-                            obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
-                        }
-
-                        resolve(true);
+                    if(time.split(' ')[0] == weekDays[lastWeekDay] && new Date() - new Date().setHours(time.split(':')[0], time.split(':')[1], time.split(':')[2]) > 0)
+                    {
+                        obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
+                    }
+                    else if(time.split(' ')[0] != weekDays[new Date().getDay()])
+                    {
+                        obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
                     }
                 }
-                else
-                {
-                    resolve(false);
-                }
-            });
-        }
-        else
-        {
-            resolve(false);
-        }
+            }
+            else
+            {
+                resolve(false);
+            }
+        });
     });
 }
