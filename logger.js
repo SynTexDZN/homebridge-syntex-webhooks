@@ -251,12 +251,12 @@ function removeExpired()
 
                     if(time.split(' ')[0] == weekDays[lastWeekDay] && new Date() - new Date().setHours(time.split(':')[0], time.split(':')[1], time.split(':')[2]) > 0)
                     {
-                        console.log('REMOVE 1', obj.logs.indexOf(obj.logs[obj.logs.length - i]));
+                        console.log('REMOVE 1', obj.logs[obj.logs.length - i]);
                         obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
                     }
                     else if(time.split(' ')[0] != weekDays[new Date().getDay()])
                     {
-                        console.log('REMOVE 2', obj.logs.indexOf(obj.logs[obj.logs.length - i]));
+                        console.log('REMOVE 2', obj.logs[obj.logs.length - i]);
                         obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
                     }
                 }
