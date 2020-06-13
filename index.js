@@ -111,7 +111,7 @@ SynTexWebHookPlatform.prototype = {
 
                         if((state = validateUpdate(urlParams.mac, accessory.type, urlParams.value)) != null)
                         {
-                            accessory.changeHandler(state);
+                            accessory.changeHandler(state, urlParams.type || null);
                         }
                         else
                         {
@@ -689,13 +689,18 @@ function createAccessory(accessory)
             var characteristic = accessories[i].characteristic;
             var service = accessories[i].service;
 
-            accessory.changeHandler = (function(state)
+            service.type = accessories[i].type;
+
+            accessory.changeHandler = (function(state, type)
             {
                 logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
 
-                if(accessory.type != 'rgb')
+                for(var j = 0; j < accessory.service.length; j++)
                 {
-                    service.getCharacteristic(characteristic).updateValue(state);
+                    if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
+                    {
+                        accessory.service[j].getCharacteristic(characteristic).updateValue(state);
+                    }
                 }
             });
 
