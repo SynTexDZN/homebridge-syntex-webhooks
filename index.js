@@ -674,7 +674,7 @@ function createAccessory(accessory)
     informationService
         .setCharacteristic(Characteristic.Manufacturer, accessory.manufacturer)
         .setCharacteristic(Characteristic.Model, accessory.model)
-        .setCharacteristic(Characteristic.FirmwareRevision, accessory.version);
+        .setCharacteristic(Characteristic.FirmwareRevision, accessory.version)
         .setCharacteristic(Characteristic.SerialNumber, accessory.mac);
 
         services.push(informationService);
