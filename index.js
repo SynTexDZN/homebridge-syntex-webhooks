@@ -665,17 +665,17 @@ function createAccessory(accessory)
     var service;
     var accessories = [];
 
-    accessories.push({type : 'contact', service : new Service.ContactSensor(this.name), characteristic : Characteristic.ContactSensorState});
-    accessories.push({type : 'motion', service : new Service.MotionSensor(this.name), characteristic : Characteristic.MotionDetected});
-    accessories.push({type : 'temperature', service : new Service.TemperatureSensor(this.name), characteristic : Characteristic.CurrentTemperature});
-    accessories.push({type : 'humidity', service : new Service.HumiditySensor(this.name), characteristic : Characteristic.CurrentRelativeHumidity});
-    accessories.push({type : 'rain', service : new Service.LeakSensor(this.name), characteristic : Characteristic.LeakDetected});
-    accessories.push({type : 'light', service : new Service.LightSensor(this.name), characteristic : Characteristic.CurrentAmbientLightLevel});
-    accessories.push({type : 'occupancy', service : new Service.OccupancySensor(this.name), characteristic : Characteristic.OccupancyDetected});
-    accessories.push({type : 'smoke', service : new Service.SmokeSensor(this.name), characteristic : Characteristic.SmokeDetected});
-    accessories.push({type : 'airquality', service : new Service.AirQualitySensor(this.name), characteristic : Characteristic.AirQuality});
-    accessories.push({type : 'rgb', service : new Service.Lightbulb(this.name), characteristic : Characteristic.AirQuality});
-    accessories.push({type : 'switch', service : new Service.Switch(this.name), characteristic : Characteristic.AirQuality});
+    accessories.push({type : 'contact', service : new Service.ContactSensor(accessory.name), characteristic : Characteristic.ContactSensorState});
+    accessories.push({type : 'motion', service : new Service.MotionSensor(accessory.name), characteristic : Characteristic.MotionDetected});
+    accessories.push({type : 'temperature', service : new Service.TemperatureSensor(accessory.name), characteristic : Characteristic.CurrentTemperature});
+    accessories.push({type : 'humidity', service : new Service.HumiditySensor(accessory.name), characteristic : Characteristic.CurrentRelativeHumidity});
+    accessories.push({type : 'rain', service : new Service.LeakSensor(accessory.name), characteristic : Characteristic.LeakDetected});
+    accessories.push({type : 'light', service : new Service.LightSensor(accessory.name), characteristic : Characteristic.CurrentAmbientLightLevel});
+    accessories.push({type : 'occupancy', service : new Service.OccupancySensor(accessory.name), characteristic : Characteristic.OccupancyDetected});
+    accessories.push({type : 'smoke', service : new Service.SmokeSensor(accessory.name), characteristic : Characteristic.SmokeDetected});
+    accessories.push({type : 'airquality', service : new Service.AirQualitySensor(accessory.name), characteristic : Characteristic.AirQuality});
+    //accessories.push({type : 'rgb', service : new Service.Lightbulb(accessory.name), characteristic : Characteristic.AirQuality});
+    //accessories.push({type : 'switch', service : new Service.Switch(accessory.name), characteristic : Characteristic.AirQuality});
 
     for(var i = 0; i < accessories.length; i++)
     {
@@ -684,21 +684,21 @@ function createAccessory(accessory)
             var characteristic = accessories[i].characteristic;
 
             service = accessories[i].service;
-            service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
+            service.getCharacteristic(characteristic).on('get', accessory.getState.bind(accessory));
 
             accessory.changeHandler = (function(state)
             {
-                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+                logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
                 service.getCharacteristic(characteristic).updateValue(state);
 
-            }).bind(this);
+            });
 
             if(accessory.type == 'temperature')
             {
                 accessory.service[0].getCharacteristic(Characteristic.CurrentTemperature).setProps({
                     minValue : -100,
                     maxValue : 140
-                }).on('get', this.getState.bind(this));
+                }).on('get', accessory.getState.bind(accessory));
             }
         }
     }
