@@ -89,7 +89,7 @@ SynTexWebHookPlatform.prototype = {
                         {
                             accessory = accessories[i];
 
-                            logger.log('debug', accessory);
+                            //logger.log('debug', accessory);
                         }
                     }
 
