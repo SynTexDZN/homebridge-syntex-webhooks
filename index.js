@@ -657,6 +657,12 @@ function createAccessory(accessory)
     accessories.push({type : 'switch', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
     accessories.push({type : 'relais', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
 
+    var informationService = new Service.AccessoryInformation();
+    
+    informationService
+        .setCharacteristic(Characteristic.Manufacturer, 'SynTex')
+        .setCharacteristic(Characteristic.Model, accessory.type);
+
     for(var i = 0; i < accessories.length; i++)
     {
         if(accessory.type.includes(accessories[i].type))
