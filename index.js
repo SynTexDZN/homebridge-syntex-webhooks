@@ -660,7 +660,7 @@ function createAccessory(accessory)
 
     for(var i = 0; i < accessories.length; i++)
     {
-        if(accessories[i].type == accessory.type)
+        if(accessory.type.includes(accessories[i].type))
         {
             var characteristic = accessories[i].characteristic;
             var service = accessories[i].service;
