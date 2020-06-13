@@ -698,5 +698,5 @@ function createAccessory(accessory)
         }
     }
 
-    return service;
+    return services;
 }
