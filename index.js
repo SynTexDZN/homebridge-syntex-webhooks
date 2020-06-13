@@ -200,7 +200,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
     }.bind(this));
 
-    this.service.push(createAccessory(this));
+    //this.service.push(createAccessory(this));
 }
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
