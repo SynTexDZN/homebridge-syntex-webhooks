@@ -249,9 +249,9 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.offForm = switchConfig['off_form'] || '';
     this.offHeaders = switchConfig['off_headers'] || '{}';
 
-    this.version = sensorConfig['version'] || '1.0.0';
-    this.model = sensorConfig['model'] || 'HTTP Accessory';
-    this.manufacturer = sensorConfig['manufacturer'] || 'SynTex';
+    this.version = switchConfig['version'] || '1.0.0';
+    this.model = switchConfig['model'] || 'HTTP Accessory';
+    this.manufacturer = switchConfig['manufacturer'] || 'SynTex';
 
     DeviceManager.getDevice(this).then(function(state) {
 
@@ -358,9 +358,9 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.name = lightConfig['name'];
     this.url = lightConfig['url'] || '';
 
-    this.version = sensorConfig['version'] || '1.0.0';
-    this.model = sensorConfig['model'] || 'HTTP Accessory';
-    this.manufacturer = sensorConfig['manufacturer'] || 'SynTex';
+    this.version = lightConfig['version'] || '1.0.0';
+    this.model = lightConfig['model'] || 'HTTP Accessory';
+    this.manufacturer = lightConfig['manufacturer'] || 'SynTex';
 
     DeviceManager.getDevice(this).then(function(state) {
 
