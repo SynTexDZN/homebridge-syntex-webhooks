@@ -246,21 +246,13 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.offForm = switchConfig['off_form'] || '';
     this.offHeaders = switchConfig['off_headers'] || '{}';
 
-    this.service[0] = new Service.Switch(this.name);
-
     DeviceManager.getDevice(this).then(function(state) {
 
         this.value = validateUpdate(this.mac, this.type, state);
 
     }.bind(this));
 
-    this.changeHandler = (function(newState)
-    {
-        this.service[0].getCharacteristic(Characteristic.On).updateValue(newState);
-
-    }).bind(this);
-    
-    this.service[0].getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service.push(createAccessory(this));
 }
 
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
@@ -675,7 +667,8 @@ function createAccessory(accessory)
     accessories.push({type : 'smoke', service : new Service.SmokeSensor(accessory.name), characteristic : Characteristic.SmokeDetected});
     accessories.push({type : 'airquality', service : new Service.AirQualitySensor(accessory.name), characteristic : Characteristic.AirQuality});
     //accessories.push({type : 'rgb', service : new Service.Lightbulb(accessory.name), characteristic : Characteristic.AirQuality});
-    //accessories.push({type : 'switch', service : new Service.Switch(accessory.name), characteristic : Characteristic.AirQuality});
+    accessories.push({type : 'switch', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
+    accessories.push({type : 'relais', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
 
     for(var i = 0; i < accessories.length; i++)
     {
@@ -684,13 +677,11 @@ function createAccessory(accessory)
             var characteristic = accessories[i].characteristic;
 
             service = accessories[i].service;
-            service.getCharacteristic(characteristic).on('get', accessory.getState.bind(accessory));
 
             accessory.changeHandler = (function(state)
             {
                 logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
                 service.getCharacteristic(characteristic).updateValue(state);
-
             });
 
             if(accessory.type == 'temperature')
@@ -699,6 +690,15 @@ function createAccessory(accessory)
                     minValue : -100,
                     maxValue : 140
                 }).on('get', accessory.getState.bind(accessory));
+            }
+
+            if(accessory.type == 'switch' || accessory.type == 'reials')
+            {
+                service.getCharacteristic(characteristic).on('get', accessory.getState.bind(accessory)).on('set', accessory.setState.bind(accessory));
+            }
+            else
+            {
+                service.getCharacteristic(characteristic).on('get', accessory.getState.bind(accessory));
             }
         }
     }
