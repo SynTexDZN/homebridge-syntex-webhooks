@@ -654,8 +654,7 @@ function validateUpdate(mac, type, state)
 
 function createAccessory(accessory)
 {
-    var service;
-    var accessories = [];
+    var service, accessories = [];
 
     accessories.push({type : 'contact', service : new Service.ContactSensor(accessory.name), characteristic : Characteristic.ContactSensorState});
     accessories.push({type : 'motion', service : new Service.MotionSensor(accessory.name), characteristic : Characteristic.MotionDetected});
@@ -666,7 +665,7 @@ function createAccessory(accessory)
     accessories.push({type : 'occupancy', service : new Service.OccupancySensor(accessory.name), characteristic : Characteristic.OccupancyDetected});
     accessories.push({type : 'smoke', service : new Service.SmokeSensor(accessory.name), characteristic : Characteristic.SmokeDetected});
     accessories.push({type : 'airquality', service : new Service.AirQualitySensor(accessory.name), characteristic : Characteristic.AirQuality});
-    //accessories.push({type : 'rgb', service : new Service.Lightbulb(accessory.name), characteristic : Characteristic.AirQuality});
+    accessories.push({type : 'rgb', service : new Service.Lightbulb(accessory.name), characteristic : Characteristic.On});
     accessories.push({type : 'switch', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
     accessories.push({type : 'relais', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
 
@@ -681,24 +680,30 @@ function createAccessory(accessory)
             accessory.changeHandler = (function(state)
             {
                 logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
-                service.getCharacteristic(characteristic).updateValue(state);
+
+                if(accessory.type != 'rgb')
+                {
+                    service.getCharacteristic(characteristic).updateValue(state);
+                }
             });
 
             if(accessory.type == 'temperature')
             {
-                service.getCharacteristic(Characteristic.CurrentTemperature).setProps({
-                    minValue : -100,
-                    maxValue : 140
-                }).on('get', accessory.getState.bind(accessory));
+                service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
 
-            if(accessory.type == 'switch' || accessory.type == 'reials')
+            service.getCharacteristic(characteristic).on('get', accessory.getState.bind(accessory));
+
+            if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
             {
-                service.getCharacteristic(characteristic).on('get', accessory.getState.bind(accessory)).on('set', accessory.setState.bind(accessory));
+                service.getCharacteristic(characteristic).on('set', accessory.setState.bind(accessory));
             }
-            else
+
+            if(accessory.type == 'rgb')
             {
-                service.getCharacteristic(characteristic).on('get', accessory.getState.bind(accessory));
+                service.addCharacteristic(new Characteristic.Hue()).on('get', accessory.getHue.bind(accessory)).on('set', accessory.setHue.bind(accessory));
+                service.addCharacteristic(new Characteristic.Saturation()).on('get', accessory.getSaturation.bind(accessory)).on('set', accessory.setSaturation.bind(accessory));
+                service.addCharacteristic(new Characteristic.Brightness()).on('get', accessory.getBrightness.bind(accessory)).on('set', accessory.setBrightness.bind(accessory));
             }
         }
     }
