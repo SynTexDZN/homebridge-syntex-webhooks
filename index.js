@@ -700,5 +700,7 @@ function createAccessory(accessory)
         }
     }
 
+    logger.log(services);
+
     return services;
 }
