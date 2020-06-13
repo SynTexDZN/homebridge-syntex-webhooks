@@ -698,7 +698,7 @@ function createAccessory(accessory)
 
                 for(var j = 0; j < accessory.service.length; j++)
                 {
-                    logger.log('debug', accessory.service[j].character + ' - ' + accessory.service[j]);
+                    logger.log('debug', accessory.service[j]);
                     
                     if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
                     {
