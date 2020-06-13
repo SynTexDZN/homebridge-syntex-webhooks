@@ -189,8 +189,6 @@ SynTexWebHookPlatform.prototype = {
 
 function SynTexWebHookSensorAccessory(sensorConfig)
 {
-    var sensors = [];
-
     this.service = [];
     this.mac = sensorConfig['mac'];
     this.name = sensorConfig['name'];
@@ -202,41 +200,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
     }.bind(this));
 
-    sensors.push({type : 'contact', service : new Service.ContactSensor(this.name), characteristic : Characteristic.ContactSensorState});
-    sensors.push({type : 'motion', service : new Service.MotionSensor(this.name), characteristic : Characteristic.MotionDetected});
-    sensors.push({type : 'temperature', service : new Service.TemperatureSensor(this.name), characteristic : Characteristic.CurrentTemperature});
-    sensors.push({type : 'humidity', service : new Service.HumiditySensor(this.name), characteristic : Characteristic.CurrentRelativeHumidity});
-    sensors.push({type : 'rain', service : new Service.LeakSensor(this.name), characteristic : Characteristic.LeakDetected});
-    sensors.push({type : 'light', service : new Service.LightSensor(this.name), characteristic : Characteristic.CurrentAmbientLightLevel});
-    sensors.push({type : 'occupancy', service : new Service.OccupancySensor(this.name), characteristic : Characteristic.OccupancyDetected});
-    sensors.push({type : 'smoke', service : new Service.SmokeSensor(this.name), characteristic : Characteristic.SmokeDetected});
-    sensors.push({type : 'airquality', service : new Service.AirQualitySensor(this.name), characteristic : Characteristic.AirQuality});
-
-    for(var i = 0; i < sensors.length; i++)
-    {
-        if(sensors[i].type == this.type)
-        {
-            var characteristic = sensors[i].characteristic;
-
-            this.service[0] = sensors[i].service;
-            this.service[0].getCharacteristic(sensors[i].characteristic).on('get', this.getState.bind(this));
-
-            this.changeHandler = (function(state)
-            {
-                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
-                this.service[0].getCharacteristic(characteristic).updateValue(state);
-
-            }).bind(this);
-        }
-    }
-
-    if(this.type === 'temperature')
-    {
-        this.service[0].getCharacteristic(Characteristic.CurrentTemperature).setProps({
-            minValue : -100,
-            maxValue : 140
-        }).on('get', this.getState.bind(this));
-    }
+    createAccessory(this);
 }
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
@@ -694,4 +658,50 @@ function validateUpdate(mac, type, state)
     {
         return state;
     }
+}
+
+function createAccessory(accessory)
+{
+    var service;
+    var accessories = [];
+
+    accessories.push({type : 'contact', service : new Service.ContactSensor(this.name), characteristic : Characteristic.ContactSensorState});
+    accessories.push({type : 'motion', service : new Service.MotionSensor(this.name), characteristic : Characteristic.MotionDetected});
+    accessories.push({type : 'temperature', service : new Service.TemperatureSensor(this.name), characteristic : Characteristic.CurrentTemperature});
+    accessories.push({type : 'humidity', service : new Service.HumiditySensor(this.name), characteristic : Characteristic.CurrentRelativeHumidity});
+    accessories.push({type : 'rain', service : new Service.LeakSensor(this.name), characteristic : Characteristic.LeakDetected});
+    accessories.push({type : 'light', service : new Service.LightSensor(this.name), characteristic : Characteristic.CurrentAmbientLightLevel});
+    accessories.push({type : 'occupancy', service : new Service.OccupancySensor(this.name), characteristic : Characteristic.OccupancyDetected});
+    accessories.push({type : 'smoke', service : new Service.SmokeSensor(this.name), characteristic : Characteristic.SmokeDetected});
+    accessories.push({type : 'airquality', service : new Service.AirQualitySensor(this.name), characteristic : Characteristic.AirQuality});
+    accessories.push({type : 'rgb', service : new Service.Lightbulb(this.name), characteristic : Characteristic.AirQuality});
+    accessories.push({type : 'switch', service : new Service.Switch(this.name), characteristic : Characteristic.AirQuality});
+
+    for(var i = 0; i < accessories.length; i++)
+    {
+        if(accessories[i].type == accessory.type)
+        {
+            var characteristic = accessories[i].characteristic;
+
+            service = accessories[i].service;
+            service.getCharacteristic(characteristic).on('get', this.getState.bind(this));
+
+            accessory.changeHandler = (function(state)
+            {
+                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+                service.getCharacteristic(characteristic).updateValue(state);
+
+            }).bind(this);
+
+            if(accessory.type == 'temperature')
+            {
+                accessory.service[0].getCharacteristic(Characteristic.CurrentTemperature).setProps({
+                    minValue : -100,
+                    maxValue : 140
+                }).on('get', this.getState.bind(this));
+            }
+        }
+    }
+
+    return service;
 }
