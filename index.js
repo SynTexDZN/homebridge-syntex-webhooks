@@ -663,6 +663,8 @@ function createAccessory(accessory)
         .setCharacteristic(Characteristic.Manufacturer, 'SynTex')
         .setCharacteristic(Characteristic.Model, accessory.type);
 
+        services.push(informationService);
+
     for(var i = 0; i < accessories.length; i++)
     {
         if(accessory.type.includes(accessories[i].type))
