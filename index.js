@@ -85,7 +85,7 @@ SynTexWebHookPlatform.prototype = {
                         
                     for(var i = 0; i < accessories.length; i++)
                     {
-                        if(accessories[i].mac === urlParams.mac && (!urlParams.type || accessories[i].type === urlParams.type))
+                        if(accessories[i].mac === urlParams.mac && (!urlParams.type || accessories[i].type.includes(urlParams.type)))
                         {
                             accessory = accessories[i];
                         }
