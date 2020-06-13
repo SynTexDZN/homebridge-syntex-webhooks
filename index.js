@@ -690,6 +690,7 @@ function createAccessory(accessory)
             var service = accessories[i].service;
 
             service.type = accessories[i].type;
+            service.character = characteristic;
 
             accessory.changeHandler = (function(state, type)
             {
@@ -701,7 +702,7 @@ function createAccessory(accessory)
                     
                     if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
                     {
-                        accessory.service[j].getCharacteristic(characteristic).updateValue(state);
+                        accessory.service[j].getCharacteristic(accessory.service[j].character).updateValue(state);
                     }
                 }
             });
