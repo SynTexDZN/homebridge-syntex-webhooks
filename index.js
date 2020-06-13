@@ -695,7 +695,7 @@ function createAccessory(accessory)
 
             if(accessory.type == 'temperature')
             {
-                accessory.service[0].getCharacteristic(Characteristic.CurrentTemperature).setProps({
+                service.getCharacteristic(Characteristic.CurrentTemperature).setProps({
                     minValue : -100,
                     maxValue : 140
                 }).on('get', accessory.getState.bind(accessory));
