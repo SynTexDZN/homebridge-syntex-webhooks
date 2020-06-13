@@ -85,11 +85,11 @@ SynTexWebHookPlatform.prototype = {
                         
                     for(var i = 0; i < accessories.length; i++)
                     {
-                        logger.log('debug', accessories[i].type + ' - ' + accessories[i].mac);
-                        
                         if(accessories[i].mac === urlParams.mac && (!urlParams.type || accessories[i].type.includes(urlParams.type)))
                         {
                             accessory = accessories[i];
+
+                            logger.log('debug', accessory);
                         }
                     }
 
