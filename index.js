@@ -659,8 +659,6 @@ function createAccessory(accessory)
 
     for(var i = 0; i < accessories.length; i++)
     {
-        logger.log('debug', accessories[i].type + ' - ' + accessory.type + ' - ' + accessory.type.includes(accessories[i].type));
-
         if(accessory.type.includes(accessories[i].type))
         {
             var characteristic = accessories[i].characteristic;
@@ -698,8 +696,6 @@ function createAccessory(accessory)
             services.push(service);
         }
     }
-
-    logger.log('debug', services);
 
     return services;
 }
