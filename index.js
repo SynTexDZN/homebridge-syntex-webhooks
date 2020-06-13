@@ -191,6 +191,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 {
     var sensors = [];
 
+    this.service = [];
     this.mac = sensorConfig['mac'];
     this.name = sensorConfig['name'];
     this.type = sensorConfig['type'];
@@ -217,13 +218,13 @@ function SynTexWebHookSensorAccessory(sensorConfig)
         {
             var characteristic = sensors[i].characteristic;
 
-            this.service = sensors[i].service;
-            this.service.getCharacteristic(sensors[i].characteristic).on('get', this.getState.bind(this));
+            this.service[0] = sensors[i].service;
+            this.service[0].getCharacteristic(sensors[i].characteristic).on('get', this.getState.bind(this));
 
             this.changeHandler = (function(state)
             {
                 logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
-                this.service.getCharacteristic(characteristic).updateValue(state);
+                this.service[0].getCharacteristic(characteristic).updateValue(state);
 
             }).bind(this);
         }
@@ -231,7 +232,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
     if(this.type === 'temperature')
     {
-        this.service.getCharacteristic(Characteristic.CurrentTemperature).setProps({
+        this.service[0].getCharacteristic(Characteristic.CurrentTemperature).setProps({
             minValue : -100,
             maxValue : 140
         }).on('get', this.getState.bind(this));
@@ -261,11 +262,12 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
 SynTexWebHookSensorAccessory.prototype.getServices = function()
 {
-    return [this.service];
+    return this.service;
 };
 
 function SynTexWebHookSwitchAccessory(switchConfig)
 {
+    this.service = [];
     this.mac = switchConfig['mac'];
     this.type = switchConfig['type'];
     this.name = switchConfig['name'];
@@ -280,7 +282,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.offForm = switchConfig['off_form'] || '';
     this.offHeaders = switchConfig['off_headers'] || '{}';
 
-    this.service = new Service.Switch(this.name);
+    this.service[0] = new Service.Switch(this.name);
 
     DeviceManager.getDevice(this).then(function(state) {
 
@@ -290,11 +292,11 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 
     this.changeHandler = (function(newState)
     {
-        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+        this.service[0].getCharacteristic(Characteristic.On).updateValue(newState);
 
     }).bind(this);
     
-    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service[0].getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 }
 
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
@@ -382,17 +384,18 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
 
 SynTexWebHookSwitchAccessory.prototype.getServices = function()
 {
-    return [this.service];
+    return this.service;
 };
 
 function SynTexWebHookStripeRGBAccessory(lightConfig)
 {
+    this.service = [];
     this.mac = lightConfig['mac'];
     this.type = lightConfig['type'];
     this.name = lightConfig['name'];
     this.url = lightConfig['url'] || '';
 
-    this.service = new Service.Lightbulb(this.name);
+    this.service[0] = new Service.Lightbulb(this.name);
 
     DeviceManager.getDevice(this).then(function(state) {
 
@@ -409,10 +412,10 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
         
     }).bind(this);
 
-    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
-    this.service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
-    this.service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
-    this.service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
+    this.service[0].getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service[0].addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
+    this.service[0].addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
+    this.service[0].addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
@@ -502,15 +505,15 @@ SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callba
 
 SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
 {
-    return [this.service];
+    return this.service;
 };
 
 function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
 {
+    this.service = [];
     this.mac = statelessSwitchConfig['mac'];
     this.name = statelessSwitchConfig['name'];
     this.buttons = statelessSwitchConfig['buttons'] || 0;
-    this.service = [];
 
     for(var i = 0; i < this.buttons; i++)
     {
