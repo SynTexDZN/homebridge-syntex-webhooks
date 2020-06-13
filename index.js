@@ -189,7 +189,6 @@ SynTexWebHookPlatform.prototype = {
 
 function SynTexWebHookSensorAccessory(sensorConfig)
 {
-    this.service = [];
     this.mac = sensorConfig['mac'];
     this.name = sensorConfig['name'];
     this.type = sensorConfig['type'];
@@ -200,7 +199,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
     }.bind(this));
 
-    this.service.push(createAccessory(this));
+    this.service = createAccessory(this);
 }
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
@@ -252,7 +251,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 
     }.bind(this));
 
-    this.service.push(createAccessory(this));
+    this.service = createAccessory(this);
 }
 
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
@@ -360,7 +359,7 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
     }.bind(this));
     
-    this.service.push(createAccessory(this));
+    this.service = createAccessory(this);
 }
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
@@ -702,5 +701,5 @@ function createAccessory(accessory)
 
     logger.log('debug', services);
 
-    return services[0];
+    return services;
 }
