@@ -193,6 +193,10 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     this.name = sensorConfig['name'];
     this.type = sensorConfig['type'];
 
+    this.version = sensorConfig['version'] || '1.0.0';
+    this.model = sensorConfig['model'] || 'HTTP Accessory';
+    this.manufacturer = sensorConfig['manufacturer'] || 'SynTex';
+
     DeviceManager.getDevice(this).then(function(state) {
 
         this.value = validateUpdate(this.mac, this.type, state);
@@ -244,6 +248,10 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.offBody = switchConfig['off_body'] || '';
     this.offForm = switchConfig['off_form'] || '';
     this.offHeaders = switchConfig['off_headers'] || '{}';
+
+    this.version = sensorConfig['version'] || '1.0.0';
+    this.model = sensorConfig['model'] || 'HTTP Accessory';
+    this.manufacturer = sensorConfig['manufacturer'] || 'SynTex';
 
     DeviceManager.getDevice(this).then(function(state) {
 
@@ -349,6 +357,10 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.type = lightConfig['type'];
     this.name = lightConfig['name'];
     this.url = lightConfig['url'] || '';
+
+    this.version = sensorConfig['version'] || '1.0.0';
+    this.model = sensorConfig['model'] || 'HTTP Accessory';
+    this.manufacturer = sensorConfig['manufacturer'] || 'SynTex';
 
     DeviceManager.getDevice(this).then(function(state) {
 
@@ -660,8 +672,9 @@ function createAccessory(accessory)
     var informationService = new Service.AccessoryInformation();
     
     informationService
-        .setCharacteristic(Characteristic.Manufacturer, 'SynTex')
-        .setCharacteristic(Characteristic.Model, accessory.type);
+        .setCharacteristic(Characteristic.Manufacturer, accessory.manufacturer)
+        .setCharacteristic(Characteristic.Model, accessory.model)
+        .setCharacteristic(Characteristic.HardwareRevision, accessory.version);
 
         services.push(informationService);
 
