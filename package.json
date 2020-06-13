@@ -1,6 +1,6 @@
 {
   "name": "homebridge-syntex-webhooks",
-  "version": "2.2.0-b21",
+  "version": "2.2.0-b14",
   "description": "A webhook plugin for HTTP devices",
   "main": "index.js",
   "author": {
