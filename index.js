@@ -198,13 +198,13 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     this.version = sensorConfig['version'] || '1.0.0';
     this.model = sensorConfig['model'] || 'HTTP Accessory';
     this.manufacturer = sensorConfig['manufacturer'] || 'SynTex';
-
+    /*
     DeviceManager.getDevice(this).then(function(state) {
 
         this.value = validateUpdate(this.mac, this.type, state);
 
     }.bind(this));
-
+    */
     this.service = createAccessory(this);
 }
 
@@ -254,13 +254,13 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.version = switchConfig['version'] || '1.0.0';
     this.model = switchConfig['model'] || 'HTTP Accessory';
     this.manufacturer = switchConfig['manufacturer'] || 'SynTex';
-
+    /*
     DeviceManager.getDevice(this).then(function(state) {
 
         this.value = validateUpdate(this.mac, this.type, state);
 
     }.bind(this));
-
+    */
     this.service = createAccessory(this);
 }
 
