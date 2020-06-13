@@ -700,7 +700,7 @@ function createAccessory(accessory)
         }
     }
 
-    logger.log(services);
+    logger.log('debug', services);
 
     return services;
 }
