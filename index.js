@@ -697,6 +697,8 @@ function createAccessory(accessory)
 
                 for(var j = 0; j < accessory.service.length; j++)
                 {
+                    logger.log('debug', type + ' - ' + accessory.service[j].type);
+                    
                     if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
                     {
                         accessory.service[j].getCharacteristic(characteristic).updateValue(state);
