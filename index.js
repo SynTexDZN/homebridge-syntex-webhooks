@@ -643,7 +643,7 @@ function validateUpdate(mac, type, state)
 
 function createAccessory(accessory)
 {
-    var service, accessories = [];
+    var services = [], accessories = [];
 
     accessories.push({type : 'contact', service : new Service.ContactSensor(accessory.name), characteristic : Characteristic.ContactSensorState});
     accessories.push({type : 'motion', service : new Service.MotionSensor(accessory.name), characteristic : Characteristic.MotionDetected});
@@ -663,8 +663,7 @@ function createAccessory(accessory)
         if(accessories[i].type == accessory.type)
         {
             var characteristic = accessories[i].characteristic;
-
-            service = accessories[i].service;
+            var service = accessories[i].service;
 
             accessory.changeHandler = (function(state)
             {
@@ -694,6 +693,8 @@ function createAccessory(accessory)
                 service.addCharacteristic(new Characteristic.Saturation()).on('get', accessory.getSaturation.bind(accessory)).on('set', accessory.setSaturation.bind(accessory));
                 service.addCharacteristic(new Characteristic.Brightness()).on('get', accessory.getBrightness.bind(accessory)).on('set', accessory.setBrightness.bind(accessory));
             }
+
+            services.push(service);
         }
     }
 
