@@ -783,7 +783,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
             }
 
-            if(service.type == 'switch' || service.type == 'relais')
+            if(this.type.includes('switch') || this.type.includes('relais'))
             {
                 name += " X";
             }
