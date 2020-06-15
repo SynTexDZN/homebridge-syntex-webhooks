@@ -814,12 +814,12 @@ function SynTexBaseAccessory(accessoryConfig)
 
             this.changeHandler = (function(state, type)
             {
-                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
-
                 for(var j = 1; j < this.service.length; j++)
                 {
                     if(this.type != 'rgb' && (type == null || type == this.service[j].type))
                     {
+                        logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+
                         this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
                     }
                 }
