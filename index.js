@@ -787,7 +787,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
             if(this.type.includes('switch') || this.type.includes('relais'))
             {
-                logger.log("debug", "switch");
+                logger.log("debug", "SWITCH");
                 name += " Z";
             }
 
