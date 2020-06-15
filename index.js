@@ -787,13 +787,9 @@ function SynTexBaseAccessory(accessoryConfig)
 
             service.mac = this.mac;
             service.type = accessories[i].type;
+            service.name = name;
             service.characteristic = characteristic;
 
-            if(this.service.length > 2)
-            {
-                service.name += ' ' + service.type[0].toUpperCase() + service.type.substring(1);
-            }
-            
             service.options = {};
 
             if(service.type == 'switch' || service.type == 'relais')
