@@ -210,9 +210,9 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
-    logger.log('debug', this);
-
     DeviceManager.getDevice(this).then(function(state) {
+
+        logger.log('debug', this.type);
 
         if(state == null)
         {
@@ -696,8 +696,6 @@ function createAccessory(accessory)
             service.type = accessories[i].type;
             service.character = characteristic;
 
-            logger.log('debug', service.type);
-
             accessory.changeHandler = (function(state, type)
             {
                 logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
@@ -722,7 +720,7 @@ function createAccessory(accessory)
 
             if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
             {
-                service.getCharacteristic(characteristic).on('set', accessory.setState.bind(accessory));
+                service.getCharacteristic(characteristic).on('set', accessory.setState.bind(service));
             }
 
             if(accessory.type == 'rgb')
