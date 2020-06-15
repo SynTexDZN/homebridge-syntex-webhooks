@@ -518,50 +518,45 @@ function createAccessory(accessory)
     {
         if(accessory.type.includes(accessories[i].type))
         {
-            var count = (accessory.type.match(new RegExp(accessories[i].type, 'g')) || []).length;
             var characteristic = accessories[i].characteristic;
+            var service = accessories[i].service;
 
-            for(var i = 0; i < count; i++)
+            service.type = accessories[i].type;
+            service.character = characteristic;
+
+            accessory.changeHandler = (function(state, type)
             {
-                var service = accessories[i].service;
+                logger.log('update', "HomeKit Status für '" + type + "' in '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
 
-                service.type = accessories[i].type;
-                service.character = characteristic;
-
-                accessory.changeHandler = (function(state, type)
+                for(var j = 1; j < accessory.service.length; j++)
                 {
-                    logger.log('update', "HomeKit Status für '" + type + "' in '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
-
-                    for(var j = 1; j < accessory.service.length; j++)
+                    if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
                     {
-                        if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
-                        {
-                            accessory.service[j].getCharacteristic(accessory.service[j].character).updateValue(state);
-                        }
+                        accessory.service[j].getCharacteristic(accessory.service[j].character).updateValue(state);
                     }
-                });
-
-                if(accessory.type == 'temperature')
-                {
-                    service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
                 }
+            });
 
-                //service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
-
-                if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
-                {
-                    service.getCharacteristic(characteristic).on('set', accessory.setState.bind(service));
-                }
-
-                if(accessory.type == 'rgb')
-                {
-                    service.addCharacteristic(new Characteristic.Hue()).on('get', accessory.getHue.bind(accessory)).on('set', accessory.setHue.bind(accessory));
-                    service.addCharacteristic(new Characteristic.Saturation()).on('get', accessory.getSaturation.bind(accessory)).on('set', accessory.setSaturation.bind(accessory));
-                    service.addCharacteristic(new Characteristic.Brightness()).on('get', accessory.getBrightness.bind(accessory)).on('set', accessory.setBrightness.bind(accessory));
-                }
-
-                services.push(service);
+            if(accessory.type == 'temperature')
+            {
+                service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
+
+            //service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
+
+            if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
+            {
+                service.getCharacteristic(characteristic).on('set', accessory.setState.bind(service));
+            }
+
+            if(accessory.type == 'rgb')
+            {
+                service.addCharacteristic(new Characteristic.Hue()).on('get', accessory.getHue.bind(accessory)).on('set', accessory.setHue.bind(accessory));
+                service.addCharacteristic(new Characteristic.Saturation()).on('get', accessory.getSaturation.bind(accessory)).on('set', accessory.setSaturation.bind(accessory));
+                service.addCharacteristic(new Characteristic.Brightness()).on('get', accessory.getBrightness.bind(accessory)).on('set', accessory.setBrightness.bind(accessory));
+            }
+
+            services.push(service);
         }
     }
 
@@ -608,104 +603,91 @@ function SynTexBaseAccessory(accessoryConfig)
     {
         if(this.type.includes(accessories[i].type))
         {
-            var count = (JSON.stringify(this.type).match(new RegExp(accessories[i].type, 'g')) || []).length;
-
             var characteristic = accessories[i].characteristic;
+            var name = this.name;
 
-            for(var j = 0; j < count; j++)
+            if(this.type instanceof Array && this.type.length > 1)
             {
-                var name = this.name;
+                name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
+            }
 
-                if(this.type instanceof Array && this.type.length > 1)
-                {
-                    name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
-                }
-                
-                if(count == 1)
-                {
-                    var service = new accessories[i].service(name);
-                }
-                else
-                {
-                    var service = new accessories[i].service(name + ' ' + (j + 1));
-                }
+            var service = new accessories[i].service(name);
 
-                service.mac = this.mac;
-                service.type = accessories[i].type;
-                service.name = name;
-                service.characteristic = characteristic;
+            service.mac = this.mac;
+            service.type = accessories[i].type;
+            service.name = name;
+            service.characteristic = characteristic;
 
-                service.options = {};
+            service.options = {};
 
-                if(service.type == 'switch' || service.type == 'relais')
-                {
-                    service.options.onURL = accessoryConfig['on_url'] || '';
-                    service.options.onMethod = accessoryConfig['on_method'] || 'GET';
-                    service.options.onBody = accessoryConfig['on_body'] || '';
-                    service.options.onForm = accessoryConfig['on_form'] || '';
-                    service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
-                    service.options.offURL = accessoryConfig['off_url'] || '';
-                    service.options.offMethod = accessoryConfig['off_method'] || 'GET';
-                    service.options.offBody = accessoryConfig['off_body'] || '';
-                    service.options.offForm = accessoryConfig['off_form'] || '';
-                    service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
-                }
-                else if(service.type == 'rgb')
-                {
-                    service.options.url = accessoryConfig['url'] || '';
-                }
+            if(service.type == 'switch' || service.type == 'relais')
+            {
+                service.options.onURL = accessoryConfig['on_url'] || '';
+                service.options.onMethod = accessoryConfig['on_method'] || 'GET';
+                service.options.onBody = accessoryConfig['on_body'] || '';
+                service.options.onForm = accessoryConfig['on_form'] || '';
+                service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
+                service.options.offURL = accessoryConfig['off_url'] || '';
+                service.options.offMethod = accessoryConfig['off_method'] || 'GET';
+                service.options.offBody = accessoryConfig['off_body'] || '';
+                service.options.offForm = accessoryConfig['off_form'] || '';
+                service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
+            }
+            else if(service.type == 'rgb')
+            {
+                service.options.url = accessoryConfig['url'] || '';
+            }
 
-                DeviceManager.getDevice({ mac : this.mac, type : service.type }).then(function(state) {
-
-                    if(service.type == 'rgb')
-                    {
-                        this.power = state.split(':')[0] == 'true';
-                        this.hue = getHSL(state)[0] || 0;
-                        this.saturation = getHSL(state)[1] || 100;
-                        this.brightness = getHSL(state)[2] || 50;
-                    }
-                    else
-                    {
-                        this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
-                    }
-            
-                }.bind({ accessory : this, service : service }));
-
-                this.changeHandler = (function(state, type)
-                {
-                    for(var j = 1; j < this.service.length; j++)
-                    {
-                        if(this.service[j].type != 'rgb' && this.service[j].type == type)
-                        {
-                            logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
-
-                            this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
-                        }
-                    }
-
-                }.bind(this));
-
-                if(service.type == 'temperature')
-                {
-                    service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
-                }
-
-                service.getCharacteristic(characteristic).on('get', this.getState.bind(service));
-
-                if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
-                {
-                    service.getCharacteristic(characteristic).on('set', this.setState.bind(service));
-                }
+            DeviceManager.getDevice({ mac : this.mac, type : service.type }).then(function(state) {
 
                 if(service.type == 'rgb')
                 {
-                    service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
-                    service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
-                    service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
+                    this.power = state.split(':')[0] == 'true';
+                    this.hue = getHSL(state)[0] || 0;
+                    this.saturation = getHSL(state)[1] || 100;
+                    this.brightness = getHSL(state)[2] || 50;
+                }
+                else
+                {
+                    this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
+                }
+        
+            }.bind({ accessory : this, service : service }));
+
+            this.changeHandler = (function(state, type)
+            {
+                for(var j = 1; j < this.service.length; j++)
+                {
+                    if(this.service[j].type != 'rgb' && this.service[j].type == type)
+                    {
+                        logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+
+                        this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
+                    }
                 }
 
-                this.service.push(service);
+            }.bind(this));
+
+            if(service.type == 'temperature')
+            {
+                service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
+
+            service.getCharacteristic(characteristic).on('get', this.getState.bind(service));
+
+            if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
+            {
+                service.getCharacteristic(characteristic).on('set', this.setState.bind(service));
+            }
+
+            if(service.type == 'rgb')
+            {
+                service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
+                service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
+                service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
+            }
+
+            this.service.push(service);
         }
     }
 }
