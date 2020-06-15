@@ -820,7 +820,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 {
                     if(this.type != 'rgb' && (type == null || type == this.service[j].type))
                     {
-                        this.service[j].getCharacteristic(this.service[j].character).updateValue(state);
+                        this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
                     }
                 }
 
