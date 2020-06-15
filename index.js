@@ -812,7 +812,7 @@ function SynTexBaseAccessory(accessoryConfig)
         
             }.bind({ accessory : this, service : service }));
 
-            service.changeHandler = (function(state, type)
+            this.changeHandler = (function(state, type)
             {
                 logger.log('update', "HomeKit Status für '" + type + "' in '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
 
