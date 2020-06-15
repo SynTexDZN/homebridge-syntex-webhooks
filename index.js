@@ -820,7 +820,7 @@ function SynTexBaseAccessory(accessoryConfig)
                     {
                         logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
 
-                        logger.log(this.service[j].getCharacteristic(this.service[j].characteristic));
+                        logger.log('debug', this.service[j].getCharacteristic(this.service[j].characteristic));
 
                         this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
                     }
