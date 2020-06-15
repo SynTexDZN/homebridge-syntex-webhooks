@@ -916,7 +916,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
             {
                 logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
 
-                DeviceManager.setDevice(this, powerOn);
+                DeviceManager.setDevice(this.mac, this.type, powerOn);
 
                 callback(null);
             }
@@ -931,7 +931,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
     }
     else
     {
-        DeviceManager.setDevice(this, powerOn);
+        DeviceManager.setDevice(this.mac, this.type, powerOn);
 
         callback(null);
     }
