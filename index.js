@@ -117,7 +117,7 @@ SynTexWebHookPlatform.prototype = {
                             logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + ' )');
                         }
 
-                        DeviceManager.setDevice(accessory, urlParams.value);
+                        DeviceManager.setDevice(urlParams.mac, urlParams.type || accessory.type, urlParams.value);
                          
                         response.write(state != null ? 'Success' : 'Error');
                     }
@@ -331,7 +331,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
             {
                 logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
 
-                DeviceManager.setDevice(this, powerOn);
+                DeviceManager.setDevice(this.mac, this.type, powerOn);
 
                 callback(null);
             }
@@ -346,7 +346,7 @@ SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, co
     }
     else
     {
-        DeviceManager.setDevice(this, powerOn);
+        DeviceManager.setDevice(this.mac, this.type, powerOn);
 
         callback(null);
     }

@@ -28,7 +28,7 @@ function getDevice(accessory)
     });
 }
 
-function setDevice(accessory, value)
+function setDevice(mac, type, value)
 {
     return new Promise(async function(resolve) {
 
@@ -36,7 +36,7 @@ function setDevice(accessory, value)
 
         for(var i = 0; i < accessories.length; i++)
         {
-            if(accessories[i].mac == accessory.mac && accessories[i].type == accessory.type)
+            if(accessories[i].mac == mac && accessories[i].type == type)
             {
                 accessories[i].value = value;
 
@@ -46,12 +46,10 @@ function setDevice(accessory, value)
 
         if(!found)
         {
-            accessory.value = value;
-
-            accessories.push(accessory);
+            accessories.push({ mac : mac, type : type, value : value });
         }
 
-        await writeFS(accessory.mac, accessory.type, value);
+        await writeFS(mac, type, value);
 
         resolve();
     });
