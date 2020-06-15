@@ -199,7 +199,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     
     this.service = createAccessory(this);
 
-    for(var i = 0; i < this.service.length; i++)
+    for(var i = 1; i < this.service.length; i++)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
@@ -258,7 +258,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     
     this.service = createAccessory(this);
 
-    for(var i = 0; i < this.service.length; i++)
+    for(var i = 1; i < this.service.length; i++)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
