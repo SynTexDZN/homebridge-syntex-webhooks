@@ -785,7 +785,8 @@ function SynTexBaseAccessory(accessoryConfig)
 
             if(this.type.includes('switch') || this.type.includes('relais'))
             {
-                name += " X";
+                logger.log("debug", "switch");
+                name += " Z";
             }
 
             var service = new accessories[i].service(name);
