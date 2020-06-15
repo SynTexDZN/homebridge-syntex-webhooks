@@ -763,16 +763,16 @@ function SynTexBaseAccessory(accessoryConfig)
     var informationService = new Service.AccessoryInformation();
     
     informationService
-        .setCharacteristic(Characteristic.Manufacturer, accessory.manufacturer)
-        .setCharacteristic(Characteristic.Model, accessory.model)
-        .setCharacteristic(Characteristic.FirmwareRevision, accessory.version)
-        .setCharacteristic(Characteristic.SerialNumber, accessory.mac);
+        .setCharacteristic(Characteristic.Manufacturer, this.manufacturer)
+        .setCharacteristic(Characteristic.Model, this.model)
+        .setCharacteristic(Characteristic.FirmwareRevision, this.version)
+        .setCharacteristic(Characteristic.SerialNumber, this.mac);
 
         services.push(informationService);
 
     for(var i = 0; i < accessories.length; i++)
     {
-        if(accessory.type.includes(accessories[i].type))
+        if(this.type.includes(accessories[i].type))
         {
             var characteristic = accessories[i].characteristic;
             var service = new accessories[i].service(this.name);
@@ -808,36 +808,36 @@ function SynTexBaseAccessory(accessoryConfig)
         
             }.bind({ accessory : this, service : service }));
 
-            accessory.changeHandler = (function(state, type)
+            this.changeHandler = (function(state, type)
             {
-                logger.log('update', "HomeKit Status für '" + type + "' in '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
+                logger.log('update', "HomeKit Status für '" + type + "' in '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
 
-                for(var j = 1; j < accessory.service.length; j++)
+                for(var j = 1; j < this.service.length; j++)
                 {
-                    if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
+                    if(this.type != 'rgb' && (type == null || type == this.service[j].type))
                     {
-                        accessory.service[j].getCharacteristic(accessory.service[j].character).updateValue(state);
+                        this.service[j].getCharacteristic(this.service[j].character).updateValue(state);
                     }
                 }
-            });
+            }.bind(this));
 
-            if(accessory.type == 'temperature')
+            if(this.type == 'temperature')
             {
                 service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
 
-            service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
+            service.getCharacteristic(characteristic).on('get', this.getState.bind(service));
 
-            if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
+            if(this.type == 'switch' || this.type == 'reials' || this.type == 'rgb')
             {
-                service.getCharacteristic(characteristic).on('set', accessory.setState.bind(service));
+                service.getCharacteristic(characteristic).on('set', this.setState.bind(service));
             }
 
-            if(accessory.type == 'rgb')
+            if(this.type == 'rgb')
             {
-                service.addCharacteristic(new Characteristic.Hue()).on('get', accessory.getHue.bind(accessory)).on('set', accessory.setHue.bind(accessory));
-                service.addCharacteristic(new Characteristic.Saturation()).on('get', accessory.getSaturation.bind(accessory)).on('set', accessory.setSaturation.bind(accessory));
-                service.addCharacteristic(new Characteristic.Brightness()).on('get', accessory.getBrightness.bind(accessory)).on('set', accessory.setBrightness.bind(accessory));
+                service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
+                service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
+                service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
             }
 
             services.push(service);
