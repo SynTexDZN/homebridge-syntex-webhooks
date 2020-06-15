@@ -886,8 +886,6 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
     var urlForm = powerOn ? this.options.onForm : this.options.offForm;
     var urlHeaders = powerOn ? this.options.onHeaders : this.options.offHeaders;
 
-    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
-
     if(urlToCall != '')
     {
         var theRequest = {
@@ -919,6 +917,8 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
             {
                 logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
 
+                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
+
                 DeviceManager.setDevice(this.mac, this.type, powerOn);
 
                 callback(null);
@@ -934,6 +934,8 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
     }
     else
     {
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
+
         DeviceManager.setDevice(this.mac, this.type, powerOn);
 
         callback(null);
