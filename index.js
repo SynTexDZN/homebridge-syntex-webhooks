@@ -198,14 +198,17 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     this.version = sensorConfig['version'] || '1.0.0';
     this.model = sensorConfig['model'] || 'HTTP Accessory';
     this.manufacturer = sensorConfig['manufacturer'] || 'SynTex';
-    /*
-    DeviceManager.getDevice(this).then(function(state) {
-
-        this.value = validateUpdate(this.mac, this.type, state);
-
-    }.bind(this));
-    */
+    
     this.service = createAccessory(this);
+
+    for(var i = 0; i < this.service.length; i++)
+    {
+        DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
+
+            this.value = validateUpdate(this.mac, this.type, state);
+    
+        }.bind({ mac : this.mac, type : this.service[i].type }));
+    }
 }
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
@@ -254,14 +257,17 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     this.version = switchConfig['version'] || '1.0.0';
     this.model = switchConfig['model'] || 'HTTP Accessory';
     this.manufacturer = switchConfig['manufacturer'] || 'SynTex';
-    /*
-    DeviceManager.getDevice(this).then(function(state) {
-
-        this.value = validateUpdate(this.mac, this.type, state);
-
-    }.bind(this));
-    */
+    
     this.service = createAccessory(this);
+
+    for(var i = 0; i < this.service.length; i++)
+    {
+        DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
+
+            this.value = validateUpdate(this.mac, this.type, state);
+    
+        }.bind({ mac : this.mac, type : this.service[i].type }));
+    }
 }
 
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
@@ -274,7 +280,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
         }
         else if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
+            logger.log('read', "HomeKit Status für '" + this.type + "' in '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
         }
          
         callback(null, state);
@@ -714,11 +720,11 @@ function createAccessory(accessory)
                 service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
 
-            service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
+            service.getCharacteristic(characteristic).on('get', accessory.getState.bind({ mac : accessory.mac, name : accessory.name, type : accessories[i].type }));
 
             if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
             {
-                service.getCharacteristic(characteristic).on('set', accessory.setState.bind(service));
+                service.getCharacteristic(characteristic).on('set', accessory.setState.bind({ mac : accessory.mac, name : accessory.name, type : accessories[i].type }));
             }
 
             if(accessory.type == 'rgb')
