@@ -203,15 +203,15 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.accessory.service[this.index].type, state), this.accessory.service[this.index].type);
+            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
     
-        }.bind({ accessory : this, index : i }));
+        }.bind({ accessory : this, service : this.service[i] }));
     }
 }
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
-    DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
 
         if(state == null)
         {
@@ -224,7 +224,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 
         callback(null, state);
 
-    }.bind(this)).catch(function(e) {
+    }.bind({ mac : this.mac, type : this.type, name : this.name })).catch(function(e) {
 
         logger.err(e);
     });
@@ -237,10 +237,10 @@ SynTexWebHookSensorAccessory.prototype.getServices = function()
 
 function SynTexWebHookSwitchAccessory(switchConfig)
 {
-    this.service = [];
     this.mac = switchConfig['mac'];
     this.type = switchConfig['type'];
     this.name = switchConfig['name'];
+
     this.onURL = switchConfig['on_url'] || '';
     this.onMethod = switchConfig['on_method'] || 'GET';
     this.onBody = switchConfig['on_body'] || '';
@@ -262,15 +262,15 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.accessory.service[this.index].type, state), this.accessory.service[this.index].type);
+            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
     
-        }.bind({ accessory : this, index : i }));
+        }.bind({ accessory : this, service : this.service[i] }));
     }
 }
 
 SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
 {
-    DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
 
         if(state == null)
         {
@@ -283,7 +283,7 @@ SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
          
         callback(null, state);
 
-    }.bind(this)).catch(function(e) {
+    }.bind({ mac : this.mac, type : this.type, name : this.name })).catch(function(e) {
 
         logger.err(e);
     });
@@ -358,7 +358,6 @@ SynTexWebHookSwitchAccessory.prototype.getServices = function()
 
 function SynTexWebHookStripeRGBAccessory(lightConfig)
 {
-    this.service = [];
     this.mac = lightConfig['mac'];
     this.type = lightConfig['type'];
     this.name = lightConfig['name'];
@@ -368,7 +367,7 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.model = lightConfig['model'] || 'HTTP Accessory';
     this.manufacturer = lightConfig['manufacturer'] || 'SynTex';
 
-    DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
 
         this.power = state.split(':')[0] == 'true';
         this.hue = getHSL(state)[0] || 0;
@@ -382,7 +381,7 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 {
-    DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
 
         if(state == null)
         {
@@ -395,7 +394,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 
         callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
 
-    }.bind(this)).catch(function(e) {
+    }.bind({ mac : this.mac, name : this.name })).catch(function(e) {
 
         logger.err(e);
     });
@@ -403,11 +402,11 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
-    DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
 
         callback(null, (state == null) ? 0 : (getHSL(state)[0] || 0));
 
-    }.bind(this)).catch(function(e) {
+    }).catch(function(e) {
 
         logger.err(e);
     });
@@ -415,11 +414,11 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 {
-    DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
 
         callback(null, (state == null) ? 100 : (getHSL(state)[1] || 100));
 
-    }.bind(this)).catch(function(e) {
+    }).catch(function(e) {
 
         logger.err(e);
     });
@@ -427,11 +426,11 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 {
-    DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
 
         callback(null, (state == null) ? 50 : (getHSL(state)[2] || 50));
 
-    }.bind(this)).catch(function(e) {
+    }).catch(function(e) {
 
         logger.err(e);
     });
