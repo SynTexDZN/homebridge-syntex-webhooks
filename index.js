@@ -691,8 +691,8 @@ function createAccessory(accessory)
             var characteristic = accessories[i].characteristic;
             var service = accessories[i].service;
 
-            service.mac = accessoriy.mac;
-            service.name = accessoriy.name;
+            service.mac = accessory.mac;
+            service.name = accessory.name;
             service.type = accessories[i].type;
             service.character = characteristic;
 
