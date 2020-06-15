@@ -203,6 +203,9 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
+            logger.log('debug', this.accessory.service[this.index].character);
+            logger.log('debug', this.accessory.service[this.index]);
+
             this.accessory.service[this.index].getCharacteristic(this.accessory.service[this.index].character).updateValue(state);
 
         }.bind({ accessory : this, index : i }));
