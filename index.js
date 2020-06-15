@@ -714,7 +714,7 @@ function createAccessory(accessory)
                 service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
 
-            service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
+            //service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
 
             if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
             {
@@ -812,7 +812,7 @@ function SynTexBaseAccessory(accessoryConfig)
         
             }.bind({ accessory : this, service : service }));
 
-            this.changeHandler = (function(state, type)
+            service.changeHandler = (function(state, type)
             {
                 logger.log('update', "HomeKit Status für '" + type + "' in '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
 
