@@ -205,9 +205,9 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            this.value = validateUpdate(this.mac, this.type, state);
+            this.changeHandler(validateUpdate(this.mac, this.service[i].type, state), this.service[i].type);
     
-        }.bind({ mac : this.mac, type : this.service[i].type }));
+        }.bind(this));
     }
 }
 
@@ -264,9 +264,9 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            this.value = validateUpdate(this.mac, this.type, state);
+            this.changeHandler(validateUpdate(this.mac, this.service[i].type, state), this.service[i].type);
     
-        }.bind({ mac : this.mac, type : this.service[i].type }));
+        }.bind(this));
     }
 }
 
