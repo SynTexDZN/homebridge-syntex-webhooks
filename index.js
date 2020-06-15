@@ -820,7 +820,7 @@ function SynTexBaseAccessory(accessoryConfig)
             {
                 for(var j = 1; j < this.service.length; j++)
                 {
-                    if(this.type != 'rgb' && (type == null || type == this.service[j].type))
+                    if(this.service[j].type != 'rgb' && (type == null || type == this.service[j].type))
                     {
                         logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
 
@@ -830,19 +830,19 @@ function SynTexBaseAccessory(accessoryConfig)
 
             }.bind(this));
 
-            if(this.type == 'temperature')
+            if(service.type == 'temperature')
             {
                 service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
 
             service.getCharacteristic(characteristic).on('get', this.getState.bind(service));
 
-            if(this.type == 'switch' || this.type == 'reials' || this.type == 'rgb')
+            if(service.type == 'switch' || service.type == 'reials' || service.type == 'rgb')
             {
                 service.getCharacteristic(characteristic).on('set', this.setState.bind(service));
             }
 
-            if(this.type == 'rgb')
+            if(service.type == 'rgb')
             {
                 service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
                 service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
