@@ -689,6 +689,8 @@ function createAccessory(accessory)
             var characteristic = accessories[i].characteristic;
             var service = accessories[i].service;
 
+            service.mac = accessories[i].mac;
+            service.name = accessories[i].name;
             service.type = accessories[i].type;
             service.character = characteristic;
 
@@ -714,7 +716,7 @@ function createAccessory(accessory)
                 service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
 
-            service.getCharacteristic(characteristic).on('get', accessory.getState.bind(accessory));
+            service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
 
             if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
             {
