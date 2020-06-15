@@ -702,6 +702,8 @@ function createAccessory(accessory)
             service.type = accessories[i].type;
             service.character = characteristic;
 
+            logger.log('warn', characteristic);
+
             accessory.changeHandler = (function(state, type)
             {
                 logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
