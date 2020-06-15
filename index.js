@@ -620,6 +620,21 @@ function SynTexBaseAccessory(accessoryConfig)
 
             for(var j = 0; j < count; j++)
             {
+                accessories = [];
+
+                accessories.push({type : 'contact', service : Service.ContactSensor, characteristic : Characteristic.ContactSensorState});
+                accessories.push({type : 'motion', service : Service.MotionSensor, characteristic : Characteristic.MotionDetected});
+                accessories.push({type : 'temperature', service : Service.TemperatureSensor, characteristic : Characteristic.CurrentTemperature});
+                accessories.push({type : 'humidity', service : Service.HumiditySensor, characteristic : Characteristic.CurrentRelativeHumidity});
+                accessories.push({type : 'rain', service : Service.LeakSensor, characteristic : Characteristic.LeakDetected});
+                accessories.push({type : 'light', service : Service.LightSensor, characteristic : Characteristic.CurrentAmbientLightLevel});
+                accessories.push({type : 'occupancy', service : Service.OccupancySensor, characteristic : Characteristic.OccupancyDetected});
+                accessories.push({type : 'smoke', service : Service.SmokeSensor, characteristic : Characteristic.SmokeDetected});
+                accessories.push({type : 'airquality', service : Service.AirQualitySensor, characteristic : Characteristic.AirQuality});
+                accessories.push({type : 'rgb', service : Service.Lightbulb, characteristic : Characteristic.On});
+                accessories.push({type : 'switch', service : Service.Switch, characteristic : Characteristic.On});
+                accessories.push({type : 'relais', service : Service.Switch, characteristic : Characteristic.On});
+                
                 if(count == 1)
                 {
                     var service = new accessories[i].service(name);
