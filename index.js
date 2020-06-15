@@ -620,7 +620,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
             }
 
-            for(var i = 0; i < count; i++)
+            for(var j = 0; j < count; j++)
             {
                 if(count == 1)
                 {
@@ -628,7 +628,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 }
                 else
                 {
-                    var service = new accessories[i].service(name + ' ' + (i + 1));
+                    var service = new accessories[i].service(name + ' ' + (j + 1));
                 }
 
                 service.mac = this.mac;
