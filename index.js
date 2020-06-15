@@ -783,6 +783,8 @@ function SynTexBaseAccessory(accessoryConfig)
                 name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
             }
 
+            logger.log("debug", this.type);
+
             if(this.type.includes('switch') || this.type.includes('relais'))
             {
                 logger.log("debug", "switch");
