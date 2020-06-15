@@ -12,8 +12,6 @@ module.exports = function(homebridge)
     Characteristic = homebridge.hap.Characteristic;
 
     homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
-    //homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSensor', SynTexWebHookSensorAccessory);
-    //homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSwitch', SynTexWebHookSwitchAccessory);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStripeRGB', SynTexWebHookStripeRGBAccessory);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStatelessSwitch', SynTexWebHookStatelessSwitchAccessory);
 };
@@ -186,176 +184,7 @@ SynTexWebHookPlatform.prototype = {
         logger.log('info', "Data Link Server läuft auf Port '" + this.port + "'");
     }
 }
-/*
-function SynTexWebHookSensorAccessory(sensorConfig)
-{
-    this.mac = sensorConfig['mac'];
-    this.name = sensorConfig['name'];
-    this.type = sensorConfig['type'];
 
-    this.version = sensorConfig['version'] || '1.0.0';
-    this.model = sensorConfig['model'] || 'HTTP Accessory';
-    this.manufacturer = sensorConfig['manufacturer'] || 'SynTex';
-    
-    this.service = createAccessory(this);
-
-    for(var i = 1; i < this.service.length; i++)
-    {
-        DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
-
-            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
-    
-        }.bind({ accessory : this, service : this.service[i] }));
-    }
-}
-
-SynTexWebHookSensorAccessory.prototype.getState = function(callback)
-{        
-    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
-
-        if(state == null)
-        {
-            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
-        }
-        else if((state = validateUpdate(this.mac, this.type, state)) != null)
-        {
-            logger.log('read', "HomeKit Status für '" + this.type + "' in '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
-        }
-         
-        callback(null, state);
-
-    }.bind({ mac : this.mac, type : this.type, name : this.name })).catch(function(e) {
-
-        logger.err(e);
-    });
-};
-
-SynTexWebHookSensorAccessory.prototype.getServices = function()
-{
-    return this.service;
-};
-
-function SynTexWebHookSwitchAccessory(switchConfig)
-{
-    this.mac = switchConfig['mac'];
-    this.type = switchConfig['type'];
-    this.name = switchConfig['name'];
-
-    this.onURL = switchConfig['on_url'] || '';
-    this.onMethod = switchConfig['on_method'] || 'GET';
-    this.onBody = switchConfig['on_body'] || '';
-    this.onForm = switchConfig['on_form'] || '';
-    this.onHeaders = switchConfig['on_headers'] || '{}';
-    this.offURL = switchConfig['off_url'] || '';
-    this.offMethod = switchConfig['off_method'] || 'GET';
-    this.offBody = switchConfig['off_body'] || '';
-    this.offForm = switchConfig['off_form'] || '';
-    this.offHeaders = switchConfig['off_headers'] || '{}';
-
-    this.version = switchConfig['version'] || '1.0.0';
-    this.model = switchConfig['model'] || 'HTTP Accessory';
-    this.manufacturer = switchConfig['manufacturer'] || 'SynTex';
-    
-    this.service = createAccessory(this);
-
-    for(var i = 1; i < this.service.length; i++)
-    {
-        DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
-
-            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
-    
-        }.bind({ accessory : this, service : this.service[i] }));
-    }
-}
-
-SynTexWebHookSwitchAccessory.prototype.getState = function(callback)
-{
-    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
-
-        if(state == null)
-        {
-            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
-        }
-        else if((state = validateUpdate(this.mac, this.type, state)) != null)
-        {
-            logger.log('read', "HomeKit Status für '" + this.type + "' in '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
-        }
-         
-        callback(null, state);
-
-    }.bind({ mac : this.mac, type : this.type, name : this.name })).catch(function(e) {
-
-        logger.err(e);
-    });
-};
-
-SynTexWebHookSwitchAccessory.prototype.setState = function(powerOn, callback, context)
-{
-    var urlToCall = powerOn ? this.onURL : this.offURL;
-    var urlMethod = powerOn ? this.onMethod : this.offMethod;
-    var urlBody = powerOn ? this.onBody : this.offBody;
-    var urlForm = powerOn ? this.onForm : this.offForm;
-    var urlHeaders = powerOn ? this.onHeaders : this.offHeaders;
-
-    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
-
-    if(urlToCall != '')
-    {
-        var theRequest = {
-            method : urlMethod,
-            url : urlToCall,
-            timeout : 5000,
-            headers: JSON.parse(urlHeaders)
-        };
-        
-        if(urlMethod === 'POST' || urlMethod === 'PUT')
-        {
-            if(urlForm)
-            {
-                //logger.log('Adding Form ' + urlForm);
-                theRequest.form = JSON.parse(urlForm);
-            }
-            else if(urlBody)
-            {
-                //logger.log('Adding Body ' + urlBody);
-                theRequest.body = urlBody;
-            }
-        }
-
-        request(theRequest, (function(err, response, body)
-        {
-            var statusCode = response && response.statusCode ? response.statusCode : -1;
-            
-            if(!err && statusCode == 200)
-            {
-                logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
-
-                DeviceManager.setDevice(this.mac, this.type, powerOn);
-
-                callback(null);
-            }
-            else
-            {
-                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
-
-                callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
-            }
-
-        }).bind(this));
-    }
-    else
-    {
-        DeviceManager.setDevice(this.mac, this.type, powerOn);
-
-        callback(null);
-    }
-};
-
-SynTexWebHookSwitchAccessory.prototype.getServices = function()
-{
-    return this.service;
-};
-*/
 function SynTexWebHookStripeRGBAccessory(lightConfig)
 {
     this.mac = lightConfig['mac'];
@@ -689,45 +518,50 @@ function createAccessory(accessory)
     {
         if(accessory.type.includes(accessories[i].type))
         {
+            var count = (accessory.type.match(new RegExp(accessories[i].type, 'g')) || []).length;
             var characteristic = accessories[i].characteristic;
-            var service = accessories[i].service;
 
-            service.type = accessories[i].type;
-            service.character = characteristic;
-
-            accessory.changeHandler = (function(state, type)
+            for(var i = 0; i < count; i++)
             {
-                logger.log('update', "HomeKit Status für '" + type + "' in '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
+                var service = accessories[i].service;
 
-                for(var j = 1; j < accessory.service.length; j++)
+                service.type = accessories[i].type;
+                service.character = characteristic;
+
+                accessory.changeHandler = (function(state, type)
                 {
-                    if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
+                    logger.log('update', "HomeKit Status für '" + type + "' in '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
+
+                    for(var j = 1; j < accessory.service.length; j++)
                     {
-                        accessory.service[j].getCharacteristic(accessory.service[j].character).updateValue(state);
+                        if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
+                        {
+                            accessory.service[j].getCharacteristic(accessory.service[j].character).updateValue(state);
+                        }
                     }
+                });
+
+                if(accessory.type == 'temperature')
+                {
+                    service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
                 }
-            });
 
-            if(accessory.type == 'temperature')
-            {
-                service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
+                //service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
+
+                if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
+                {
+                    service.getCharacteristic(characteristic).on('set', accessory.setState.bind(service));
+                }
+
+                if(accessory.type == 'rgb')
+                {
+                    service.addCharacteristic(new Characteristic.Hue()).on('get', accessory.getHue.bind(accessory)).on('set', accessory.setHue.bind(accessory));
+                    service.addCharacteristic(new Characteristic.Saturation()).on('get', accessory.getSaturation.bind(accessory)).on('set', accessory.setSaturation.bind(accessory));
+                    service.addCharacteristic(new Characteristic.Brightness()).on('get', accessory.getBrightness.bind(accessory)).on('set', accessory.setBrightness.bind(accessory));
+                }
+
+                services.push(service);
             }
-
-            //service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
-
-            if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
-            {
-                service.getCharacteristic(characteristic).on('set', accessory.setState.bind(service));
-            }
-
-            if(accessory.type == 'rgb')
-            {
-                service.addCharacteristic(new Characteristic.Hue()).on('get', accessory.getHue.bind(accessory)).on('set', accessory.setHue.bind(accessory));
-                service.addCharacteristic(new Characteristic.Saturation()).on('get', accessory.getSaturation.bind(accessory)).on('set', accessory.setSaturation.bind(accessory));
-                service.addCharacteristic(new Characteristic.Brightness()).on('get', accessory.getBrightness.bind(accessory)).on('set', accessory.setBrightness.bind(accessory));
-            }
-
-            services.push(service);
         }
     }
 
@@ -774,6 +608,7 @@ function SynTexBaseAccessory(accessoryConfig)
     {
         if(this.type.includes(accessories[i].type))
         {
+            var count = (accessory.type.match(new RegExp(accessories[i].type, 'g')) || []).length;
             var characteristic = accessories[i].characteristic;
             var name = this.name;
 
@@ -782,83 +617,93 @@ function SynTexBaseAccessory(accessoryConfig)
                 name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
             }
 
-            var service = new accessories[i].service(name);
-
-            service.mac = this.mac;
-            service.type = accessories[i].type;
-            service.name = name;
-            service.characteristic = characteristic;
-
-            service.options = {};
-
-            if(service.type == 'switch' || service.type == 'relais')
+            for(var i = 0; i < count; i++)
             {
-                service.options.onURL = accessoryConfig['on_url'] || '';
-                service.options.onMethod = accessoryConfig['on_method'] || 'GET';
-                service.options.onBody = accessoryConfig['on_body'] || '';
-                service.options.onForm = accessoryConfig['on_form'] || '';
-                service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
-                service.options.offURL = accessoryConfig['off_url'] || '';
-                service.options.offMethod = accessoryConfig['off_method'] || 'GET';
-                service.options.offBody = accessoryConfig['off_body'] || '';
-                service.options.offForm = accessoryConfig['off_form'] || '';
-                service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
-            }
-            else if(service.type == 'rgb')
-            {
-                service.options.url = accessoryConfig['url'] || '';
-            }
-
-            DeviceManager.getDevice({ mac : this.mac, type : service.type }).then(function(state) {
-
-                if(service.type == 'rgb')
+                if(count == 1)
                 {
-                    this.power = state.split(':')[0] == 'true';
-                    this.hue = getHSL(state)[0] || 0;
-                    this.saturation = getHSL(state)[1] || 100;
-                    this.brightness = getHSL(state)[2] || 50;
+                    var service = new accessories[i].service(name);
                 }
                 else
                 {
-                    this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
+                    var service = new accessories[i].service(name + ' ' + (i + 1));
                 }
-        
-            }.bind({ accessory : this, service : service }));
 
-            this.changeHandler = (function(state, type)
-            {
-                for(var j = 1; j < this.service.length; j++)
+                service.mac = this.mac;
+                service.type = accessories[i].type;
+                service.name = name;
+                service.characteristic = characteristic;
+
+                service.options = {};
+
+                if(service.type == 'switch' || service.type == 'relais')
                 {
-                    if(this.service[j].type != 'rgb' && this.service[j].type == type)
-                    {
-                        logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
-
-                        this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
-                    }
+                    service.options.onURL = accessoryConfig['on_url'] || '';
+                    service.options.onMethod = accessoryConfig['on_method'] || 'GET';
+                    service.options.onBody = accessoryConfig['on_body'] || '';
+                    service.options.onForm = accessoryConfig['on_form'] || '';
+                    service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
+                    service.options.offURL = accessoryConfig['off_url'] || '';
+                    service.options.offMethod = accessoryConfig['off_method'] || 'GET';
+                    service.options.offBody = accessoryConfig['off_body'] || '';
+                    service.options.offForm = accessoryConfig['off_form'] || '';
+                    service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
+                }
+                else if(service.type == 'rgb')
+                {
+                    service.options.url = accessoryConfig['url'] || '';
                 }
 
-            }.bind(this));
+                DeviceManager.getDevice({ mac : this.mac, type : service.type }).then(function(state) {
 
-            if(service.type == 'temperature')
-            {
-                service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
+                    if(service.type == 'rgb')
+                    {
+                        this.power = state.split(':')[0] == 'true';
+                        this.hue = getHSL(state)[0] || 0;
+                        this.saturation = getHSL(state)[1] || 100;
+                        this.brightness = getHSL(state)[2] || 50;
+                    }
+                    else
+                    {
+                        this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
+                    }
+            
+                }.bind({ accessory : this, service : service }));
+
+                this.changeHandler = (function(state, type)
+                {
+                    for(var j = 1; j < this.service.length; j++)
+                    {
+                        if(this.service[j].type != 'rgb' && this.service[j].type == type)
+                        {
+                            logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+
+                            this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
+                        }
+                    }
+
+                }.bind(this));
+
+                if(service.type == 'temperature')
+                {
+                    service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
+                }
+
+                service.getCharacteristic(characteristic).on('get', this.getState.bind(service));
+
+                if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
+                {
+                    service.getCharacteristic(characteristic).on('set', this.setState.bind(service));
+                }
+
+                if(service.type == 'rgb')
+                {
+                    service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
+                    service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
+                    service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
+                }
+
+                this.service.push(service);
             }
-
-            service.getCharacteristic(characteristic).on('get', this.getState.bind(service));
-
-            if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
-            {
-                service.getCharacteristic(characteristic).on('set', this.setState.bind(service));
-            }
-
-            if(service.type == 'rgb')
-            {
-                service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
-                service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
-                service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
-            }
-
-            this.service.push(service);
         }
     }
 }
