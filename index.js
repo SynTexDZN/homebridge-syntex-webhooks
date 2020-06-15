@@ -264,7 +264,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            this.changeHandler(validateUpdate(this.mac, this.service[i].type, state), this.service[i].type);
+            this.changeHandler(validateUpdate(this.mac, this.service[this.i].type, state), this.service[this.i].type);
     
         }.bind({ i : i, this : this }));
     }
