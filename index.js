@@ -740,7 +740,7 @@ function createAccessory(accessory)
 function SynTexBaseAccessory(accessoryConfig)
 {
     this.mac = accessoryConfig['mac'];
-    this.name = accessoryConfig['name'];
+    this.name = accessoryConfig['name'] + "X";
     this.type = accessoryConfig['type'];
 
     this.version = accessoryConfig['version'] || '1.0.0';
