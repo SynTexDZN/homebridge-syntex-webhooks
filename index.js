@@ -716,11 +716,11 @@ function createAccessory(accessory)
                 service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
 
-            service.getCharacteristic(characteristic).on('get', accessory.getState.bind({ mac : accessory.mac, name : accessory.name, type : accessories[i].type, options : service.options }));
+            service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
 
             if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
             {
-                service.getCharacteristic(characteristic).on('set', accessory.setState.bind({ mac : accessory.mac, name : accessory.name, type : accessories[i].type, options : service.options }));
+                service.getCharacteristic(characteristic).on('set', accessory.setState.bind(service));
             }
 
             if(accessory.type == 'rgb')
