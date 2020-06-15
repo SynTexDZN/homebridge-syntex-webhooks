@@ -203,9 +203,9 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.accessory.service[this.index].type, state), this.accessory.service[this.index].type);
-    
-        }.bind({ index : i, accessory : this }));
+            this.accessory.service[this.index].getCharacteristic(this.accessory.service[this.index].character).updateValue(state);
+
+        }.bind({ accessory : this, index : i }));
     }
 }
 
@@ -262,9 +262,9 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.accessory.service[this.index].type, state), this.accessory.service[this.index].type);
-    
-        }.bind({ index : i, accessory : this }));
+            this.accessory.service[this.index].getCharacteristic(this.accessory.service[this.index].character).updateValue(state);
+
+        }.bind({ accessory : this, index : i }));
     }
 }
 
