@@ -203,10 +203,8 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            logger.log('debug', this.accessory.service[this.index].characteristic);
-
-            this.accessory.service[this.index].getCharacteristic(this.accessory.service[this.index].characteristic).updateValue(state);
-
+            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.accessory.service[this.index].type, state), this.accessory.service[this.index].type);
+    
         }.bind({ accessory : this, index : i }));
     }
 }
@@ -264,10 +262,8 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            logger.log('debug', this.accessory.service[this.index].characteristic);
-
-            this.accessory.service[this.index].getCharacteristic(this.accessory.service[this.index].characteristic).updateValue(state);
-
+            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.accessory.service[this.index].type, state), this.accessory.service[this.index].type);
+    
         }.bind({ accessory : this, index : i }));
     }
 }
@@ -665,20 +661,20 @@ function validateUpdate(mac, type, state)
 
 function createAccessory(accessory)
 {
-    var services = [], presets = [];
+    var services = [], accessories = [];
 
-    presets.push({type : 'contact', service : new Service.ContactSensor(accessory.name), characteristic : Characteristic.ContactSensorState});
-    presets.push({type : 'motion', characteristic : new Characteristic.MotionDetected(), service : new Service.MotionSensor(accessory.name) });
-    presets.push({type : 'temperature', service : new Service.TemperatureSensor(accessory.name), characteristic : Characteristic.CurrentTemperature});
-    presets.push({type : 'humidity', service : new Service.HumiditySensor(accessory.name), characteristic : Characteristic.CurrentRelativeHumidity});
-    presets.push({type : 'rain', service : new Service.LeakSensor(accessory.name), characteristic : Characteristic.LeakDetected});
-    presets.push({type : 'light', service : new Service.LightSensor(accessory.name), characteristic : Characteristic.CurrentAmbientLightLevel});
-    presets.push({type : 'occupancy', service : new Service.OccupancySensor(accessory.name), characteristic : Characteristic.OccupancyDetected});
-    presets.push({type : 'smoke', service : new Service.SmokeSensor(accessory.name), characteristic : Characteristic.SmokeDetected});
-    presets.push({type : 'airquality', service : new Service.AirQualitySensor(accessory.name), characteristic : Characteristic.AirQuality});
-    presets.push({type : 'rgb', service : new Service.Lightbulb(accessory.name), characteristic : Characteristic.On});
-    presets.push({type : 'switch', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
-    presets.push({type : 'relais', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
+    accessories.push({type : 'contact', service : new Service.ContactSensor(accessory.name), characteristic : Characteristic.ContactSensorState});
+    accessories.push({type : 'motion', service : new Service.MotionSensor(accessory.name), characteristic : Characteristic.MotionDetected});
+    accessories.push({type : 'temperature', service : new Service.TemperatureSensor(accessory.name), characteristic : Characteristic.CurrentTemperature});
+    accessories.push({type : 'humidity', service : new Service.HumiditySensor(accessory.name), characteristic : Characteristic.CurrentRelativeHumidity});
+    accessories.push({type : 'rain', service : new Service.LeakSensor(accessory.name), characteristic : Characteristic.LeakDetected});
+    accessories.push({type : 'light', service : new Service.LightSensor(accessory.name), characteristic : Characteristic.CurrentAmbientLightLevel});
+    accessories.push({type : 'occupancy', service : new Service.OccupancySensor(accessory.name), characteristic : Characteristic.OccupancyDetected});
+    accessories.push({type : 'smoke', service : new Service.SmokeSensor(accessory.name), characteristic : Characteristic.SmokeDetected});
+    accessories.push({type : 'airquality', service : new Service.AirQualitySensor(accessory.name), characteristic : Characteristic.AirQuality});
+    accessories.push({type : 'rgb', service : new Service.Lightbulb(accessory.name), characteristic : Characteristic.On});
+    accessories.push({type : 'switch', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
+    accessories.push({type : 'relais', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
 
     var informationService = new Service.AccessoryInformation();
     
@@ -690,20 +686,17 @@ function createAccessory(accessory)
 
         services.push(informationService);
 
-    for(var i = 0; i < presets.length; i++)
+    for(var i = 0; i < accessories.length; i++)
     {
-        if(accessory.type.includes(presets[i].type))
+        if(accessory.type.includes(accessories[i].type))
         {
-            var characteristic = presets[i].characteristic;
-            var service = presets[i].service;
+            var characteristic = accessories[i].characteristic;
+            var service = accessories[i].service;
 
             service.mac = accessory.mac;
             service.name = accessory.name;
-            service.type = presets[i].type;
+            service.type = accessories[i].type;
             service.character = characteristic;
-
-            logger.log('warn', presets[i].characteristic);
-            logger.log('warn', presets[i]);
 
             accessory.changeHandler = (function(state, type)
             {
@@ -723,11 +716,11 @@ function createAccessory(accessory)
                 service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
 
-            service.getCharacteristic(characteristic).on('get', accessory.getState.bind({ mac : accessory.mac, name : accessory.name, type : presets[i].type, characteristic : characteristic }));
+            service.getCharacteristic(characteristic).on('get', accessory.getState.bind({ mac : accessory.mac, name : accessory.name, type : accessories[i].type }));
 
             if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
             {
-                service.getCharacteristic(characteristic).on('set', accessory.setState.bind({ mac : accessory.mac, name : accessory.name, type : presets[i].type, characteristic : characteristic }));
+                service.getCharacteristic(characteristic).on('set', accessory.setState.bind({ mac : accessory.mac, name : accessory.name, type : accessories[i].type }));
             }
 
             if(accessory.type == 'rgb')
