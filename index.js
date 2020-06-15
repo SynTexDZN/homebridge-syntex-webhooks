@@ -205,7 +205,7 @@ function SynTexWebHookSensorAccessory(sensorConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            accessory.changeHandler(validateUpdate(accessory.mac, accessory.service[this.index].type, state), accessory.service[this.index].type);
+            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.accessory.service[this.index].type, state), this.accessory.service[this.index].type);
     
         }.bind({ index : i, accessory : this }));
     }
