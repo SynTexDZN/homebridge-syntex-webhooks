@@ -778,7 +778,7 @@ function SynTexBaseAccessory(accessoryConfig)
             var characteristic = accessories[i].characteristic;
             var name = this.name;
 
-            if(this.type instanceof Array && this.type.length > 2)
+            if(this.type instanceof Array && this.type.length > 1)
             {
                 name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
             }
