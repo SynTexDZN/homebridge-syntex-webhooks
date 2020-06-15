@@ -210,6 +210,8 @@ function SynTexWebHookSensorAccessory(sensorConfig)
 
 SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
+    logger.log('debug', this);
+
     DeviceManager.getDevice(this).then(function(state) {
 
         if(state == null)
