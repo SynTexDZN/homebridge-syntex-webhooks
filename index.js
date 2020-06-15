@@ -700,7 +700,7 @@ function createAccessory(accessory)
 
             accessory.changeHandler = (function(state, type)
             {
-                logger.log('update', "HomeKit Status für '" + service.type + "' in '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
+                logger.log('update', "HomeKit Status für '" + type + "' in '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
 
                 for(var j = 1; j < accessory.service.length; j++)
                 {
