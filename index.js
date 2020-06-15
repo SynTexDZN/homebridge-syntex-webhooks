@@ -814,12 +814,16 @@ function SynTexBaseAccessory(accessoryConfig)
 
             this.changeHandler = (function(state, type)
             {
-                logger.log('update', "HomeKit Status für '" + type + "' in '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+
+                logger.log("debug", this.characteristic);
+                logger.log("debug", this.getCharacteristic(this.characteristic));
 
                 if(this.type != 'rgb' && (type == null || type == this.type))
                 {
                     this.getCharacteristic(this.characteristic).updateValue(state);
                 }
+
             }.bind(service));
 
             if(this.type == 'temperature')
@@ -856,7 +860,7 @@ SynTexBaseAccessory.prototype.getState = function(callback)
         }
         else if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
-            logger.log('read', "HomeKit Status für '" + this.type + "' in '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
         }
          
         callback(null, state);
