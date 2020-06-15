@@ -756,6 +756,7 @@ function SynTexBaseAccessory(accessoryConfig)
         var service = this.service[i];
 
         //service.type = ;
+        service.options = {};
 
         if(service.type == 'switch' || service.type == 'relais')
         {
