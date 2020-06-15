@@ -668,7 +668,7 @@ function createAccessory(accessory)
     var services = [], presets = [];
 
     presets.push({type : 'contact', service : new Service.ContactSensor(accessory.name), characteristic : Characteristic.ContactSensorState});
-    presets.push({type : 'motion', characteristic : Characteristic.MotionDetected, service : new Service.MotionSensor(accessory.name) });
+    presets.push({type : 'motion', characteristic : new Characteristic.MotionDetected(), service : new Service.MotionSensor(accessory.name) });
     presets.push({type : 'temperature', service : new Service.TemperatureSensor(accessory.name), characteristic : Characteristic.CurrentTemperature});
     presets.push({type : 'humidity', service : new Service.HumiditySensor(accessory.name), characteristic : Characteristic.CurrentRelativeHumidity});
     presets.push({type : 'rain', service : new Service.LeakSensor(accessory.name), characteristic : Characteristic.LeakDetected});
