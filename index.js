@@ -781,6 +781,7 @@ function SynTexBaseAccessory(accessoryConfig)
             service.mac = this.mac;
             service.name = this.name;
             service.type = accessories[i].type;
+            service.characteristic = characteristic;
 
             if(this.service.length > 2)
             {
@@ -803,7 +804,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
             }
 
-            DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
+            DeviceManager.getDevice({ mac : this.mac, type : service.type }).then(function(state) {
 
                 this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
         
@@ -815,12 +816,12 @@ function SynTexBaseAccessory(accessoryConfig)
 
                 for(var j = 1; j < this.service.length; j++)
                 {
-                    if(this.type != 'rgb' && (type == null || type == this.service[j].type))
+                    if(this.type != 'rgb' && (type == null || type == this.type))
                     {
-                        this.service[j].getCharacteristic(this.service[j].character).updateValue(state);
+                        this.getCharacteristic(this.characteristic).updateValue(state);
                     }
                 }
-            }.bind(this));
+            }.bind(service));
 
             if(this.type == 'temperature')
             {
