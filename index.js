@@ -212,15 +212,13 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
 {        
     DeviceManager.getDevice(this).then(function(state) {
 
-        logger.log('debug', this.type);
-
         if(state == null)
         {
             logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
         }
         else if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
+            logger.log('read', "HomeKit Status für '" + this.type + "' in '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
         }
 
         callback(null, state);
