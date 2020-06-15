@@ -739,7 +739,7 @@ function SynTexBaseAccessory(accessoryConfig)
 {
     this.service = [];
     this.mac = accessoryConfig['mac'];
-    this.name = accessoryConfig['name'] + " X";
+    this.name = accessoryConfig['name'] + " Y";
     this.type = accessoryConfig['type'];
 
     this.version = accessoryConfig['version'] || '1.0.0';
@@ -778,7 +778,7 @@ function SynTexBaseAccessory(accessoryConfig)
             var characteristic = accessories[i].characteristic;
             var name = this.name;
 
-            if(this.service.length > 2)
+            if(this.type instanceof Array && this.type.length > 2)
             {
                 name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
             }
@@ -820,12 +820,9 @@ function SynTexBaseAccessory(accessoryConfig)
             {
                 logger.log('update', "HomeKit Status für '" + type + "' in '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
 
-                for(var j = 1; j < this.service.length; j++)
+                if(this.type != 'rgb' && (type == null || type == this.type))
                 {
-                    if(this.type != 'rgb' && (type == null || type == this.type))
-                    {
-                        this.getCharacteristic(this.characteristic).updateValue(state);
-                    }
+                    this.getCharacteristic(this.characteristic).updateValue(state);
                 }
             }.bind(service));
 
