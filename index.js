@@ -737,6 +737,7 @@ function createAccessory(accessory)
 
 function SynTexBaseAccessory(accessoryConfig)
 {
+    this.service = [];
     this.mac = accessoryConfig['mac'];
     this.name = accessoryConfig['name'] + " X";
     this.type = accessoryConfig['type'];
@@ -768,7 +769,7 @@ function SynTexBaseAccessory(accessoryConfig)
         .setCharacteristic(Characteristic.FirmwareRevision, this.version)
         .setCharacteristic(Characteristic.SerialNumber, this.mac);
 
-        services.push(informationService);
+        this.service.push(informationService);
 
     for(var i = 0; i < accessories.length; i++)
     {
@@ -842,17 +843,6 @@ function SynTexBaseAccessory(accessoryConfig)
 
             services.push(service);
         }
-    }
-
-    this.service = createAccessory(this);
-
-    for(var i = 1; i < this.service.length; i++)
-    {
-        //this.service[i].type = this.type
-
-        var service = this.service[i];
-
-        
     }
 }
 
