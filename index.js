@@ -50,7 +50,7 @@ SynTexWebHookPlatform.prototype = {
         for(var i = 0; i < this.switches.length; i++)
         {
             accessories.push(new SynTexWebHookSwitchAccessory(this.switches[i]));
-            //accessories.push(new SynTexBaseAccessory(this.switches[i]));
+            accessories.push(new SynTexBaseAccessory(this.switches[i]));
         }
 
         for(var i = 0; i < this.lights.length; i++)
@@ -788,7 +788,7 @@ function SynTexBaseAccessory(accessoryConfig)
             if(this.type.includes('switch') || this.type.includes('relais'))
             {
                 logger.log("debug", "SWITCH");
-                name += " Z";
+                name += " NEW";
             }
 
             var service = new accessories[i].service(name);
