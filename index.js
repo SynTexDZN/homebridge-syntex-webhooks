@@ -755,7 +755,9 @@ function SynTexBaseAccessory(accessoryConfig)
 
         var service = this.service[i];
 
-        //service.type = ;
+        //service.type = ;toupper(Type.charAt(0))) + Type.substring(1)
+        service.name = service.type[0].toUpperCase() + service.type.substring(1);
+        logger.log("debug", service.name);
         service.options = {};
 
         if(service.type == 'switch' || service.type == 'relais')
@@ -782,8 +784,6 @@ function SynTexBaseAccessory(accessoryConfig)
 
 SynTexBaseAccessory.prototype.getState = function(callback)
 {        
-    logger.log("debug", this.options);
-
     DeviceManager.getDevice(this).then(function(state) {
 
         if(state == null)
@@ -805,11 +805,11 @@ SynTexBaseAccessory.prototype.getState = function(callback)
 
 SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 {
-    var urlToCall = powerOn ? this.onURL : this.offURL;
-    var urlMethod = powerOn ? this.onMethod : this.offMethod;
-    var urlBody = powerOn ? this.onBody : this.offBody;
-    var urlForm = powerOn ? this.onForm : this.offForm;
-    var urlHeaders = powerOn ? this.onHeaders : this.offHeaders;
+    var urlToCall = powerOn ? this.options.onURL : this.options.offURL;
+    var urlMethod = powerOn ? this.options.onMethod : this.options.offMethod;
+    var urlBody = powerOn ? this.options.onBody : this.options.offBody;
+    var urlForm = powerOn ? this.options.onForm : this.options.offForm;
+    var urlHeaders = powerOn ? this.options.onHeaders : this.options.offHeaders;
 
     logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
 
