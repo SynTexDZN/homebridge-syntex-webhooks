@@ -266,7 +266,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
 
             this.changeHandler(validateUpdate(this.mac, this.service[i].type, state), this.service[i].type);
     
-        }.bind(this));
+        }.bind({ i : i, this : this }));
     }
 }
 
