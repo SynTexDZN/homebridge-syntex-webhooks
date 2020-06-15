@@ -607,7 +607,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
             for(var j = 0; j < count; j++)
             {
-
+                logger.log("debug", j);
             }
             
             var characteristic = accessories[i].characteristic;
