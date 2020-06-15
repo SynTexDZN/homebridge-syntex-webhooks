@@ -13,7 +13,7 @@ module.exports = function(homebridge)
 
     homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
     //homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSensor', SynTexWebHookSensorAccessory);
-    homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSwitch', SynTexWebHookSwitchAccessory);
+    //homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSwitch', SynTexWebHookSwitchAccessory);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStripeRGB', SynTexWebHookStripeRGBAccessory);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStatelessSwitch', SynTexWebHookStatelessSwitchAccessory);
 };
@@ -49,7 +49,7 @@ SynTexWebHookPlatform.prototype = {
         
         for(var i = 0; i < this.switches.length; i++)
         {
-            accessories.push(new SynTexWebHookSwitchAccessory(this.switches[i]));
+            //accessories.push(new SynTexWebHookSwitchAccessory(this.switches[i]));
             accessories.push(new SynTexBaseAccessory(this.switches[i]));
         }
 
@@ -784,12 +784,6 @@ function SynTexBaseAccessory(accessoryConfig)
             }
 
             logger.log("debug", this.type);
-
-            if(this.type.includes('switch') || this.type.includes('relais'))
-            {
-                logger.log("debug", "SWITCH");
-                name += " NEW";
-            }
 
             logger.log("debug", name);
 
