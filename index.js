@@ -88,8 +88,6 @@ SynTexWebHookPlatform.prototype = {
                         if(accessories[i].mac === urlParams.mac && (!urlParams.type || accessories[i].type.includes(urlParams.type)))
                         {
                             accessory = accessories[i];
-
-                            //logger.log('debug', accessory);
                         }
                     }
 
@@ -264,7 +262,7 @@ function SynTexWebHookSwitchAccessory(switchConfig)
     {
         DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
 
-            accessory.changeHandler(validateUpdate(accessory.mac, accessory.service[this.index].type, state), accessory.service[this.index].type);
+            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.accessory.service[this.index].type, state), this.accessory.service[this.index].type);
     
         }.bind({ index : i, accessory : this }));
     }
@@ -706,8 +704,6 @@ function createAccessory(accessory)
 
                 for(var j = 1; j < accessory.service.length; j++)
                 {
-                    logger.log('debug', accessory.service[j].character + ' - ' + accessory.service[j].type);
-                    
                     if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
                     {
                         accessory.service[j].getCharacteristic(accessory.service[j].character).updateValue(state);
