@@ -839,7 +839,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
             if(service.type == 'switch' || service.type == 'reials' || service.type == 'rgb')
             {
-                logger.log('denug', 'ADD SET BINDING');
+                logger.log('debug', 'ADD SET BINDING');
 
                 service.getCharacteristic(characteristic).on('set', this.setState.bind(service));
             }
