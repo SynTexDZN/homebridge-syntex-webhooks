@@ -44,7 +44,6 @@ SynTexWebHookPlatform.prototype = {
         
         for(var i = 0; i < this.sensors.length; i++)
         {
-            accessories.push(new SynTexWebHookSensorAccessory(this.sensors[i]));
             accessories.push(new SynTexBaseAccessory(this.sensors[i]));
         }
         
@@ -187,7 +186,7 @@ SynTexWebHookPlatform.prototype = {
         logger.log('info', "Data Link Server läuft auf Port '" + this.port + "'");
     }
 }
-
+/*
 function SynTexWebHookSensorAccessory(sensorConfig)
 {
     this.mac = sensorConfig['mac'];
@@ -235,7 +234,7 @@ SynTexWebHookSensorAccessory.prototype.getServices = function()
 {
     return this.service;
 };
-
+*/
 function SynTexWebHookSwitchAccessory(switchConfig)
 {
     this.mac = switchConfig['mac'];
@@ -739,7 +738,7 @@ function SynTexBaseAccessory(accessoryConfig)
 {
     this.service = [];
     this.mac = accessoryConfig['mac'];
-    this.name = accessoryConfig['name'] + " Y";
+    this.name = accessoryConfig['name'];
     this.type = accessoryConfig['type'];
 
     this.version = accessoryConfig['version'] || '1.0.0';
@@ -820,8 +819,6 @@ function SynTexBaseAccessory(accessoryConfig)
                     {
                         logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
 
-                        logger.log('debug', this.service[j].getCharacteristic(this.service[j].characteristic));
-
                         this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
                     }
                 }
@@ -855,8 +852,6 @@ function SynTexBaseAccessory(accessoryConfig)
 SynTexBaseAccessory.prototype.getState = function(callback)
 {        
     DeviceManager.getDevice(this).then(function(state) {
-
-        logger.log("debug", this.mac + " - " + this.type + " - " + state);
 
         if(state == null)
         {
