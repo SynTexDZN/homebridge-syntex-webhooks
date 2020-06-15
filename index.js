@@ -49,7 +49,6 @@ SynTexWebHookPlatform.prototype = {
         
         for(var i = 0; i < this.switches.length; i++)
         {
-            //accessories.push(new SynTexWebHookSwitchAccessory(this.switches[i]));
             accessories.push(new SynTexBaseAccessory(this.switches[i]));
         }
 
@@ -783,11 +782,6 @@ function SynTexBaseAccessory(accessoryConfig)
                 name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
             }
 
-            logger.log("debug", this.type);
-            logger.log("debug", accessories[i].type);
-
-            logger.log("debug", name);
-
             var service = new accessories[i].service(name);
 
             service.mac = this.mac;
@@ -810,10 +804,24 @@ function SynTexBaseAccessory(accessoryConfig)
                 service.options.offForm = accessoryConfig['off_form'] || '';
                 service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
             }
+            else if(service.type == 'rgb')
+            {
+                service.options.url = accessoryConfig['url'] || '';
+            }
 
             DeviceManager.getDevice({ mac : this.mac, type : service.type }).then(function(state) {
 
-                this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
+                if(service.type == 'rgb')
+                {
+                    this.power = state.split(':')[0] == 'true';
+                    this.hue = getHSL(state)[0] || 0;
+                    this.saturation = getHSL(state)[1] || 100;
+                    this.brightness = getHSL(state)[2] || 50;
+                }
+                else
+                {
+                    this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
+                }
         
             }.bind({ accessory : this, service : service }));
 
@@ -840,8 +848,6 @@ function SynTexBaseAccessory(accessoryConfig)
 
             if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
             {
-                logger.log('debug', 'ADD SET BINDING');
-
                 service.getCharacteristic(characteristic).on('set', this.setState.bind(service));
             }
 
