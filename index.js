@@ -702,7 +702,8 @@ function createAccessory(accessory)
             service.type = accessories[i].type;
             service.character = characteristic;
 
-            logger.log('warn', characteristic);
+            logger.log('warn', accessories[i].characteristic);
+            logger.log('warn', accessories[i]);
 
             accessory.changeHandler = (function(state, type)
             {
