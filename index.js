@@ -738,12 +738,111 @@ function createAccessory(accessory)
 function SynTexBaseAccessory(accessoryConfig)
 {
     this.mac = accessoryConfig['mac'];
-    this.name = accessoryConfig['name'] + "X";
+    this.name = accessoryConfig['name'] + " X";
     this.type = accessoryConfig['type'];
 
     this.version = accessoryConfig['version'] || '1.0.0';
     this.model = accessoryConfig['model'] || 'HTTP Accessory';
     this.manufacturer = accessoryConfig['manufacturer'] || 'SynTex';
+
+    var accessories = [];
+
+    accessories.push({type : 'contact', service : Service.ContactSensor, characteristic : Characteristic.ContactSensorState});
+    accessories.push({type : 'motion', service : Service.MotionSensor, characteristic : Characteristic.MotionDetected});
+    accessories.push({type : 'temperature', service : Service.TemperatureSensor, characteristic : Characteristic.CurrentTemperature});
+    accessories.push({type : 'humidity', service : Service.HumiditySensor, characteristic : Characteristic.CurrentRelativeHumidity});
+    accessories.push({type : 'rain', service : Service.LeakSensor, characteristic : Characteristic.LeakDetected});
+    accessories.push({type : 'light', service : Service.LightSensor, characteristic : Characteristic.CurrentAmbientLightLevel});
+    accessories.push({type : 'occupancy', service : Service.OccupancySensor, characteristic : Characteristic.OccupancyDetected});
+    accessories.push({type : 'smoke', service : Service.SmokeSensor, characteristic : Characteristic.SmokeDetected});
+    accessories.push({type : 'airquality', service : Service.AirQualitySensor, characteristic : Characteristic.AirQuality});
+    accessories.push({type : 'rgb', service : Service.Lightbulb, characteristic : Characteristic.On});
+    accessories.push({type : 'switch', service : Service.Switch, characteristic : Characteristic.On});
+    accessories.push({type : 'relais', service : Service.Switch, characteristic : Characteristic.On});
+
+    var informationService = new Service.AccessoryInformation();
+    
+    informationService
+        .setCharacteristic(Characteristic.Manufacturer, accessory.manufacturer)
+        .setCharacteristic(Characteristic.Model, accessory.model)
+        .setCharacteristic(Characteristic.FirmwareRevision, accessory.version)
+        .setCharacteristic(Characteristic.SerialNumber, accessory.mac);
+
+        services.push(informationService);
+
+    for(var i = 0; i < accessories.length; i++)
+    {
+        if(accessory.type.includes(accessories[i].type))
+        {
+            var characteristic = accessories[i].characteristic;
+            var service = new accessories[i].service(this.name);
+
+            service.mac = this.mac;
+            service.name = this.name;
+            service.type = accessories[i].type;
+
+            if(this.service.length > 2)
+            {
+                service.name += ' ' + service.type[0].toUpperCase() + service.type.substring(1);
+            }
+            
+            service.options = {};
+
+            if(service.type == 'switch' || service.type == 'relais')
+            {
+                service.options.onURL = accessoryConfig['on_url'] || '';
+                service.options.onMethod = accessoryConfig['on_method'] || 'GET';
+                service.options.onBody = accessoryConfig['on_body'] || '';
+                service.options.onForm = accessoryConfig['on_form'] || '';
+                service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
+                service.options.offURL = accessoryConfig['off_url'] || '';
+                service.options.offMethod = accessoryConfig['off_method'] || 'GET';
+                service.options.offBody = accessoryConfig['off_body'] || '';
+                service.options.offForm = accessoryConfig['off_form'] || '';
+                service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
+            }
+
+            DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
+
+                this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
+        
+            }.bind({ accessory : this, service : service }));
+
+            accessory.changeHandler = (function(state, type)
+            {
+                logger.log('update', "HomeKit Status für '" + type + "' in '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
+
+                for(var j = 1; j < accessory.service.length; j++)
+                {
+                    if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
+                    {
+                        accessory.service[j].getCharacteristic(accessory.service[j].character).updateValue(state);
+                    }
+                }
+            });
+
+            if(accessory.type == 'temperature')
+            {
+                service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
+            }
+
+            service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
+
+            if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
+            {
+                service.getCharacteristic(characteristic).on('set', accessory.setState.bind(service));
+            }
+
+            if(accessory.type == 'rgb')
+            {
+                service.addCharacteristic(new Characteristic.Hue()).on('get', accessory.getHue.bind(accessory)).on('set', accessory.setHue.bind(accessory));
+                service.addCharacteristic(new Characteristic.Saturation()).on('get', accessory.getSaturation.bind(accessory)).on('set', accessory.setSaturation.bind(accessory));
+                service.addCharacteristic(new Characteristic.Brightness()).on('get', accessory.getBrightness.bind(accessory)).on('set', accessory.setBrightness.bind(accessory));
+            }
+
+            services.push(service);
+        }
+    }
 
     this.service = createAccessory(this);
 
@@ -753,36 +852,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
         var service = this.service[i];
 
-        service.mac = this.mac;
-        service.name = this.name;
-
-        if(this.service.length > 2)
-        {
-            service.name += ' ' + service.type[0].toUpperCase() + service.type.substring(1);
-        }
         
-        logger.log("debug", service.name);
-        service.options = {};
-
-        if(service.type == 'switch' || service.type == 'relais')
-        {
-            service.options.onURL = accessoryConfig['on_url'] || '';
-            service.options.onMethod = accessoryConfig['on_method'] || 'GET';
-            service.options.onBody = accessoryConfig['on_body'] || '';
-            service.options.onForm = accessoryConfig['on_form'] || '';
-            service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
-            service.options.offURL = accessoryConfig['off_url'] || '';
-            service.options.offMethod = accessoryConfig['off_method'] || 'GET';
-            service.options.offBody = accessoryConfig['off_body'] || '';
-            service.options.offForm = accessoryConfig['off_form'] || '';
-            service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
-        }
-
-        DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
-
-            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
-    
-        }.bind({ accessory : this, service : service }));
     }
 }
 
