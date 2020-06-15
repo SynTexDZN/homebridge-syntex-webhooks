@@ -221,7 +221,7 @@ SynTexWebHookSensorAccessory.prototype.getState = function(callback)
         {
             logger.log('read', "HomeKit Status für '" + this.type + "' in '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
         }
-
+         
         callback(null, state);
 
     }.bind({ mac : this.mac, type : this.type, name : this.name })).catch(function(e) {
@@ -715,11 +715,11 @@ function createAccessory(accessory)
                 service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
             }
 
-            service.getCharacteristic(characteristic).on('get', accessory.getState.bind({ mac : accessory.mac, name : accessory.name, type : accessories[i].type }));
+            service.getCharacteristic(characteristic).on('get', accessory.getState.bind({ mac : accessory.mac, name : accessory.name, type : accessories[i].type, options : service.options }));
 
             if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
             {
-                service.getCharacteristic(characteristic).on('set', accessory.setState.bind({ mac : accessory.mac, name : accessory.name, type : accessories[i].type }));
+                service.getCharacteristic(characteristic).on('set', accessory.setState.bind({ mac : accessory.mac, name : accessory.name, type : accessories[i].type, options : service.options }));
             }
 
             if(accessory.type == 'rgb')
@@ -735,3 +735,135 @@ function createAccessory(accessory)
 
     return services;
 }
+
+function SynTexBaseAccessory(accessoryConfig)
+{
+    this.mac = accessoryConfig['mac'];
+    this.name = accessoryConfig['name'];
+    this.type = accessoryConfig['type'];
+
+    this.version = accessoryConfig['version'] || '1.0.0';
+    this.model = accessoryConfig['model'] || 'HTTP Accessory';
+    this.manufacturer = accessoryConfig['manufacturer'] || 'SynTex';
+
+    this.service = createAccessory(this);
+
+    for(var i = 1; i < this.service.length; i++)
+    {
+        //this.service[i].type = this.type
+
+        var service = this.service[i];
+
+        //service.type = ;
+
+        if(service.type == 'switch' || service.type == 'relais')
+        {
+            service.options.onURL = accessoryConfig['on_url'] || '';
+            service.options.onMethod = accessoryConfig['on_method'] || 'GET';
+            service.options.onBody = accessoryConfig['on_body'] || '';
+            service.options.onForm = accessoryConfig['on_form'] || '';
+            service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
+            service.options.offURL = accessoryConfig['off_url'] || '';
+            service.options.offMethod = accessoryConfig['off_method'] || 'GET';
+            service.options.offBody = accessoryConfig['off_body'] || '';
+            service.options.offForm = accessoryConfig['off_form'] || '';
+            service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
+        }
+
+        DeviceManager.getDevice({ mac : this.mac, type : this.service[i].type }).then(function(state) {
+
+            this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
+    
+        }.bind({ accessory : this, service : service }));
+    }
+}
+
+SynTexBaseAccessory.prototype.getState = function(callback)
+{        
+    logger.log("debug", this.options);
+
+    DeviceManager.getDevice(this).then(function(state) {
+
+        if(state == null)
+        {
+            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
+        }
+        else if((state = validateUpdate(this.mac, this.type, state)) != null)
+        {
+            logger.log('read', "HomeKit Status für '" + this.type + "' in '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
+        }
+         
+        callback(null, state);
+
+    }.bind(this)).catch(function(e) {
+
+        logger.err(e);
+    });
+};
+
+SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
+{
+    var urlToCall = powerOn ? this.onURL : this.offURL;
+    var urlMethod = powerOn ? this.onMethod : this.offMethod;
+    var urlBody = powerOn ? this.onBody : this.offBody;
+    var urlForm = powerOn ? this.onForm : this.offForm;
+    var urlHeaders = powerOn ? this.onHeaders : this.offHeaders;
+
+    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
+
+    if(urlToCall != '')
+    {
+        var theRequest = {
+            method : urlMethod,
+            url : urlToCall,
+            timeout : 5000,
+            headers: JSON.parse(urlHeaders)
+        };
+        
+        if(urlMethod === 'POST' || urlMethod === 'PUT')
+        {
+            if(urlForm)
+            {
+                //logger.log('Adding Form ' + urlForm);
+                theRequest.form = JSON.parse(urlForm);
+            }
+            else if(urlBody)
+            {
+                //logger.log('Adding Body ' + urlBody);
+                theRequest.body = urlBody;
+            }
+        }
+
+        request(theRequest, (function(err, response, body)
+        {
+            var statusCode = response && response.statusCode ? response.statusCode : -1;
+            
+            if(!err && statusCode == 200)
+            {
+                logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
+
+                DeviceManager.setDevice(this, powerOn);
+
+                callback(null);
+            }
+            else
+            {
+                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
+
+                callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+            }
+
+        }).bind(this));
+    }
+    else
+    {
+        DeviceManager.setDevice(this, powerOn);
+
+        callback(null);
+    }
+};
+
+SynTexBaseAccessory.prototype.getServices = function()
+{
+    return this.service;
+};
