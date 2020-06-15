@@ -791,6 +791,8 @@ function SynTexBaseAccessory(accessoryConfig)
                 name += " NEW";
             }
 
+            logger.log("debug", name);
+
             var service = new accessories[i].service(name);
 
             service.mac = this.mac;
