@@ -608,7 +608,7 @@ function SynTexBaseAccessory(accessoryConfig)
     {
         if(this.type.includes(accessories[i].type))
         {
-            var count = (accessory.type.match(new RegExp(accessories[i].type, 'g')) || []).length;
+            var count = (this.type.match(new RegExp(accessories[i].type, 'g')) || []).length;
             var characteristic = accessories[i].characteristic;
             var name = this.name;
 
