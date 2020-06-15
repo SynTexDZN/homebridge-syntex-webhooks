@@ -611,29 +611,15 @@ function SynTexBaseAccessory(accessoryConfig)
             var count = (JSON.stringify(this.type).match(new RegExp(accessories[i].type, 'g')) || []).length;
 
             var characteristic = accessories[i].characteristic;
-            var name = this.name;
-
-            if(this.type instanceof Array && this.type.length > 1)
-            {
-                name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
-            }
 
             for(var j = 0; j < count; j++)
             {
-                accessories = [];
+                var name = this.name;
 
-                accessories.push({type : 'contact', service : Service.ContactSensor, characteristic : Characteristic.ContactSensorState});
-                accessories.push({type : 'motion', service : Service.MotionSensor, characteristic : Characteristic.MotionDetected});
-                accessories.push({type : 'temperature', service : Service.TemperatureSensor, characteristic : Characteristic.CurrentTemperature});
-                accessories.push({type : 'humidity', service : Service.HumiditySensor, characteristic : Characteristic.CurrentRelativeHumidity});
-                accessories.push({type : 'rain', service : Service.LeakSensor, characteristic : Characteristic.LeakDetected});
-                accessories.push({type : 'light', service : Service.LightSensor, characteristic : Characteristic.CurrentAmbientLightLevel});
-                accessories.push({type : 'occupancy', service : Service.OccupancySensor, characteristic : Characteristic.OccupancyDetected});
-                accessories.push({type : 'smoke', service : Service.SmokeSensor, characteristic : Characteristic.SmokeDetected});
-                accessories.push({type : 'airquality', service : Service.AirQualitySensor, characteristic : Characteristic.AirQuality});
-                accessories.push({type : 'rgb', service : Service.Lightbulb, characteristic : Characteristic.On});
-                accessories.push({type : 'switch', service : Service.Switch, characteristic : Characteristic.On});
-                accessories.push({type : 'relais', service : Service.Switch, characteristic : Characteristic.On});
+                if(this.type instanceof Array && this.type.length > 1)
+                {
+                    name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
+                }
                 
                 if(count == 1)
                 {
