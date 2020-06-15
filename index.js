@@ -50,6 +50,7 @@ SynTexWebHookPlatform.prototype = {
         for(var i = 0; i < this.switches.length; i++)
         {
             accessories.push(new SynTexWebHookSwitchAccessory(this.switches[i]));
+            accessories.push(new SynTexWBaseAccessory(this.switches[i]));
         }
 
         for(var i = 0; i < this.lights.length; i++)
