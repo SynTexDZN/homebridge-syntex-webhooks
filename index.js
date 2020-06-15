@@ -856,6 +856,8 @@ SynTexBaseAccessory.prototype.getState = function(callback)
 {        
     DeviceManager.getDevice(this).then(function(state) {
 
+        logger.log("debug", this.mac + " - " + this.type + " - " + state);
+
         if(state == null)
         {
             logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
