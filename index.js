@@ -693,8 +693,6 @@ function createAccessory(accessory)
             var characteristic = accessories[i].characteristic;
             var service = accessories[i].service;
 
-            service.mac = accessory.mac;
-            service.name = accessory.name;
             service.type = accessories[i].type;
             service.character = characteristic;
 
@@ -755,8 +753,14 @@ function SynTexBaseAccessory(accessoryConfig)
 
         var service = this.service[i];
 
-        //service.type = ;toupper(Type.charAt(0))) + Type.substring(1)
-        service.name = service.type[0].toUpperCase() + service.type.substring(1);
+        service.mac = this.mac;
+        service.name = this.name;
+
+        if(this.service.length > 2)
+        {
+            service.name += ' ' + service.type[0].toUpperCase() + service.type.substring(1);
+        }
+        
         logger.log("debug", service.name);
         service.options = {};
 
