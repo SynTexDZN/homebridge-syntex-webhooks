@@ -776,10 +776,16 @@ function SynTexBaseAccessory(accessoryConfig)
         if(this.type.includes(accessories[i].type))
         {
             var characteristic = accessories[i].characteristic;
-            var service = new accessories[i].service(this.name);
+            var name = this.name;
+
+            if(this.service.length > 2)
+            {
+                name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
+            }
+
+            var service = new accessories[i].service(name);
 
             service.mac = this.mac;
-            service.name = this.name;
             service.type = accessories[i].type;
             service.characteristic = characteristic;
 
