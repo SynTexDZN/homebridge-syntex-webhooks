@@ -784,6 +784,7 @@ function SynTexBaseAccessory(accessoryConfig)
             }
 
             logger.log("debug", this.type);
+            logger.log("debug", accessories[i].type);
 
             logger.log("debug", name);
 
@@ -837,7 +838,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
             service.getCharacteristic(characteristic).on('get', this.getState.bind(service));
 
-            if(service.type == 'switch' || service.type == 'reials' || service.type == 'rgb')
+            if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
             {
                 logger.log('debug', 'ADD SET BINDING');
 
