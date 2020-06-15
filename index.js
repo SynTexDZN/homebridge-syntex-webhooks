@@ -816,15 +816,15 @@ function SynTexBaseAccessory(accessoryConfig)
             {
                 logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
 
-                logger.log("debug", this.characteristic);
-                logger.log("debug", this.getCharacteristic(this.characteristic));
-
-                if(this.type != 'rgb' && (type == null || type == this.type))
+                for(var j = 1; j < this.service.length; j++)
                 {
-                    this.getCharacteristic(this.characteristic).updateValue(state);
+                    if(this.type != 'rgb' && (type == null || type == this.service[j].type))
+                    {
+                        this.service[j].getCharacteristic(this.service[j].character).updateValue(state);
+                    }
                 }
 
-            }.bind(service));
+            }.bind(this));
 
             if(this.type == 'temperature')
             {
