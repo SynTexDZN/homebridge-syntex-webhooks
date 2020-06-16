@@ -622,7 +622,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 }
                 else
                 {
-                    var service = new accessories[i].service(name + ' ' + (j + 1));
+                    var service = new accessories[i].service(name + ' ' + (j + 1), j);
                     logger.log('debug', name + ' ' + (j + 1));
                 }
 
