@@ -615,6 +615,8 @@ function SynTexBaseAccessory(accessoryConfig)
                     name += ' ' + accessories[i].type[0].toUpperCase() + accessories[i].type.substring(1);
                 }
 
+                var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
                 if(count == 1)
                 {
                     var service = new accessories[i].service(name);
@@ -622,7 +624,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 }
                 else
                 {
-                    var service = new accessories[i].service(name + ' ' + (j + 1), j);
+                    var service = new accessories[i].service(name + ' ' + letters[j], j);
                     logger.log('debug', name + ' ' + (j + 1));
                 }
 
