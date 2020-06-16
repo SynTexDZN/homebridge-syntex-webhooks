@@ -702,8 +702,6 @@ function SynTexBaseAccessory(accessoryConfig)
                     service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
                 }
 
-                logger.log('debug', service);
-
                 this.service.push(service);
             }
         }
