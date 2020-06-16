@@ -618,10 +618,12 @@ function SynTexBaseAccessory(accessoryConfig)
                 if(count == 1)
                 {
                     var service = new accessories[i].service(name);
+                    logger.log('debug', name);
                 }
                 else
                 {
                     var service = new accessories[i].service(name + ' ' + (j + 1));
+                    logger.log('debug', name + ' ' + (j + 1));
                 }
 
                 service.mac = this.mac;
