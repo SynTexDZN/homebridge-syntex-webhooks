@@ -34,7 +34,7 @@ module.exports = function(homebridge)
 
 function SynTexWebHookPlatform(log, sconfig, api)
 {
-    this.accessories = sconfig['accessories'] || [];
+    this.devices = sconfig['accessories'] || [];
 
     this.sensors = sconfig['sensors'] || [];
     this.switches = sconfig['switches'] || [];
@@ -58,9 +58,9 @@ SynTexWebHookPlatform.prototype = {
     {
         var accessories = [];
 
-        for(var i = 0; i < this.accessories.length; i++)
+        for(var i = 0; i < this.devices.length; i++)
         {
-            accessories.push(new SynTexBaseAccessory(this.accessories[i]));
+            accessories.push(new SynTexBaseAccessory(this.devices[i]));
         }
         
         for(var i = 0; i < this.sensors.length; i++)
