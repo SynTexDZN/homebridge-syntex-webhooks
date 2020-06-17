@@ -114,13 +114,13 @@ SynTexWebHookPlatform.prototype = {
                             logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + ' )');
                         }
 
-                        DeviceManager.setDevice(urlParams.mac, urlParams.type || accessory.type, urlParams.value);
+                        DeviceManager.setDevice(urlParams.mac, urlParams.type || accessory.type, 0, urlParams.value);
                          
                         response.write(state != null ? 'Success' : 'Error');
                     }
                     else
                     {
-                        var state = await DeviceManager.getDevice(accessory);
+                        var state = await DeviceManager.getDevice(urlParams.mac, urlParams.type || accessory.type, 0);
 
                         response.write(state != null ? state.toString() : 'Error');
                     }
@@ -196,7 +196,7 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
     this.model = lightConfig['model'] || 'HTTP Accessory';
     this.manufacturer = lightConfig['manufacturer'] || 'SynTex';
 
-    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.type, 0).then(function(state) {
 
         this.power = state.split(':')[0] == 'true';
         this.hue = getHSL(state)[0] || 0;
@@ -210,7 +210,7 @@ function SynTexWebHookStripeRGBAccessory(lightConfig)
 
 SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 {
-    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.type, 0).then(function(state) {
 
         if(state == null)
         {
@@ -231,7 +231,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 {
-    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.type, 0).then(function(state) {
 
         callback(null, (state == null) ? 0 : (getHSL(state)[0] || 0));
 
@@ -243,7 +243,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 {
-    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.type, 0).then(function(state) {
 
         callback(null, (state == null) ? 100 : (getHSL(state)[1] || 100));
 
@@ -255,7 +255,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
 
 SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
 {
-    DeviceManager.getDevice({ mac : this.mac, type : this.type }).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.type, 0).then(function(state) {
 
         callback(null, (state == null) ? 50 : (getHSL(state)[2] || 50));
 
@@ -438,7 +438,7 @@ function setRGB(accessory)
                 {
                     logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
         
-                    DeviceManager.setDevice(accessory, accessory.fetch);
+                    DeviceManager.setDevice(accessory.mac, accessory.type, 0, accessory.fetch);
                 }
                 else
                 {
@@ -625,10 +625,11 @@ function SynTexBaseAccessory(accessoryConfig)
                 else
                 {
                     var service = new accessories[i].service(name + ' ' + letters[j], j);
-                    logger.log('debug', name + ' ' + (j + 1));
+                    logger.log('debug', name + ' ' + letters[j]);
                 }
 
                 service.mac = this.mac;
+                service.counter = j;
                 service.type = accessories[i].type;
                 service.name = name;
                 service.characteristic = characteristic;
@@ -653,7 +654,7 @@ function SynTexBaseAccessory(accessoryConfig)
                     service.options.url = accessoryConfig['url'] || '';
                 }
 
-                DeviceManager.getDevice({ mac : this.mac, type : service.type }).then(function(state) {
+                DeviceManager.getDevice(this.mac, service.type, service.counter).then(function(state) {
 
                     if(service.type == 'rgb')
                     {
@@ -710,7 +711,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
 SynTexBaseAccessory.prototype.getState = function(callback)
 {        
-    DeviceManager.getDevice(this).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.type, this.counter).then(function(state) {
 
         if(state == null)
         {
@@ -770,7 +771,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 
                 logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
 
-                DeviceManager.setDevice(this.mac, this.type, powerOn);
+                DeviceManager.setDevice(this.mac, this.type, this.counter, powerOn);
 
                 callback(null);
             }
@@ -787,7 +788,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
     {
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
 
-        DeviceManager.setDevice(this.mac, this.type, powerOn);
+        DeviceManager.setDevice(this.mac, this.type, this.counter, powerOn);
 
         callback(null);
     }
