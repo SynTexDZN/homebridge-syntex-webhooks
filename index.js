@@ -602,34 +602,34 @@ function SynTexBaseAccessory(accessoryConfig)
 
     for(var preset in presets)
     {
-        if(this.type.includes(preset.type))
+        if(this.type.includes(preset))
         {
-            var count = (JSON.stringify(this.type).match(new RegExp(preset.type, 'g')) || []).length;
+            var count = (JSON.stringify(this.type).match(new RegExp(preset, 'g')) || []).length;
 
             for(var j = 0; j < count; j++)
             {
-                var characteristic = preset.characteristic;
+                var characteristic = presets[preset].characteristic;
                 var name = this.name;
 
                 if(this.type instanceof Array && this.type.length > 1)
                 {
-                    name += ' ' + preset.type[0].toUpperCase() + preset.type.substring(1);
+                    name += ' ' + preset[0].toUpperCase() + preset.substring(1);
                 }
 
                 if(count == 1)
                 {
-                    var service = new preset.service(name);
+                    var service = new presets[preset].service(name);
                     logger.log('debug', name);
                 }
                 else
                 {
-                    var service = new preset.service(name + ' ' + letters[j], j);
+                    var service = new presets[preset].service(name + ' ' + letters[j], j);
                     logger.log('debug', name + ' ' + letters[j]);
                 }
 
                 service.mac = this.mac;
                 service.counter = j;
-                service.type = preset.type;
+                service.type = preset;
                 service.name = name;
                 service.characteristic = characteristic;
 
