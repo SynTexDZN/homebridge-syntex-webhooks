@@ -63,16 +63,6 @@ SynTexWebHookPlatform.prototype = {
             accessories.push(new SynTexBaseAccessory(this.devices[i]));
         }
         
-        for(var i = 0; i < this.sensors.length; i++)
-        {
-            accessories.push(new SynTexBaseAccessory(this.sensors[i]));
-        }
-        
-        for(var i = 0; i < this.switches.length; i++)
-        {
-            accessories.push(new SynTexBaseAccessory(this.switches[i]));
-        }
-
         for(var i = 0; i < this.lights.length; i++)
         {
             //accessories.push(new SynTexWebHookStripeRGBAccessory(this.lights[i]));
@@ -106,9 +96,22 @@ SynTexWebHookPlatform.prototype = {
                         
                     for(var i = 0; i < accessories.length; i++)
                     {
-                        if(accessories[i].mac === urlParams.mac && (!urlParams.type || accessories[i].type.includes(urlParams.type)))
+                        if(accessories[i].mac == urlParams.mac)
                         {
-                            accessory = accessories[i];
+                            if(urlParams.event || (urlParams.type && urlParams.type == 'rgb'))
+                            {
+                                accessory = accessories[i];
+                            }
+                            else
+                            {
+                                for(var j = 0; j < accessories[i].service.length; j++)
+                                {
+                                    if((!urlParams.type || accessories[i].service[j].type == urlParams.type))
+                                    {
+                                        accessory = accessories[i].service[j];
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -120,7 +123,7 @@ SynTexWebHookPlatform.prototype = {
                     }
                     else if(urlParams.event)
                     {
-                        accessory.changeHandler(accessory.name, urlParams.event, urlParams.value ? urlParams.value : 0);
+                        accessory.changeHandler(accessory.name, urlParams.event, urlParams.value || 0);
 
                         response.write('Success');
                     }
@@ -128,22 +131,22 @@ SynTexWebHookPlatform.prototype = {
                     {
                         var state = null;
 
-                        if((state = validateUpdate(urlParams.mac, urlParams.type || accessory.type, urlParams.value)) != null)
+                        if((state = validateUpdate(urlParams.mac, accessory.type, urlParams.value)) != null)
                         {
-                            accessory.changeHandler(state, urlParams.type || accessory.type);
+                            accessory.changeHandler(state, accessory.type);
                         }
                         else
                         {
                             logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + ' )');
                         }
 
-                        DeviceManager.setDevice(urlParams.mac, urlParams.type || accessory.type, presets[urlParams.type || accessory.type].letter + '0', urlParams.value);
+                        DeviceManager.setDevice(urlParams.mac, accessory.type, accessory.letters, urlParams.value);
                          
                         response.write(state != null ? 'Success' : 'Error');
                     }
                     else
                     {
-                        var state = await DeviceManager.getDevice(urlParams.mac, urlParams.type || accessory.type, presets[urlParams.type || accessory.type] + 0);
+                        var state = await DeviceManager.getDevice(urlParams.mac, accessory.type, accessory.letters);
 
                         response.write(state != null ? state.toString() : 'Error');
                     }
