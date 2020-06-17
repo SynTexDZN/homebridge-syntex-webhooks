@@ -629,12 +629,10 @@ function SynTexBaseAccessory(accessoryConfig)
                 if(count == 1)
                 {
                     var service = new presets[preset].service(name);
-                    logger.log('debug', name);
                 }
                 else
                 {
                     var service = new presets[preset].service(name + ' ' + letters[j], j);
-                    logger.log('debug', name + ' ' + letters[j]);
                 }
 
                 service.mac = this.mac;
@@ -674,22 +672,16 @@ function SynTexBaseAccessory(accessoryConfig)
                     }
                     else
                     {
-                        this.accessory.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
+                        this.service.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
                     }
             
                 }.bind({ accessory : this, service : service }));
 
-                this.changeHandler = (function(state, type)
+                service.changeHandler = (function(state, type)
                 {
-                    for(var j = 1; j < this.service.length; j++)
-                    {
-                        if(this.service[j].type != 'rgb' && this.service[j].type == type)
-                        {
-                            logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+                    logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
 
-                            this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
-                        }
-                    }
+                    this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
 
                 }.bind(this));
 
