@@ -631,7 +631,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 service.type = preset;
                 service.name = name;
                 service.characteristic = characteristic;
-                service.letters = preset.letter + j;
+                service.letters = presets[preset].letter + j;
 
                 service.options = {};
 
