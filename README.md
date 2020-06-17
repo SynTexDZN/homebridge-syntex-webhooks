@@ -23,7 +23,7 @@ A plugin to control and to create HTTP devices.
         "port": 1710,
         "cache_directory": "./SynTex/",
         "log_directory": "./SynTex/log",
-        "sensors": [
+        "devices": [
             {
                 "mac": "EC:FA:BC:59:3F:3C",
                 "name": "Temperature",
@@ -63,9 +63,7 @@ A plugin to control and to create HTTP devices.
                 "mac": "sensor4",
                 "name": "Occupancy",
                 "type": "occupancy"
-            }
-        ],
-        "switches": [
+            },
             {
                 "mac": "EC:FA:BC:59:3F:3C",
                 "name": "Switch",
@@ -88,6 +86,16 @@ A plugin to control and to create HTTP devices.
                 "mac": "switch1",
                 "name": "Dummy",
                 "type": "switch"
+            },
+            {
+                "mac": "multi1",
+                "name": "Multi Switch",
+                "type": ["switch", "switch", "switch"]
+            },
+            {
+                "mac": "multi2",
+                "name": "Multi Device",
+                "type": ["switch", "temperature", "humidity", "rain"]
             }
         ],
         "lights": [

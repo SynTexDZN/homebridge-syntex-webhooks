@@ -36,8 +36,6 @@ function SynTexWebHookPlatform(log, sconfig, api)
 {
     this.devices = sconfig['accessories'] || [];
 
-    this.sensors = sconfig['sensors'] || [];
-    this.switches = sconfig['switches'] || [];
     this.lights = sconfig['lights'] || [];
     this.statelessSwitches = sconfig['statelessswitches'] || [];
     
@@ -106,7 +104,7 @@ SynTexWebHookPlatform.prototype = {
                             {
                                 for(var j = 0; j < accessories[i].service.length; j++)
                                 {
-                                    if((!urlParams.type || accessories[i].service[j].type == urlParams.type))
+                                    if((!urlParams.type || accessories[i].service[j].type == urlParams.type) && (!urlParams.counter || accessories[i].service[j].letters.slice(-1) == urlParams.counter))
                                     {
                                         accessory = accessories[i].service[j];
                                     }
@@ -618,7 +616,6 @@ function SynTexBaseAccessory(accessoryConfig)
 
             for(var j = 0; j < count; j++)
             {
-                var characteristic = presets[preset].characteristic;
                 var name = this.name;
 
                 if(this.type instanceof Array && this.type.length > 1)
@@ -638,7 +635,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 service.mac = this.mac;
                 service.type = preset;
                 service.name = name;
-                service.characteristic = characteristic;
+                service.characteristic = presets[preset].characteristic;
                 service.letters = presets[preset].letter + j;
 
                 service.options = {};
@@ -663,38 +660,38 @@ function SynTexBaseAccessory(accessoryConfig)
 
                 DeviceManager.getDevice(this.mac, service.type, service.letters).then(function(state) {
 
-                    if(service.type == 'rgb')
+                    if(this.service.type == 'rgb')
                     {
-                        this.power = state.split(':')[0] == 'true';
-                        this.hue = getHSL(state)[0] || 0;
-                        this.saturation = getHSL(state)[1] || 100;
-                        this.brightness = getHSL(state)[2] || 50;
+                        this.accessory.power = state.split(':')[0] == 'true';
+                        this.accessory.hue = getHSL(state)[0] || 0;
+                        this.accessory.saturation = getHSL(state)[1] || 100;
+                        this.accessory.brightness = getHSL(state)[2] || 50;
                     }
                     else
                     {
-                        this.service.changeHandler(validateUpdate(this.accessory.mac, this.service.type, state), this.service.type);
+                        this.service.changeHandler(validateUpdate(this.service.mac, this.service.type, state), this.service.type);
                     }
             
                 }.bind({ accessory : this, service : service }));
 
                 service.changeHandler = (function(state, type)
                 {
-                    logger.log('update', "HomeKit Status für '" + this.service[j].name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+                    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
 
-                    this.service[j].getCharacteristic(this.service[j].characteristic).updateValue(state);
+                    this.getCharacteristic(this.characteristic).updateValue(state);
 
-                }.bind(this));
+                }.bind(service));
 
                 if(service.type == 'temperature')
                 {
-                    service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
+                    service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
                 }
 
-                service.getCharacteristic(characteristic).on('get', this.getState.bind(service));
+                service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
 
                 if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
                 {
-                    service.getCharacteristic(characteristic).on('set', this.setState.bind(service));
+                    service.getCharacteristic(service.characteristic).on('set', this.setState.bind(service));
                 }
 
                 if(service.type == 'rgb')
