@@ -1,7 +1,7 @@
 var logger, storage, accessories = [];
 var store = require('json-fs-store');
 
-function getDevice(mac, type, counter)
+function getDevice(mac, type, service)
 {
     return new Promise(async function(resolve) {
 
@@ -9,7 +9,7 @@ function getDevice(mac, type, counter)
 
         for(var i = 0; i < accessories.length; i++)
         {
-            if(accessories[i].mac == mac && accessories[i].type == type && accessories[i].counter == counter)
+            if(accessories[i].mac == mac && accessories[i].type == type && accessories[i].service == service)
             {
                 found = true;
 
@@ -22,8 +22,8 @@ function getDevice(mac, type, counter)
             var accessory = {
                 mac : mac,
                 type : type,
-                counter : counter,
-                value : await readFS(mac, type, counter)
+                service : service,
+                value : await readFS(mac, type, service)
             };
 
             accessories.push(accessory);
@@ -33,7 +33,7 @@ function getDevice(mac, type, counter)
     });
 }
 
-function setDevice(mac, type, counter, value)
+function setDevice(mac, type, service, value)
 {
     return new Promise(async function(resolve) {
 
@@ -41,7 +41,7 @@ function setDevice(mac, type, counter, value)
 
         for(var i = 0; i < accessories.length; i++)
         {
-            if(accessories[i].mac == mac && accessories[i].type == type && accessories[i].counter == counter)
+            if(accessories[i].mac == mac && accessories[i].type == type && accessories[i].service == service)
             {
                 accessories[i].value = value;
 
@@ -51,21 +51,21 @@ function setDevice(mac, type, counter, value)
 
         if(!found)
         {
-            accessories.push({ mac : mac, type : type, counter : counter, value : value });
+            accessories.push({ mac : mac, type : type, service : service, value : value });
         }
 
-        await writeFS(mac, type, counter, value);
+        await writeFS(mac, type, service, value);
 
         resolve();
     });
 }
 
-function writeFS(mac, type, counter, value)
+function writeFS(mac, type, service, value)
 {
     return new Promise(resolve => {
         
         var device = {
-            id: mac + ':' + type[0].toUpperCase() + counter,
+            id: mac + ':' + type[0].toUpperCase() + service,
             value: value,
             type: type
         };
@@ -82,11 +82,11 @@ function writeFS(mac, type, counter, value)
     });
 }
 
-function readFS(mac, type, counter)
+function readFS(mac, type, service)
 {
     return new Promise(resolve => {
 
-        storage.load(mac + ':' + type[0].toUpperCase() + counter, (err, device) => {    
+        storage.load(mac + ':' + type[0].toUpperCase() + service, (err, device) => {    
 
             resolve(device && !err ? device.value : null);
         });
