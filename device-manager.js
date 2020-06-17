@@ -26,6 +26,8 @@ function getDevice(mac, type, service)
                 value : await readFS(mac, service)
             };
 
+            logger.log('debug', accessory);
+
             accessories.push(accessory);
 
             resolve(accessory.value);
@@ -85,6 +87,8 @@ function writeFS(mac, type, service, value)
 function readFS(mac, service)
 {
     return new Promise(resolve => {
+
+        logger.log('debug', mac + ':' + service);
 
         storage.load(mac + ':' + service, (err, device) => {    
 
