@@ -130,7 +130,7 @@ SynTexWebHookPlatform.prototype = {
                             logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + ' )');
                         }
 
-                        DeviceManager.setDevice(urlParams.mac, urlParams.type || accessory.type, presets[urlParams.type || accessory.type] + '0', urlParams.value);
+                        DeviceManager.setDevice(urlParams.mac, urlParams.type || accessory.type, presets[urlParams.type || accessory.type].letter + '0', urlParams.value);
                          
                         response.write(state != null ? 'Success' : 'Error');
                     }
