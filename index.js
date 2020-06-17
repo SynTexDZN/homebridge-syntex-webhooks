@@ -628,10 +628,10 @@ function SynTexBaseAccessory(accessoryConfig)
                 }
 
                 service.mac = this.mac;
-                service.counter = j;
                 service.type = preset;
                 service.name = name;
                 service.characteristic = characteristic;
+                service.letters = preset.letter + j;
 
                 service.options = {};
 
