@@ -23,7 +23,7 @@ function getDevice(mac, type, service)
                 mac : mac,
                 type : type,
                 service : service,
-                value : await readFS(mac, type, service)
+                value : await readFS(mac, service)
             };
 
             accessories.push(accessory);
@@ -65,7 +65,7 @@ function writeFS(mac, type, service, value)
     return new Promise(resolve => {
         
         var device = {
-            id: mac + ':' + type[0].toUpperCase() + service,
+            id: mac + ':' + service,
             value: value,
             type: type
         };
@@ -82,11 +82,11 @@ function writeFS(mac, type, service, value)
     });
 }
 
-function readFS(mac, type, service)
+function readFS(mac, service)
 {
     return new Promise(resolve => {
 
-        storage.load(mac + ':' + type[0].toUpperCase() + service, (err, device) => {    
+        storage.load(mac + ':' + service, (err, device) => {    
 
             resolve(device && !err ? device.value : null);
         });
