@@ -638,6 +638,8 @@ function SynTexBaseAccessory(accessoryConfig)
             }
         }
 
+        logger.log('debug', type);
+
         if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
         {
             var service = new presets[type].service(name);
