@@ -3,6 +3,8 @@ var store = require('json-fs-store');
 
 function getDevice(mac, type, service)
 {
+    logger.log('debug', mac + ':' + service);
+    
     return new Promise(async function(resolve) {
 
         var found = false;
@@ -86,12 +88,8 @@ function readFS(mac, service)
 {
     return new Promise(resolve => {
 
-        logger.log('debug', mac + ':' + service);
-
         storage.load(mac + ':' + service, (err, device) => {    
 
-            logger.log('warn', err);
-            logger.log('warn', device);
             resolve(device && !err ? device.value : null);
         });
     });

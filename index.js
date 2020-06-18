@@ -272,6 +272,8 @@ function SynTexBaseAccessory(accessoryConfig)
         service.characteristic = presets[type].characteristic;
         service.letters = presets[type].letter + i;
 
+        logger.log('warn', service.mac + ':' + service.letters);
+
         service.options = {};
 
         if(type == 'switch' || type == 'relais')
