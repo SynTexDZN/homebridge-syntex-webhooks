@@ -511,82 +511,6 @@ function validateUpdate(mac, type, state)
     }
 }
 
-function createAccessory(accessory)
-{
-    var services = [], accessories = [];
-
-    accessories.push({type : 'contact', service : new Service.ContactSensor(accessory.name), characteristic : Characteristic.ContactSensorState});
-    accessories.push({type : 'motion', service : new Service.MotionSensor(accessory.name), characteristic : Characteristic.MotionDetected});
-    accessories.push({type : 'temperature', service : new Service.TemperatureSensor(accessory.name), characteristic : Characteristic.CurrentTemperature});
-    accessories.push({type : 'humidity', service : new Service.HumiditySensor(accessory.name), characteristic : Characteristic.CurrentRelativeHumidity});
-    accessories.push({type : 'rain', service : new Service.LeakSensor(accessory.name), characteristic : Characteristic.LeakDetected});
-    accessories.push({type : 'light', service : new Service.LightSensor(accessory.name), characteristic : Characteristic.CurrentAmbientLightLevel});
-    accessories.push({type : 'occupancy', service : new Service.OccupancySensor(accessory.name), characteristic : Characteristic.OccupancyDetected});
-    accessories.push({type : 'smoke', service : new Service.SmokeSensor(accessory.name), characteristic : Characteristic.SmokeDetected});
-    accessories.push({type : 'airquality', service : new Service.AirQualitySensor(accessory.name), characteristic : Characteristic.AirQuality});
-    accessories.push({type : 'rgb', service : new Service.Lightbulb(accessory.name), characteristic : Characteristic.On});
-    accessories.push({type : 'switch', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
-    accessories.push({type : 'relais', service : new Service.Switch(accessory.name), characteristic : Characteristic.On});
-
-    var informationService = new Service.AccessoryInformation();
-    
-    informationService
-        .setCharacteristic(Characteristic.Manufacturer, accessory.manufacturer)
-        .setCharacteristic(Characteristic.Model, accessory.model)
-        .setCharacteristic(Characteristic.FirmwareRevision, accessory.version)
-        .setCharacteristic(Characteristic.SerialNumber, accessory.mac);
-
-        services.push(informationService);
-
-    for(var i = 0; i < accessories.length; i++)
-    {
-        if(accessory.type.includes(accessories[i].type))
-        {
-            var characteristic = accessories[i].characteristic;
-            var service = accessories[i].service;
-
-            service.type = accessories[i].type;
-            service.character = characteristic;
-
-            accessory.changeHandler = (function(state, type)
-            {
-                logger.log('update', "HomeKit Status für '" + type + "' in '" + accessory.name + "' geändert zu '" + state + "' ( " + accessory.mac + ' )');
-
-                for(var j = 1; j < accessory.service.length; j++)
-                {
-                    if(accessory.type != 'rgb' && (type == null || type == accessory.service[j].type))
-                    {
-                        accessory.service[j].getCharacteristic(accessory.service[j].character).updateValue(state);
-                    }
-                }
-            });
-
-            if(accessory.type == 'temperature')
-            {
-                service.getCharacteristic(Characteristic.CurrentTemperature).setProps({ minValue : -100, maxValue : 140 });
-            }
-
-            //service.getCharacteristic(characteristic).on('get', accessory.getState.bind(service));
-
-            if(accessory.type == 'switch' || accessory.type == 'reials' || accessory.type == 'rgb')
-            {
-                service.getCharacteristic(characteristic).on('set', accessory.setState.bind(service));
-            }
-
-            if(accessory.type == 'rgb')
-            {
-                service.addCharacteristic(new Characteristic.Hue()).on('get', accessory.getHue.bind(accessory)).on('set', accessory.setHue.bind(accessory));
-                service.addCharacteristic(new Characteristic.Saturation()).on('get', accessory.getSaturation.bind(accessory)).on('set', accessory.setSaturation.bind(accessory));
-                service.addCharacteristic(new Characteristic.Brightness()).on('get', accessory.getBrightness.bind(accessory)).on('set', accessory.setBrightness.bind(accessory));
-            }
-
-            services.push(service);
-        }
-    }
-
-    return services;
-}
-
 function SynTexBaseAccessory(accessoryConfig)
 {
     this.service = [];
@@ -622,11 +546,6 @@ function SynTexBaseAccessory(accessoryConfig)
         name = this.services.name;
     }
 
-    logger.log('debug', counter);
-    logger.log('debug', this.services);
-    logger.log('debug', this.services instanceof Object);
-    logger.log('debug', this.services instanceof Array);
-
     for(var i = 0; i < counter; i++)
     {
         if(counter > 1)
@@ -642,8 +561,6 @@ function SynTexBaseAccessory(accessoryConfig)
                 name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
             }
         }
-
-        logger.log('debug', type);
 
         if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
         {
@@ -687,19 +604,19 @@ function SynTexBaseAccessory(accessoryConfig)
 
         DeviceManager.getDevice(this.mac, type, service.letters).then(function(state) {
 
-            if(this.service.type == 'rgb')
+            if(this.type == 'rgb')
             {
-                this.accessory.power = state.split(':')[0] == 'true';
-                this.accessory.hue = getHSL(state)[0] || 0;
-                this.accessory.saturation = getHSL(state)[1] || 100;
-                this.accessory.brightness = getHSL(state)[2] || 50;
+                this.power = state.split(':')[0] == 'true';
+                this.hue = getHSL(state)[0] || 0;
+                this.saturation = getHSL(state)[1] || 100;
+                this.brightness = getHSL(state)[2] || 50;
             }
             else
             {
-                this.service.changeHandler(validateUpdate(this.service.mac, this.service.type, state));
+                this.changeHandler(validateUpdate(this.mac, this.type, state));
             }
     
-        }.bind({ accessory : this, service : service }));
+        }.bind(service));
 
         service.changeHandler = (function(state)
         {
@@ -709,12 +626,12 @@ function SynTexBaseAccessory(accessoryConfig)
 
         }.bind(service));
 
+        service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
+
         if(service.type == 'temperature')
         {
             service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
         }
-
-        service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
 
         if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
         {
@@ -723,9 +640,9 @@ function SynTexBaseAccessory(accessoryConfig)
 
         if(service.type == 'rgb')
         {
-            service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
-            service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
-            service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
+            service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(service)).on('set', this.setHue.bind(service));
+            service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(service)).on('set', this.setSaturation.bind(service));
+            service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(service)).on('set', this.setBrightness.bind(service));
         }
 
         this.service.push(service);
@@ -745,7 +662,14 @@ SynTexBaseAccessory.prototype.getState = function(callback)
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
         }
          
-        callback(null, state);
+        if(this.type == 'rgb')
+        {
+            callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
+        }
+        else
+        {
+            callback(null, state);
+        }
 
     }.bind(this)).catch(function(e) {
 
@@ -800,7 +724,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
             }
             else
             {
-                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
+                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err || ''));
 
                 callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
             }
@@ -815,6 +739,70 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 
         callback(null);
     }
+};
+
+SynTexBaseAccessory.prototype.getHue = function(callback)
+{
+    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
+
+        callback(null, (state == null) ? 0 : (getHSL(state)[0] || 0));
+
+    }).catch(function(e) {
+
+        logger.err(e);
+    });
+};
+
+SynTexBaseAccessory.prototype.getSaturation = function(callback)
+{
+    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
+
+        callback(null, (state == null) ? 100 : (getHSL(state)[1] || 100));
+
+    }).catch(function(e) {
+
+        logger.err(e);
+    });
+}
+
+SynTexBaseAccessory.prototype.getBrightness = function(callback)
+{
+    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
+
+        callback(null, (state == null) ? 50 : (getHSL(state)[2] || 50));
+
+    }).catch(function(e) {
+
+        logger.err(e);
+    });
+}
+
+SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
+{
+    this.power = powerOn;
+    setRGB(this);
+    callback(null);
+};
+
+SynTexBaseAccessory.prototype.setHue = function(level, callback)
+{
+    this.hue = level;
+    setRGB(this);
+    callback(null);
+};
+
+SynTexBaseAccessory.prototype.setSaturation = function(level, callback)
+{
+    this.saturation = level;
+    setRGB(this);
+    callback(null);
+};
+
+SynTexBaseAccessory.prototype.setBrightness = function(level, callback)
+{
+    this.brightness = level;
+    setRGB(this);
+    callback(null);
 };
 
 SynTexBaseAccessory.prototype.getServices = function()
