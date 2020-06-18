@@ -131,7 +131,7 @@ SynTexWebHookPlatform.prototype = {
 
                         if((state = validateUpdate(urlParams.mac, accessory.type, urlParams.value)) != null)
                         {
-                            accessory.changeHandler(state, accessory.type);
+                            accessory.changeHandler(state);
                         }
                         else
                         {
@@ -592,7 +592,7 @@ function SynTexBaseAccessory(accessoryConfig)
     this.service = [];
     this.mac = accessoryConfig['mac'];
     this.name = accessoryConfig['name'];
-    this.type = accessoryConfig['type'];
+    this.services = accessoryConfig['services'];
 
     this.version = accessoryConfig['version'] || '1.0.0';
     this.model = accessoryConfig['model'] || 'HTTP Accessory';
@@ -608,102 +608,116 @@ function SynTexBaseAccessory(accessoryConfig)
 
         this.service.push(informationService);
 
-    for(var preset in presets)
+    var type = this.services;
+    var name = this.name;
+    var counter = 1;
+
+    if(this.services instanceof Object)
     {
-        if(this.type.includes(preset))
+        type = this.services.type;
+        name = this.services.name;
+    }
+    else if(this.services instanceof Array)
+    {
+        counter = this.services.length;
+    }
+
+    for(var i = 0; i < counter; i++)
+    {
+        if(counter > 1)
         {
-            var count = (JSON.stringify(this.type).match(new RegExp(preset, 'g')) || []).length;
-
-            for(var j = 0; j < count; j++)
+            if(this.services[i] instanceof Object)
             {
-                var name = this.name;
-
-                if(this.type instanceof Array && this.type.length > 1)
-                {
-                    name += ' ' + preset[0].toUpperCase() + preset.substring(1);
-                }
-
-                if(count == 1)
-                {
-                    var service = new presets[preset].service(name);
-                }
-                else
-                {
-                    var service = new presets[preset].service(name + ' ' + letters[j], j);
-                }
-
-                service.mac = this.mac;
-                service.type = preset;
-                service.name = name;
-                service.characteristic = presets[preset].characteristic;
-                service.letters = presets[preset].letter + j;
-
-                service.options = {};
-
-                if(service.type == 'switch' || service.type == 'relais')
-                {
-                    service.options.onURL = accessoryConfig['on_url'] || '';
-                    service.options.onMethod = accessoryConfig['on_method'] || 'GET';
-                    service.options.onBody = accessoryConfig['on_body'] || '';
-                    service.options.onForm = accessoryConfig['on_form'] || '';
-                    service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
-                    service.options.offURL = accessoryConfig['off_url'] || '';
-                    service.options.offMethod = accessoryConfig['off_method'] || 'GET';
-                    service.options.offBody = accessoryConfig['off_body'] || '';
-                    service.options.offForm = accessoryConfig['off_form'] || '';
-                    service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
-                }
-                else if(service.type == 'rgb')
-                {
-                    service.options.url = accessoryConfig['url'] || '';
-                }
-
-                DeviceManager.getDevice(this.mac, service.type, service.letters).then(function(state) {
-
-                    if(this.service.type == 'rgb')
-                    {
-                        this.accessory.power = state.split(':')[0] == 'true';
-                        this.accessory.hue = getHSL(state)[0] || 0;
-                        this.accessory.saturation = getHSL(state)[1] || 100;
-                        this.accessory.brightness = getHSL(state)[2] || 50;
-                    }
-                    else
-                    {
-                        this.service.changeHandler(validateUpdate(this.service.mac, this.service.type, state), this.service.type);
-                    }
-            
-                }.bind({ accessory : this, service : service }));
-
-                service.changeHandler = (function(state, type)
-                {
-                    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
-
-                    this.getCharacteristic(this.characteristic).updateValue(state);
-
-                }.bind(service));
-
-                if(service.type == 'temperature')
-                {
-                    service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
-                }
-
-                service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
-
-                if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
-                {
-                    service.getCharacteristic(service.characteristic).on('set', this.setState.bind(service));
-                }
-
-                if(service.type == 'rgb')
-                {
-                    service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
-                    service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
-                    service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
-                }
-
-                this.service.push(service);
+                type = this.services[i].type;
+                name = this.services[i].name;
+            }
+            else
+            {
+                type = this.services[i];
+                name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
             }
         }
+
+        if((JSON.stringify(type).match(new RegExp(type, 'g')) || []).length == 1)
+        {
+            var service = new presets[type].service(name);
+        }
+        else
+        {
+            name +=  ' ' + letters[i];
+            var service = new presets[type].service(name, i);
+        }
+
+        service.mac = this.mac;
+        service.type = type;
+        service.name = name;
+        service.characteristic = presets[type].characteristic;
+        service.letters = presets[type].letter + i;
+
+        service.options = {};
+
+        if(type == 'switch' || type == 'relais')
+        {
+            service.options.onURL = accessoryConfig['on_url'] || '';
+            service.options.onMethod = accessoryConfig['on_method'] || 'GET';
+            service.options.onBody = accessoryConfig['on_body'] || '';
+            service.options.onForm = accessoryConfig['on_form'] || '';
+            service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
+            service.options.offURL = accessoryConfig['off_url'] || '';
+            service.options.offMethod = accessoryConfig['off_method'] || 'GET';
+            service.options.offBody = accessoryConfig['off_body'] || '';
+            service.options.offForm = accessoryConfig['off_form'] || '';
+            service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
+        }
+        else if(type == 'rgb')
+        {
+            service.options.url = accessoryConfig['url'] || '';
+        }
+
+        DeviceManager.getDevice(this.mac, type, service.letters).then(function(state) {
+
+            if(this.service.type == 'rgb')
+            {
+                this.accessory.power = state.split(':')[0] == 'true';
+                this.accessory.hue = getHSL(state)[0] || 0;
+                this.accessory.saturation = getHSL(state)[1] || 100;
+                this.accessory.brightness = getHSL(state)[2] || 50;
+            }
+            else
+            {
+                this.service.changeHandler(validateUpdate(this.service.mac, this.service.type, state));
+            }
+    
+        }.bind({ accessory : this, service : service }));
+
+        service.changeHandler = (function(state)
+        {
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+
+            this.getCharacteristic(this.characteristic).updateValue(state);
+
+        }.bind(service));
+
+        if(service.type == 'temperature')
+        {
+            service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
+        }
+
+        service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
+
+        if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
+        {
+            service.getCharacteristic(service.characteristic).on('set', this.setState.bind(service));
+        }
+
+        if(service.type == 'rgb')
+        {
+            service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(this)).on('set', this.setHue.bind(this));
+            service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(this)).on('set', this.setSaturation.bind(this));
+            service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
+        }
+
+        this.service.push(service);
     }
 }
 
