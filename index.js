@@ -622,6 +622,8 @@ function SynTexBaseAccessory(accessoryConfig)
         counter = this.services.length;
     }
 
+    logger.log(counter);
+
     for(var i = 0; i < counter; i++)
     {
         if(counter > 1)
