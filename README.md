@@ -115,9 +115,9 @@ B. For accessories with multiple services with more than one of the same service
 - Contact Sensor
 - Smoke Sensor
 - Occupancy Sensor
+- Airquality Sensor
 - Switch / Relais
 - RGB Lights
-- Airquality
 
 # NEW
 - Added support for complex accessory with multiple services
