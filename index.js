@@ -624,6 +624,8 @@ function SynTexBaseAccessory(accessoryConfig)
 
     logger.log('debug', counter);
     logger.log('debug', this.services);
+    logger.log('debug', this.services instanceof Object);
+    logger.log('debug', this.services instanceof Array);
 
     for(var i = 0; i < counter; i++)
     {
