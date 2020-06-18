@@ -340,7 +340,9 @@ function SynTexBaseAccessory(accessoryConfig)
 }
 
 SynTexBaseAccessory.prototype.getState = function(callback)
-{        
+{   
+    logger.log('debug', this.mac + ' - ' + this.type + ' - ' + this.letters);     
+
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
         if(state == null)
