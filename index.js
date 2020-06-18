@@ -28,15 +28,12 @@ module.exports = function(homebridge)
     presets.relais = {letter : '5', service : Service.Switch, characteristic : Characteristic.On};
 
     homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
-    homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStripeRGB', SynTexWebHookStripeRGBAccessory);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStatelessSwitch', SynTexWebHookStatelessSwitchAccessory);
 };
 
 function SynTexWebHookPlatform(log, sconfig, api)
 {
     this.devices = sconfig['accessories'] || [];
-
-    this.lights = sconfig['lights'] || [];
     this.statelessSwitches = sconfig['statelessswitches'] || [];
     
     this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
@@ -59,11 +56,6 @@ SynTexWebHookPlatform.prototype = {
         for(var i = 0; i < this.devices.length; i++)
         {
             accessories.push(new SynTexBaseAccessory(this.devices[i]));
-        }
-        
-        for(var i = 0; i < this.lights.length; i++)
-        {
-            //accessories.push(new SynTexWebHookStripeRGBAccessory(this.lights[i]));
         }
 
         for(var i = 0; i < this.statelessSwitches.length; i++)
@@ -209,51 +201,237 @@ SynTexWebHookPlatform.prototype = {
     }
 }
 
-function SynTexWebHookStripeRGBAccessory(lightConfig)
+function SynTexBaseAccessory(accessoryConfig)
 {
-    this.mac = lightConfig['mac'];
-    this.type = lightConfig['type'];
-    this.name = lightConfig['name'];
-    this.url = lightConfig['url'] || '';
+    this.service = [];
+    this.mac = accessoryConfig['mac'];
+    this.name = accessoryConfig['name'];
+    this.services = accessoryConfig['services'];
 
-    this.version = lightConfig['version'] || '1.0.0';
-    this.model = lightConfig['model'] || 'HTTP Accessory';
-    this.manufacturer = lightConfig['manufacturer'] || 'SynTex';
+    this.version = accessoryConfig['version'] || '1.0.0';
+    this.model = accessoryConfig['model'] || 'HTTP Accessory';
+    this.manufacturer = accessoryConfig['manufacturer'] || 'SynTex';
 
-    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
-
-        this.power = state.split(':')[0] == 'true';
-        this.hue = getHSL(state)[0] || 0;
-        this.saturation = getHSL(state)[1] || 100;
-        this.brightness = getHSL(state)[2] || 50;
-
-    }.bind(this));
+    var informationService = new Service.AccessoryInformation();
     
-    this.service = createAccessory(this);
+    informationService
+        .setCharacteristic(Characteristic.Manufacturer, this.manufacturer)
+        .setCharacteristic(Characteristic.Model, this.model)
+        .setCharacteristic(Characteristic.FirmwareRevision, this.version)
+        .setCharacteristic(Characteristic.SerialNumber, this.mac);
+
+        this.service.push(informationService);
+
+    var type = this.services;
+    var name = this.name;
+    var counter = 1;
+
+    if(Array.isArray(this.services))
+    {
+        counter = this.services.length;
+    }
+    else if(this.services instanceof Object)
+    {
+        type = this.services.type;
+        name = this.services.name;
+    }
+
+    for(var i = 0; i < counter; i++)
+    {
+        if(counter > 1)
+        {
+            if(this.services[i] instanceof Object)
+            {
+                type = this.services[i].type;
+                name = this.services[i].name;
+            }
+            else
+            {
+                type = this.services[i];
+                name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
+            }
+        }
+
+        if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
+        {
+            var service = new presets[type].service(name);
+        }
+        else if(this.services[i] instanceof Object)
+        {
+            var service = new presets[type].service(name, i);
+        }
+        else
+        {
+            name +=  ' ' + letters[i];
+            var service = new presets[type].service(name, i);
+        }
+
+        service.mac = this.mac;
+        service.type = type;
+        service.name = name;
+        service.characteristic = presets[type].characteristic;
+        service.letters = presets[type].letter + i;
+
+        service.options = {};
+
+        if(type == 'switch' || type == 'relais')
+        {
+            service.options.onURL = accessoryConfig['on_url'] || '';
+            service.options.onMethod = accessoryConfig['on_method'] || 'GET';
+            service.options.onBody = accessoryConfig['on_body'] || '';
+            service.options.onForm = accessoryConfig['on_form'] || '';
+            service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
+            service.options.offURL = accessoryConfig['off_url'] || '';
+            service.options.offMethod = accessoryConfig['off_method'] || 'GET';
+            service.options.offBody = accessoryConfig['off_body'] || '';
+            service.options.offForm = accessoryConfig['off_form'] || '';
+            service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
+        }
+        else if(type == 'rgb')
+        {
+            service.options.url = accessoryConfig['url'] || '';
+        }
+
+        DeviceManager.getDevice(this.mac, type, service.letters).then(function(state) {
+
+            this.changeHandler(validateUpdate(this.mac, this.type, state));
+    
+        }.bind(service));
+
+        service.changeHandler = (function(state)
+        {
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+
+            if(this.type == 'rgb')
+            {
+                this.getCharacteristic(Characteristic.On).updateValue(state.split(':')[0] == 'true');
+                this.getCharacteristic(Characteristic.Hue).updateValue(getHSL(state)[0] || 0);
+                this.getCharacteristic(Characteristic.Saturation).updateValue(getHSL(state)[1] || 100);
+                this.getCharacteristic(Characteristic.Brightness).updateValue(getHSL(state)[2] || 50);
+            }
+            else
+            {
+                this.getCharacteristic(this.characteristic).updateValue(state);
+            }
+
+        }.bind(service));
+
+        service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
+
+        if(service.type == 'temperature')
+        {
+            service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
+        }
+
+        if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
+        {
+            service.getCharacteristic(service.characteristic).on('set', this.setState.bind(service));
+        }
+
+        if(service.type == 'rgb')
+        {
+            service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(service)).on('set', this.setHue.bind(service));
+            service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(service)).on('set', this.setSaturation.bind(service));
+            service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(service)).on('set', this.setBrightness.bind(service));
+        }
+
+        this.service.push(service);
+    }
 }
 
-SynTexWebHookStripeRGBAccessory.prototype.getState = function(callback)
-{
+SynTexBaseAccessory.prototype.getState = function(callback)
+{        
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
         if(state == null)
         {
             logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
         }
-        else
+        else if((state = validateUpdate(this.mac, this.type, state)) != null)
         {
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
         }
+         
+        if(this.type == 'rgb')
+        {
+            callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
+        }
+        else
+        {
+            callback(null, state);
+        }
 
-        callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
-
-    }.bind({ mac : this.mac, name : this.name })).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
         logger.err(e);
     });
 };
 
-SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
+SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
+{
+    var urlToCall = powerOn ? this.options.onURL : this.options.offURL;
+    var urlMethod = powerOn ? this.options.onMethod : this.options.offMethod;
+    var urlBody = powerOn ? this.options.onBody : this.options.offBody;
+    var urlForm = powerOn ? this.options.onForm : this.options.offForm;
+    var urlHeaders = powerOn ? this.options.onHeaders : this.options.offHeaders;
+
+    if(urlToCall != '')
+    {
+        var theRequest = {
+            method : urlMethod,
+            url : urlToCall,
+            timeout : 5000,
+            headers: JSON.parse(urlHeaders)
+        };
+        
+        if(urlMethod === 'POST' || urlMethod === 'PUT')
+        {
+            if(urlForm)
+            {
+                //logger.log('Adding Form ' + urlForm);
+                theRequest.form = JSON.parse(urlForm);
+            }
+            else if(urlBody)
+            {
+                //logger.log('Adding Body ' + urlBody);
+                theRequest.body = urlBody;
+            }
+        }
+
+        request(theRequest, (function(err, response, body)
+        {
+            var statusCode = response && response.statusCode ? response.statusCode : -1;
+            
+            if(!err && statusCode == 200)
+            {
+                logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
+
+                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
+
+                DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
+
+                callback(null);
+            }
+            else
+            {
+                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err || ''));
+
+                callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+            }
+
+        }).bind(this));
+    }
+    else
+    {
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
+
+        DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
+
+        callback(null);
+    }
+};
+
+SynTexBaseAccessory.prototype.getHue = function(callback)
 {
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
@@ -265,7 +443,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getHue = function(callback)
     });
 };
 
-SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
+SynTexBaseAccessory.prototype.getSaturation = function(callback)
 {
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
@@ -277,7 +455,7 @@ SynTexWebHookStripeRGBAccessory.prototype.getSaturation = function(callback)
     });
 }
 
-SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
+SynTexBaseAccessory.prototype.getBrightness = function(callback)
 {
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
@@ -289,35 +467,35 @@ SynTexWebHookStripeRGBAccessory.prototype.getBrightness = function(callback)
     });
 }
 
-SynTexWebHookStripeRGBAccessory.prototype.setState = function(powerOn, callback, context)
+SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 {
     this.power = powerOn;
     setRGB(this);
     callback(null);
 };
 
-SynTexWebHookStripeRGBAccessory.prototype.setHue = function(level, callback)
+SynTexBaseAccessory.prototype.setHue = function(level, callback)
 {
     this.hue = level;
     setRGB(this);
     callback(null);
 };
 
-SynTexWebHookStripeRGBAccessory.prototype.setSaturation = function(level, callback)
+SynTexBaseAccessory.prototype.setSaturation = function(level, callback)
 {
     this.saturation = level;
     setRGB(this);
     callback(null);
 };
 
-SynTexWebHookStripeRGBAccessory.prototype.setBrightness = function(level, callback)
+SynTexBaseAccessory.prototype.setBrightness = function(level, callback)
 {
     this.brightness = level;
     setRGB(this);
     callback(null);
 };
 
-SynTexWebHookStripeRGBAccessory.prototype.getServices = function()
+SynTexBaseAccessory.prototype.getServices = function()
 {
     return this.service;
 };
@@ -510,302 +688,3 @@ function validateUpdate(mac, type, state)
         return state;
     }
 }
-
-function SynTexBaseAccessory(accessoryConfig)
-{
-    this.service = [];
-    this.mac = accessoryConfig['mac'];
-    this.name = accessoryConfig['name'];
-    this.services = accessoryConfig['services'];
-
-    this.version = accessoryConfig['version'] || '1.0.0';
-    this.model = accessoryConfig['model'] || 'HTTP Accessory';
-    this.manufacturer = accessoryConfig['manufacturer'] || 'SynTex';
-
-    var informationService = new Service.AccessoryInformation();
-    
-    informationService
-        .setCharacteristic(Characteristic.Manufacturer, this.manufacturer)
-        .setCharacteristic(Characteristic.Model, this.model)
-        .setCharacteristic(Characteristic.FirmwareRevision, this.version)
-        .setCharacteristic(Characteristic.SerialNumber, this.mac);
-
-        this.service.push(informationService);
-
-    var type = this.services;
-    var name = this.name;
-    var counter = 1;
-
-    if(Array.isArray(this.services))
-    {
-        counter = this.services.length;
-    }
-    else if(this.services instanceof Object)
-    {
-        type = this.services.type;
-        name = this.services.name;
-    }
-
-    for(var i = 0; i < counter; i++)
-    {
-        if(counter > 1)
-        {
-            if(this.services[i] instanceof Object)
-            {
-                type = this.services[i].type;
-                name = this.services[i].name;
-            }
-            else
-            {
-                type = this.services[i];
-                name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
-            }
-        }
-
-        if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
-        {
-            var service = new presets[type].service(name);
-        }
-        else if(this.services[i] instanceof Object)
-        {
-            var service = new presets[type].service(name, i);
-        }
-        else
-        {
-            name +=  ' ' + letters[i];
-            var service = new presets[type].service(name, i);
-        }
-
-        service.mac = this.mac;
-        service.type = type;
-        service.name = name;
-        service.characteristic = presets[type].characteristic;
-        service.letters = presets[type].letter + i;
-
-        service.options = {};
-
-        if(type == 'switch' || type == 'relais')
-        {
-            service.options.onURL = accessoryConfig['on_url'] || '';
-            service.options.onMethod = accessoryConfig['on_method'] || 'GET';
-            service.options.onBody = accessoryConfig['on_body'] || '';
-            service.options.onForm = accessoryConfig['on_form'] || '';
-            service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
-            service.options.offURL = accessoryConfig['off_url'] || '';
-            service.options.offMethod = accessoryConfig['off_method'] || 'GET';
-            service.options.offBody = accessoryConfig['off_body'] || '';
-            service.options.offForm = accessoryConfig['off_form'] || '';
-            service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
-        }
-        else if(type == 'rgb')
-        {
-            service.options.url = accessoryConfig['url'] || '';
-        }
-
-        DeviceManager.getDevice(this.mac, type, service.letters).then(function(state) {
-
-            if(this.type == 'rgb')
-            {
-                this.power = state.split(':')[0] == 'true';
-                this.hue = getHSL(state)[0] || 0;
-                this.saturation = getHSL(state)[1] || 100;
-                this.brightness = getHSL(state)[2] || 50;
-            }
-            else
-            {
-                this.changeHandler(validateUpdate(this.mac, this.type, state));
-            }
-    
-        }.bind(service));
-
-        service.changeHandler = (function(state)
-        {
-            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
-
-            this.getCharacteristic(this.characteristic).updateValue(state);
-
-        }.bind(service));
-
-        service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
-
-        if(service.type == 'temperature')
-        {
-            service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
-        }
-
-        if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
-        {
-            service.getCharacteristic(service.characteristic).on('set', this.setState.bind(service));
-        }
-
-        if(service.type == 'rgb')
-        {
-            service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(service)).on('set', this.setHue.bind(service));
-            service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(service)).on('set', this.setSaturation.bind(service));
-            service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(service)).on('set', this.setBrightness.bind(service));
-        }
-
-        this.service.push(service);
-    }
-}
-
-SynTexBaseAccessory.prototype.getState = function(callback)
-{        
-    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
-
-        if(state == null)
-        {
-            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.mac + ' )');
-        }
-        else if((state = validateUpdate(this.mac, this.type, state)) != null)
-        {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.mac + ' )');
-        }
-         
-        if(this.type == 'rgb')
-        {
-            callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
-        }
-        else
-        {
-            callback(null, state);
-        }
-
-    }.bind(this)).catch(function(e) {
-
-        logger.err(e);
-    });
-};
-
-SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
-{
-    var urlToCall = powerOn ? this.options.onURL : this.options.offURL;
-    var urlMethod = powerOn ? this.options.onMethod : this.options.offMethod;
-    var urlBody = powerOn ? this.options.onBody : this.options.offBody;
-    var urlForm = powerOn ? this.options.onForm : this.options.offForm;
-    var urlHeaders = powerOn ? this.options.onHeaders : this.options.offHeaders;
-
-    if(urlToCall != '')
-    {
-        var theRequest = {
-            method : urlMethod,
-            url : urlToCall,
-            timeout : 5000,
-            headers: JSON.parse(urlHeaders)
-        };
-        
-        if(urlMethod === 'POST' || urlMethod === 'PUT')
-        {
-            if(urlForm)
-            {
-                //logger.log('Adding Form ' + urlForm);
-                theRequest.form = JSON.parse(urlForm);
-            }
-            else if(urlBody)
-            {
-                //logger.log('Adding Body ' + urlBody);
-                theRequest.body = urlBody;
-            }
-        }
-
-        request(theRequest, (function(err, response, body)
-        {
-            var statusCode = response && response.statusCode ? response.statusCode : -1;
-            
-            if(!err && statusCode == 200)
-            {
-                logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
-
-                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
-
-                DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
-
-                callback(null);
-            }
-            else
-            {
-                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err || ''));
-
-                callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
-            }
-
-        }).bind(this));
-    }
-    else
-    {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
-
-        DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
-
-        callback(null);
-    }
-};
-
-SynTexBaseAccessory.prototype.getHue = function(callback)
-{
-    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
-
-        callback(null, (state == null) ? 0 : (getHSL(state)[0] || 0));
-
-    }).catch(function(e) {
-
-        logger.err(e);
-    });
-};
-
-SynTexBaseAccessory.prototype.getSaturation = function(callback)
-{
-    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
-
-        callback(null, (state == null) ? 100 : (getHSL(state)[1] || 100));
-
-    }).catch(function(e) {
-
-        logger.err(e);
-    });
-}
-
-SynTexBaseAccessory.prototype.getBrightness = function(callback)
-{
-    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
-
-        callback(null, (state == null) ? 50 : (getHSL(state)[2] || 50));
-
-    }).catch(function(e) {
-
-        logger.err(e);
-    });
-}
-
-SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
-{
-    this.power = powerOn;
-    setRGB(this);
-    callback(null);
-};
-
-SynTexBaseAccessory.prototype.setHue = function(level, callback)
-{
-    this.hue = level;
-    setRGB(this);
-    callback(null);
-};
-
-SynTexBaseAccessory.prototype.setSaturation = function(level, callback)
-{
-    this.saturation = level;
-    setRGB(this);
-    callback(null);
-};
-
-SynTexBaseAccessory.prototype.setBrightness = function(level, callback)
-{
-    this.brightness = level;
-    setRGB(this);
-    callback(null);
-};
-
-SynTexBaseAccessory.prototype.getServices = function()
-{
-    return this.service;
-};

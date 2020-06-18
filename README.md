@@ -25,86 +25,61 @@ A plugin to control and to create HTTP devices.
         "log_directory": "./SynTex/log",
         "devices": [
             {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Temperature",
-                "type": "temperature"
-            },
-            {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Humidity",
-                "type": "humidity"
-            },
-            {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Light",
-                "type": "light"
-            },
-            {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Leak",
-                "type": "leak"
-            },
-            {
-                "mac": "sensor1",
-                "name": "Motion",
-                "type": "motion"
-            },
-            {
-                "mac": "sensor2",
+                "mac": "sensor",
                 "name": "Contact",
-                "type": "contact"
-            },
-            {
-                "mac": "sensor3",
-                "name": "Smoke",
-                "type": "smoke"
-            },
-            {
-                "mac": "sensor4",
-                "name": "Occupancy",
-                "type": "occupancy"
+                "services": "contact"
             },
             {
                 "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Switch",
-                "type": "switch",
-                "on_method": "GET",
-                "on_url": "http://192.168.178.164/switch?state=true",
-                "off_method": "GET",
-                "off_url": "http://192.168.178.164/switch?state=false"
-            },
-            {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Relais",
-                "type": "relais",
-                "on_method": "GET",
-                "on_url": "http://192.168.178.162/switch?state=true",
-                "off_method": "GET",
-                "off_url": "http://192.168.178.162/switch?state=false"
-            },
-            {
-                "mac": "switch1",
-                "name": "Dummy",
-                "type": "switch"
+                "name": "Climate",
+                "services": [
+                    "temperature",
+                    "humidity"
+                ]
             },
             {
                 "mac": "multi1",
                 "name": "Multi Switch",
-                "type": ["switch", "switch", "switch"]
+                "services": [
+                    {"type" : "switch", "name" : "First"},
+                    {"type" : "switch", "name" : "Second"}
+                ]
             },
             {
                 "mac": "multi2",
                 "name": "Multi Device",
-                "type": ["switch", "temperature", "humidity", "rain"]
-            }
-        ],
-        "lights": [
+                "services": [
+                    {"type" : "switch", "name" : "First"},
+                    {"type" : "motion", "name" : "Second"},
+                    {"type" : "light", "name" : "Second"},
+                    {"type" : "leak", "name" : "Second"},
+                    {"type" : "smoke", "name" : "Second"},
+                    {"type" : "occupancy", "name" : "Second"}
+                ]
+            },
+            {
+                "mac": "EC:FA:BC:59:3F:3C",
+                "name": "Switch",
+                "services": "switch",
+                "on_method": "GET",
+                "on_url": "http://192.168.178.100/switch?state=true",
+                "off_method": "GET",
+                "off_url": "http://192.168.178.100/switch?state=false"
+            },
+            {
+                "mac": "EC:FA:BC:59:3F:3C",
+                "name": "Relais",
+                "services": "relais",
+                "on_method": "GET",
+                "on_url": "http://192.168.178.101/switch?state=true",
+                "off_method": "GET",
+                "off_url": "http://192.168.178.101/switch?state=false"
+            },
             {
                 "mac": "light1",
                 "name": "Dummy Light",
-                "type": "rgb",
-                "url": "http://192.168.178.163/color",
-                "url_method": "GET"
+                "services": "rgb",
+                "url": "http://192.168.178.163/color"
             }
         ]
     }
