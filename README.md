@@ -26,7 +26,7 @@ A plugin to control and to create HTTP devices.
         "log_directory": "./SynTex/log",
         "devices": [
             {
-                "mac": "sensor",
+                "mac": "sensor1",
                 "name": "Contact",
                 "services": "contact"
             },
@@ -103,7 +103,7 @@ B. For accessories with multiple services with more than one of the same service
 2. Insert the `Bridge IP` and `Device Mac`
 A. For accessories with multiple service types add `&type=SERVICETYPE`
 B. For accessories with multiple services with more than one of the same service types add `&counter=SERVICENUMBER` ( *First of that type = 0, second = 1 ..* )
-**Example:** `http://homebridge.local/devices?mac=multi1&type=switch&counter=1` ( *Gets the value of `Second` from the Example Config* )
+- **Example:** `http://homebridge.local/devices?mac=multi1&type=switch&counter=1` ( *Gets the value of `Second` from the Example Config* )
 
 
 # Currently Supported

@@ -304,10 +304,15 @@ function SynTexBaseAccessory(accessoryConfig)
 
             if(this.type == 'rgb')
             {
-                this.getCharacteristic(Characteristic.On).updateValue(state.split(':')[0] == 'true');
-                this.getCharacteristic(Characteristic.Hue).updateValue(getHSL(state)[0] || 0);
-                this.getCharacteristic(Characteristic.Saturation).updateValue(getHSL(state)[1] || 100);
-                this.getCharacteristic(Characteristic.Brightness).updateValue(getHSL(state)[2] || 50);
+                this.power = state.split(':')[0] == 'true';
+                this.hue = getHSL(state)[0] || 0;
+                this.saturation = getHSL(state)[1] || 100;
+                this.brightness = getHSL(state)[2] || 50;
+
+                this.getCharacteristic(Characteristic.On).updateValue(this.power);
+                this.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
+                this.getCharacteristic(Characteristic.Saturation).updateValue(this.saturation);
+                this.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
             }
             else
             {
