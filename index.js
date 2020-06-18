@@ -612,14 +612,14 @@ function SynTexBaseAccessory(accessoryConfig)
     var name = this.name;
     var counter = 1;
 
-    if(this.services instanceof Object)
+    if(Array.isArray(this.services))
+    {
+        counter = this.services.length;
+    }
+    else if(this.services instanceof Object)
     {
         type = this.services.type;
         name = this.services.name;
-    }
-    else if(this.services instanceof Array)
-    {
-        counter = this.services.length;
     }
 
     logger.log('debug', counter);
