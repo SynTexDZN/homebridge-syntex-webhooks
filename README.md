@@ -6,15 +6,16 @@ A plugin to control and to create HTTP devices.
 1. Install homebridge using: `sudo npm install -g homebridge`
 2. Install this plugin using: `sudo npm install -g homebridge-syntex-webhooks`
 3. Update your configuration file. See snippet below.
+4. Restart the Homebridge Service.
 
 
 # Example Config
 **INFO:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
 - `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
 - `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
-- For the mac address you can use either a `real mac address` or another `unique text`
-- Every device needs these configurations: `mac`, `name` and `type`
-- For lights GET parameters are added to the URL ( *Pattern: [ url ]?r=0&b=0&b=0* )
+- For the mac address you can use either a `real mac address` or another `random unique text`
+- Every device needs these configurations: `mac`, `name` and `service`
+- For lights GET parameters are included to the URL ( *Pattern: [ url ]?r=0&b=0&b=0* )
 
 ```
 "platforms": [
@@ -51,10 +52,10 @@ A plugin to control and to create HTTP devices.
                 "services": [
                     {"type" : "switch", "name" : "First"},
                     {"type" : "motion", "name" : "Second"},
-                    {"type" : "light", "name" : "Second"},
-                    {"type" : "leak", "name" : "Second"},
-                    {"type" : "smoke", "name" : "Second"},
-                    {"type" : "occupancy", "name" : "Second"}
+                    {"type" : "light", "name" : "Third"},
+                    {"type" : "leak", "name" : "Leak"},
+                    {"type" : "smoke", "name" : "Smoke"},
+                    {"type" : "occupancy", "name" : "Present"}
                 ]
             },
             {
@@ -93,11 +94,16 @@ A plugin to control and to create HTTP devices.
 - For boolean devices: `true` / `false` ( *leak, motion, contact, smoke, occupancy, switch* )
 - For numeric devices: `10` / `12.4` ( *temperature, humidity, light* )
 - For RGB lights devices: `true:210:78:50` ( *power state, hue, saturation, brightness* )
+A. For accessories with multiple service types add `&type=SERVICETYPE`
+B. For accessories with multiple services with more than one of the same service types add `&counter=SERVICENUMBER` ( *First of that type = 0, second = 1 ..* )
 
 
-# See HTTP Device Values
+# Read HTTP Device Values
 1. Open `http://`  **Bridge IP**  `/devices?mac=`  **Device Mac**
 2. Insert the `Bridge IP` and `Device Mac`
+A. For accessories with multiple service types add `&type=SERVICETYPE`
+B. For accessories with multiple services with more than one of the same service types add `&counter=SERVICENUMBER` ( *First of that type = 0, second = 1 ..* )
+**Example:** `http://homebridge.local/devices?mac=multi1&type=switch&counter=1` ( *Gets the value of `Second` from the Example Config* )
 
 
 # Currently Supported
@@ -111,3 +117,7 @@ A plugin to control and to create HTTP devices.
 - Occupancy Sensor
 - Switch / Relais
 - RGB Lights
+- Airquality
+
+# NEW
+- Added support for complex accessory with multiple services
