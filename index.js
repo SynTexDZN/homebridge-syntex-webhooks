@@ -645,7 +645,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
         logger.log('debug', type);
 
-        if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
+        if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1 || this.services[i] instanceof Object)
         {
             var service = new presets[type].service(name);
         }
