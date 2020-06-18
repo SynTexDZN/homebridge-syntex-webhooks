@@ -3,8 +3,6 @@ var store = require('json-fs-store');
 
 function getDevice(mac, type, service)
 {
-    logger.log('debug', mac + ':' + service);
-    
     return new Promise(async function(resolve) {
 
         var found = false;

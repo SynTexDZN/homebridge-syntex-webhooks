@@ -88,7 +88,7 @@ SynTexWebHookPlatform.prototype = {
                     {
                         if(accessories[i].mac == urlParams.mac)
                         {
-                            if(urlParams.event || (urlParams.type && urlParams.type == 'rgb'))
+                            if(urlParams.event)
                             {
                                 accessory = accessories[i];
                             }
@@ -222,10 +222,9 @@ function SynTexBaseAccessory(accessoryConfig)
 
         this.service.push(informationService);
 
+    var counter = 1, subtypes = {};
     var type = this.services;
     var name = this.name;
-    var counter = 1;
-    var subtypes = {};
 
     if(Array.isArray(this.services))
     {
@@ -272,8 +271,6 @@ function SynTexBaseAccessory(accessoryConfig)
         service.name = name;
         service.characteristic = presets[type].characteristic;
         service.letters = presets[type].letter + (subtypes[type] || 0);
-
-        logger.log('warn', service.mac + ':' + service.letters);
 
         service.options = {};
 
@@ -346,8 +343,6 @@ function SynTexBaseAccessory(accessoryConfig)
 
 SynTexBaseAccessory.prototype.getState = function(callback)
 {   
-    logger.log('debug', this.mac + ' - ' + this.type + ' - ' + this.letters);     
-
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
         if(state == null)
