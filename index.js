@@ -225,6 +225,7 @@ function SynTexBaseAccessory(accessoryConfig)
     var type = this.services;
     var name = this.name;
     var counter = 1;
+    var subtypes = {};
 
     if(Array.isArray(this.services))
     {
@@ -270,7 +271,7 @@ function SynTexBaseAccessory(accessoryConfig)
         service.type = type;
         service.name = name;
         service.characteristic = presets[type].characteristic;
-        service.letters = presets[type].letter + i;
+        service.letters = presets[type].letter + (subtypes[type] || 0);
 
         logger.log('warn', service.mac + ':' + service.letters);
 
@@ -336,6 +337,8 @@ function SynTexBaseAccessory(accessoryConfig)
             service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(service)).on('set', this.setSaturation.bind(service));
             service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(service)).on('set', this.setBrightness.bind(service));
         }
+
+        subtypes[type] = (subtypes[type] || 0) + 1;
 
         this.service.push(service);
     }
