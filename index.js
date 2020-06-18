@@ -446,11 +446,11 @@ function setRGB(accessory)
 
         logger.log('update', "HomeKit Status für '" + accessory.name + "' geändert zu '" + accessory.fetch + "' ( " + accessory.mac + ' )');
 
-        if(accessory.url != '')
+        if(accessory.options.url != '')
         {
             var theRequest = {
                 method : 'GET',
-                url : accessory.url + '?r=' + r + '&g=' + g + '&b=' + b,
+                url : accessory.options.url + '?r=' + r + '&g=' + g + '&b=' + b,
                 timeout : 10000
             };
         
