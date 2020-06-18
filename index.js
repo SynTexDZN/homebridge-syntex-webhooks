@@ -622,7 +622,7 @@ function SynTexBaseAccessory(accessoryConfig)
         counter = this.services.length;
     }
 
-    logger.log(counter);
+    logger.log('debug', counter);
 
     for(var i = 0; i < counter; i++)
     {
