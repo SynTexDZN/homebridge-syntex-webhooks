@@ -638,7 +638,7 @@ function SynTexBaseAccessory(accessoryConfig)
             }
         }
 
-        if((JSON.stringify(type).match(new RegExp(type, 'g')) || []).length == 1)
+        if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
         {
             var service = new presets[type].service(name);
         }
