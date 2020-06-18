@@ -10,7 +10,7 @@ A plugin to control and to create HTTP devices.
 
 
 # Example Config
-**INFO:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
+**Info:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
 - `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
 - `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
 - For the mac address you can use either a `real mac address` or another `random unique text`
@@ -94,7 +94,7 @@ A plugin to control and to create HTTP devices.
 - For boolean devices: `true` / `false` ( *leak, motion, contact, smoke, occupancy, switch* )
 - For numeric devices: `10` / `12.4` ( *temperature, humidity, light* )
 - For RGB lights devices: `true:210:78:50` ( *power state, hue, saturation, brightness* )
-
+---
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
 ( *First of that type = 0, second = 1 ..* )
@@ -106,7 +106,7 @@ A plugin to control and to create HTTP devices.
 # Read HTTP Device Values
 1. Open `http://`  **Bridge IP**  `/devices?mac=`  **Device Mac**
 2. Insert the `Bridge IP` and `Device Mac`
-
+---
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
 ( *First of that type = 0, second = 1 ..* )
