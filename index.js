@@ -376,65 +376,79 @@ SynTexBaseAccessory.prototype.getState = function(callback)
 
 SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 {
-    var urlToCall = powerOn ? this.options.onURL : this.options.offURL;
-    var urlMethod = powerOn ? this.options.onMethod : this.options.offMethod;
-    var urlBody = powerOn ? this.options.onBody : this.options.offBody;
-    var urlForm = powerOn ? this.options.onForm : this.options.offForm;
-    var urlHeaders = powerOn ? this.options.onHeaders : this.options.offHeaders;
-
-    if(urlToCall != '')
+    if(this.type == 'rgb')
     {
-        var theRequest = {
-            method : urlMethod,
-            url : urlToCall,
-            timeout : 5000,
-            headers: JSON.parse(urlHeaders)
-        };
-        
-        if(urlMethod === 'POST' || urlMethod === 'PUT')
-        {
-            if(urlForm)
-            {
-                //logger.log('Adding Form ' + urlForm);
-                theRequest.form = JSON.parse(urlForm);
-            }
-            else if(urlBody)
-            {
-                //logger.log('Adding Body ' + urlBody);
-                theRequest.body = urlBody;
-            }
-        }
-
-        request(theRequest, (function(err, response, body)
-        {
-            var statusCode = response && response.statusCode ? response.statusCode : -1;
-            
-            if(!err && statusCode == 200)
-            {
-                logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
-
-                logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
-
-                DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
-
-                callback(null);
-            }
-            else
-            {
-                logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err || ''));
-
-                callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
-            }
-
-        }).bind(this));
+        /*
+        var urlToCall = this.options.url;
+        var urlMethod = 'GET';
+        var urlBody = '';
+        var urlForm = '';
+        var urlHeaders = '{}';
+        */
+        this.power = powerOn;
+        setRGB(this);
+        callback(null);
     }
     else
     {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
+        var urlToCall = powerOn ? this.options.onURL : this.options.offURL;
+        var urlMethod = powerOn ? this.options.onMethod : this.options.offMethod;
+        var urlBody = powerOn ? this.options.onBody : this.options.offBody;
+        var urlForm = powerOn ? this.options.onForm : this.options.offForm;
+        var urlHeaders = powerOn ? this.options.onHeaders : this.options.offHeaders;
 
-        DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
+        if(urlToCall != '')
+        {
+            var theRequest = {
+                method : urlMethod,
+                url : urlToCall,
+                timeout : 5000,
+                headers: JSON.parse(urlHeaders)
+            };
+            
+            if(urlMethod === 'POST' || urlMethod === 'PUT')
+            {
+                if(urlForm)
+                {
+                    theRequest.form = JSON.parse(urlForm);
+                }
+                else if(urlBody)
+                {
+                    theRequest.body = urlBody;
+                }
+            }
 
-        callback(null);
+            request(theRequest, (function(err, response, body)
+            {
+                var statusCode = response && response.statusCode ? response.statusCode : -1;
+                
+                if(!err && statusCode == 200)
+                {
+                    logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
+
+                    logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
+
+                    DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
+
+                    callback(null);
+                }
+                else
+                {
+                    logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err || ''));
+
+                    callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+                }
+
+            }).bind(this));
+        }
+        else
+        {
+            logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
+
+            DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
+
+            callback(null);
+        }
     }
 };
 
@@ -473,13 +487,6 @@ SynTexBaseAccessory.prototype.getBrightness = function(callback)
         logger.err(e);
     });
 }
-
-SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
-{
-    this.power = powerOn;
-    setRGB(this);
-    callback(null);
-};
 
 SynTexBaseAccessory.prototype.setHue = function(level, callback)
 {
