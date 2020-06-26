@@ -58,7 +58,8 @@ logger.log = function(level, message)
         var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
-        saveLog(weekDays[d.getDay()] + ' ' + time + ' > [' + level.toUpperCase() + '] ' + message);
+        //d.getTime() + '$' + level.toUpperCase() + '$' + message
+        saveLog({ time : d.getTime(), level : level[0].toUpperCase() + level.substring(1), message : level != 'update' && level != 'read' ? message : '' });
     }
 }
 
