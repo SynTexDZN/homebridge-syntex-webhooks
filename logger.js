@@ -60,19 +60,17 @@ logger.log = function(level, message)
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
 
         var event = {
-            time : d.getTime(),
-            level : level[0].toUpperCase() + level.substring(1)
+            t : Math.round(d.getTime() / 1000),
+            l : level[0].toUpperCase() + level.substring(1)
         };
 
         if(level == 'update' || level == 'read')
         {
-            event.mac = message.split('( ')[1].split(' )')[0];
-            event.name = message.split("'")[1].split("'")[0];
-            event.value = message.split("'")[3].split("'")[0];
+            event.m = message.split('( ')[1].split(' )')[0] + '$' + message.split("'")[1].split("'")[0] + '$' + message.split("'")[3].split("'")[0];
         }
         else
         {
-            event.message = message;
+            event.m = message;
         }
 
         //d.getTime() + '$' + level.toUpperCase() + '$' + message
