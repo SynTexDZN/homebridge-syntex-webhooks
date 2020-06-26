@@ -68,7 +68,7 @@ logger.log = function(level, message)
         {
             event.mac = message.split('( ')[1].split(' )')[0];
             event.name = message.split("'")[1].split("'")[0];
-            event.value = message.split("'")[2].split("'")[0];
+            event.value = message.split("'")[3].split("'")[0];
         }
         else
         {
