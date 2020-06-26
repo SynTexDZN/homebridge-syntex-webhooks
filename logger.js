@@ -58,8 +58,22 @@ logger.log = function(level, message)
         var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
+
+        var event = {
+            time : d.getTime(),
+            level : level[0].toUpperCase() + level.substring(1),
+            message : level != 'update' && level != 'read' ? message : ''
+        };
+
+        if(level == 'update' || level == 'read')
+        {
+            event.mac = message.split('( ')[1].split(' )')[0];
+            event.name = message.split("'")[1].split("'")[0];
+            event.value = message.split("'")[2].split("'")[0];
+        }
+
         //d.getTime() + '$' + level.toUpperCase() + '$' + message
-        saveLog({ time : d.getTime(), level : level[0].toUpperCase() + level.substring(1), message : level != 'update' && level != 'read' ? message : '' });
+        saveLog(event);
     }
 }
 
