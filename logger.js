@@ -187,13 +187,9 @@ async function saveLog(level, mac, name, time, message)
 
                 device[mac].logs[device[mac].logs.length] = { t : time, l : level, m : message };
 
-                console.log('ADDING TO STORAGE', device[mac].logs.length);
-
                 logger.logs.add(device, function(err) {
 
                     inWork = false;
-
-                    console.log('FINISHED');
 
                     if(err)
                     {
@@ -203,7 +199,6 @@ async function saveLog(level, mac, name, time, message)
                     if(que.length != 0)
                     {
                         saveLog(que[0].level, que[0].mac, que[0].name, que[0].time, que[0].message);
-                        console.log(JSON.stringify(que[0]));
                     }
                 });
             }
