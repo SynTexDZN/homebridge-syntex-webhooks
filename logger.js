@@ -148,7 +148,7 @@ async function saveLog(level, mac, name, time, message)
     {
         if(!que.includes(queOBJ))
         {
-            que.push(queOBJ);
+            //que.push(queOBJ);
         }
     }
     else
