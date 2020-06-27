@@ -426,7 +426,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
                 {
                     logger.log('success', this.mac, this.name, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
 
-                    logger.log('update', this.mac, this.name, "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
+                    logger.log('update', this.mac, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
 
                     DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
 
@@ -652,7 +652,7 @@ function setRGB(accessory)
         
                 if(!err && statusCode == 200)
                 {
-                    logger.log('success', accessory.mac, accessory.name, 'Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+                    logger.log('success', accessory.mac, accessory.name, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
         
                     DeviceManager.setDevice(accessory.mac, accessory.type, accessory.letters, accessory.fetch);
                 }
