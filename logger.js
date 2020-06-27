@@ -187,7 +187,7 @@ async function saveLog(level, mac, name, time, message)
 
                 device[mac].logs[device[mac].logs.length] = { t : time, l : level, m : message };
 
-                console.log('ADDING TO STORAGE');
+                console.log('ADDING TO STORAGE', device.length, device[mac].length);
 
                 logger.logs.add(device, function(err) {
 
