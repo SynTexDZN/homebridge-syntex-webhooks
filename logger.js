@@ -162,6 +162,8 @@ async function saveLog(level, mac, name, time, message)
         if(que.includes(queOBJ))
         {
             que.shift();
+
+            console.log(que.length);
         }
 
         logger.logs.load(prefix, (err, device) => {    
