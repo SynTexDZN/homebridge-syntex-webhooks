@@ -127,7 +127,7 @@ SynTexWebHookPlatform.prototype = {
                         }
                         else
                         {
-                            logger.log('error', "'" + urlParams.value + "' ist kein gültiger Wert! ( " + urlParams.mac + ' )');
+                            logger.log('error', "[" + urlParams.value + "] ist kein gültiger Wert! ( " + urlParams.mac + ' )');
                         }
 
                         DeviceManager.setDevice(urlParams.mac, accessory.type, accessory.letters, urlParams.value);
@@ -169,7 +169,7 @@ SynTexWebHookPlatform.prototype = {
                             }
                             else
                             {
-                                logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
+                                logger.log('success', "Die Homebridge wurde auf die Version [" + version + "] aktualisiert!");
 
                                 restart = true;
 
@@ -197,7 +197,7 @@ SynTexWebHookPlatform.prototype = {
 
         http.createServer(createServerCallback).listen(this.port, '0.0.0.0');
            
-        logger.log('info', "Data Link Server läuft auf Port '" + this.port + "'");
+        logger.log('info', "Data Link Server läuft auf Port [" + this.port + "]");
     }
 }
 
@@ -424,7 +424,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
                 
                 if(!err && statusCode == 200)
                 {
-                    logger.log('success', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
+                    logger.log('success', "Anfrage zu [" + urlToCall + "] wurde mit dem Status Code [" + statusCode + "] beendet: [" + body + "]");
 
                     logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + powerOn.toString() + "' ( " + this.mac + ' )');
 
@@ -434,7 +434,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
                 }
                 else
                 {
-                    logger.log('error', "Anfrage zu '" + urlToCall + "' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err || ''));
+                    logger.log('error', "Anfrage zu [" + urlToCall + "] wurde mit dem Status Code [" + statusCode + "] beendet: [" + body + "] " + (err || ''));
 
                     callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
                 }
@@ -542,7 +542,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         {
             if(i == event)
             {
-               logger.log('success', "'" + buttonName + "': Event " + i + " wurde ausgeführt! ( " + this.mac + ' )');
+               logger.log('success', '[' + buttonName + "]: Event " + i + " wurde ausgeführt! ( " + this.mac + ' )');
 
                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
             }
@@ -652,13 +652,13 @@ function setRGB(accessory)
         
                 if(!err && statusCode == 200)
                 {
-                    logger.log('success', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "'");
+                    logger.log('success', "Anfrage zu [URL] wurde mit dem Status Code [" + statusCode + "] beendet: [" + body + "]");
         
                     DeviceManager.setDevice(accessory.mac, accessory.type, accessory.letters, accessory.fetch);
                 }
                 else
                 {
-                    logger.log('error', "Anfrage zu 'URL' wurde mit dem Status Code '" + statusCode + "' beendet: '" + body + "' " + (err ? err : ''));
+                    logger.log('error', "Anfrage zu [URL] wurde mit dem Status Code [" + statusCode + "] beendet: [" + body + "] " + (err ? err : ''));
                 }
                 
             }));
@@ -672,7 +672,7 @@ function validateUpdate(mac, type, state)
     {
         if(state != true && state != false && state != 'true' && state != 'false')
         {
-            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine boolsche Variable! ( " + mac + ' )');
+            logger.log('warn', "Konvertierungsfehler: [" + state + "] ist keine boolsche Variable! ( " + mac + ' )');
 
             return null;
         }
@@ -683,7 +683,7 @@ function validateUpdate(mac, type, state)
     {
         if(isNaN(state))
         {
-            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable! ( " + mac + ' )');
+            logger.log('warn', "Konvertierungsfehler: [" + state + "] ist keine numerische Variable! ( " + mac + ' )');
         }
 
         return !isNaN(state) ? parseFloat(state) : null;
@@ -692,7 +692,7 @@ function validateUpdate(mac, type, state)
     {
         if(isNaN(state))
         {
-            logger.log('warn', "Konvertierungsfehler: '" + state + "' ist keine numerische Variable! ( " + mac + ' )');
+            logger.log('warn', "Konvertierungsfehler: [" + state + "] ist keine numerische Variable! ( " + mac + ' )');
         }
 
         return !isNaN(state) ? parseInt(state) : null;
