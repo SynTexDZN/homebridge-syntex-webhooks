@@ -55,7 +55,7 @@ logger.log = function(level, mac, name, message)
 
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
 
-        saveLog(level[0].toUpperCase() + level.substring(1), mac, name, Math.round(new Date().getTime() / 1000), message);
+        //saveLog(level[0].toUpperCase() + level.substring(1), mac, name, Math.round(new Date().getTime() / 1000), message);
     }
 }
 
