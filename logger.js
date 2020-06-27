@@ -155,7 +155,7 @@ async function saveLog(level, mac, name, time, message)
     {
         inWork = true;
 
-        //await removeExpired();
+        await removeExpired();
 
         if(que.includes(queOBJ))
         {
