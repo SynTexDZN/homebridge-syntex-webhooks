@@ -55,7 +55,7 @@ logger.log = function(level, mac, name, message)
 
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
 
-        //saveLog(level[0].toUpperCase() + level.substring(1), mac, name, Math.round(new Date().getTime() / 1000), message);
+        saveLog(level[0].toUpperCase() + level.substring(1), mac, name, Math.round(new Date().getTime() / 1000), message);
     }
 }
 
@@ -155,7 +155,7 @@ async function saveLog(level, mac, name, time, message)
     {
         inWork = true;
 
-        await removeExpired();
+        //await removeExpired();
 
         if(que.includes(queOBJ))
         {
@@ -242,7 +242,7 @@ function removeExpired()
                             if(new Date() - new Date(time * 1000) > 86400000)
                             {
                                 console.log('REMOVE 1', JSON.stringify(obj[obj[Object.keys(obj)[i]].logs.length - j]));
-                                //obj[Object.keys(obj)[i]].logs.splice(obj[Object.keys(obj)[i]].logs.indexOf(obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - i]), 1);
+                                obj[Object.keys(obj)[i]].logs.splice(obj[Object.keys(obj)[i]].logs.indexOf(obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - i]), 1);
                             }
                         }
                     }
