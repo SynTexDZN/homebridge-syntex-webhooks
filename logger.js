@@ -149,8 +149,6 @@ async function saveLog(level, mac, name, time, message)
         if(!que.some(element => element.time == time && element.message == message))
         {
             que.push(queOBJ);
-
-            console.log(que.length);
         }
     }
     else
@@ -162,8 +160,6 @@ async function saveLog(level, mac, name, time, message)
         if(que.some(element => element.time == time && element.message == message))
         {
             que.shift();
-
-            console.log(que.length);
         }
 
         logger.logs.load(prefix, (err, device) => {    
