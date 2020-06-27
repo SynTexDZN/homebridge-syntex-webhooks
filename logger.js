@@ -146,7 +146,7 @@ async function saveLog(level, mac, name, time, message)
 
     if(inWork)
     {
-        if(!que.some(element => element.t == time && element.message == message))
+        if(!que.some(element => element.t == time && element.m == message))
         {
             que.push(queOBJ);
 
@@ -159,7 +159,7 @@ async function saveLog(level, mac, name, time, message)
 
         await removeExpired();
 
-        if(que.some(element => element.t == time && element.message == message))
+        if(que.some(element => element.t == time && element.m == message))
         {
             que.shift();
 
