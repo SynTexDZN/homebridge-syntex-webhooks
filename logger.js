@@ -65,7 +65,7 @@ logger.err = function(error)
     logger.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + " ( '" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + "' bei Zeile '" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + "' )");
 }
 
-logger.load = function(pluginName)
+logger.load = function(pluginName, group)
 {
     return new Promise(async function(resolve) {
         
@@ -81,7 +81,7 @@ logger.load = function(pluginName)
 
                     for(var i = 1; i < Object.keys(obj).length; i++)
                     {
-                        if(obj[Object.keys(obj)[i]].logs)
+                        if(obj[Object.keys(obj)[i]].logs && (group == null || group == Object.keys(obj)[i]))
                         {
                             for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
                             {
@@ -241,8 +241,8 @@ function removeExpired()
 
                             if(new Date() - new Date(time * 1000) > 86400000)
                             {
-                                console.log('REMOVE 1', JSON.stringify(obj[obj[Object.keys(obj)[i]].logs.length - j]));
-                                obj[Object.keys(obj)[i]].logs.splice(obj[Object.keys(obj)[i]].logs.indexOf(obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - i]), 1);
+                                console.log('REMOVE 1', JSON.stringify(obj[Object.keys(obj)[i]].logs.length - j));
+                                obj[Object.keys(obj)[i]].logs.splice(obj[Object.keys(obj)[i]].logs.indexOf(obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j]), 1);
                             }
                         }
                     }
