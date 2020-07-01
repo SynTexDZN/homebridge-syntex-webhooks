@@ -34,7 +34,6 @@ module.exports = function(homebridge)
 function SynTexWebHookPlatform(log, sconfig, api)
 {
     this.devices = sconfig['accessories'] || [];
-    this.statelessSwitches = sconfig['statelessswitches'] || [];
     
     this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
     this.logDirectory = sconfig['log_directory'] || './SynTex/log';
@@ -55,12 +54,14 @@ SynTexWebHookPlatform.prototype = {
 
         for(var i = 0; i < this.devices.length; i++)
         {
-            accessories.push(new SynTexBaseAccessory(this.devices[i]));
-        }
-
-        for(var i = 0; i < this.statelessSwitches.length; i++)
-        {
-            accessories.push(new SynTexWebHookStatelessSwitchAccessory(this.statelessSwitches[i]));
+            if(this.devices[i].services == 'statelessswitch')
+            {
+                accessories.push(new SynTexWebHookStatelessSwitchAccessory(this.devices[i]));
+            }
+            else
+            {
+                accessories.push(new SynTexBaseAccessory(this.devices[i]));
+            }
         }
         
         callback(accessories);
