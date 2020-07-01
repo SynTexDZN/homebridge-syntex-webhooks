@@ -81,6 +81,12 @@ A plugin to control and to create HTTP devices.
                 "name": "Dummy Light",
                 "services": "rgb",
                 "url": "http://192.168.178.163/color"
+            },
+            {
+                "mac": "event1",
+                "name": "Events",
+                "services": "statelessswitch",
+                "buttons": 1
             }
         ]
     }
