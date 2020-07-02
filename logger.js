@@ -65,6 +65,11 @@ logger.err = function(error)
     logger.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + " ( [" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + "] bei Zeile [" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + "] )");
 }
 
+logger.debug = function(message)
+{
+    logger.log('debug', 'bridge', 'Bridge', message);
+}
+
 logger.load = function(pluginName, group)
 {
     return new Promise(async function(resolve) {
