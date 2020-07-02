@@ -62,7 +62,7 @@ logger.log = function(level, mac, name, message)
 logger.err = function(error)
 {
     var s = (error.stack.split('\n')[1].split('\n')[0].match(/\//g) || []).length;
-    logger.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + " ( '" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + "' bei Zeile '" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + "' )");
+    logger.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + " ( [" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + "] bei Zeile [" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + "] )");
 }
 
 logger.load = function(pluginName, group)
