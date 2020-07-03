@@ -122,6 +122,8 @@ SynTexWebHookPlatform.prototype = {
                     {
                         var state = null;
 
+                        logger.debug(accessory.type + " - " + (urlParams.type || "No URL Params"));
+
                         if((state = validateUpdate(urlParams.mac, accessory.type, urlParams.value)) != null)
                         {
                             accessory.changeHandler(state);
