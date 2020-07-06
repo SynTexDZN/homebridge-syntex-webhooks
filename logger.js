@@ -90,7 +90,10 @@ logger.load = function(pluginName, group)
                         {
                             for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
                             {
-                                logs.push(obj[Object.keys(obj)[i]].logs[j]);
+                                if(obj[Object.keys(obj)[i]].logs[j].l == 'Update' || obj[Object.keys(obj)[i]].logs[j].l == 'Success')
+                                {
+                                    logs.push(obj[Object.keys(obj)[i]].logs[j]);
+                                }
                             }
                         }
                     }
@@ -160,8 +163,6 @@ async function saveLog(level, mac, name, time, message)
     {
         inWork = true;
 
-        await removeExpired();
-
         if(que.some(element => element.time == time && element.message == message))
         {
             que.shift();
@@ -171,6 +172,8 @@ async function saveLog(level, mac, name, time, message)
 
             if(device && !err)
             {    
+                device = removeExpired(device);
+
                 if(!device[mac])
                 {
                     device[mac] = {};
@@ -228,45 +231,24 @@ async function saveLog(level, mac, name, time, message)
     }
 }
 
-function removeExpired()
+function removeExpired(obj)
 {
-    return new Promise(async function(resolve) {
-
-        logger.logs.load(prefix, (err, obj) => {    
-
-            if(obj && !err)
-            {    
-                for(var i = 1; i < Object.keys(obj).length; i++)
-                {
-                    if(obj[Object.keys(obj)[i]].logs)
-                    {
-                        for(var j = 1; j < obj[Object.keys(obj)[i]].logs.length + 1; j++)
-                        {
-                            var time = obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j].t;
-
-                            if(new Date() - new Date(time * 1000) > 86400000)
-                            {
-                                console.log('REMOVE 1', JSON.stringify(obj[Object.keys(obj)[i]].logs.length - j));
-                                obj[Object.keys(obj)[i]].logs.splice(obj[Object.keys(obj)[i]].logs.indexOf(obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j]), 1);
-                            }
-                        }
-                    }
-                }
-
-                logger.logs.add(obj, (err) => {
-
-                    if(err)
-                    {
-                        logger.err(prefix + '.json konnte nicht aktualisiert werden! ' + err);
-                    }
-
-                    resolve(true);
-                });
-            }
-            else
+    for(var i = 1; i < Object.keys(obj).length; i++)
+    {
+        if(obj[Object.keys(obj)[i]].logs)
+        {
+            for(var j = 1; j < obj[Object.keys(obj)[i]].logs.length + 1; j++)
             {
-                resolve(false);
+                var time = obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j].t;
+
+                if(new Date() - new Date(time * 1000) > 86400000)
+                {
+                    console.log('REMOVE', JSON.stringify(obj[Object.keys(obj)[i]].logs.length - j));
+                    obj[Object.keys(obj)[i]].logs.splice(obj[Object.keys(obj)[i]].logs.indexOf(obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j]), 1);
+                }
             }
-        });
-    });
+        }
+    }
+
+    return obj;
 }
