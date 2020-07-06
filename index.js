@@ -295,7 +295,31 @@ function SynTexBaseAccessory(accessoryConfig)
 
         DeviceManager.getDevice(this.mac, type, service.letters).then(function(state) {
 
-            this.changeHandler(validateUpdate(this.mac, this.type, state));
+            if(state == null)
+            {
+                logger.log('error', this.mac, this.name, '[' + this.name + '] wurde nicht in der Storage gefunden! ( ' + this.mac + ' )');
+            }
+            else if((state = validateUpdate(this.mac, this.type, state)) != null)
+            {
+                logger.log('read', this.mac, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
+            }
+            
+            if(this.type == 'rgb')
+            {
+                this.power = state.split(':')[0] == 'true';
+                this.hue = getHSL(state)[0] || 0;
+                this.saturation = getHSL(state)[1] || 100;
+                this.brightness = getHSL(state)[2] || 50;
+
+                this.getCharacteristic(Characteristic.On).updateValue(this.power);
+                this.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
+                this.getCharacteristic(Characteristic.Saturation).updateValue(this.saturation);
+                this.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+            }
+            else
+            {
+                this.getCharacteristic(this.characteristic).updateValue(state);
+            }
     
         }.bind(service));
 
