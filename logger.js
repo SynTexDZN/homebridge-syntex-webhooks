@@ -90,7 +90,7 @@ logger.load = function(pluginName, group)
                         {
                             for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
                             {
-                                if(obj[Object.keys(obj)[i]].logs[j].l == 'Update' || obj[Object.keys(obj)[i]].logs[j].l == 'Success')
+                                if(group == null || obj[Object.keys(obj)[i]].logs[j].l == 'Update' || obj[Object.keys(obj)[i]].logs[j].l == 'Success')
                                 {
                                     logs.push(obj[Object.keys(obj)[i]].logs[j]);
                                 }
