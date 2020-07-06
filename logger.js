@@ -172,7 +172,7 @@ async function saveLog(level, mac, name, time, message)
 
             if(device && !err)
             {    
-                console.log(removeExpired(device));
+                device = removeExpired(device);
 
                 if(!device[mac])
                 {
