@@ -628,7 +628,7 @@ function setRGB(accessory)
         {
             var theRequest = {
                 method : 'GET',
-                url : accessory.options.url + accessory.hue + ',' + saccessory.saturation + ',' + accessory.power ? accessory.brightness : 0,
+                url : accessory.options.url + accessory.hue + ',' + accessory.saturation + ',' + accessory.power ? accessory.brightness : 0,
                 timeout : 10000
             };
         
