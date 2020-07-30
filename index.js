@@ -291,6 +291,7 @@ function SynTexBaseAccessory(accessoryConfig)
         else if(type == 'rgb')
         {
             service.options.url = accessoryConfig['url'] || '';
+            service.options.spectrum = accessoryConfig['spectrum'] || 'RGB';
         }
 
         DeviceManager.getDevice(this.mac, type, service.letters).then(function(state) {
@@ -621,53 +622,13 @@ function setRGB(accessory)
     var h = accessory.hue, s = accessory.saturation * 2, l = accessory.power ? accessory.brightness / 4 : 0;
     var r = 0, g = 0, b = 0;
 
-    s /= 100;
-    l /= 100;
-
-    let c = (1 - Math.abs(2 * l - 1)) * s,
-        x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-        m = l - c/2;
-
-    if(0 <= h && h < 60)
+    if(accessory.options.spectrum == 'hsl')
     {
-        r = c; g = x; b = 0;
-    }
-    else if(60 <= h && h < 120)
-    {
-        r = x; g = c; b = 0;
-    }
-    else if(120 <= h && h < 180)
-    {
-        r = 0; g = c; b = x;
-    }
-    else if(180 <= h && h < 240)
-    {
-        r = 0; g = x; b = c;
-    }
-    else if(240 <= h && h < 300)
-    {
-        r = x; g = 0; b = c;
-    }
-    else if(300 <= h && h < 360)
-    {
-        r = c; g = 0; b = x;
-    }
-
-    r = Math.round((r + m) * 255);
-    g = Math.round((g + m) * 255);
-    b = Math.round((b + m) * 255);
-
-    if(accessory.fetch != accessory.power + ':' + r + ':' + g + ':' + b)
-    {
-        accessory.fetch = accessory.power + ':' + r + ':' + g + ':' + b;
-
-        logger.log('update', accessory.mac, accessory.name, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.fetch + '] ( ' + accessory.mac + ' )');
-
         if(accessory.options.url != '')
         {
             var theRequest = {
                 method : 'GET',
-                url : accessory.options.url + '?r=' + r + '&g=' + g + '&b=' + b,
+                url : accessory.options.url + h + ',' + s + ',' + l,
                 timeout : 10000
             };
         
@@ -687,6 +648,77 @@ function setRGB(accessory)
                 }
                 
             }));
+        }
+    }
+    else if(accessory.options.spectrum == 'rgb')
+    {
+        s /= 100;
+        l /= 100;
+
+        let c = (1 - Math.abs(2 * l - 1)) * s,
+            x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+            m = l - c/2;
+
+        if(0 <= h && h < 60)
+        {
+            r = c; g = x; b = 0;
+        }
+        else if(60 <= h && h < 120)
+        {
+            r = x; g = c; b = 0;
+        }
+        else if(120 <= h && h < 180)
+        {
+            r = 0; g = c; b = x;
+        }
+        else if(180 <= h && h < 240)
+        {
+            r = 0; g = x; b = c;
+        }
+        else if(240 <= h && h < 300)
+        {
+            r = x; g = 0; b = c;
+        }
+        else if(300 <= h && h < 360)
+        {
+            r = c; g = 0; b = x;
+        }
+
+        r = Math.round((r + m) * 255);
+        g = Math.round((g + m) * 255);
+        b = Math.round((b + m) * 255);
+
+        if(accessory.fetch != accessory.power + ':' + r + ':' + g + ':' + b)
+        {
+            accessory.fetch = accessory.power + ':' + r + ':' + g + ':' + b;
+
+            logger.log('update', accessory.mac, accessory.name, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.fetch + '] ( ' + accessory.mac + ' )');
+
+            if(accessory.options.url != '')
+            {
+                var theRequest = {
+                    method : 'GET',
+                    url : accessory.options.url + r + ',' + g + ',' + b,
+                    timeout : 10000
+                };
+            
+                request(theRequest, (function(err, response, body)
+                {
+                    var statusCode = response && response.statusCode ? response.statusCode : -1;
+            
+                    if(!err && statusCode == 200)
+                    {
+                        logger.log('success', accessory.mac, accessory.name, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+            
+                        DeviceManager.setDevice(accessory.mac, accessory.type, accessory.letters, accessory.fetch);
+                    }
+                    else
+                    {
+                        logger.log('error', accessory.mac, accessory.name, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
+                    }
+                    
+                }));
+            }
         }
     }
 }
