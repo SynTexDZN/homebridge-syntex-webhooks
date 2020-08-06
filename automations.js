@@ -1,11 +1,12 @@
-var logger, storage, automations = [], DeviceManager, Devices;
-var request = require('request'), store = require('json-fs-store');;
+var logger, storage, automations = [], DeviceManager;
+var request = require('request'), store = require('json-fs-store');
+var eventLock = [];
 
 function runAutomations(mac, type, letters, value)
 {
     for(var i = 0; i < automations.length; i++)
     {
-        if(automations[i].active)
+        if(automations[i].active && !eventLock.includes(automations[i].id))
         {
             checkTrigger(automations[i], mac, type, letters, value.toString());
         }
@@ -104,6 +105,8 @@ function executeResult(automation)
             logger.log('update', automation.result[i].mac, automation.result[i].name, 'HomeKit Status für [' + automation.result[i].name + '] geändert zu [' + automation.result[i].value + '] ( ' + automation.result[i].mac + ' )');
         }
 
+        eventLock.push(automation.id);
+
         if(url != '')
         {
             var theRequest = {
@@ -152,12 +155,11 @@ function loadAutomations()
     });
 }
 
-async function SETUP(log, storagePath, Manager, Config)
+async function SETUP(log, storagePath, Manager)
 {
     logger = log;
     storage = store(storagePath);
     DeviceManager = Manager;
-    Devices = Config;
 
     if(await loadAutomations())
     {
