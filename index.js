@@ -4,6 +4,7 @@ var http = require('http');
 var url = require('url');
 var logger = require('./logger');
 var DeviceManager = require('./device-manager');
+var Automations = require('./automations');
 var restart = true;
 
 var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -42,6 +43,7 @@ function SynTexWebHookPlatform(log, sconfig, api)
     logger.create('SynTexWebHooks', this.logDirectory, api.user.storagePath());
 
     DeviceManager.SETUP(logger, this.cacheDirectory);
+    Automations.SETUP(logger, this.cacheDirectory, DeviceManager, sconfig['accessories'] || []);
 
     restart = false;
 }
@@ -384,6 +386,8 @@ SynTexBaseAccessory.prototype.getState = function(callback)
         {
             logger.log('read', this.mac, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
         }
+
+        Automations.runAutomations(this.mac, state);
          
         if(this.type == 'rgb')
         {

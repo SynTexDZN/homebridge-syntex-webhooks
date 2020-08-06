@@ -1,0 +1,9 @@
+[
+    {
+        "name" : "Test Automation",
+        "active": true,
+        "trigger" : { "combination" : "ALL", "triggers" : [ { "mac" : "", "type" : "", "counter" : "", "value" : "20", "operation" : ">" } ] },
+        "condition" : { "combination" : "ONE", "conditions" : [ { "mac" : "", "type" : "", "counter" : "", "value" : "true", "operation" : "=" } ] },
+        "result" : { "combination" : "ALL", "results" : [ { "mac" : "", "type" : "", "counter" : "", "value" : "false" }, { "mac" : "", "value" : "true" } ] }
+    }
+]
