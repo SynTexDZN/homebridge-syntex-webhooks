@@ -41,9 +41,12 @@ async function checkTrigger(automation, mac, value)
                 trigger = true;
             }
 
+            logger.debug(automation.trigger.triggers[i].operation + ' - ' + (value == automation.trigger.triggers[i].value)); 
+
             if(automation.trigger.triggers[i].operation == '=' && value == automation.trigger.triggers[i].value)
             {
                 trigger = true;
+                logger.debug('TRIGGER'); 
             }
         }
     }
