@@ -102,13 +102,11 @@ function executeResult(automation)
 
         if(automation.result.results[i].type == 'relais')
         {
-            logger.debug('RELAIS');
-
             for(var j = 0; j < Devices.length; j++)
             {
-                logger.debug(Devices[j].mac + ' - ' + automation.result.results[i].mac + ' - ' + Devices[j].type + ' - ' + automation.result.results[i].type);
+                logger.debug(Devices[j].mac + ' - ' + automation.result.results[i].mac + ' - ' + Devices[j].services + ' - ' + automation.result.results[i].type);
 
-                if(Devices[j].mac == automation.result.results[i].mac && Devices[j].type == automation.result.results[i].type)
+                if(Devices[j].mac == automation.result.results[i].mac && Devices[j].services.includes(automation.result.results[i].type))
                 {
                     var theRequest = {
                         method : 'GET',
