@@ -136,14 +136,14 @@ function executeResult(automation)
 
                 if(!err && statusCode == 200)
                 {
-                    logger.log('success', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+                    //logger.log('success', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
                 }
                 else
                 {
-                    logger.log('error', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
+                    //logger.log('error', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
                 }
                 
-            }.bind({ mac : Devices[j].mac, name : Devices[j].name })));
+            }));
         }
     }
 
