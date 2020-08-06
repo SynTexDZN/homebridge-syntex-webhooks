@@ -97,7 +97,7 @@ function executeResult(automation)
 {
     for(var i = 0; i < automation.result.results.length; i++)
     {
-        var url = '',
+        var url = '';
 
         if(automation.result.results[i].url)
         {
