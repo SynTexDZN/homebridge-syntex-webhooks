@@ -132,7 +132,7 @@ function executeResult(automation)
         }
     }
 
-    logger.log('success', automation.result.results[i].mac, automation.result.results[i].name, '[' + automation.result.results[i].name + ']: Event [' + automation.name + '] wurde ausgeführt! ( ' + automation.result.results[i].mac + ' )');
+    logger.log('success', 'bridge', 'Bridge', 'Die Automatisierung [' + automation.name + '] wurde ausgeführt!');
 }
 
 function loadAutomations()
