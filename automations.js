@@ -64,7 +64,7 @@ async function checkCondition(automation)
 
     for(var i = 0; i < automation.condition.conditions.length; i++)
     {
-        var value = await DeviceManager.getDevice(automation.condition.conditions[i].mac, automation.condition.conditions[i].type, automation.condition.conditions[i].letters);
+        var value = await DeviceManager.getDevice(automation.condition.conditions[i].mac, automation.condition.conditions[i].type, automation.condition.conditions[i].letters).toString();
 
         if(automation.condition.conditions[i].operation == '>' && value > automation.condition.conditions[i].value)
         {
