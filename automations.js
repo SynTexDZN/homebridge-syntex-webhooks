@@ -3,14 +3,11 @@ var request = require('request'), store = require('json-fs-store');;
 
 function runAutomations(mac, value)
 {
-    logger.debug(mac + ' ' + value);
-
     for(var i = 0; i < automations.length; i++)
     {
         if(automations[i].active)
         {
             checkTrigger(automations[i], mac, value.toString());
-            logger.debug(automations[i]);
         }
     }
 }
@@ -91,6 +88,8 @@ async function checkCondition(automation)
         {
             executeResult(automation);
         }
+
+        logger.debug('Condition Erfüllt');
     }
 }
 
@@ -99,6 +98,8 @@ function executeResult(automation)
     for(var i = 0; i < automation.result.results.length; i++)
     {
         DeviceManager.setDevice(automation.result.results[i].mac, automation.result.results[i].type, automation.result.results[i].counter, automation.result.results[i].value);
+
+        logger.log('update', automation.result.results[i].mac, automation.result.results[i].name, 'HomeKit Status für [' + automation.result.results[i].name + '] geändert zu [' + automation.result.results[i].value + '] ( ' + automation.result.results[i].mac + ' )');
 
         if(automation.result.results[i].type == 'relais')
         {
@@ -130,6 +131,8 @@ function executeResult(automation)
             }
         }
     }
+
+    logger.log('success', automation.result.results[i].mac, automation.result.results[i].name, '[' + automation.result.results[i].name + ']: Event [' + automation.name + '] wurde ausgeführt! ( ' + automation.result.results[i].mac + ' )');
 }
 
 function loadAutomations()
