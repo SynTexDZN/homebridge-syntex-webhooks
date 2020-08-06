@@ -310,9 +310,9 @@ function SynTexBaseAccessory(accessoryConfig)
             if(this.type == 'rgb')
             {
                 this.power = state ? state.split(':')[0] == 'true' : 'false';
-                this.hue = getHSL(state)[0] || 0;
-                this.saturation = getHSL(state)[1] || 100;
-                this.brightness = getHSL(state)[2] || 50;
+                this.hue = state ? getHSL(state)[0] : 0;
+                this.saturation = state ? getHSL(state)[1] : 100;
+                this.brightness = state ? getHSL(state)[2] : 50;
 
                 this.getCharacteristic(Characteristic.On).updateValue(this.power);
                 this.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
