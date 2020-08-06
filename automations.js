@@ -148,7 +148,7 @@ function loadAutomations()
     });
 }
 
-function SETUP(log, storagePath, Manager, Config)
+async function SETUP(log, storagePath, Manager, Config)
 {
     logger = log;
     storage = store(storagePath);
