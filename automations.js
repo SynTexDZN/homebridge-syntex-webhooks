@@ -41,6 +41,10 @@ async function checkTrigger(automation, mac, type, letters, value)
 
     if(trigger)
     {
+        logger.debug(automations.condition);
+        logger.debug(automations.condition.conditions);
+        logger.debug(automation.condition.conditions.length);
+
         if(automations.condition && automations.condition.conditions && automation.condition.conditions.length > 0)
         {
             checkCondition(automation);
