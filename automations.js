@@ -23,14 +23,8 @@ async function checkTrigger(automation, mac, value)
 
     for(var i = 0; i < automation.trigger.triggers.length; i++)
     {
-        logger.debug(automation.trigger.triggers[i].mac + ' - ' + mac); 
-
         if(automation.trigger.triggers[i].mac == mac)
         {
-            //var value = await DeviceManager.getDevice(automation.trigger.triggers[i].mac, automation.trigger.triggers[i].type, automation.trigger.triggers[i].counter);
-
-            logger.debug(automation.trigger.triggers[i].value + ' - ' + value); 
-
             if(automation.trigger.triggers[i].operation == '>' && value > automation.trigger.triggers[i].value)
             {
                 trigger = true;
@@ -41,12 +35,9 @@ async function checkTrigger(automation, mac, value)
                 trigger = true;
             }
 
-            logger.debug(automation.trigger.triggers[i].operation + ' - ' + (value == automation.trigger.triggers[i].value)); 
-
             if(automation.trigger.triggers[i].operation == '=' && value == automation.trigger.triggers[i].value)
             {
                 trigger = true;
-                logger.debug('TRIGGER'); 
             }
         }
     }
@@ -107,6 +98,8 @@ function executeResult(automation)
 {
     for(var i = 0; i < automation.result.results.length; i++)
     {
+        logger.debug(automation.result.results[i].mac + ' - ' + automation.result.results[i].type + ' - ' + automation.result.results[i].counter + ' - ' + automation.result.results[i].value);
+
         DeviceManager.setDevice(automation.result.results[i].mac, automation.result.results[i].type, automation.result.results[i].counter, automation.result.results[i].value);
 
         if(automation.result.results[i].type == 'relais')
