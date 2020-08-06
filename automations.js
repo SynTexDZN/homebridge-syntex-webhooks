@@ -18,14 +18,14 @@ function runAutomations(mac, type, letters, value)
                 {
                     var index = eventLock.indexOf(automations[i].id);
 
-                    if(automations[i].trigger[j].operation == '>' && value < automations[i].trigger[j].value)
+                    if(automations[i].trigger[j].operation == '>' && value > automations[i].trigger[j].value)
                     {
                         eventLock.splice(index, 1);
 
                         logger.debug('Value Unterschritten');
                     }
 
-                    if(automations[i].trigger[j].operation == '<' && value > automations[i].trigger[j].value)
+                    if(automations[i].trigger[j].operation == '<' && value < automations[i].trigger[j].value)
                     {
                         eventLock.splice(index, 1);
 
