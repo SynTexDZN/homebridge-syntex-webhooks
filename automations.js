@@ -156,17 +156,7 @@ async function SETUP(log, storagePath, Manager, Config)
     logger = log;
     storage = store(storagePath);
     DeviceManager = Manager;
-
-    for(const i in Config.platforms)
-    {
-        if(Config.platforms[i].platform === 'SynTexWebHooks')
-        {
-            Devices = Config.platforms[i].accessories;
-
-            logger.debug(Config.platforms[i].accessories);
-            logger.debug(Config.platforms[i]);
-        }
-    }
+    Devices = Config;
 
     if(await loadAutomations())
     {

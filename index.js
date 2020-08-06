@@ -43,7 +43,7 @@ function SynTexWebHookPlatform(log, sconfig, api)
     logger.create('SynTexWebHooks', this.logDirectory, api.user.storagePath());
 
     DeviceManager.SETUP(logger, this.cacheDirectory);
-    Automations.SETUP(logger, this.cacheDirectory, DeviceManager, sconfig['accessories'] || []);
+    Automations.SETUP(logger, this.cacheDirectory, DeviceManager, this.devices);
 
     restart = false;
 }
