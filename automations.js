@@ -82,7 +82,9 @@ async function checkCondition(automation)
         }
     }
 
-    if(condition > 0 && (automation.condition.conditions[i].combination == 'ONE' || (automation.condition.conditions[i].combination == 'ALL' && condition >= automation.condition.conditions.length)))
+    logger.debug(condition);
+
+    if(condition > 0 && (automation.condition.combination == 'ONE' || (automation.condition.combination == 'ALL' && condition >= automation.condition.conditions.length)))
     {
         executeResult(automation);
 
