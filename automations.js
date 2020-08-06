@@ -18,14 +18,14 @@ function runAutomations(mac, type, letters, value)
                 {
                     var index = eventLock.indexOf(automations[i].id);
 
-                    if(automations[i].trigger[j].operation == '>' && parseFloat(value) > parseFloat(automations[i].trigger[j].value))
+                    if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value))
                     {
                         eventLock.splice(index, 1);
 
                         logger.debug('Value Unterschritten ' + automations[i].id);
                     }
 
-                    if(automations[i].trigger[j].operation == '<' && parseFloat(value) < parseFloat(automations[i].trigger[j].value))
+                    if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value))
                     {
                         eventLock.splice(index, 1);
 
@@ -54,12 +54,12 @@ async function checkTrigger(automation, mac, type, letters, value)
     {
         if(automation.trigger[i].mac == mac && automation.trigger[i].type == type && automation.trigger[i].letters == letters)
         {
-            if(automation.trigger[i].operation == '>' && parseFloat(value) < parseFloat(automation.trigger[i].value))
+            if(automation.trigger[i].operation == '>' && parseFloat(value) > parseFloat(automation.trigger[i].value))
             {
                 trigger = true;
             }
 
-            if(automation.trigger[i].operation == '<' && parseFloat(value) > parseFloat(automation.trigger[i].value))
+            if(automation.trigger[i].operation == '<' && parseFloat(value) < parseFloat(automation.trigger[i].value))
             {
                 trigger = true;
             }
