@@ -9,7 +9,7 @@ function runAutomations(mac, value)
     {
         if(automations[i].active)
         {
-            checkTrigger(automations[i], mac, value);
+            checkTrigger(automations[i], mac, value.toString());
             logger.debug(automations[i]);
         }
     }
