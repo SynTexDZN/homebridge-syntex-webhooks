@@ -18,25 +18,25 @@ function runAutomations(mac, type, letters, value)
                 {
                     var index = eventLock.indexOf(automations[i].id);
 
-                    if(automations[i].trigger[j].operation == '>' && value > automations[i].trigger[j].value)
+                    if(automations[i].trigger[j].operation == '>' && parseFloat(value) > parseFloat(automations[i].trigger[j].value))
                     {
                         eventLock.splice(index, 1);
 
-                        logger.debug('Value Unterschritten');
+                        logger.debug('Value Unterschritten ' + automations[i].id);
                     }
 
-                    if(automations[i].trigger[j].operation == '<' && value < automations[i].trigger[j].value)
+                    if(automations[i].trigger[j].operation == '<' && parseFloat(value) < parseFloat(automations[i].trigger[j].value))
                     {
                         eventLock.splice(index, 1);
 
-                        logger.debug('Value Überschritten');
+                        logger.debug('Value Überschritten ' + automations[i].id);
                     }
 
                     if(automations[i].trigger[j].operation == '=' && value != automations[i].trigger[j].value)
                     {
                         eventLock.splice(index, 1);
 
-                        logger.debug('Value Ungleich');
+                        logger.debug('Value Ungleich ' + automations[i].id);
                     }
                 }
             }
