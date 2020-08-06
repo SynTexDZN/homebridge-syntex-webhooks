@@ -80,9 +80,10 @@ async function checkCondition(automation)
         {
             condition++;
         }
+
+        logger.debug(automation.condition.conditions[i].operation + ' - ' + value + ' - ' + automation.condition.conditions[i].value);
     }
 
-    logger.debug(automation.condition.conditions[i].operation + ' - ' + value + ' - ' + automation.condition.conditions[i].value);
     logger.debug(condition);
 
     if(condition > 0 && (automation.condition.combination == 'ONE' || (automation.condition.combination == 'ALL' && condition >= automation.condition.conditions.length)))
