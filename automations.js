@@ -124,7 +124,8 @@ function executeResult(automation)
                         {
                             logger.log('error', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
                         }
-                    }.bind({ mac : automation.result.results[i].mac, name : automation.result.results[i].name })));
+                        
+                    }.bind({ mac : Devices[j].mac, name : Devices[j].name })));
                 }
             }
         }
