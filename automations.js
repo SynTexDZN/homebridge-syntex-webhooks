@@ -9,7 +9,7 @@ function runAutomations(mac, value)
     {
         if(automations[i].active && automations[i].trigger.triggers)
         {
-            checkTrigger(automations[i], mac);
+            checkTrigger(automations[i], mac, value);
             logger.debug(automations[i]);
         }
     }
@@ -17,7 +17,7 @@ function runAutomations(mac, value)
 
 // TODO: Multiple Triggers, Conditions, Results
 
-async function checkTrigger(automation, mac)
+async function checkTrigger(automation, mac, value)
 {
     var trigger = false;
 
@@ -25,7 +25,9 @@ async function checkTrigger(automation, mac)
     {
         if(automation.trigger.triggers[i].mac == mac)
         {
-            var value = await DeviceManager.getDevice(automation.trigger.triggers[i].mac, automation.trigger.triggers[i].type, automation.trigger.triggers[i].counter);
+            //var value = await DeviceManager.getDevice(automation.trigger.triggers[i].mac, automation.trigger.triggers[i].type, automation.trigger.triggers[i].counter);
+
+
 
             if(automation.trigger.triggers[i].operation == '>' && value > automation.trigger.triggers[i].value)
             {
