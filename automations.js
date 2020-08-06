@@ -164,11 +164,11 @@ async function SETUP(log, storagePath, Manager, Config)
 
     if(await loadAutomations())
     {
-        logger.log('success', 'Hintergrundprozesse wurden geladen!');
+        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
     }
     else
     {
-        logger.log('error', 'bridge', 'Bridge', 'Hintergrundprozesse konnten nicht geladen werden!');
+        logger.log('error', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
     }
 }
 
