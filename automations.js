@@ -54,12 +54,12 @@ async function checkTrigger(automation, mac, type, letters, value)
     {
         if(automation.trigger[i].mac == mac && automation.trigger[i].type == type && automation.trigger[i].letters == letters)
         {
-            if(automation.trigger[i].operation == '>' && value > automation.trigger[i].value)
+            if(automation.trigger[i].operation == '>' && parseFloat(value) > parseFloat(automation.trigger[i].value))
             {
                 trigger = true;
             }
 
-            if(automation.trigger[i].operation == '<' && value < automation.trigger[i].value)
+            if(automation.trigger[i].operation == '<' && parseFloat(value) < parseFloat(automation.trigger[i].value))
             {
                 trigger = true;
             }
