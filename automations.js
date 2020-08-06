@@ -97,9 +97,19 @@ function executeResult(automation)
 {
     for(var i = 0; i < automation.result.results.length; i++)
     {
-        DeviceManager.setDevice(automation.result.results[i].mac, automation.result.results[i].type, automation.result.results[i].counter, automation.result.results[i].value);
+        var url = '',
 
-        logger.log('update', automation.result.results[i].mac, automation.result.results[i].name, 'HomeKit Status für [' + automation.result.results[i].name + '] geändert zu [' + automation.result.results[i].value + '] ( ' + automation.result.results[i].mac + ' )');
+        if(automation.result.results[i].url)
+        {
+            url = automation.result.results[i].url;
+        }
+
+        if(automation.result.results[i].type != 'event')
+        {
+            DeviceManager.setDevice(automation.result.results[i].mac, automation.result.results[i].type, automation.result.results[i].counter, automation.result.results[i].value);
+
+            logger.log('update', automation.result.results[i].mac, automation.result.results[i].name, 'HomeKit Status für [' + automation.result.results[i].name + '] geändert zu [' + automation.result.results[i].value + '] ( ' + automation.result.results[i].mac + ' )');
+        }
 
         if(automation.result.results[i].type == 'relais')
         {
@@ -107,32 +117,37 @@ function executeResult(automation)
             {
                 if(Devices[j].mac == automation.result.results[i].mac && Devices[j].services.includes(automation.result.results[i].type))
                 {
-                    var theRequest = {
-                        method : 'GET',
-                        url : automation.result.results[i].value ? Devices[j].on_url : Devices[j].off_url,
-                        timeout : 10000
-                    };
-
-                    request(theRequest, (function(err, response, body)
-                    {
-                        var statusCode = response && response.statusCode ? response.statusCode : -1;
-
-                        if(!err && statusCode == 200)
-                        {
-                            logger.log('success', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
-                        }
-                        else
-                        {
-                            logger.log('error', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
-                        }
-                        
-                    }.bind({ mac : Devices[j].mac, name : Devices[j].name })));
+                    url = automation.result.results[i].value ? Devices[j].on_url : Devices[j].off_url;
                 }
             }
         }
+
+        if(url != '')
+        {
+            var theRequest = {
+                method : 'GET',
+                url : url,
+                timeout : 10000
+            };
+
+            request(theRequest, (function(err, response, body)
+            {
+                var statusCode = response && response.statusCode ? response.statusCode : -1;
+
+                if(!err && statusCode == 200)
+                {
+                    logger.log('success', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+                }
+                else
+                {
+                    logger.log('error', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
+                }
+                
+            }.bind({ mac : Devices[j].mac, name : Devices[j].name })));
+        }
     }
 
-    logger.log('success', 'bridge', 'Bridge', 'Die Automatisierung [' + automation.name + '] wurde ausgeführt!');
+    logger.log('success', 'bridge', 'Bridge', 'Der Prozess [' + automation.name + '] wurde ausgeführt!');
 }
 
 function loadAutomations()
