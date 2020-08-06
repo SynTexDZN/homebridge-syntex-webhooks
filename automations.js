@@ -104,8 +104,6 @@ function executeResult(automation)
         {
             for(var j = 0; j < Devices.length; j++)
             {
-                logger.debug(Devices[j].mac + ' - ' + automation.result.results[i].mac + ' - ' + Devices[j].services + ' - ' + automation.result.results[i].type);
-
                 if(Devices[j].mac == automation.result.results[i].mac && Devices[j].services.includes(automation.result.results[i].type))
                 {
                     var theRequest = {
@@ -114,23 +112,19 @@ function executeResult(automation)
                         timeout : 10000
                     };
 
-                    logger.debug('Request');
-                
                     request(theRequest, (function(err, response, body)
                     {
                         var statusCode = response && response.statusCode ? response.statusCode : -1;
 
-                        logger.debug(statusCode);
-                
                         if(!err && statusCode == 200)
                         {
-                            logger.log('success', automation.result.results[i].mac, automation.result.results[i].name, '[' + automation.result.results[i].name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+                            logger.log('success', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
                         }
                         else
                         {
-                            logger.log('error', automation.result.results[i].mac, automation.result.results[i].name, '[' + automation.result.results[i].name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
+                            logger.log('error', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
                         }
-                    }));
+                    }.bind({ mac : automation.result.results[i].mac, name : automation.result.results[i].name })));
                 }
             }
         }
