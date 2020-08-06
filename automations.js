@@ -60,7 +60,7 @@ async function checkCondition(automation)
 
     for(var i = 0; i < automation.condition.conditions.length; i++)
     {
-        var value = await DeviceManager.getDevice(automation.condition.conditions[i].mac, automation.condition.conditions[i].type, automation.condition.conditions[i].counter);
+        var value = await DeviceManager.getDevice(automation.condition.conditions[i].mac, automation.condition.conditions[i].type, automation.condition.conditions[i].letters);
 
         if(automation.condition.conditions[i].operation == '>' && value > automation.condition.conditions[i].value)
         {
@@ -78,16 +78,9 @@ async function checkCondition(automation)
         }
     }
 
-    if(condition > 0 && (automation.condition.conditions[i].combination == 'ONE' || (automation.condition.conditions[i].combination == 'ALL' && trigger >= automation.condition.conditions.length)))
+    if(condition > 0 && (automation.condition.conditions[i].combination == 'ONE' || (automation.condition.conditions[i].combination == 'ALL' && condition >= automation.condition.conditions.length)))
     {
-        if(automations.checkCondition && automation.trigger.length > 0)
-        {
-            checkCondition(automation);
-        }
-        else
-        {
-            executeResult(automation);
-        }
+        executeResult(automation);
 
         logger.debug('Condition Erfüllt');
     }
@@ -129,10 +122,10 @@ function executeResult(automation)
                 }
                 else
                 {
-                    //logger.log('error', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
+                    logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
                 }
                 
-            }));
+            }.bind({ url : theRequest.url, name : automation.name })));
         }
     }
 
