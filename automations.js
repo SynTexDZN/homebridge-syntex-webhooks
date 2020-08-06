@@ -1,38 +1,38 @@
 var logger, storage, automations = [], DeviceManager, Devices;
 var request = require('request'), store = require('json-fs-store');;
 
-function runAutomations(mac, value)
+function runAutomations(mac, type, letters, value)
 {
     for(var i = 0; i < automations.length; i++)
     {
         if(automations[i].active)
         {
-            checkTrigger(automations[i], mac, value.toString());
+            checkTrigger(automations[i], mac, type, letters, value.toString());
         }
     }
 }
 
 // TODO: Multiple Triggers, Conditions, Results
 
-async function checkTrigger(automation, mac, value)
+async function checkTrigger(automation, mac, type, letters, value)
 {
     var trigger = false;
 
-    for(var i = 0; i < automation.trigger.triggers.length; i++)
+    for(var i = 0; i < automation.trigger.length; i++)
     {
-        if(automation.trigger.triggers[i].mac == mac)
+        if(automation.trigger[i].mac == mac && automation.trigger[i].type == type && automation.trigger[i].letters == letters)
         {
-            if(automation.trigger.triggers[i].operation == '>' && value > automation.trigger.triggers[i].value)
+            if(automation.trigger[i].operation == '>' && value > automation.trigger[i].value)
             {
                 trigger = true;
             }
 
-            if(automation.trigger.triggers[i].operation == '<' && value < automation.trigger.triggers[i].value)
+            if(automation.trigger[i].operation == '<' && value < automation.trigger[i].value)
             {
                 trigger = true;
             }
 
-            if(automation.trigger.triggers[i].operation == '=' && value == automation.trigger.triggers[i].value)
+            if(automation.trigger[i].operation == '=' && value == automation.trigger[i].value)
             {
                 trigger = true;
             }
@@ -95,31 +95,20 @@ async function checkCondition(automation)
 
 function executeResult(automation)
 {
-    for(var i = 0; i < automation.result.results.length; i++)
+    for(var i = 0; i < automation.result.length; i++)
     {
         var url = '';
 
-        if(automation.result.results[i].url)
+        if(automation.result[i].url)
         {
-            url = automation.result.results[i].url;
+            url = automation.result[i].url;
         }
-
-        if(automation.result.results[i].type != 'event')
+        
+        if(automation.result[i].mac && automation.result[i].type && automation.result[i].letters && automation.result[i].value && automation.result[i].name)
         {
-            DeviceManager.setDevice(automation.result.results[i].mac, automation.result.results[i].type, automation.result.results[i].counter, automation.result.results[i].value);
+            DeviceManager.setDevice(automation.result[i].mac, automation.result[i].type, automation.result[i].letters, automation.result[i].value);
 
-            logger.log('update', automation.result.results[i].mac, automation.result.results[i].name, 'HomeKit Status für [' + automation.result.results[i].name + '] geändert zu [' + automation.result.results[i].value + '] ( ' + automation.result.results[i].mac + ' )');
-        }
-
-        if(automation.result.results[i].type == 'relais')
-        {
-            for(var j = 0; j < Devices.length; j++)
-            {
-                if(Devices[j].mac == automation.result.results[i].mac && Devices[j].services.includes(automation.result.results[i].type))
-                {
-                    url = automation.result.results[i].value ? Devices[j].on_url : Devices[j].off_url;
-                }
-            }
+            logger.log('update', automation.result[i].mac, automation.result[i].name, 'HomeKit Status für [' + automation.result[i].name + '] geändert zu [' + automation.result[i].value + '] ( ' + automation.result[i].mac + ' )');
         }
 
         if(url != '')
