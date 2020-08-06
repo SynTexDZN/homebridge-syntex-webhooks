@@ -168,7 +168,7 @@ async function SETUP(log, storagePath, Manager, Config)
     }
     else
     {
-        logger.err('Hintergrundprozesse konnten nicht geladeb werden!');
+        logger.log('error', 'bridge', 'Bridge', 'Hintergrundprozesse konnten nicht geladen werden!');
     }
 }
 
