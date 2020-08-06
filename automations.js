@@ -98,8 +98,6 @@ function executeResult(automation)
 {
     for(var i = 0; i < automation.result.results.length; i++)
     {
-        logger.debug(automation.result.results[i].mac + ' - ' + automation.result.results[i].type + ' - ' + automation.result.results[i].counter + ' - ' + automation.result.results[i].value);
-
         DeviceManager.setDevice(automation.result.results[i].mac, automation.result.results[i].type, automation.result.results[i].counter, automation.result.results[i].value);
 
         if(automation.result.results[i].type == 'relais')
@@ -164,6 +162,9 @@ async function SETUP(log, storagePath, Manager, Config)
         if(Config.platforms[i].platform === 'SynTexWebHooks')
         {
             Devices = Config.platforms[i].accessories;
+
+            logger.debug(Config.platforms[i].accessories);
+            logger.debug(Config.platforms[i]);
         }
     }
 
