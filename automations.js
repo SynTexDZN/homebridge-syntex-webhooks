@@ -1,5 +1,5 @@
 var logger, storage, automations = [], DeviceManager, Devices;
-var request = require('request');
+var request = require('request'), store = require('json-fs-store');;
 
 function runAutomations(mac, value)
 {
