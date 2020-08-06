@@ -10,6 +10,37 @@ function runAutomations(mac, type, letters, value)
         {
             checkTrigger(automations[i], mac, type, letters, value.toString());
         }
+        else if(eventLock.includes(automations[i].id))
+        {
+            for(var i = 0; i < automation.trigger.length; i++)
+            {
+                if(automation.trigger[i].mac == mac && automation.trigger[i].type == type && automation.trigger[i].letters == letters)
+                {
+                    var index = eventLock.indexOf(automation.id);
+
+                    if(automation.trigger[i].operation == '>' && value < automation.trigger[i].value)
+                    {
+                        eventLock.splice(index, 1);
+
+                        logger.debug('Value Unterschritten');
+                    }
+
+                    if(automation.trigger[i].operation == '<' && value > automation.trigger[i].value)
+                    {
+                        eventLock.splice(index, 1);
+
+                        logger.debug('Value Überschritten');
+                    }
+
+                    if(automation.trigger[i].operation == '=' && value != automation.trigger[i].value)
+                    {
+                        eventLock.splice(index, 1);
+
+                        logger.debug('Value Ungleich');
+                    }
+                }
+            }
+        }
     }
 }
 
