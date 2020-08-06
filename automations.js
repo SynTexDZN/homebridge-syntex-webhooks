@@ -12,27 +12,27 @@ function runAutomations(mac, type, letters, value)
         }
         else if(eventLock.includes(automations[i].id))
         {
-            for(var i = 0; i < automations[i].trigger.length; i++)
+            for(var j = 0; j < automations[i].trigger.length; j++)
             {
-                if(automations[i].trigger[i].mac == mac && automations[i].trigger[i].type == type && automations[i].trigger[i].letters == letters)
+                if(automations[i].trigger[j].mac == mac && automations[i].trigger[j].type == type && automations[i].trigger[j].letters == letters)
                 {
                     var index = eventLock.indexOf(automations[i].id);
 
-                    if(automations[i].trigger[i].operation == '>' && value < automations[i].trigger[i].value)
+                    if(automations[i].trigger[j].operation == '>' && value < automations[i].trigger[j].value)
                     {
                         eventLock.splice(index, 1);
 
                         logger.debug('Value Unterschritten');
                     }
 
-                    if(automations[i].trigger[i].operation == '<' && value > automations[i].trigger[i].value)
+                    if(automations[i].trigger[j].operation == '<' && value > automations[i].trigger[j].value)
                     {
                         eventLock.splice(index, 1);
 
                         logger.debug('Value Überschritten');
                     }
 
-                    if(automations[i].trigger[i].operation == '=' && value != automations[i].trigger[i].value)
+                    if(automations[i].trigger[j].operation == '=' && value != automations[i].trigger[j].value)
                     {
                         eventLock.splice(index, 1);
 
