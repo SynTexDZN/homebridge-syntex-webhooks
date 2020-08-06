@@ -7,9 +7,9 @@ function runAutomations(mac, value)
 
     for(var i = 0; i < automations.length; i++)
     {
-        if(automations[i].active)
+        if(automations[i].active && automations[i].trigger.triggers)
         {
-            checkTrigger(automations[i]);
+            checkTrigger(automations[i], mac);
             logger.debug(automations[i]);
         }
     }
@@ -17,27 +17,30 @@ function runAutomations(mac, value)
 
 // TODO: Multiple Triggers, Conditions, Results
 
-async function checkTrigger(automation)
+async function checkTrigger(automation, mac)
 {
     var trigger = false;
 
     for(var i = 0; i < automation.trigger.triggers.length; i++)
     {
-        var value = await DeviceManager.getDevice(automation.trigger.triggers[i].mac, automation.trigger.triggers[i].type, automation.trigger.triggers[i].counter);
-
-        if(automation.trigger.triggers[i].operation == '>' && value > automation.trigger.triggers[i].value)
+        if(automation.trigger.triggers[i].mac == mac)
         {
-            trigger = true;
-        }
+            var value = await DeviceManager.getDevice(automation.trigger.triggers[i].mac, automation.trigger.triggers[i].type, automation.trigger.triggers[i].counter);
 
-        if(automation.trigger.triggers[i].operation == '<' && value < automation.trigger.triggers[i].value)
-        {
-            trigger = true;
-        }
+            if(automation.trigger.triggers[i].operation == '>' && value > automation.trigger.triggers[i].value)
+            {
+                trigger = true;
+            }
 
-        if(automation.trigger.triggers[i].operation == '=' && value == automation.trigger.triggers[i].value)
-        {
-            trigger = true;
+            if(automation.trigger.triggers[i].operation == '<' && value < automation.trigger.triggers[i].value)
+            {
+                trigger = true;
+            }
+
+            if(automation.trigger.triggers[i].operation == '=' && value == automation.trigger.triggers[i].value)
+            {
+                trigger = true;
+            }
         }
     }
 
@@ -51,6 +54,8 @@ async function checkTrigger(automation)
         {
             executeResult(automation);
         }
+
+        logger.debug('Trigger Ausgelöst');
     }
 }
 

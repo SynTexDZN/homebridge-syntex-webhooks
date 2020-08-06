@@ -347,6 +347,8 @@ function SynTexBaseAccessory(accessoryConfig)
                 this.getCharacteristic(this.characteristic).updateValue(state);
             }
 
+            Automations.runAutomations(this.mac, state);
+
         }.bind(service));
 
         service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
@@ -387,8 +389,6 @@ SynTexBaseAccessory.prototype.getState = function(callback)
             logger.log('read', this.mac, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
         }
 
-        Automations.runAutomations(this.mac, state);
-         
         if(this.type == 'rgb')
         {
             callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
