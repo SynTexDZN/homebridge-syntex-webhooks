@@ -498,7 +498,14 @@ SynTexBaseAccessory.prototype.getHue = function(callback)
 {
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
-        callback(null, (state == null) ? 0 : (getHSL(state)[0] || 0));
+        if(this.options.spectrum == 'HSL')
+        {
+            callback(null, (state == null) ? 0 : (state.split(':')[1] || 0));
+        }
+        else
+        {
+            callback(null, (state == null) ? 0 : (getHSL(state)[0] || 0));
+        }
 
     }).catch(function(e) {
 
@@ -510,7 +517,14 @@ SynTexBaseAccessory.prototype.getSaturation = function(callback)
 {
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
-        callback(null, (state == null) ? 100 : (getHSL(state)[1] || 100));
+        if(this.options.spectrum == 'HSL')
+        {
+            callback(null, (state == null) ? 100 : (state.split(':')[2] || 100));
+        }
+        else
+        {
+            callback(null, (state == null) ? 100 : (getHSL(state)[1] || 100));
+        }
 
     }).catch(function(e) {
 
@@ -522,7 +536,14 @@ SynTexBaseAccessory.prototype.getBrightness = function(callback)
 {
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
-        callback(null, (state == null) ? 50 : (getHSL(state)[2] || 50));
+        if(this.options.spectrum == 'HSL')
+        {
+            callback(null, (state == null) ? 50 : (state.split(':')[3] || 50));
+        }
+        else
+        {
+            callback(null, (state == null) ? 50 : (getHSL(state)[2] || 50));
+        }
 
     }).catch(function(e) {
 
