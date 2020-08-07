@@ -317,8 +317,6 @@ function SynTexBaseAccessory(accessoryConfig)
                     arr.shift();
                 }
 
-                logger.debug(arr);
-
                 var value = service.options.spectrum == 'RGB' ? getHSL(state) : arr;
 
                 this.power = state ? state.split(':')[0] == 'true' : 'false';
