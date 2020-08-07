@@ -534,8 +534,6 @@ SynTexBaseAccessory.prototype.getSaturation = function(callback)
 
 SynTexBaseAccessory.prototype.getBrightness = function(callback)
 {
-    logger.debug(this);
-
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
         if(this.options.spectrum == 'HSL')

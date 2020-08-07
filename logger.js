@@ -197,7 +197,7 @@ async function saveLog(level, mac, name, time, message)
 
                     if(err)
                     {
-                        logger.err(prefix + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     if(que.length != 0)
@@ -218,7 +218,7 @@ async function saveLog(level, mac, name, time, message)
 
                     if(err)
                     {
-                        logger.err(prefix + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     if(que.length != 0)
