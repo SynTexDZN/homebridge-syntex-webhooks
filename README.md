@@ -1,5 +1,5 @@
 # Homebridge SynTex Webhooks
-A plugin to control and to create HTTP devices.
+A plugin to control and to create HTTP devices. It stores accessory data you can request to display the content on your Website / App.
 
 
 # Installation
