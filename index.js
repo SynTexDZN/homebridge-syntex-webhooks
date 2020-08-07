@@ -309,10 +309,11 @@ function SynTexBaseAccessory(accessoryConfig)
             
             if(this.type == 'rgb')
             {
-                var value = service.options.spectrum == 'HSL' ? state.split(':').shift() : getHSL(state);
+                var arr = state.split(':');
+                var value = service.options.spectrum == 'HSL' ? arr.shift() : getHSL(state);
 
                 logger.debug(state);
-                logger.debug(state.split(':').shift());
+                logger.debug(arr.shift());
 
                 this.power = state ? state.split(':')[0] == 'true' : 'false';
                 this.hue = state ? value[0] : 0;
