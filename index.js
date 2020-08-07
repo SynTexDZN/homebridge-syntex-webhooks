@@ -507,7 +507,7 @@ SynTexBaseAccessory.prototype.getHue = function(callback)
             callback(null, (state == null) ? 0 : (getHSL(state)[0] || 0));
         }
 
-    }).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
         logger.err(e);
     });
@@ -526,7 +526,7 @@ SynTexBaseAccessory.prototype.getSaturation = function(callback)
             callback(null, (state == null) ? 100 : (getHSL(state)[1] || 100));
         }
 
-    }).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
         logger.err(e);
     });
@@ -534,6 +534,8 @@ SynTexBaseAccessory.prototype.getSaturation = function(callback)
 
 SynTexBaseAccessory.prototype.getBrightness = function(callback)
 {
+    logger.debug(this);
+
     DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
 
         if(this.options.spectrum == 'HSL')
@@ -545,7 +547,7 @@ SynTexBaseAccessory.prototype.getBrightness = function(callback)
             callback(null, (state == null) ? 50 : (getHSL(state)[2] || 50));
         }
 
-    }).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
         logger.err(e);
     });
