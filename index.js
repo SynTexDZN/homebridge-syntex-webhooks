@@ -309,10 +309,12 @@ function SynTexBaseAccessory(accessoryConfig)
             
             if(this.type == 'rgb')
             {
+                var value = service.options.spectrum == 'HSL' ? state.split(':').splice(0, 1) : getHSL(state);
+
                 this.power = state ? state.split(':')[0] == 'true' : 'false';
-                this.hue = state ? getHSL(state)[0] : 0;
-                this.saturation = state ? getHSL(state)[1] : 100;
-                this.brightness = state ? getHSL(state)[2] : 50;
+                this.hue = state ? value[0] : 0;
+                this.saturation = state ? value[1] : 100;
+                this.brightness = state ? value[2] : 50;
 
                 this.getCharacteristic(Characteristic.On).updateValue(this.power);
                 this.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
@@ -626,7 +628,7 @@ function setRGB(accessory)
     var h = accessory.hue, s = accessory.saturation * 2, l = accessory.power ? accessory.brightness / 4 : 0;
     var r = 0, g = 0, b = 0;
 
-    if(accessory.options.spectrum == 'hsl')
+    if(accessory.options.spectrum == 'HSL')
     {
         if(accessory.options.url != '')
         {
@@ -644,8 +646,6 @@ function setRGB(accessory)
                 {
                     logger.log('success', accessory.mac, accessory.name, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
         
-                    logger.debug(accessory.power + ':' + h + ':' + s + ':' + l);
-
                     DeviceManager.setDevice(accessory.mac, accessory.type, accessory.letters, accessory.power + ':' + h + ':' + s + ':' + l);
                 }
                 else
