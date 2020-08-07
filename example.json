@@ -1,9 +1,0 @@
-[
-    {
-        "name" : "Test Automation",
-        "active": true,
-        "trigger" : { "combination" : "ALL", "triggers" : [ { "mac" : "EC:FA:BC:59:3D:DA", "type" : "motion", "counter" : "0", "value" : "true", "operation" : "=" } ] },
-        "condition" : { "combination" : "ONE", "conditions" : [ { "mac" : "", "type" : "", "counter" : "", "value" : "true", "operation" : "=" } ] },
-        "result" : [ { "mac" : "", "type" : "", "counter" : "", "value" : "false" }, { "mac" : "", "value" : "true" } ]
-    }
-]

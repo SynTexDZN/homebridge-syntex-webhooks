@@ -1,7 +1,7 @@
 var logger, storage, accessories = [];
 var store = require('json-fs-store');
 
-function getDevice(mac, type, service)
+function getDevice(mac, service)
 {
     return new Promise(async function(resolve) {
 
@@ -9,7 +9,7 @@ function getDevice(mac, type, service)
 
         for(var i = 0; i < accessories.length; i++)
         {
-            if(accessories[i].mac == mac && accessories[i].type == type && accessories[i].service == service)
+            if(accessories[i].mac == mac && accessories[i].service == service)
             {
                 found = true;
 
@@ -21,7 +21,6 @@ function getDevice(mac, type, service)
         {
             var accessory = {
                 mac : mac,
-                type : type,
                 service : service,
                 value : await readFS(mac, service)
             };
@@ -33,7 +32,7 @@ function getDevice(mac, type, service)
     });
 }
 
-function setDevice(mac, type, service, value)
+function setDevice(mac, service, value)
 {
     return new Promise(async function(resolve) {
 
@@ -41,7 +40,7 @@ function setDevice(mac, type, service, value)
 
         for(var i = 0; i < accessories.length; i++)
         {
-            if(accessories[i].mac == mac && accessories[i].type == type && accessories[i].service == service)
+            if(accessories[i].mac == mac && accessories[i].service == service)
             {
                 accessories[i].value = value;
 
@@ -51,23 +50,22 @@ function setDevice(mac, type, service, value)
 
         if(!found)
         {
-            accessories.push({ mac : mac, type : type, service : service, value : value });
+            accessories.push({ mac : mac, service : service, value : value });
         }
 
-        await writeFS(mac, type, service, value);
+        await writeFS(mac, service, value);
 
         resolve();
     });
 }
 
-function writeFS(mac, type, service, value)
+function writeFS(mac, service, value)
 {
     return new Promise(resolve => {
         
         var device = {
             id: mac + ':' + service,
-            value: value,
-            type: type
+            value: value
         };
         
         storage.add(device, (err) => {

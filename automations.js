@@ -2,19 +2,19 @@ var logger, storage, automations = [], DeviceManager;
 var request = require('request'), store = require('json-fs-store');
 var eventLock = [];
 
-function runAutomations(mac, type, letters, value)
+function runAutomations(mac, letters, value)
 {
     for(var i = 0; i < automations.length; i++)
     {
         if(automations[i].active && !eventLock.includes(automations[i].id))
         {
-            checkTrigger(automations[i], mac, type, letters, value.toString());
+            checkTrigger(automations[i], mac, letters, value.toString());
         }
         else if(eventLock.includes(automations[i].id))
         {
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
-                if(automations[i].trigger[j].mac == mac && automations[i].trigger[j].type == type && automations[i].trigger[j].letters == letters)
+                if(automations[i].trigger[j].mac == mac && automations[i].trigger[j].letters == letters)
                 {
                     var index = eventLock.indexOf(automations[i].id);
 
@@ -46,13 +46,13 @@ function runAutomations(mac, type, letters, value)
 
 // TODO: Multiple Triggers, Conditions, Results
 
-async function checkTrigger(automation, mac, type, letters, value)
+async function checkTrigger(automation, mac, letters, value)
 {
     var trigger = false;
 
     for(var i = 0; i < automation.trigger.length; i++)
     {
-        if(automation.trigger[i].mac == mac && automation.trigger[i].type == type && automation.trigger[i].letters == letters)
+        if(automation.trigger[i].mac == mac && automation.trigger[i].letters == letters)
         {
             if(automation.trigger[i].operation == '>' && parseFloat(value) > parseFloat(automation.trigger[i].value))
             {
@@ -92,7 +92,7 @@ async function checkCondition(automation)
 
     for(var i = 0; i < automation.condition.conditions.length; i++)
     {
-        var value = (await DeviceManager.getDevice(automation.condition.conditions[i].mac, automation.condition.conditions[i].type, automation.condition.conditions[i].letters)).toString();
+        var value = (await DeviceManager.getDevice(automation.condition.conditions[i].mac, automation.condition.conditions[i].letters)).toString();
 
         if(automation.condition.conditions[i].operation == '>' && parseFloat(value) > parseFloat(automation.condition.conditions[i].value))
         {
@@ -129,9 +129,9 @@ function executeResult(automation)
             url = automation.result[i].url;
         }
         
-        if(automation.result[i].mac && automation.result[i].type && automation.result[i].letters && automation.result[i].value && automation.result[i].name)
+        if(automation.result[i].mac && automation.result[i].letters && automation.result[i].value && automation.result[i].name)
         {
-            DeviceManager.setDevice(automation.result[i].mac, automation.result[i].type, automation.result[i].letters, automation.result[i].value);
+            DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, automation.result[i].value);
 
             logger.log('update', automation.result[i].mac, automation.result[i].name, 'HomeKit Status für [' + automation.result[i].name + '] geändert zu [' + automation.result[i].value + '] ( ' + automation.result[i].mac + ' )');
         }

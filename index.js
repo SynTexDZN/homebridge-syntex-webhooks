@@ -133,13 +133,13 @@ SynTexWebHookPlatform.prototype = {
                             logger.log('error', urlParams.mac, accessory.name, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
                         }
 
-                        DeviceManager.setDevice(urlParams.mac, accessory.type, accessory.letters, urlParams.value);
+                        DeviceManager.setDevice(urlParams.mac, accessory.letters, urlParams.value);
                          
                         response.write(state != null ? 'Success' : 'Error');
                     }
                     else
                     {
-                        var state = await DeviceManager.getDevice(urlParams.mac, accessory.type, accessory.letters);
+                        var state = await DeviceManager.getDevice(urlParams.mac, accessory.letters);
 
                         response.write(state != null ? state.toString() : 'Error');
                     }
@@ -296,7 +296,7 @@ function SynTexBaseAccessory(accessoryConfig)
             service.options.spectrum = accessoryConfig['spectrum'] || 'RGB';
         }
 
-        DeviceManager.getDevice(this.mac, type, service.letters).then(function(state) {
+        DeviceManager.getDevice(this.mac, service.letters).then(function(state) {
 
             if(state == null)
             {
@@ -388,7 +388,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
 SynTexBaseAccessory.prototype.getState = function(callback)
 {   
-    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
 
         if(state == null)
         {
@@ -468,7 +468,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 
                     logger.log('update', this.mac, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
 
-                    DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
+                    DeviceManager.setDevice(this.mac, this.letters, powerOn);
 
                     callback(null);
                 }
@@ -485,7 +485,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
         {
             logger.log('update', this.mac, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
 
-            DeviceManager.setDevice(this.mac, this.type, this.letters, powerOn);
+            DeviceManager.setDevice(this.mac, this.letters, powerOn);
 
             callback(null);
         }
@@ -494,7 +494,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 
 SynTexBaseAccessory.prototype.getHue = function(callback)
 {
-    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
 
         if(this.options.spectrum == 'HSL')
         {
@@ -513,7 +513,7 @@ SynTexBaseAccessory.prototype.getHue = function(callback)
 
 SynTexBaseAccessory.prototype.getSaturation = function(callback)
 {
-    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
 
         if(this.options.spectrum == 'HSL')
         {
@@ -532,7 +532,7 @@ SynTexBaseAccessory.prototype.getSaturation = function(callback)
 
 SynTexBaseAccessory.prototype.getBrightness = function(callback)
 {
-    DeviceManager.getDevice(this.mac, this.type, this.letters).then(function(state) {
+    DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
 
         if(this.options.spectrum == 'HSL')
         {
@@ -675,7 +675,7 @@ function setRGB(accessory)
                 {
                     logger.log('success', accessory.mac, accessory.name, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
         
-                    DeviceManager.setDevice(accessory.mac, accessory.type, accessory.letters, accessory.power + ':' + accessory.hue + ':' + accessory.saturation + ':' + accessory.brightness);
+                    DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power + ':' + accessory.hue + ':' + accessory.saturation + ':' + accessory.brightness);
                 }
                 else
                 {
@@ -745,7 +745,7 @@ function setRGB(accessory)
                     {
                         logger.log('success', accessory.mac, accessory.name, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
             
-                        DeviceManager.setDevice(accessory.mac, accessory.type, accessory.letters, accessory.fetch);
+                        DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.fetch);
                     }
                     else
                     {
