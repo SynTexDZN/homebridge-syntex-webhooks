@@ -646,7 +646,7 @@ function setRGB(accessory)
                 {
                     logger.log('success', accessory.mac, accessory.name, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
         
-                    DeviceManager.setDevice(accessory.mac, accessory.type, accessory.letters, accessory.power + ':' + h + ':' + s + ':' + l);
+                    DeviceManager.setDevice(accessory.mac, accessory.type, accessory.letters, accessory.power + ':' + accessory.hue + ':' + accessory.saturation + ':' + accessory.brightness);
                 }
                 else
                 {
