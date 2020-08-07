@@ -1,12 +1,14 @@
 # Homebridge SynTex Webhooks
-A plugin to control and to create HTTP devices.
+A simple plugin to control and to create HTTP devices.<br>
+This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge<br>
+It stores accessory data you can request to display the content on your website / app.
 
 
 # Installation
 1. Install homebridge using: `sudo npm install -g homebridge`
 2. Install this plugin using: `sudo npm install -g homebridge-syntex-webhooks`
-3. Update your configuration file. See snippet below.
-4. Restart the Homebridge Service.
+3. Update your `config.json` file. See snippet below.
+4. Restart the Homebridge Service with `sudo systemctl restart homebridge; sudo journalctl -fau homebridge`.
 
 
 # Example Config
