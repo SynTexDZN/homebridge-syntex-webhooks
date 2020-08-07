@@ -94,12 +94,12 @@ async function checkCondition(automation)
     {
         var value = (await DeviceManager.getDevice(automation.condition.conditions[i].mac, automation.condition.conditions[i].type, automation.condition.conditions[i].letters)).toString();
 
-        if(automation.condition.conditions[i].operation == '>' && value > automation.condition.conditions[i].value)
+        if(automation.condition.conditions[i].operation == '>' && parseFloat(value) > parseFloat(automation.condition.conditions[i].value))
         {
             condition++;
         }
 
-        if(automation.condition.conditions[i].operation == '<' && value < automation.condition.conditions[i].value)
+        if(automation.condition.conditions[i].operation == '<' && parseFloat(value) < parseFloat(automation.condition.conditions[i].value))
         {
             condition++;
         }
