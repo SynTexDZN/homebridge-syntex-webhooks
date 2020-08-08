@@ -9,13 +9,9 @@ function runAutomations(mac, letters, value)
         if(automations[i].active && !eventLock.includes(automations[i].id))
         {
             checkTrigger(automations[i], mac, letters, value.toString());
-
-            logger.debug("CHECK TRIGGER");
         }
         else if(eventLock.includes(automations[i].id))
         {
-            logger.debug("LOCK ACTIVE");
-
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
                 if(automations[i].trigger[j].mac == mac && automations[i].trigger[j].letters == letters)
@@ -50,14 +46,12 @@ function runAutomations(mac, letters, value)
 
 // TODO: Multiple Triggers, Conditions, Results
 
-function checkTrigger(automation, mac, letters, value)
+async function checkTrigger(automation, mac, letters, value)
 {
     var trigger = false;
 
     for(var i = 0; i < automation.trigger.length; i++)
     {
-        logger.debug(automation.trigger[i].mac + " - " + mac + " - " + automation.trigger[i].letters + " - " + letters);
-
         if(automation.trigger[i].mac == mac && automation.trigger[i].letters == letters)
         {
             if(automation.trigger[i].operation == '>' && parseFloat(value) > parseFloat(automation.trigger[i].value))
