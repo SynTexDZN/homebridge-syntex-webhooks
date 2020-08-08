@@ -357,7 +357,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 this.getCharacteristic(this.characteristic).updateValue(state);
             }
 
-            Automations.runAutomations(this.mac, this.type, this.letters, state);
+            Automations.runAutomations(this.mac, this.letters, state);
 
         }.bind(service));
 
