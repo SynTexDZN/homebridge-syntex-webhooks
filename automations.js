@@ -188,8 +188,8 @@ function loadAutomations()
 
 function SETUP(log, storagePath, Manager)
 {
-    return new Promise(resolve => {
-
+    return new Promise(async function(resolve)
+    {
         logger = log;
         storage = store(storagePath);
         DeviceManager = Manager;
