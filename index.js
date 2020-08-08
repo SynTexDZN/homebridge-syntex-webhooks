@@ -32,7 +32,7 @@ module.exports = function(homebridge)
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStatelessSwitch', SynTexWebHookStatelessSwitchAccessory);
 };
 
-function SynTexWebHookPlatform(log, sconfig, api)
+async function SynTexWebHookPlatform(log, sconfig, api)
 {
     this.devices = sconfig['accessories'] || [];
     
@@ -43,7 +43,7 @@ function SynTexWebHookPlatform(log, sconfig, api)
     logger.create('SynTexWebHooks', this.logDirectory, api.user.storagePath());
 
     DeviceManager.SETUP(logger, this.cacheDirectory);
-    Automations.SETUP(logger, this.cacheDirectory, DeviceManager);
+    await Automations.SETUP(logger, this.cacheDirectory, DeviceManager);
 
     restart = false;
 }

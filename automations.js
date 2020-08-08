@@ -186,20 +186,25 @@ function loadAutomations()
     });
 }
 
-async function SETUP(log, storagePath, Manager)
+function SETUP(log, storagePath, Manager)
 {
-    logger = log;
-    storage = store(storagePath);
-    DeviceManager = Manager;
+    return new Promise(resolve => {
 
-    if(await loadAutomations())
-    {
-        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
-    }
-    else
-    {
-        logger.log('error', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
-    }
+        logger = log;
+        storage = store(storagePath);
+        DeviceManager = Manager;
+
+        if(await loadAutomations())
+        {
+            logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+        }
+        else
+        {
+            logger.log('error', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+        }
+
+        resolve();
+    });
 }
 
 module.exports = {
