@@ -50,12 +50,14 @@ function runAutomations(mac, letters, value)
 
 // TODO: Multiple Triggers, Conditions, Results
 
-async function checkTrigger(automation, mac, letters, value)
+function checkTrigger(automation, mac, letters, value)
 {
     var trigger = false;
 
     for(var i = 0; i < automation.trigger.length; i++)
     {
+        logger.debug(automation.trigger[i].mac + " - " + mac + " - " + automation.trigger[i].letters + " - " + letters);
+
         if(automation.trigger[i].mac == mac && automation.trigger[i].letters == letters)
         {
             if(automation.trigger[i].operation == '>' && parseFloat(value) > parseFloat(automation.trigger[i].value))
