@@ -9,9 +9,13 @@ function runAutomations(mac, letters, value)
         if(automations[i].active && !eventLock.includes(automations[i].id))
         {
             checkTrigger(automations[i], mac, letters, value.toString());
+
+            logger.debug("CHECK TRIGGER");
         }
         else if(eventLock.includes(automations[i].id))
         {
+            logger.debug("LOCK ACTIVE");
+
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
                 if(automations[i].trigger[j].mac == mac && automations[i].trigger[j].letters == letters)
