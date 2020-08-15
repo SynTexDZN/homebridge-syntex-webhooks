@@ -139,9 +139,7 @@ function executeResult(automation)
                 {
                     if(automation.result[i].type = 'statelessswitch')
                     {
-                        logger.debug(accessories[j]);
-
-                        accessories[j].services[0].changeHandler(accessories[j].name, automation.result[i].value, 0);
+                        accessories[j].service[0].changeHandler(accessories[j].name, automation.result[i].value, 0);
                     }
                     else
                     {
@@ -154,9 +152,9 @@ function executeResult(automation)
 
                         for(var k = 0; k < count; k++)
                         {
-                            if(accessories[j].services[k].letters == automation.result[i].letters)
+                            if(accessories[j].service[k].letters == automation.result[i].letters)
                             {
-                                accessories[j].services[k].changeHandler(automation.result[i].value);
+                                accessories[j].service[k].changeHandler(automation.result[i].value);
                             }
                         }
                     }
