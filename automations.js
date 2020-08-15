@@ -156,6 +156,9 @@ function executeResult(automation)
 
                             if(accessories[j].service[k].letters == automation.result[i].letters)
                             {
+                                logger.debug('Change Handler!!!');
+                                logger.debug(validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
+
                                 accessories[j].service[k].changeHandler(validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
                             }
                         }
