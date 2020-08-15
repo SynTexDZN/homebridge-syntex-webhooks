@@ -139,6 +139,8 @@ function executeResult(automation)
                 {
                     if(automation.result[i].type = 'statelessswitch')
                     {
+                        logger.debug(accessories[j]);
+
                         accessories[j].services[0].changeHandler(accessories[j].name, automation.result[i].value, 0);
                     }
                     else
