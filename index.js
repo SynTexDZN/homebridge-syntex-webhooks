@@ -587,6 +587,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
     this.mac = statelessSwitchConfig['mac'];
     this.name = statelessSwitchConfig['name'];
     this.type = 'statelessswitch';
+    this.services = 'statelessswitch';
     this.buttons = statelessSwitchConfig['buttons'] || 0;
 
     for(var i = 0; i < this.buttons; i++)
