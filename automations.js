@@ -73,6 +73,8 @@ async function checkTrigger(automation, mac, letters, value)
 
     if(trigger)
     {
+        logger.debug('Trigger Ausgelöst');
+
         if(automation.condition && automation.condition.conditions && automation.condition.conditions.length > 0)
         {
             checkCondition(automation);
@@ -81,8 +83,6 @@ async function checkTrigger(automation, mac, letters, value)
         {
             executeResult(automation);
         }
-
-        logger.debug('Trigger Ausgelöst');
     }
 }
 
@@ -112,9 +112,9 @@ async function checkCondition(automation)
 
     if(condition > 0 && (automation.condition.combination == 'ONE' || (automation.condition.combination == 'ALL' && condition >= automation.condition.conditions.length)))
     {
-        executeResult(automation);
-
         logger.debug('Condition Erfüllt');
+
+        executeResult(automation);
     }
 }
 
@@ -131,8 +131,6 @@ function executeResult(automation)
         
         if(automation.result[i].mac && automation.result[i].letters && automation.result[i].value && automation.result[i].name)
         {
-            //DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, automation.result[i].value);
-
             for(var j = 0; j < accessories.length; j++)
             {
                 if(accessories[j].mac == automation.result[i].mac && JSON.stringify(accessories[j].services).includes(automation.result[i].type))
@@ -166,8 +164,6 @@ function executeResult(automation)
                     }
                 }
             }
-
-            //logger.log('update', automation.result[i].mac, automation.result[i].name, 'HomeKit Status für [' + automation.result[i].name + '] geändert zu [' + automation.result[i].value + '] ( ' + automation.result[i].mac + ' )');
         }
 
         eventLock.push(automation.id);
