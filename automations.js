@@ -137,7 +137,7 @@ function executeResult(automation)
             {
                 if(accessories[j].mac == automation.result[i].mac && JSON.stringify(accessories[j].services).includes(automation.result[i].type))
                 {
-                    if(automation.result[i].type = 'statelessswitch')
+                    if(automation.result[i].type == 'statelessswitch')
                     {
                         accessories[j].changeHandler(accessories[j].name, automation.result[i].value, 0);
                     }
