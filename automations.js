@@ -135,7 +135,7 @@ function executeResult(automation)
 
             for(var j = 0; j < accessories.length; j++)
             {
-                if(accessories[j].mac == automation.result[i].mac && accessories[j].services.includes(automation.result[i].type))
+                if(accessories[j].mac == automation.result[i].mac && JSON.stringify(accessories[j].services).includes(automation.result[i].type))
                 {
                     if(automation.result[i].type = 'statelessswitch')
                     {
