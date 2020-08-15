@@ -135,11 +135,11 @@ function executeResult(automation)
 
             for(var j = 0; j < accessories.length; j++)
             {
-                if(accessories[j].mac == automation.result[i].mac && accessories[j].services.include(automation.result[i].type))
+                if(accessories[j].mac == automation.result[i].mac && accessories[j].services.includes(automation.result[i].type))
                 {
                     if(automation.result[i].type = 'statelessswitch')
                     {
-                        logger.degub(accessories[j].service[0]);
+                        logger.debug(accessories[j].service[0]);
 
                         accessories[j].service[0].changeHandler(accessories[j].name, automation.result[i].value, 0);
                     }
