@@ -139,7 +139,7 @@ function executeResult(automation)
                 {
                     if(automation.result[i].type = 'statelessswitch')
                     {
-                        accessories[j].changeHandler(accessories[j].name, automation.result[i].value, 0);
+                        accessories[j].services[0].changeHandler(accessories[j].name, automation.result[i].value, 0);
                     }
                     else
                     {
@@ -154,7 +154,7 @@ function executeResult(automation)
                         {
                             if(accessories[j].services[k].letters == automation.result[i].letters)
                             {
-                                accessories[j].changeHandler(automation.result[i].value);
+                                accessories[j].services[k].changeHandler(automation.result[i].value);
                             }
                         }
                     }
