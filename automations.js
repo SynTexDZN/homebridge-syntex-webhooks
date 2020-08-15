@@ -143,22 +143,22 @@ function executeResult(automation)
                     }
                     else
                     {
-                        var count = 1;
-
-                        if(Array.isArray(accessories[j].services))
-                        {
-                            count = accessories[j].services.length;
-                        }
+                        var count = Array.isArray(accessories[j].services) ? accessories[j].services.length : 1;
 
                         for(var k = 1; k <= count; k++)
                         {
-                            logger.debug(accessories[j].service[k].letters + ' - ' + automation.result[i].letters);
-
                             if(accessories[j].service[k].letters == automation.result[i].letters)
                             {
-                                logger.debug('Change Handler!!!');
+                                var state = null;
 
-                                accessories[j].service[k].changeHandler(validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
+                                if((state = validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value)) != null)
+                                {
+                                    accessories[j].service[k].changeHandler(state);
+                                }
+                                else
+                                {
+                                    logger.log('error', automation.result[i].mac, automation.result[i].name, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].mac + ' )');
+                                }
 
                                 DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
                             }
