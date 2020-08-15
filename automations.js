@@ -156,7 +156,7 @@ function executeResult(automation)
 
                             if(accessories[j].service[k].letters == automation.result[i].letters)
                             {
-                                accessories[j].service[k].changeHandler(automation.result[i].value);
+                                accessories[j].service[k].changeHandler(validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
                             }
                         }
                     }
@@ -247,3 +247,40 @@ module.exports = {
     setAccessories,
     runAutomations
 };
+
+function validateUpdate(mac, type, state)
+{
+    if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
+    {
+        if(state != true && state != false && state != 'true' && state != 'false')
+        {
+            logger.log('warn', mac, '', 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
+
+            return null;
+        }
+
+        return (state == 'true' || state == true ? true : false);
+    }
+    else if(type === 'light' || type === 'temperature')
+    {
+        if(isNaN(state))
+        {
+            logger.log('warn', mac, '', 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+        }
+
+        return !isNaN(state) ? parseFloat(state) : null;
+    }
+    else if(type === 'humidity' || type === 'airquality')
+    {
+        if(isNaN(state))
+        {
+            logger.log('warn', mac, '', 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+        }
+
+        return !isNaN(state) ? parseInt(state) : null;
+    }
+    else
+    {
+        return state;
+    }
+}
