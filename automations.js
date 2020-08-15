@@ -143,7 +143,7 @@ function executeResult(automation)
                     {
                         logger.debug(accessories[j].service[0]);
 
-                        accessories[j].service[0].changeHandler(accessories[j].name, automation.result[i].value, 0);
+                        accessories[j].changeHandler(accessories[j].name, automation.result[i].value, 0);
                     }
                     else
                     {
