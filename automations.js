@@ -160,7 +160,7 @@ function executeResult(automation)
                                 logger.debug(validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
                                 logger.debug(accessories[j].service[k]);
 
-                                accessories[j].service[k].changeHandler(validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
+                                accessories[j].service[k].changeHandler(false);
                             }
                         }
                     }
