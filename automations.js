@@ -150,7 +150,7 @@ function executeResult(automation)
                             count = accessories[j].services.length;
                         }
 
-                        for(var k = 0; k < count; k++)
+                        for(var k = 1; k <= count; k++)
                         {
                             logger.debug(accessories[j].service[k].letters + ' - ' + automation.result[i].letters);
 
