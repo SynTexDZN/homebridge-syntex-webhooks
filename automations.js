@@ -135,6 +135,8 @@ function executeResult(automation)
 
             for(var j = 0; j < accessories.length; j++)
             {
+                logger.debug(accessories[j].services);
+
                 if(accessories[j].mac == automation.result[i].mac && accessories[j].services.includes(automation.result[i].type))
                 {
                     if(automation.result[i].type = 'statelessswitch')
