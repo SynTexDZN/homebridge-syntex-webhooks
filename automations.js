@@ -1,4 +1,4 @@
-var logger, storage, automations = [], DeviceManager;
+var logger, storage, automations = [], accessories = [], DeviceManager;
 var request = require('request'), store = require('json-fs-store');
 var eventLock = [];
 
@@ -131,7 +131,35 @@ function executeResult(automation)
         
         if(automation.result[i].mac && automation.result[i].letters && automation.result[i].value && automation.result[i].name)
         {
-            DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, automation.result[i].value);
+            //DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, automation.result[i].value);
+
+            for(var j = 0; j < accessories.length; j++)
+            {
+                if(accessories[j].mac == automation.result[i].mac)
+                {
+                    if(automation.result[i].type = 'statelessswitch')
+                    {
+                        accessories[j].changeHandler(accessories[j].name, automation.result[i].value, 0);
+                    }
+                    else
+                    {
+                        var count = 1;
+
+                        if(Array.isArray(accessories[j].services))
+                        {
+                            count = accessories[j].services.length;
+                        }
+
+                        for(var k = 0; k < count; k++)
+                        {
+                            if(accessories[j].services[k].letters == automation.result[i].letters)
+                            {
+                                accessories[j].changeHandler(automation.result[i].value);
+                            }
+                        }
+                    }
+                }
+            }
 
             logger.log('update', automation.result[i].mac, automation.result[i].name, 'HomeKit Status für [' + automation.result[i].name + '] geändert zu [' + automation.result[i].value + '] ( ' + automation.result[i].mac + ' )');
         }
@@ -186,6 +214,11 @@ function loadAutomations()
     });
 }
 
+function setAccessories(devices)
+{
+    accessories = devices;
+}
+
 function SETUP(log, storagePath, Manager)
 {
     return new Promise(async function(resolve)
@@ -209,5 +242,6 @@ function SETUP(log, storagePath, Manager)
 
 module.exports = {
     SETUP,
+    setAccessories,
     runAutomations
 };

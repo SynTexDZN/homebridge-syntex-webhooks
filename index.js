@@ -66,6 +66,8 @@ SynTexWebHookPlatform.prototype = {
                 accessories.push(new SynTexBaseAccessory(this.devices[i]));
             }
         }
+
+        Automations.setAccessories(accessories);
         
         callback(accessories);
         
