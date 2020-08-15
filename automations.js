@@ -157,10 +157,10 @@ function executeResult(automation)
                             if(accessories[j].service[k].letters == automation.result[i].letters)
                             {
                                 logger.debug('Change Handler!!!');
-                                logger.debug(validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
-                                logger.debug(accessories[j].service[k]);
 
-                                accessories[j].service[k].changeHandler(0);
+                                accessories[j].service[k].changeHandler(validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
+
+                                DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
                             }
                         }
                     }
