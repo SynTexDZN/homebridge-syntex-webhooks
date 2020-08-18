@@ -208,7 +208,7 @@ function loadAutomations()
             }
             else
             {
-                automations = obj;
+                automations = obj.automations;
 
                 resolve(true);
             }
