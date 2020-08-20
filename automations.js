@@ -1,6 +1,6 @@
 var logger, storage, automations = [], accessories = [], DeviceManager;
 var request = require('request'), store = require('json-fs-store');
-var eventLock = [];
+var eventLock = [], positiveFired = false, negativeFired = false;
 
 function runAutomations(mac, letters, value)
 {
@@ -18,14 +18,14 @@ function runAutomations(mac, letters, value)
                 {
                     var index = eventLock.indexOf(automations[i].id);
 
-                    if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value))
+                    if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && negativeFired)
                     {
                         eventLock.splice(index, 1);
 
                         logger.debug('Value Unterschritten ' + automations[i].id);
                     }
 
-                    if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value))
+                    if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && positiveFired)
                     {
                         eventLock.splice(index, 1);
 
@@ -167,6 +167,17 @@ function executeResult(automation)
         }
 
         eventLock.push(automation.id);
+
+        if(automation.trigger[0].operation = '<')
+        {
+            negativeFired = true;
+            positiveFired = false;
+        }
+        else if(automation.trigger[0].operation = '>')
+        {
+            positiveFired = true;
+            negativeFired = false;
+        }
 
         if(url != '')
         {
