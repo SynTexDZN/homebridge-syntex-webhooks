@@ -1,6 +1,19 @@
 var logger, storage, automations = [], accessories = [], DeviceManager;
 var request = require('request'), store = require('json-fs-store');
 var eventLock = [], positiveFired = false, negativeFired = false;
+var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
+var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
+
+function letterToType(letter)
+{
+    return types[letters.indexOf(letter)];
+}
+
+function typeToLetter(type)
+{
+    return letters[types.indexOf(type)];
+}
+
 
 function runAutomations(mac, letters, value)
 {
@@ -133,9 +146,9 @@ function executeResult(automation)
         {
             for(var j = 0; j < accessories.length; j++)
             {
-                if(accessories[j].mac == automation.result[i].mac && JSON.stringify(accessories[j].services).includes(automation.result[i].type))
+                if(accessories[j].mac == automation.result[i].mac && JSON.stringify(accessories[j].services).includes(letterToType(automation.result[i].letters[0])))
                 {
-                    if(automation.result[i].type == 'statelessswitch')
+                    if(letterToType(automation.result[i].letters[0]) == 'statelessswitch')
                     {
                         accessories[j].changeHandler(accessories[j].name, automation.result[i].value, 0);
                     }
@@ -149,7 +162,7 @@ function executeResult(automation)
                             {
                                 var state = null;
 
-                                if((state = validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value)) != null)
+                                if((state = validateUpdate(automation.result[i].mac, letterToType(automation.result[i].letters[0]), automation.result[i].value)) != null)
                                 {
                                     accessories[j].service[k].changeHandler(state);
                                 }
@@ -158,7 +171,7 @@ function executeResult(automation)
                                     logger.log('error', automation.result[i].mac, automation.result[i].name, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].mac + ' )');
                                 }
 
-                                DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, validateUpdate(automation.result[i].mac, automation.result[i].type, automation.result[i].value));
+                                DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, validateUpdate(automation.result[i].mac, letterToType(automation.result[i].letters[0]), automation.result[i].value));
                             }
                         }
                     }
