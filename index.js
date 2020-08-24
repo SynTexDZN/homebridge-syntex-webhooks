@@ -27,6 +27,8 @@ module.exports = function(homebridge)
     presets.rgb = {letter : '3', service : Service.Lightbulb, characteristic : Characteristic.On};
     presets.switch = {letter : '4', service : Service.Switch, characteristic : Characteristic.On};
     presets.relais = {letter : '5', service : Service.Switch, characteristic : Characteristic.On};
+    //presets.statelessswitch = {letter : '6', service : Service.Switch, characteristic : Characteristic.On};
+    presets.lcd = {letter : '7', service : Service.Switch, characteristic : Characteristic.On};
 
     homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStatelessSwitch', SynTexWebHookStatelessSwitchAccessory);
@@ -280,7 +282,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
         service.options = {};
 
-        if(type == 'switch' || type == 'relais')
+        if(type == 'switch' || type == 'relais' || type == 'lcd')
         {
             service.options.onURL = accessoryConfig['on_url'] || '';
             service.options.onMethod = accessoryConfig['on_method'] || 'GET';
