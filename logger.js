@@ -227,6 +227,8 @@ async function saveLog(level, mac, letters, time, message)
             {
                 var entry = { id : prefix };
 
+                entry[mac] = {};
+
                 entry[mac][letters] = [ { t : time, l : level, m : message } ];
 
                 logger.logs.add(entry, (err) => {
