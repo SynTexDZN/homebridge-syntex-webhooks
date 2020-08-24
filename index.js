@@ -28,7 +28,7 @@ module.exports = function(homebridge)
     presets.switch = {letter : '4', service : Service.Switch, characteristic : Characteristic.On};
     presets.relais = {letter : '5', service : Service.Switch, characteristic : Characteristic.On};
     //presets.statelessswitch = {letter : '6', service : Service.Switch, characteristic : Characteristic.On};
-    presets.lcd = {letter : '7', service : Service.Switch, characteristic : Characteristic.On};
+    //presets.lcd = {letter : '7', service : Service.Switch, characteristic : Characteristic.On};
 
     homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStatelessSwitch', SynTexWebHookStatelessSwitchAccessory);
@@ -260,137 +260,140 @@ function SynTexBaseAccessory(accessoryConfig)
             }
         }
 
-        if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
+        if(presets[type] != undefined)
         {
-            var service = new presets[type].service(name);
-        }
-        else if(this.services[i] instanceof Object)
-        {
-            var service = new presets[type].service(name, i);
-        }
-        else
-        {
-            name +=  ' ' + letters[i];
-            var service = new presets[type].service(name, i);
-        }
-
-        service.mac = this.mac;
-        service.type = type;
-        service.name = name;
-        service.characteristic = presets[type].characteristic;
-        service.letters = presets[type].letter + (subtypes[type] || 0);
-
-        service.options = {};
-
-        if(type == 'switch' || type == 'relais' || type == 'lcd')
-        {
-            service.options.onURL = accessoryConfig['on_url'] || '';
-            service.options.onMethod = accessoryConfig['on_method'] || 'GET';
-            service.options.onBody = accessoryConfig['on_body'] || '';
-            service.options.onForm = accessoryConfig['on_form'] || '';
-            service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
-            service.options.offURL = accessoryConfig['off_url'] || '';
-            service.options.offMethod = accessoryConfig['off_method'] || 'GET';
-            service.options.offBody = accessoryConfig['off_body'] || '';
-            service.options.offForm = accessoryConfig['off_form'] || '';
-            service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
-        }
-        else if(type == 'rgb')
-        {
-            service.options.url = accessoryConfig['url'] || '';
-            service.options.spectrum = accessoryConfig['spectrum'] || 'RGB';
-        }
-
-        DeviceManager.getDevice(this.mac, service.letters).then(function(state) {
-
-            if(state == null)
+            if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
             {
-                logger.log('error', this.mac, this.name, '[' + this.name + '] wurde nicht in der Storage gefunden! ( ' + this.mac + ' )');
+                var service = new presets[type].service(name);
             }
-            else if((state = validateUpdate(this.mac, this.type, state)) != null)
+            else if(this.services[i] instanceof Object)
             {
-                logger.log('read', this.mac, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
+                var service = new presets[type].service(name, i);
             }
-            
-            if(this.type == 'rgb')
+            else
             {
-                var arr = [0, 100, 50];
+                name +=  ' ' + letters[i];
+                var service = new presets[type].service(name, i);
+            }
 
-                if(state != null)
+            service.mac = this.mac;
+            service.type = type;
+            service.name = name;
+            service.characteristic = presets[type].characteristic;
+            service.letters = presets[type].letter + (subtypes[type] || 0);
+
+            service.options = {};
+
+            if(type == 'switch' || type == 'relais' || type == 'lcd')
+            {
+                service.options.onURL = accessoryConfig['on_url'] || '';
+                service.options.onMethod = accessoryConfig['on_method'] || 'GET';
+                service.options.onBody = accessoryConfig['on_body'] || '';
+                service.options.onForm = accessoryConfig['on_form'] || '';
+                service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
+                service.options.offURL = accessoryConfig['off_url'] || '';
+                service.options.offMethod = accessoryConfig['off_method'] || 'GET';
+                service.options.offBody = accessoryConfig['off_body'] || '';
+                service.options.offForm = accessoryConfig['off_form'] || '';
+                service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
+            }
+            else if(type == 'rgb')
+            {
+                service.options.url = accessoryConfig['url'] || '';
+                service.options.spectrum = accessoryConfig['spectrum'] || 'RGB';
+            }
+
+            DeviceManager.getDevice(this.mac, service.letters).then(function(state) {
+
+                if(state == null)
                 {
-                    arr = state.split(':');
-                    arr.shift();
+                    logger.log('error', this.mac, this.name, '[' + this.name + '] wurde nicht in der Storage gefunden! ( ' + this.mac + ' )');
+                }
+                else if((state = validateUpdate(this.mac, this.type, state)) != null)
+                {
+                    logger.log('read', this.mac, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
+                }
+                
+                if(this.type == 'rgb')
+                {
+                    var arr = [0, 100, 50];
+
+                    if(state != null)
+                    {
+                        arr = state.split(':');
+                        arr.shift();
+                    }
+
+                    var value = service.options.spectrum == 'RGB' ? getHSL(state) : arr;
+
+                    this.power = state ? state.split(':')[0] == 'true' : 'false';
+                    this.hue = value[0];
+                    this.saturation = value[1];
+                    this.brightness = value[2];
+
+                    this.getCharacteristic(Characteristic.On).updateValue(this.power);
+                    this.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
+                    this.getCharacteristic(Characteristic.Saturation).updateValue(this.saturation);
+                    this.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+                }
+                else
+                {
+                    this.getCharacteristic(this.characteristic).updateValue(state);
+                }
+        
+            }.bind(service));
+
+            service.changeHandler = (function(state)
+            {
+                logger.log('update', this.mac, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.mac + ' )');
+
+                if(this.type == 'rgb')
+                {
+                    this.power = state.split(':')[0] == 'true';
+                    this.hue = getHSL(state)[0] || 0;
+                    this.saturation = getHSL(state)[1] || 100;
+                    this.brightness = getHSL(state)[2] || 50;
+
+                    this.getCharacteristic(Characteristic.On).updateValue(this.power);
+                    this.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
+                    this.getCharacteristic(Characteristic.Saturation).updateValue(this.saturation);
+                    this.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+                }
+                else
+                {
+                    this.getCharacteristic(this.characteristic).updateValue(state);
                 }
 
-                var value = service.options.spectrum == 'RGB' ? getHSL(state) : arr;
+                if(!restart)
+                {
+                    Automations.runAutomations(this.mac, this.letters, state);
+                }
 
-                this.power = state ? state.split(':')[0] == 'true' : 'false';
-                this.hue = value[0];
-                this.saturation = value[1];
-                this.brightness = value[2];
+            }.bind(service));
 
-                this.getCharacteristic(Characteristic.On).updateValue(this.power);
-                this.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
-                this.getCharacteristic(Characteristic.Saturation).updateValue(this.saturation);
-                this.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
-            }
-            else
+            service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
+
+            if(service.type == 'temperature')
             {
-                this.getCharacteristic(this.characteristic).updateValue(state);
+                service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
             }
-    
-        }.bind(service));
 
-        service.changeHandler = (function(state)
-        {
-            logger.log('update', this.mac, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.mac + ' )');
-
-            if(this.type == 'rgb')
+            if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
             {
-                this.power = state.split(':')[0] == 'true';
-                this.hue = getHSL(state)[0] || 0;
-                this.saturation = getHSL(state)[1] || 100;
-                this.brightness = getHSL(state)[2] || 50;
-
-                this.getCharacteristic(Characteristic.On).updateValue(this.power);
-                this.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
-                this.getCharacteristic(Characteristic.Saturation).updateValue(this.saturation);
-                this.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+                service.getCharacteristic(service.characteristic).on('set', this.setState.bind(service));
             }
-            else
+
+            if(service.type == 'rgb')
             {
-                this.getCharacteristic(this.characteristic).updateValue(state);
+                service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(service)).on('set', this.setHue.bind(service));
+                service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(service)).on('set', this.setSaturation.bind(service));
+                service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(service)).on('set', this.setBrightness.bind(service));
             }
 
-            if(!restart)
-            {
-                Automations.runAutomations(this.mac, this.letters, state);
-            }
+            subtypes[type] = (subtypes[type] || 0) + 1;
 
-        }.bind(service));
-
-        service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
-
-        if(service.type == 'temperature')
-        {
-            service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
+            this.service.push(service);
         }
-
-        if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
-        {
-            service.getCharacteristic(service.characteristic).on('set', this.setState.bind(service));
-        }
-
-        if(service.type == 'rgb')
-        {
-            service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(service)).on('set', this.setHue.bind(service));
-            service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(service)).on('set', this.setSaturation.bind(service));
-            service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(service)).on('set', this.setBrightness.bind(service));
-        }
-
-        subtypes[type] = (subtypes[type] || 0) + 1;
-
-        this.service.push(service);
     }
 }
 
