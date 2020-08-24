@@ -201,17 +201,12 @@ async function saveLog(level, mac, letters, time, message)
                     device[mac] = {};
                 }
 
-                if(!device[mac].letters || device[mac].letters == '')
+                if(!device[mac][letters])
                 {
-                    device[mac].letters = letters;
+                    device[mac][letters] = [];
                 }
 
-                if(!device[mac].logs)
-                {
-                    device[mac].logs = [];
-                }
-
-                device[mac].logs[device[mac].logs.length] = { t : time, l : level, m : message };
+                device[mac][letters][device[mac][letters].length] = { t : time, l : level, m : message };
 
                 logger.logs.add(device, function(err) {
 
@@ -232,7 +227,7 @@ async function saveLog(level, mac, letters, time, message)
             {
                 var entry = { id : prefix };
 
-                entry[mac] = { letters : letters, logs : [ { t : time, l : level, m : message } ] };
+                entry[mac][letters] = [ { t : time, l : level, m : message } ];
 
                 logger.logs.add(entry, (err) => {
 
