@@ -168,7 +168,7 @@ function executeResult(automation)
                                 }
                                 else
                                 {
-                                    logger.log('error', automation.result[i].mac, automation.result[i].name, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].mac + ' )');
+                                    logger.log('error', automation.result[i].mac, automation.result[i].letters, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].mac + ' )');
                                 }
 
                                 DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, validateUpdate(automation.result[i].mac, letterToType(automation.result[i].letters[0]), automation.result[i].value));
