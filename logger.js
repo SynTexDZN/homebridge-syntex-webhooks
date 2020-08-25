@@ -106,15 +106,25 @@ logger.load = function(pluginName, group)
                 {    
                     var logs = [];
 
-                    for(var i = 1; i < Object.keys(obj).length; i++)
+                    for(const i in obj)
                     {
-                        if(obj[Object.keys(obj)[i]].logs && (group == null || group == Object.keys(obj)[i]))
+                        console.log('I: ' + i);
+
+                        if(i != 'id' && (group == null || group == i))
                         {
-                            for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
+                            for(const k in obj[i])
                             {
-                                if(group == null || obj[Object.keys(obj)[i]].logs[j].l == 'Update' || obj[Object.keys(obj)[i]].logs[j].l == 'Success')
+                                console.log('K: ' + k);
+
+                                for(const j in obj[i][k])
                                 {
-                                    logs.push(obj[Object.keys(obj)[i]].logs[j]);
+                                    console.log('J: ' + j);
+
+                                    if(group == null || obj[i][k][j].l == 'Update' || obj[i][k][j].l == 'Success')
+                                    {
+                                        var l = obj[i][k][j];
+                                        logs.push({ t : l.t, l : l.l, m : l.m, s : k });
+                                    }
                                 }
                             }
                         }
