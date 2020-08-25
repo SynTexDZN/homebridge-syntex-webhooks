@@ -594,6 +594,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
     this.type = 'statelessswitch';
     this.services = 'statelessswitch';
     this.buttons = statelessSwitchConfig['buttons'] || 0;
+    this.letters = '60';
 
     for(var i = 0; i < this.buttons; i++)
     {
