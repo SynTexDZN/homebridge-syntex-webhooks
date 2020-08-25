@@ -27,7 +27,7 @@ module.exports = function(homebridge)
     presets.rgb = {letter : '3', service : Service.Lightbulb, characteristic : Characteristic.On};
     presets.switch = {letter : '4', service : Service.Switch, characteristic : Characteristic.On};
     presets.relais = {letter : '5', service : Service.Switch, characteristic : Characteristic.On};
-    //presets.statelessswitch = {letter : '6', service : Service.Switch, characteristic : Characteristic.On};
+    presets.statelessswitch = {letter : '6', service : Service.StatelessProgrammableSwitch, characteristic : Characteristic.On};
     //presets.lcd = {letter : '7', service : Service.Switch, characteristic : Characteristic.On};
 
     homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
