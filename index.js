@@ -616,7 +616,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         {
             if(i == event)
             {
-               logger.log('success', this.mac, this.letters, '[' + buttonName + ']: Event [' + i + '] wurde ausgeführt! ( ' + this.mac + ' )');
+               logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + i + '] wurde ausgeführt! ( ' + this.mac + ' )');
 
                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
             }
@@ -686,16 +686,16 @@ function setRGB(accessory)
         
                 if(!err && statusCode == 200)
                 {
-                    logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+                    logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
         
                     DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power + ':' + accessory.hue + ':' + accessory.saturation + ':' + accessory.brightness);
                 }
                 else
                 {
-                    logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
+                    logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
                 }
                 
-            }));
+            }.bind({ url : theRequest.url })));
         }
     }
     else if(accessory.options.spectrum == 'rgb')
@@ -756,16 +756,16 @@ function setRGB(accessory)
             
                     if(!err && statusCode == 200)
                     {
-                        logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+                        logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
             
                         DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.fetch);
                     }
                     else
                     {
-                        logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
+                        logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
                     }
                     
-                }));
+                }.bind({ url : theRequest.url })));
             }
         }
     }

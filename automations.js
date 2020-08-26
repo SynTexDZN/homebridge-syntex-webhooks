@@ -61,7 +61,7 @@ function runAutomations(mac, letters, value)
 
 async function checkTrigger(automation, mac, letters, value)
 {
-    var trigger = false;
+    var trigger = null;
 
     for(var i = 0; i < automation.trigger.length; i++)
     {
@@ -69,37 +69,37 @@ async function checkTrigger(automation, mac, letters, value)
         {
             if(automation.trigger[i].operation == '>' && parseFloat(value) > parseFloat(automation.trigger[i].value))
             {
-                trigger = true;
+                trigger = automation.trigger[i];
             }
 
             if(automation.trigger[i].operation == '<' && parseFloat(value) < parseFloat(automation.trigger[i].value))
             {
-                trigger = true;
+                trigger = automation.trigger[i];
             }
 
             if(automation.trigger[i].operation == '=' && value == automation.trigger[i].value)
             {
-                trigger = true;
+                trigger = automation.trigger[i];
             }
         }
     }
 
-    if(trigger)
+    if(trigger != null)
     {
         logger.debug('Trigger Ausgelöst');
 
         if(automation.condition && automation.condition.conditions && automation.condition.conditions.length > 0)
         {
-            checkCondition(automation);
+            checkCondition(automation, trigger);
         }
         else
         {
-            executeResult(automation);
+            executeResult(automation, trigger);
         }
     }
 }
 
-async function checkCondition(automation)
+async function checkCondition(automation, trigger)
 {
     var condition = 0;
 
@@ -127,11 +127,11 @@ async function checkCondition(automation)
     {
         logger.debug('Condition Erfüllt');
 
-        executeResult(automation);
+        executeResult(automation, trigger);
     }
 }
 
-function executeResult(automation)
+function executeResult(automation, trigger)
 {
     for(var i = 0; i < automation.result.length; i++)
     {
@@ -217,7 +217,7 @@ function executeResult(automation)
         }
     }
 
-    logger.log('success', automation.trigger[0].mac, automation.trigger[0].letters, '[' + automation.trigger[0].name + '] hat den Prozess [' + automation.name + '] ausgeführt!');
+    logger.log('success', trigger.mac, trigger.letters, '[' + trigger.name + '] hat den Prozess [' + automation.name + '] ausgeführt!');
 }
 
 function loadAutomations()
