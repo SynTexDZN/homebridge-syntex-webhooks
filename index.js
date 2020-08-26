@@ -27,7 +27,7 @@ module.exports = function(homebridge)
     presets.rgb = {letter : '3', service : Service.Lightbulb, characteristic : Characteristic.On};
     presets.switch = {letter : '4', service : Service.Switch, characteristic : Characteristic.On};
     presets.relais = {letter : '5', service : Service.Switch, characteristic : Characteristic.On};
-    presets.statelessswitch = {letter : '6', service : Service.StatelessProgrammableSwitch, characteristic : Characteristic.On};
+    presets.statelessswitch = {letter : '6', service : Service.StatelessProgrammableSwitch, characteristic : Characteristic.ProgrammableSwitchEvent};
     //presets.lcd = {letter : '7', service : Service.Switch, characteristic : Characteristic.On};
 
     homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
@@ -302,6 +302,10 @@ function SynTexBaseAccessory(accessoryConfig)
                 service.options.url = accessoryConfig['url'] || '';
                 service.options.spectrum = accessoryConfig['spectrum'] || 'RGB';
             }
+            else if(type == 'statelessswitch')
+            {
+                service.options.buttons = statelessSwitchConfig['buttons'] || 0;
+            }
 
             DeviceManager.getDevice(this.mac, service.letters).then(function(state) {
 
@@ -359,6 +363,20 @@ function SynTexBaseAccessory(accessoryConfig)
                     this.getCharacteristic(Characteristic.Saturation).updateValue(this.saturation);
                     this.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
                 }
+                /*
+                else if(this.type == 'statelessswitch')
+                {
+                    for(var i = 0; i < this.service.length; i++)
+                    {
+                        if(i == event)
+                        {
+                            logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + i + '] wurde ausgeführt! ( ' + this.mac + ' )');
+
+                            this.getCharacteristic(this.characteristic).updateValue(value);
+                        }
+                    }
+                }
+                */
                 else
                 {
                     this.getCharacteristic(this.characteristic).updateValue(state);
