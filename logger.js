@@ -238,23 +238,16 @@ function removeExpired(obj)
 {
     for(const i in obj)
     {
-        console.log(i, i != 'id');
-
         if(i != 'id')
         {
             for(const j in obj[i])
             {
-                console.log(j, obj[i][j].length);
-
                 for(var k = 1; k < obj[i][j].length + 1; k++)
                 {
                     var time = obj[i][j][obj[i][j].length - k].t;
 
-                    console.log(k, new Date() - new Date(time * 1000));
-
                     if(new Date() - new Date(time * 1000) > 86400000)
                     {
-                        console.log('REMOVE', JSON.stringify(obj[i][j].length - k));
                         obj[i][j].splice(obj[i][j].length - k, 1);
                     }
                 }
