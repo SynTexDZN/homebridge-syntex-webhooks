@@ -110,29 +110,9 @@ logger.load = function(pluginName, group)
                     {
                         if(i != 'id' && (group == null || group == i))
                         {
-                            for(const k in obj[i])
-                            {
-                                for(const j in obj[i][k])
-                                {
-                                    if(group == null || obj[i][k][j].l == 'Update' || obj[i][k][j].l == 'Success')
-                                    {
-                                        var l = obj[i][k][j];
-                                        logs.push({ t : l.t, l : l.l, m : l.m, s : k });
-                                    }
-                                }
-                            }
+                            logs.push(obj[i]);
                         }
                     }
-
-                    logs.sort(function(a, b) {
-
-                        var keyA = new Date(a.t), keyB = new Date(b.t);
-                        
-                        if (keyA < keyB) return 1;
-                        if (keyA > keyB) return -1;
-                        
-                        return 0;
-                    });
 
                     resolve(logs);
                 }
@@ -256,22 +236,31 @@ async function saveLog(level, mac, letters, time, message)
 
 function removeExpired(obj)
 {
-    for(var i = 1; i < Object.keys(obj).length; i++)
+    for(const i in obj)
     {
-        if(obj[Object.keys(obj)[i]].logs)
-        {
-            for(var j = 1; j < obj[Object.keys(obj)[i]].logs.length + 1; j++)
-            {
-                var time = obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j].t;
+        console.log(i, i != 'id');
 
-                if(new Date() - new Date(time * 1000) > 86400000)
+        if(i != 'id')
+        {
+            for(const j in obj[i])
+            {
+                console.log(j, obj[i][j].length);
+
+                for(var k = 1; k < obj[i][j].length + 1; k++)
                 {
-                    console.log('REMOVE', JSON.stringify(obj[Object.keys(obj)[i]].logs.length - j));
-                    obj[Object.keys(obj)[i]].logs.splice(obj[Object.keys(obj)[i]].logs.indexOf(obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j]), 1);
+                    var time = obj[i][j][obj[i][j].length - k].t;
+
+                    console.log(k, new Date() - new Date(time * 1000));
+
+                    if(new Date() - new Date(time * 1000) > 86400000)
+                    {
+                        console.log('REMOVE', JSON.stringify(obj[i][j].length - k));
+                        obj[i][j].splice(obj[i][j].length - k, 1);
+                    }
                 }
             }
         }
     }
-
+    
     return obj;
 }

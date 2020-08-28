@@ -241,7 +241,7 @@ function SynTexBaseAccessory(accessoryConfig)
     else if(this.services instanceof Object)
     {
         type = this.services.type;
-        name = this.name + ' ' + this.services.name;
+        name = this.services.name;
     }
 
     for(var i = 0; i < counter; i++)
@@ -251,7 +251,7 @@ function SynTexBaseAccessory(accessoryConfig)
             if(this.services[i] instanceof Object)
             {
                 type = this.services[i].type;
-                name = this.name + ' ' + this.services[i].name;
+                name = this.services[i].name;
             }
             else
             {
