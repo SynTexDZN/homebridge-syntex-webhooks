@@ -32,14 +32,14 @@ function runAutomations(mac, letters, value)
 
                     logger.debug(positiveFired + " - " + negativeFired);
 
-                    if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && positiveFired)
+                    if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && negativeFired)
                     {
                         eventLock.splice(index, 1);
 
                         logger.debug('Value Unterschritten ' + automations[i].id + ' - ' + automations[i].trigger[j].operation + ' - ' + automations[i].trigger[j].value);
                     }
 
-                    if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && negativeFired)
+                    if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && positiveFired)
                     {
                         eventLock.splice(index, 1);
 
