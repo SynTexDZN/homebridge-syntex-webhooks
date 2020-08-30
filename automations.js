@@ -16,6 +16,8 @@ function typeToLetter(type)
 
 function runAutomations(mac, letters, value)
 {
+    console.log(automations);
+
     for(var i = 0; i < automations.length; i++)
     {
         if(automations[i].active && !eventLock.includes(automations[i].id))
@@ -23,7 +25,7 @@ function runAutomations(mac, letters, value)
             checkTrigger(automations[i], mac, letters, value.toString());
         }
     }
-    
+
     for(var i = 0; i < automations.length; i++)
     {
         if(eventLock.includes(automations[i].id))
@@ -186,12 +188,12 @@ function executeResult(automation, trigger)
 
         eventLock.push(automation.id);
 
-        if(trigger.operation = '<')
+        if(trigger.operation == '<')
         {
             negativeFired = true;
             positiveFired = false;
         }
-        else if(trigger.operation = '>')
+        else if(trigger.operation == '>')
         {
             positiveFired = true;
             negativeFired = false;
