@@ -18,6 +18,14 @@ function runAutomations(mac, letters, value)
 {
     for(var i = 0; i < automations.length; i++)
     {
+        if(automations[i].active && !eventLock.includes(automations[i].id))
+        {
+            checkTrigger(automations[i], mac, letters, value.toString());
+        }
+    }
+    
+    for(var i = 0; i < automations.length; i++)
+    {
         if(eventLock.includes(automations[i].id))
         {
             for(var j = 0; j < automations[i].trigger.length; j++)
@@ -25,7 +33,7 @@ function runAutomations(mac, letters, value)
                 if(automations[i].trigger[j].mac == mac && automations[i].trigger[j].letters == letters)
                 {
                     var index = eventLock.indexOf(automations[i].id);
-
+                    console.log(automations[i].trigger);
                     logger.debug(positiveFired + ' - ' + negativeFired + ' - ' + automations[i].trigger[j].operation + ' - ' + automations[i].trigger[j].value);
 
                     if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && negativeFired)
@@ -50,11 +58,6 @@ function runAutomations(mac, letters, value)
                     }
                 }
             }
-        }
-        
-        if(automations[i].active && !eventLock.includes(automations[i].id))
-        {
-            checkTrigger(automations[i], mac, letters, value.toString());
         }
     }
 }
