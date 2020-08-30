@@ -181,15 +181,15 @@ function executeResult(automation, trigger)
 
         eventLock.push(automation.id);
 
-        if(automation.trigger[0].operation = '<')
+        if(trigger.operation = '<')
         {
-            negativeFired = false;
-            positiveFired = true;
-        }
-        else if(automation.trigger[0].operation = '>')
-        {
-            positiveFired = false;
             negativeFired = true;
+            positiveFired = false;
+        }
+        else if(trigger.operation = '>')
+        {
+            positiveFired = true;
+            negativeFired = false;
         }
 
         if(url != '')
