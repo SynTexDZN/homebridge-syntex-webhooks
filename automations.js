@@ -31,14 +31,14 @@ function runAutomations(mac, letters, value)
                 {
                     var index = eventLock.indexOf(automations[i].id);
 
-                    if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && positiveFired)
+                    if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && negativeFired)
                     {
                         eventLock.splice(index, 1);
 
                         logger.debug('Value Unterschritten ' + automations[i].id);
                     }
 
-                    if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && negativeFired)
+                    if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && positiveFired)
                     {
                         eventLock.splice(index, 1);
 
@@ -183,13 +183,13 @@ function executeResult(automation, trigger)
 
         if(automation.trigger[0].operation = '<')
         {
-            negativeFired = true;
-            positiveFired = false;
+            negativeFired = false;
+            positiveFired = true;
         }
         else if(automation.trigger[0].operation = '>')
         {
-            positiveFired = true;
-            negativeFired = false;
+            positiveFired = false;
+            negativeFired = true;
         }
 
         if(url != '')
