@@ -18,11 +18,7 @@ function runAutomations(mac, letters, value)
 {
     for(var i = 0; i < automations.length; i++)
     {
-        if(automations[i].active && !eventLock.includes(automations[i].id))
-        {
-            checkTrigger(automations[i], mac, letters, value.toString());
-        }
-        else if(eventLock.includes(automations[i].id))
+        if(eventLock.includes(automations[i].id))
         {
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
@@ -30,20 +26,20 @@ function runAutomations(mac, letters, value)
                 {
                     var index = eventLock.indexOf(automations[i].id);
 
-                    logger.debug(positiveFired + " - " + negativeFired);
+                    logger.debug(positiveFired + ' - ' + negativeFired + ' - ' + automations[i].trigger[j].operation + ' - ' + automations[i].trigger[j].value);
 
                     if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && negativeFired)
                     {
                         eventLock.splice(index, 1);
 
-                        logger.debug('Value Unterschritten ' + automations[i].id + ' - ' + automations[i].trigger[j].operation + ' - ' + automations[i].trigger[j].value);
+                        logger.debug('Value Unterschritten ' + automations[i].id);
                     }
 
                     if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && positiveFired)
                     {
                         eventLock.splice(index, 1);
 
-                        logger.debug('Value Überschritten ' + automations[i].id + ' - ' + automations[i].trigger[j].operation + ' - ' + automations[i].trigger[j].value);
+                        logger.debug('Value Überschritten ' + automations[i].id);
                     }
 
                     if(automations[i].trigger[j].operation == '=' && value != automations[i].trigger[j].value)
@@ -54,6 +50,11 @@ function runAutomations(mac, letters, value)
                     }
                 }
             }
+        }
+        
+        if(automations[i].active && !eventLock.includes(automations[i].id))
+        {
+            checkTrigger(automations[i], mac, letters, value.toString());
         }
     }
 }
