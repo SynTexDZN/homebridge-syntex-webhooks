@@ -14,7 +14,6 @@ function typeToLetter(type)
     return letters[types.indexOf(type)];
 }
 
-
 function runAutomations(mac, letters, value)
 {
     for(var i = 0; i < automations.length; i++)
@@ -35,14 +34,14 @@ function runAutomations(mac, letters, value)
                     {
                         eventLock.splice(index, 1);
 
-                        logger.debug('Value Unterschritten ' + automations[i].id);
+                        logger.debug('Value Unterschritten ' + automations[i].id + ' - ' + automations[i].trigger[j].operation);
                     }
 
                     if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && negativeFired)
                     {
                         eventLock.splice(index, 1);
 
-                        logger.debug('Value Überschritten ' + automations[i].id);
+                        logger.debug('Value Überschritten ' + automations[i].id + ' - ' + automations[i].trigger[j].operation);
                     }
 
                     if(automations[i].trigger[j].operation == '=' && value != automations[i].trigger[j].value)
