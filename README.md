@@ -26,7 +26,7 @@ It stores accessory data you can request to display the content on your website 
         "port": 1710,
         "cache_directory": "./SynTex/",
         "log_directory": "./SynTex/log",
-        "devices": [
+        "accessories": [
             {
                 "mac": "sensor1",
                 "name": "Contact",
