@@ -161,6 +161,21 @@ SynTexWebHookPlatform.prototype = {
                     response.write(restart.toString());
                     response.end();
                 }
+                else if(urlPath == '/reload-automation')
+                {
+                    if(await loadAutomations())
+                    {
+                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+                        response.write('Success');
+                    }
+                    else
+                    {
+                        logger.log('error', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+                        response.write('Error');
+                    }
+                    
+                    response.end();
+                }
                 else if(urlPath == '/update')
                 {
                     var version = urlParams.version ? urlParams.version : 'latest';
@@ -493,7 +508,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
                 
                 if(!err && statusCode == 200)
                 {
-                    logger.log('success', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+                    logger.log('success', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] '');
 
                     logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
 
@@ -503,7 +518,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
                 }
                 else
                 {
-                    logger.log('error', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err || ''));
+                    logger.log('error', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' ' + (err || ''));
 
                     callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
                 }
@@ -704,13 +719,13 @@ function setRGB(accessory)
         
                 if(!err && statusCode == 200)
                 {
-                    logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+                    logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] '');
         
                     DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power + ':' + accessory.hue + ':' + accessory.saturation + ':' + accessory.brightness);
                 }
                 else
                 {
-                    logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
+                    logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' ' + (err ? err : ''));
                 }
                 
             }.bind({ url : theRequest.url })));
@@ -774,13 +789,13 @@ function setRGB(accessory)
             
                     if(!err && statusCode == 200)
                     {
-                        logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+                        logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] '');
             
                         DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.fetch);
                     }
                     else
                     {
-                        logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
+                        logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' ' + (err ? err : ''));
                     }
                     
                 }.bind({ url : theRequest.url })));

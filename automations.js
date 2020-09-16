@@ -209,11 +209,11 @@ function executeResult(automation, trigger)
 
                 if(!err && statusCode == 200)
                 {
-                    //logger.log('success', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + ']');
+                    //logger.log('success', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] '');
                 }
                 else
                 {
-                    logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + body + '] ' + (err ? err : ''));
+                    logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' ' + (err ? err : ''));
                 }
                 
             }.bind({ url : theRequest.url, name : automation.name })));
@@ -272,7 +272,8 @@ function SETUP(log, storagePath, Manager)
 module.exports = {
     SETUP,
     setAccessories,
-    runAutomations
+    runAutomations,
+    loadAutomations
 };
 
 function validateUpdate(mac, type, state)
