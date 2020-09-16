@@ -213,7 +213,7 @@ function executeResult(automation, trigger)
                 }
                 else
                 {
-                    logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' ' + (err ? err : ''));
+                    logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
                 }
                 
             }.bind({ url : theRequest.url, name : automation.name })));
