@@ -163,7 +163,7 @@ SynTexWebHookPlatform.prototype = {
                 }
                 else if(urlPath == '/reload-automation')
                 {
-                    if(await loadAutomations())
+                    if(await Automations.loadAutomations())
                     {
                         logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
                         response.write('Success');
