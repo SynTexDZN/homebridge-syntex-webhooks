@@ -207,11 +207,7 @@ function executeResult(automation, trigger)
             {
                 var statusCode = response && response.statusCode ? response.statusCode : -1;
 
-                if(!err && statusCode == 200)
-                {
-                    //logger.log('success', this.mac, this.name, '[' + this.name + '] hat die Anfrage zu [URL] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] '');
-                }
-                else
+                if(err || statusCode != 200)
                 {
                     logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
                 }
