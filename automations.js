@@ -91,7 +91,7 @@ async function checkTrigger(automation, mac, letters, value)
     {
         logger.debug('Trigger Ausgelöst');
 
-        if(automation.condition && automation.condition.conditions && automation.condition.conditions.length > 0)
+        if(automation.condition && automation.condition.length > 0)
         {
             checkCondition(automation, trigger);
         }
@@ -106,27 +106,27 @@ async function checkCondition(automation, trigger)
 {
     var condition = 0;
 
-    for(var i = 0; i < automation.condition.conditions.length; i++)
+    for(var i = 0; i < automation.condition.length; i++)
     {
-        var value = (await DeviceManager.getDevice(automation.condition.conditions[i].mac, automation.condition.conditions[i].letters)).toString();
+        var value = (await DeviceManager.getDevice(automation.condition[i].mac, automation.condition[i].letters)).toString();
 
-        if(automation.condition.conditions[i].operation == '>' && parseFloat(value) > parseFloat(automation.condition.conditions[i].value))
+        if(automation.condition[i].operation == '>' && parseFloat(value) > parseFloat(automation.condition[i].value))
         {
             condition++;
         }
 
-        if(automation.condition.conditions[i].operation == '<' && parseFloat(value) < parseFloat(automation.condition.conditions[i].value))
+        if(automation.condition[i].operation == '<' && parseFloat(value) < parseFloat(automation.condition[i].value))
         {
             condition++;
         }
 
-        if(automation.condition.conditions[i].operation == '=' && value == automation.condition.conditions[i].value)
+        if(automation.condition[i].operation == '=' && value == automation.condition[i].value)
         {
             condition++;
         }
     }
 
-    if(condition > 0 && (automation.condition.combination == 'ONE' || (automation.condition.combination == 'ALL' && condition >= automation.condition.conditions.length)))
+    if(condition > 0 && ((!automation.combination || automation.combination == 'ALL') && condition >= automation.condition.length) || automation.condition.combination == 'ONE')
     {
         logger.debug('Condition Erfüllt');
 
