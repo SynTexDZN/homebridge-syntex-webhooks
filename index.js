@@ -293,6 +293,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
             if(type == 'statelessswitch')
             {
+                service = null;
                 service = new Service.StatelessProgrammableSwitch(this.mac + (subtypes[type] || 0), '' + (subtypes[type] || 0));
             }
 
@@ -437,6 +438,8 @@ function SynTexBaseAccessory(accessoryConfig)
 
                 service.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(props);
                 service.getCharacteristic(Characteristic.ServiceLabelIndex).setValue((subtypes[type] || 0) + 1);
+
+                console.log(service);
             }
 
             subtypes[type] = (subtypes[type] || 0) + 1;
