@@ -291,6 +291,11 @@ function SynTexBaseAccessory(accessoryConfig)
                 var service = new presets[type].service(name, i);
             }
 
+            if(type == 'statelessswitch')
+            {
+                service = new Service.StatelessProgrammableSwitch(this.mac + (subtypes[type] || 0), '' + (subtypes[type] || 0));
+            }
+
             service.mac = this.mac;
             service.type = type;
             service.name = name;
@@ -421,6 +426,17 @@ function SynTexBaseAccessory(accessoryConfig)
                 service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(service)).on('set', this.setHue.bind(service));
                 service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(service)).on('set', this.setSaturation.bind(service));
                 service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(service)).on('set', this.setBrightness.bind(service));
+            }
+
+            if(service.type == 'statelessswitch')
+            {
+                var props = {
+                    minValue : Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS,
+                    maxValue : Characteristic.ProgrammableSwitchEvent.DOUBLE_PRESS
+                };
+
+                service.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(props);
+                service.getCharacteristic(Characteristic.ServiceLabelIndex).setValue((subtypes[type] || 0) + 1);
             }
 
             subtypes[type] = (subtypes[type] || 0) + 1;
