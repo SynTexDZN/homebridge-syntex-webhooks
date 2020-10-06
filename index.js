@@ -294,7 +294,7 @@ function SynTexBaseAccessory(accessoryConfig)
             if(type == 'statelessswitch')
             {
                 service = null;
-                service = new Service.StatelessProgrammableSwitch(this.mac + (subtypes[type] || 0), '' + (subtypes[type] || 0));
+                service = new Service.StatelessProgrammableSwitch(name + (subtypes[type] || 0), '' + (subtypes[type] || 0));
             }
 
             service.mac = this.mac;
