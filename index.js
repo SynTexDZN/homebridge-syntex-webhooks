@@ -319,7 +319,7 @@ function SynTexBaseAccessory(accessoryConfig)
             }
             else if(type == 'statelessswitch')
             {
-                service.options.buttons = statelessSwitchConfig['buttons'] || 0;
+                service.options.buttons = accessoryConfig['buttons'] || 0;
             }
 
             DeviceManager.getDevice(this.mac, service.letters).then(function(state) {
