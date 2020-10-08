@@ -262,7 +262,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
     for(var i = 0; i < counter; i++)
     {
-        var s = services;
+        var s = this.services;
 
         if(Array.isArray(this.services))
         {
