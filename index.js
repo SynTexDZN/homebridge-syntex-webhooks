@@ -557,19 +557,15 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 
                     }).bind(this));
                 }
-                else
-                {
-                    logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
-
-                    DeviceManager.setDevice(this.mac, this.letters, powerOn);
-
-                    callback(null);
-                }
             }
         }
 
         if(counter == 0)
         {
+            logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
+
+            DeviceManager.setDevice(this.mac, this.letters, powerOn);
+
             callback(null);
         }
         /*
