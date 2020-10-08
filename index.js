@@ -234,6 +234,7 @@ function SynTexBaseAccessory(accessoryConfig)
     this.version = accessoryConfig['version'] || '1.0.0';
     this.model = accessoryConfig['model'] || 'HTTP Accessory';
     this.manufacturer = accessoryConfig['manufacturer'] || 'SynTex';
+    this.requests = accessoryConfig['requests'] || [];
 
     var informationService = new Service.AccessoryInformation();
     
@@ -494,6 +495,73 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
     }
     else
     {
+        for(var i = 0; i < this.requests.length; i++)
+        {
+            if(this.requests[i].trigger
+            && (powerOn && this.requests[i].trigger.toLowerCase() == 'on'
+            || !powerOn && this.requests[i].trigger.toLowerCase() == 'off'))
+            {
+                var urlMethod = this.requests[i].method || '';
+                var urlToCall = this.requests[i].url || '';
+                var urlBody = this.requests[i].body || '';
+                var urlForm = this.requests[i].form || '';
+                var urlHeaders = this.requests[i].body || '{}';
+
+                if(urlMethod != '' && urlToCall != '')
+                {
+                    var theRequest = {
+                        method : urlMethod,
+                        url : urlToCall,
+                        timeout : 5000,
+                        headers: JSON.parse(urlHeaders)
+                    };
+                    
+                    if(urlMethod === 'POST' || urlMethod === 'PUT')
+                    {
+                        if(urlForm)
+                        {
+                            theRequest.form = JSON.parse(urlForm);
+                        }
+                        else if(urlBody)
+                        {
+                            theRequest.body = urlBody;
+                        }
+                    }
+
+                    request(theRequest, (function(err, response, body)
+                    {
+                        var statusCode = response && response.statusCode ? response.statusCode : -1;
+                        
+                        if(!err && statusCode == 200)
+                        {
+                            logger.log('success', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
+
+                            logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
+
+                            DeviceManager.setDevice(this.mac, this.letters, powerOn);
+
+                            callback(null);
+                        }
+                        else
+                        {
+                            logger.log('error', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
+
+                            callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+                        }
+
+                    }).bind(this));
+                }
+                else
+                {
+                    logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
+
+                    DeviceManager.setDevice(this.mac, this.letters, powerOn);
+
+                    callback(null);
+                }
+            }
+        }
+        /*
         var urlToCall = powerOn ? this.options.onURL : this.options.offURL;
         var urlMethod = powerOn ? this.options.onMethod : this.options.offMethod;
         var urlBody = powerOn ? this.options.onBody : this.options.offBody;
@@ -552,6 +620,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 
             callback(null);
         }
+        */
     }
 };
 
