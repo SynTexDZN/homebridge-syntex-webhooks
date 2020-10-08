@@ -262,34 +262,22 @@ function SynTexBaseAccessory(accessoryConfig)
 
     for(var i = 0; i < counter; i++)
     {
-        if(counter > 1)
+        var s = services;
+
+        if(Array.isArray(this.services))
         {
-            if(Array.isArray(this.services))
-            {
-                if(this.services[i] instanceof Object)
-                {
-                    type = this.services[i].type;
-                    name = this.services[i].name;
-                }
-                else
-                {
-                    type = this.services[i];
-                    name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
-                }
-            }
-            else
-            {
-                if(this.services[i] instanceof Object)
-                {
-                    type = this.services.type;
-                    name = this.services.name;
-                }
-                else
-                {
-                    type = this.services;
-                    name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
-                }
-            }
+            s = services[i];
+        }
+
+        if(s instanceof Object)
+        {
+            type = s.type;
+            name = s.name;
+        }
+        else if(counter > 1)
+        {
+            type = s;
+            name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
         }
 
         if(presets[type] != undefined)
@@ -298,7 +286,7 @@ function SynTexBaseAccessory(accessoryConfig)
             {
                 var service = new presets[type].service(name);
             }
-            else if(this.services[i] instanceof Object)
+            else if(s instanceof Object)
             {
                 var service = new presets[type].service(name, i);
             }
@@ -322,9 +310,9 @@ function SynTexBaseAccessory(accessoryConfig)
 
             service.options = {};
 
-            if(this.services[i] instanceof Object)
+            if(s instanceof Object)
             {
-                service.options.requests = this.services[i].requests || [];
+                service.options.requests = s.requests || [];
             }
 
             if(type == 'rgb')
@@ -501,7 +489,7 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
         setRGB(this);
         callback(null);
     }
-    else
+    else if(this.options.requests)
     {
         var counter = 0, finished = 0;
 
