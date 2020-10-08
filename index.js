@@ -306,6 +306,8 @@ function SynTexBaseAccessory(accessoryConfig)
 
             service.options = {};
 
+            console.log(this.services);
+
             service.options.requests = this.services[i].requests || [];
 
             if(type == 'switch' || type == 'relais' || type == 'lcd')
