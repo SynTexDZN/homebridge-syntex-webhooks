@@ -264,7 +264,7 @@ function SynTexBaseAccessory(accessoryConfig)
     {
         var s = this.services;
 
-        if(Array.isArray(this.services))
+        if(Array.isArray(s))
         {
             s = this.services[i];
         }
@@ -274,6 +274,8 @@ function SynTexBaseAccessory(accessoryConfig)
             type = s.type;
         }
 
+        console.log(type);
+
         if(counter > 1)
         {
             name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
@@ -282,6 +284,8 @@ function SynTexBaseAccessory(accessoryConfig)
         {
             name = s.name || this.name;
         }
+
+        console.log(name);
 
         if(presets[type] != undefined)
         {
