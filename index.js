@@ -271,16 +271,16 @@ function SynTexBaseAccessory(accessoryConfig)
 
         if(s instanceof Object)
         {
-            if(counter > 1)
-            {
-                type = s;
-                name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
-            }
-            else
-            {
-                type = s.type;
-                name = s.name || this.name;
-            }
+            type = s.type;
+        }
+
+        if(counter > 1)
+        {
+            name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
+        }
+        else
+        {
+            name = s.name || this.name;
         }
 
         if(presets[type] != undefined)
