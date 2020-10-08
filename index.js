@@ -284,9 +284,13 @@ function SynTexBaseAccessory(accessoryConfig)
         {
             name = s.name;
         }
-        else if(counter > 1)
+        else if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
         {
             name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
+        }
+        else if(counter > 1)
+        {
+            name += ' ' + letters[i];
         }
 
         console.log(name);
