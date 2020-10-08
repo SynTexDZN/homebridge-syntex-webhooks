@@ -304,6 +304,8 @@ function SynTexBaseAccessory(accessoryConfig)
             service.characteristic = presets[type].characteristic;
             service.letters = presets[type].letter + (subtypes[type] || 0);
 
+            service.requests = accessoryConfig['requests'] || [];
+
             service.options = {};
 
             if(type == 'switch' || type == 'relais' || type == 'lcd')
