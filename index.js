@@ -272,12 +272,12 @@ function SynTexBaseAccessory(accessoryConfig)
         if(s instanceof Object)
         {
             type = s.type;
-            name = s.name;
+            name = s.name || name;
         }
         else if(counter > 1)
         {
             type = s;
-            name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
+            name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
         }
 
         if(presets[type] != undefined)
