@@ -304,9 +304,9 @@ function SynTexBaseAccessory(accessoryConfig)
             service.characteristic = presets[type].characteristic;
             service.letters = presets[type].letter + (subtypes[type] || 0);
 
-            service.requests = accessoryConfig['requests'] || [];
-
             service.options = {};
+
+            service.options.requests = this.services[i].requests || [];
 
             if(type == 'switch' || type == 'relais' || type == 'lcd')
             {
@@ -499,17 +499,17 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
     {
         var counter = 0;
 
-        for(var i = 0; i < this.requests.length; i++)
+        for(var i = 0; i < this.options.requests.length; i++)
         {
-            if(this.requests[i].trigger
-            && (powerOn && this.requests[i].trigger.toLowerCase() == 'on'
-            || !powerOn && this.requests[i].trigger.toLowerCase() == 'off'))
+            if(this.options.requests[i].trigger
+            && (powerOn && this.options.requests[i].trigger.toLowerCase() == 'on'
+            || !powerOn && this.options.requests[i].trigger.toLowerCase() == 'off'))
             {
-                var urlMethod = this.requests[i].method || '';
-                var urlToCall = this.requests[i].url || '';
-                var urlBody = this.requests[i].body || '';
-                var urlForm = this.requests[i].form || '';
-                var urlHeaders = this.requests[i].body || '{}';
+                var urlMethod = this.options.requests[i].method || '';
+                var urlToCall = this.options.requests[i].url || '';
+                var urlBody = this.options.requests[i].body || '';
+                var urlForm = this.options.requests[i].form || '';
+                var urlHeaders = this.options.requests[i].body || '{}';
 
                 counter++;
 
