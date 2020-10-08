@@ -280,13 +280,13 @@ function SynTexBaseAccessory(accessoryConfig)
 
         console.log(type);
 
-        if(counter > 1)
+        if(s.name)
+        {
+            name = s.name;
+        }
+        else if(counter > 1)
         {
             name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
-        }
-        else
-        {
-            name = s.name || this.name;
         }
 
         console.log(name);
