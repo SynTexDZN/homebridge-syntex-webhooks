@@ -5,6 +5,7 @@ var url = require('url');
 var logger = require('./logger');
 var DeviceManager = require('./device-manager');
 var Automations = require('./automations');
+const { count } = require('console');
 var restart = true;
 
 var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -234,7 +235,6 @@ function SynTexBaseAccessory(accessoryConfig)
     this.version = accessoryConfig['version'] || '1.0.0';
     this.model = accessoryConfig['model'] || 'HTTP Accessory';
     this.manufacturer = accessoryConfig['manufacturer'] || 'SynTex';
-    this.requests = accessoryConfig['requests'] || [];
 
     var informationService = new Service.AccessoryInformation();
     
@@ -497,6 +497,8 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
     }
     else
     {
+        var counter = 0;
+
         for(var i = 0; i < this.requests.length; i++)
         {
             if(this.requests[i].trigger
@@ -508,6 +510,8 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
                 var urlBody = this.requests[i].body || '';
                 var urlForm = this.requests[i].form || '';
                 var urlHeaders = this.requests[i].body || '{}';
+
+                counter++;
 
                 if(urlMethod != '' && urlToCall != '')
                 {
@@ -562,6 +566,11 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
                     callback(null);
                 }
             }
+        }
+
+        if(counter == 0)
+        {
+            callback(null);
         }
         /*
         var urlToCall = powerOn ? this.options.onURL : this.options.offURL;
