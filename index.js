@@ -311,6 +311,7 @@ function SynTexBaseAccessory(accessoryConfig)
             if(this.services[i] instanceof Object)
             {
                 service.options.requests = this.services[i].requests || [];
+                console.log('REQUEST FOUND');
             }
 
             if(type == 'switch' || type == 'relais' || type == 'lcd')
@@ -503,6 +504,8 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
     else
     {
         var counter = 0;
+
+        console.log(this);
 
         for(var i = 0; i < this.options.requests.length; i++)
         {
