@@ -275,6 +275,10 @@ function SynTexBaseAccessory(accessoryConfig)
         {
             type = s.type;
         }
+        else
+        {
+            type = s;
+        }
 
         console.log(type);
 
