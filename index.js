@@ -269,6 +269,8 @@ function SynTexBaseAccessory(accessoryConfig)
             s = this.services[i];
         }
 
+        console.log(s);
+
         if(s instanceof Object)
         {
             type = s.type;
