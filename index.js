@@ -443,7 +443,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 service.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(props);
                 service.getCharacteristic(Characteristic.ServiceLabelIndex).setValue((subtypes[type] || 0) + 1);
 
-                console.log(service);
+                //console.log(service);
             }
 
             subtypes[type] = (subtypes[type] || 0) + 1;
