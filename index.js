@@ -272,7 +272,7 @@ function SynTexBaseAccessory(accessoryConfig)
         if(s instanceof Object)
         {
             type = s.type;
-            name = s.name || name;
+            name = s.name || this.name;
         }
         else if(counter > 1)
         {
