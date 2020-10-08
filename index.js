@@ -266,7 +266,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
         if(Array.isArray(this.services))
         {
-            s = services[i];
+            s = this.services[i];
         }
 
         if(s instanceof Object)
