@@ -306,28 +306,12 @@ function SynTexBaseAccessory(accessoryConfig)
 
             service.options = {};
 
-            console.log(this.services[i], i);
-
             if(this.services[i] instanceof Object)
             {
                 service.options.requests = this.services[i].requests || [];
-                console.log('OBJECT FOUND', service.options.requests);
             }
 
-            if(type == 'switch' || type == 'relais' || type == 'lcd')
-            {
-                service.options.onURL = accessoryConfig['on_url'] || '';
-                service.options.onMethod = accessoryConfig['on_method'] || 'GET';
-                service.options.onBody = accessoryConfig['on_body'] || '';
-                service.options.onForm = accessoryConfig['on_form'] || '';
-                service.options.onHeaders = accessoryConfig['on_headers'] || '{}';
-                service.options.offURL = accessoryConfig['off_url'] || '';
-                service.options.offMethod = accessoryConfig['off_method'] || 'GET';
-                service.options.offBody = accessoryConfig['off_body'] || '';
-                service.options.offForm = accessoryConfig['off_form'] || '';
-                service.options.offHeaders = accessoryConfig['off_headers'] || '{}'; 
-            }
-            else if(type == 'rgb')
+            if(type == 'rgb')
             {
                 service.options.url = accessoryConfig['url'] || '';
                 service.options.spectrum = accessoryConfig['spectrum'] || 'RGB';
