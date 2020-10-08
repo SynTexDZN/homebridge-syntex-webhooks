@@ -264,15 +264,31 @@ function SynTexBaseAccessory(accessoryConfig)
     {
         if(counter > 1)
         {
-            if(this.services[i] instanceof Object)
+            if(Array.isArray(this.services))
             {
-                type = this.services[i].type;
-                name = this.services[i].name;
+                if(this.services[i] instanceof Object)
+                {
+                    type = this.services[i].type;
+                    name = this.services[i].name;
+                }
+                else
+                {
+                    type = this.services[i];
+                    name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
+                }
             }
             else
             {
-                type = this.services[i];
-                name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
+                if(this.services[i] instanceof Object)
+                {
+                    type = this.services.type;
+                    name = this.services.name;
+                }
+                else
+                {
+                    type = this.services;
+                    name = this.name + ' ' + type[0].toUpperCase() + type.substring(1)
+                }
             }
         }
 
