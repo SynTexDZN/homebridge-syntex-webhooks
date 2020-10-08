@@ -487,9 +487,19 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
     }
     else
     {
-        var counter = 0;
+        var counter = 0, finished = 0;
 
         console.log(this.options);
+
+        for(var i = 0; i < this.options.requests.length; i++)
+        {
+            if(this.options.requests[i].trigger
+            && (powerOn && this.options.requests[i].trigger.toLowerCase() == 'on'
+            || !powerOn && this.options.requests[i].trigger.toLowerCase() == 'off'))
+            {
+                counter++;
+            }
+        }
 
         for(var i = 0; i < this.options.requests.length; i++)
         {
@@ -502,8 +512,6 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
                 var urlBody = this.options.requests[i].body || '';
                 var urlForm = this.options.requests[i].form || '';
                 var urlHeaders = this.options.requests[i].body || '{}';
-
-                counter++;
 
                 if(urlMethod != '' && urlToCall != '')
                 {
@@ -530,6 +538,8 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
                     {
                         var statusCode = response && response.statusCode ? response.statusCode : -1;
                         
+                        finished++;
+
                         if(!err && statusCode == 200)
                         {
                             logger.log('success', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
@@ -538,13 +548,19 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 
                             DeviceManager.setDevice(this.mac, this.letters, powerOn);
 
-                            callback(null);
+                            if(finished >= counter)
+                            {
+                                callback(null);
+                            }
                         }
                         else
                         {
                             logger.log('error', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
 
-                            callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+                            if(finished >= counter)
+                            {
+                                callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+                            }
                         }
 
                     }).bind(this));
