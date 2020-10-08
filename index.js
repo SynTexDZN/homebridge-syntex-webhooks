@@ -278,7 +278,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
         if(counter > 1)
         {
-            name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
+            //name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
         }
         else
         {
