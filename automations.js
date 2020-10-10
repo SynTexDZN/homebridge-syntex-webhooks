@@ -182,7 +182,10 @@ function executeResult(automation, trigger)
             }
         }
 
-        eventLock.push(automation.id);
+        if(!eventLock.includes(automation.id))
+        {
+            eventLock.push(automation.id);
+        }
 
         if(trigger.operation == '<')
         {
