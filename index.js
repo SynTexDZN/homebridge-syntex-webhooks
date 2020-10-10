@@ -747,9 +747,9 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
     this.buttons = statelessSwitchConfig['buttons'] || 0;
     this.letters = '60';
 
-    this.version = accessoryConfig['version'] || '1.0.0';
-    this.model = accessoryConfig['model'] || 'HTTP Accessory';
-    this.manufacturer = accessoryConfig['manufacturer'] || 'SynTex';
+    this.version = statelessSwitchConfig['version'] || '1.0.0';
+    this.model = statelessSwitchConfig['model'] || 'HTTP Accessory';
+    this.manufacturer = statelessSwitchConfig['manufacturer'] || 'SynTex';
 
     var informationService = new Service.AccessoryInformation();
     
