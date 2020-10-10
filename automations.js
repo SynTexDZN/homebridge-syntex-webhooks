@@ -48,6 +48,8 @@ function runAutomations(mac, letters, value)
                         logger.debug('Value Überschritten ' + automations[i].id);
                     }
 
+                    logger.debug(value + '!=' +  automations[i].trigger[j].value);
+
                     if(automations[i].trigger[j].operation == '=' && value != automations[i].trigger[j].value)
                     {
                         eventLock.splice(index, 1);
