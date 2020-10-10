@@ -244,7 +244,7 @@ function SynTexBaseAccessory(accessoryConfig)
         .setCharacteristic(Characteristic.FirmwareRevision, this.version)
         .setCharacteristic(Characteristic.SerialNumber, this.mac);
 
-        this.service.push(informationService);
+    this.service.push(informationService);
 
     var counter = 1, subtypes = {};
     var type = this.services;
@@ -746,6 +746,20 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
     this.services = 'statelessswitch';
     this.buttons = statelessSwitchConfig['buttons'] || 0;
     this.letters = '60';
+
+    this.version = accessoryConfig['version'] || '1.0.0';
+    this.model = accessoryConfig['model'] || 'HTTP Accessory';
+    this.manufacturer = accessoryConfig['manufacturer'] || 'SynTex';
+
+    var informationService = new Service.AccessoryInformation();
+    
+    informationService
+        .setCharacteristic(Characteristic.Manufacturer, this.manufacturer)
+        .setCharacteristic(Characteristic.Model, this.model)
+        .setCharacteristic(Characteristic.FirmwareRevision, this.version)
+        .setCharacteristic(Characteristic.SerialNumber, this.mac);
+
+    this.service.push(informationService);
 
     for(var i = 0; i < this.buttons; i++)
     {
