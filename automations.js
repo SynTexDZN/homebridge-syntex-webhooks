@@ -161,6 +161,8 @@ function executeResult(automation, trigger)
 
                         for(var k = 1; k <= count; k++)
                         {
+                            console.log(JSON.stringify(accessories[j]));
+
                             if(accessories[j].service[k].letters == automation.result[i].letters)
                             {
                                 var state = null;
