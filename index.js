@@ -482,9 +482,9 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 {
     this.power = powerOn;
 
-    fetchRequests(this).then(() => {
+    fetchRequests(this).then((result) => {
 
-        callback(null);
+        callback(result);
     });
 };
 
@@ -549,9 +549,9 @@ SynTexBaseAccessory.prototype.setHue = function(level, callback)
 {
     this.hue = level;
     
-    fetchRequests(this).then(() => {
+    fetchRequests(this).then((result) => {
 
-        callback(null);
+        callback(result);
     });
 };
 
@@ -559,9 +559,9 @@ SynTexBaseAccessory.prototype.setSaturation = function(level, callback)
 {
     this.saturation = level;
     
-    fetchRequests(this).then(() => {
+    fetchRequests(this).then((result) => {
 
-        callback(null);
+        callback(result);
     });
 };
 
@@ -569,9 +569,9 @@ SynTexBaseAccessory.prototype.setBrightness = function(level, callback)
 {
     this.brightness = level;
     
-    fetchRequests(this).then(() => {
+    fetchRequests(this).then((result) => {
 
-        callback(null);
+        callback(result);
     });
 };
 
@@ -825,119 +825,120 @@ function validateUpdate(mac, type, state)
 
 function fetchRequests(accessory)
 {
-    console.log(accessory.power);
+    return new Promise(resolve => {
 
-    if(accessory.options.requests)
-    {
-        var counter = 0, finished = 0;
-
-        for(var i = 0; i < accessory.options.requests.length; i++)
+        if(accessory.options.requests)
         {
-            if(accessory.options.requests[i].trigger && accessory.power != undefined
-            && (accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-            || !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
-            || accessory.options.requests[i].trigger.toLowerCase() == 'color'))
-            {
-                counter++;
-            }
-        }
+            var counter = 0, finished = 0;
 
-        for(var i = 0; i < accessory.options.requests.length; i++)
-        {
-            if(accessory.options.requests[i].trigger && accessory.power != undefined)
+            for(var i = 0; i < accessory.options.requests.length; i++)
             {
-                if(accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-                || !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+                if(accessory.options.requests[i].trigger && accessory.power != undefined
+                && (accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+                || !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
+                || accessory.options.requests[i].trigger.toLowerCase() == 'color'))
                 {
-                    var urlMethod = accessory.options.requests[i].method || '';
-                    var urlToCall = accessory.options.requests[i].url || '';
-                    var urlBody = accessory.options.requests[i].body || '';
-                    var urlForm = accessory.options.requests[i].form || '';
-                    var urlHeaders = accessory.options.requests[i].body || '{}';
+                    counter++;
+                }
+            }
 
-                    if(urlMethod != '' && urlToCall != '')
+            for(var i = 0; i < accessory.options.requests.length; i++)
+            {
+                if(accessory.options.requests[i].trigger && accessory.power != undefined)
+                {
+                    if(accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+                    || !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
                     {
-                        var theRequest = {
-                            method : urlMethod,
-                            url : urlToCall,
-                            timeout : 5000,
-                            headers: JSON.parse(urlHeaders)
-                        };
-                        
-                        if(urlMethod === 'POST' || urlMethod === 'PUT')
-                        {
-                            if(urlForm)
-                            {
-                                theRequest.form = JSON.parse(urlForm);
-                            }
-                            else if(urlBody)
-                            {
-                                theRequest.body = urlBody;
-                            }
-                        }
+                        var urlMethod = accessory.options.requests[i].method || '';
+                        var urlToCall = accessory.options.requests[i].url || '';
+                        var urlBody = accessory.options.requests[i].body || '';
+                        var urlForm = accessory.options.requests[i].form || '';
+                        var urlHeaders = accessory.options.requests[i].body || '{}';
 
-                        request(theRequest, (function(err, response, body)
+                        if(urlMethod != '' && urlToCall != '')
                         {
-                            var statusCode = response && response.statusCode ? response.statusCode : -1;
+                            var theRequest = {
+                                method : urlMethod,
+                                url : urlToCall,
+                                timeout : 5000,
+                                headers: JSON.parse(urlHeaders)
+                            };
+                            
+                            if(urlMethod === 'POST' || urlMethod === 'PUT')
+                            {
+                                if(urlForm)
+                                {
+                                    theRequest.form = JSON.parse(urlForm);
+                                }
+                                else if(urlBody)
+                                {
+                                    theRequest.body = urlBody;
+                                }
+                            }
+
+                            request(theRequest, (function(err, response, body)
+                            {
+                                var statusCode = response && response.statusCode ? response.statusCode : -1;
+                                
+                                finished++;
+
+                                if(!err && statusCode == 200)
+                                {
+                                    logger.log('success', accessory.mac, accessory.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
+
+                                    logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
+
+                                    DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
+
+                                    if(finished >= counter)
+                                    {
+                                        resolve(null);
+                                    }
+                                }
+                                else
+                                {
+                                    logger.log('error', accessory.mac, accessory.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
+
+                                    if(finished >= counter)
+                                    {
+                                        resolve(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+                                    }
+                                }
+
+                            }).bind(accessory));
+                        }
+                    }
+                    else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
+                    {
+                        setRGB(accessory).then(() => {
                             
                             finished++;
 
-                            if(!err && statusCode == 200)
+                            if(finished >= counter)
                             {
-                                logger.log('success', accessory.mac, accessory.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
-
-                                logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
-
-                                DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
-
-                                if(finished >= counter)
-                                {
-                                    callback(null);
-                                }
+                                resolve(null);
                             }
-                            else
-                            {
-                                logger.log('error', accessory.mac, accessory.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
-
-                                if(finished >= counter)
-                                {
-                                    callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
-                                }
-                            }
-
-                        }).bind(accessory));
+                        });
                     }
                 }
-                else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
-                {
-                    setRGB(accessory).then(() => {
-                        
-                        finished++;
+            }
 
-                        if(finished >= counter)
-                        {
-                            callback(null);
-                        }
-                    });
-                }
+            if(counter == 0)
+            {
+                logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
+
+                DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
+
+                resolve(null);
             }
         }
-
-        if(counter == 0)
+        else
         {
             logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
 
             DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
 
-            callback(null);
+            resolve(null);
         }
-    }
-    else
-    {
-        logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
-
-        DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
-
-        callback(null);
-    }
+    });
 }
