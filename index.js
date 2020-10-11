@@ -675,7 +675,7 @@ function getHSL(state)
 
 function setRGB(accessory)
 {
-    console.log(accessory.hue, accessory.options.spectrum);
+    console.log(accessory.hue, accessory.options.spectrum, accessory.requests);
 
     return new Promise(resolve => {
 
