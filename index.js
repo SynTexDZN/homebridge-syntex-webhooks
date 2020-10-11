@@ -826,7 +826,7 @@ function validateUpdate(mac, type, state)
 function fetchRequests(accessory)
 {
     console.log(accessory.powerOn);
-    
+
     if(accessory.options.requests)
     {
         var counter = 0, finished = 0;
@@ -835,8 +835,8 @@ function fetchRequests(accessory)
         {
             if(accessory.options.requests[i].trigger && accessory.powerOn != undefined
             && (accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-            || !accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'off')
-            || accessory.options.requests[i].trigger.toLowerCase() == 'color')
+            || !accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'off'
+            || accessory.options.requests[i].trigger.toLowerCase() == 'color'))
             {
                 counter++;
             }
