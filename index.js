@@ -831,9 +831,9 @@ function fetchRequests(accessory)
 
         for(var i = 0; i < accessory.options.requests.length; i++)
         {
-            if(accessory.options.requests[i].trigger && this.powerOn != undefined
-            && (this.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-            || !this.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+            if(accessory.options.requests[i].trigger && accessory.powerOn != undefined
+            && (accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+            || !accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'off')
             || accessory.options.requests[i].trigger.toLowerCase() == 'color')
             {
                 counter++;
@@ -842,10 +842,10 @@ function fetchRequests(accessory)
 
         for(var i = 0; i < accessory.options.requests.length; i++)
         {
-            if(accessory.options.requests[i].trigger && this.powerOn != undefined)
+            if(accessory.options.requests[i].trigger && accessory.powerOn != undefined)
             {
-                if(this.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-                || !this.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+                if(accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+                || !accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'off')
                 {
                     var urlMethod = accessory.options.requests[i].method || '';
                     var urlToCall = accessory.options.requests[i].url || '';
@@ -884,9 +884,9 @@ function fetchRequests(accessory)
                             {
                                 logger.log('success', accessory.mac, accessory.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
 
-                                logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + this.powerOn.toString() + '] ( ' + accessory.mac + ' )');
+                                logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.powerOn.toString() + '] ( ' + accessory.mac + ' )');
 
-                                DeviceManager.setDevice(accessory.mac, accessory.letters, this.powerOn);
+                                DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.powerOn);
 
                                 if(finished >= counter)
                                 {
@@ -923,18 +923,18 @@ function fetchRequests(accessory)
 
         if(counter == 0)
         {
-            logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + this.powerOn.toString() + '] ( ' + accessory.mac + ' )');
+            logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.powerOn.toString() + '] ( ' + accessory.mac + ' )');
 
-            DeviceManager.setDevice(accessory.mac, accessory.letters, this.powerOn);
+            DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.powerOn);
 
             callback(null);
         }
     }
     else
     {
-        logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + this.powerOn.toString() + '] ( ' + accessory.mac + ' )');
+        logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.powerOn.toString() + '] ( ' + accessory.mac + ' )');
 
-        DeviceManager.setDevice(accessory.mac, accessory.letters, this.powerOn);
+        DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.powerOn);
 
         callback(null);
     }
