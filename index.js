@@ -825,6 +825,8 @@ function validateUpdate(mac, type, state)
 
 function fetchRequests(accessory)
 {
+    console.log(accessory.powerOn);
+    
     if(accessory.options.requests)
     {
         var counter = 0, finished = 0;
