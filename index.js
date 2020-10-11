@@ -825,7 +825,7 @@ function validateUpdate(mac, type, state)
 
 function fetchRequests(accessory)
 {
-    console.log(accessory.powerOn);
+    console.log(accessory.power);
 
     if(accessory.options.requests)
     {
@@ -833,9 +833,9 @@ function fetchRequests(accessory)
 
         for(var i = 0; i < accessory.options.requests.length; i++)
         {
-            if(accessory.options.requests[i].trigger && accessory.powerOn != undefined
-            && (accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-            || !accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'off'
+            if(accessory.options.requests[i].trigger && accessory.power != undefined
+            && (accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+            || !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
             || accessory.options.requests[i].trigger.toLowerCase() == 'color'))
             {
                 counter++;
@@ -844,10 +844,10 @@ function fetchRequests(accessory)
 
         for(var i = 0; i < accessory.options.requests.length; i++)
         {
-            if(accessory.options.requests[i].trigger && accessory.powerOn != undefined)
+            if(accessory.options.requests[i].trigger && accessory.power != undefined)
             {
-                if(accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-                || !accessory.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+                if(accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+                || !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
                 {
                     var urlMethod = accessory.options.requests[i].method || '';
                     var urlToCall = accessory.options.requests[i].url || '';
@@ -886,9 +886,9 @@ function fetchRequests(accessory)
                             {
                                 logger.log('success', accessory.mac, accessory.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
 
-                                logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.powerOn.toString() + '] ( ' + accessory.mac + ' )');
+                                logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
 
-                                DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.powerOn);
+                                DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
 
                                 if(finished >= counter)
                                 {
@@ -925,18 +925,18 @@ function fetchRequests(accessory)
 
         if(counter == 0)
         {
-            logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.powerOn.toString() + '] ( ' + accessory.mac + ' )');
+            logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
 
-            DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.powerOn);
+            DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
 
             callback(null);
         }
     }
     else
     {
-        logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.powerOn.toString() + '] ( ' + accessory.mac + ' )');
+        logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
 
-        DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.powerOn);
+        DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
 
         callback(null);
     }
