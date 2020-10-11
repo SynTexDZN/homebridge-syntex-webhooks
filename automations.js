@@ -18,14 +18,6 @@ function runAutomations(mac, letters, value)
 {
     for(var i = 0; i < automations.length; i++)
     {
-        if(automations[i].active && !eventLock.includes(automations[i].id))
-        {
-            checkTrigger(automations[i], mac, letters, value.toString());
-        }
-    }
-
-    for(var i = 0; i < automations.length; i++)
-    {
         if(eventLock.includes(automations[i].id))
         {
             for(var j = 0; j < automations[i].trigger.length; j++)
@@ -58,6 +50,14 @@ function runAutomations(mac, letters, value)
                     }
                 }
             }
+        }
+    }
+
+    for(var i = 0; i < automations.length; i++)
+    {
+        if(automations[i].active && !eventLock.includes(automations[i].id))
+        {
+            checkTrigger(automations[i], mac, letters, value.toString());
         }
     }
 }
