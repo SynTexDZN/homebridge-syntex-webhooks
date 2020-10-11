@@ -673,7 +673,7 @@ function getHSL(state)
     return [h, s, l];
 }
 
-function setRGB(accessory)
+function setRGB(accessory, request)
 {
     console.log(accessory.hue, accessory.options.spectrum, accessory.requests);
 
@@ -684,11 +684,11 @@ function setRGB(accessory)
 
         if(accessory.options.spectrum == 'HSL')
         {
-            if(accessory.options.url != '')
+            if(request.url != '')
             {
                 var theRequest = {
                     method : 'GET',
-                    url : accessory.options.url + accessory.hue + ',' + accessory.saturation + ',' + (accessory.power ? accessory.brightness : 0),
+                    url : request.url + accessory.hue + ',' + accessory.saturation + ',' + (accessory.power ? accessory.brightness : 0),
                     timeout : 10000
                 };
             
@@ -756,11 +756,11 @@ function setRGB(accessory)
 
                 logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.fetch + '] ( ' + accessory.mac + ' )');
 
-                if(accessory.options.url != '')
+                if(request.url != '')
                 {
                     var theRequest = {
                         method : 'GET',
-                        url : accessory.options.url + r + ',' + g + ',' + b,
+                        url : request.url + r + ',' + g + ',' + b,
                         timeout : 10000
                     };
                 
@@ -912,7 +912,7 @@ function fetchRequests(accessory)
                     }
                     else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
                     {
-                        setRGB(accessory).then(() => {
+                        setRGB(accessory, accessory.options.requests[i]).then(() => {
                             
                             finished++;
 
