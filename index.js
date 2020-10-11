@@ -319,17 +319,21 @@ function SynTexBaseAccessory(accessoryConfig)
             service.characteristic = presets[type].characteristic;
             service.letters = presets[type].letter + (subtypes[type] || 0);
 
-            service.options = {};
+            service.options = {
+                requests : [],
+                spectrum : 'RGB'
+            };
 
             if(s instanceof Object)
             {
                 service.options.requests = s.requests || [];
+                service.options.spectrum = s.spectrum || 'RGB';
             }
 
             if(type == 'rgb')
             {
                 service.options.url = accessoryConfig['url'] || '';
-                service.options.spectrum = accessoryConfig['spectrum'] || 'RGB';
+                //service.options.spectrum = accessoryConfig['spectrum'] || 'RGB';
             }
             else if(type == 'statelessswitch')
             {
@@ -446,8 +450,6 @@ function SynTexBaseAccessory(accessoryConfig)
 
                 service.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps(props);
                 service.getCharacteristic(Characteristic.ServiceLabelIndex).setValue((subtypes[type] || 0) + 1);
-
-                //console.log(service);
             }
 
             subtypes[type] = (subtypes[type] || 0) + 1;
@@ -591,66 +593,6 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 
             callback(null);
         }
-        /*
-        var urlToCall = powerOn ? this.options.onURL : this.options.offURL;
-        var urlMethod = powerOn ? this.options.onMethod : this.options.offMethod;
-        var urlBody = powerOn ? this.options.onBody : this.options.offBody;
-        var urlForm = powerOn ? this.options.onForm : this.options.offForm;
-        var urlHeaders = powerOn ? this.options.onHeaders : this.options.offHeaders;
-
-        if(urlToCall != '')
-        {
-            var theRequest = {
-                method : urlMethod,
-                url : urlToCall,
-                timeout : 5000,
-                headers: JSON.parse(urlHeaders)
-            };
-            
-            if(urlMethod === 'POST' || urlMethod === 'PUT')
-            {
-                if(urlForm)
-                {
-                    theRequest.form = JSON.parse(urlForm);
-                }
-                else if(urlBody)
-                {
-                    theRequest.body = urlBody;
-                }
-            }
-
-            request(theRequest, (function(err, response, body)
-            {
-                var statusCode = response && response.statusCode ? response.statusCode : -1;
-                
-                if(!err && statusCode == 200)
-                {
-                    logger.log('success', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
-
-                    logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
-
-                    DeviceManager.setDevice(this.mac, this.letters, powerOn);
-
-                    callback(null);
-                }
-                else
-                {
-                    logger.log('error', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
-
-                    callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
-                }
-
-            }).bind(this));
-        }
-        else
-        {
-            logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
-
-            DeviceManager.setDevice(this.mac, this.letters, powerOn);
-
-            callback(null);
-        }
-        */
     }
     else
     {
