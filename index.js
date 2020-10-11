@@ -278,8 +278,6 @@ function SynTexBaseAccessory(accessoryConfig)
             type = s;
         }
 
-        console.log(type);
-
         if(s.name)
         {
             name = s.name;
@@ -288,8 +286,6 @@ function SynTexBaseAccessory(accessoryConfig)
         {
             name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
         }
-
-        console.log(name);
 
         if(presets[type] != undefined)
         {
@@ -330,12 +326,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 service.options.spectrum = s.spectrum || 'RGB';
             }
 
-            if(type == 'rgb')
-            {
-                service.options.url = accessoryConfig['url'] || '';
-                //service.options.spectrum = accessoryConfig['spectrum'] || 'RGB';
-            }
-            else if(type == 'statelessswitch')
+            if(type == 'statelessswitch')
             {
                 service.options.buttons = accessoryConfig['buttons'] || 0;
             }
@@ -489,119 +480,12 @@ SynTexBaseAccessory.prototype.getState = function(callback)
 
 SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
 {
-    if(this.type == 'rgb')
-    {
-        /*
-        var urlToCall = this.options.url;
-        var urlMethod = 'GET';
-        var urlBody = '';
-        var urlForm = '';
-        var urlHeaders = '{}';
-        */
-        this.power = powerOn;
-        setRGB(this);
-        callback(null);
-    }
-    else if(this.options.requests)
-    {
-        var counter = 0, finished = 0;
+    this.power = powerOn;
 
-        console.log(this.options);
-
-        for(var i = 0; i < this.options.requests.length; i++)
-        {
-            if(this.options.requests[i].trigger
-            && (powerOn && this.options.requests[i].trigger.toLowerCase() == 'on'
-            || !powerOn && this.options.requests[i].trigger.toLowerCase() == 'off'))
-            {
-                counter++;
-            }
-        }
-
-        for(var i = 0; i < this.options.requests.length; i++)
-        {
-            if(this.options.requests[i].trigger
-            && (powerOn && this.options.requests[i].trigger.toLowerCase() == 'on'
-            || !powerOn && this.options.requests[i].trigger.toLowerCase() == 'off'))
-            {
-                var urlMethod = this.options.requests[i].method || '';
-                var urlToCall = this.options.requests[i].url || '';
-                var urlBody = this.options.requests[i].body || '';
-                var urlForm = this.options.requests[i].form || '';
-                var urlHeaders = this.options.requests[i].body || '{}';
-
-                if(urlMethod != '' && urlToCall != '')
-                {
-                    var theRequest = {
-                        method : urlMethod,
-                        url : urlToCall,
-                        timeout : 5000,
-                        headers: JSON.parse(urlHeaders)
-                    };
-                    
-                    if(urlMethod === 'POST' || urlMethod === 'PUT')
-                    {
-                        if(urlForm)
-                        {
-                            theRequest.form = JSON.parse(urlForm);
-                        }
-                        else if(urlBody)
-                        {
-                            theRequest.body = urlBody;
-                        }
-                    }
-
-                    request(theRequest, (function(err, response, body)
-                    {
-                        var statusCode = response && response.statusCode ? response.statusCode : -1;
-                        
-                        finished++;
-
-                        if(!err && statusCode == 200)
-                        {
-                            logger.log('success', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
-
-                            logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
-
-                            DeviceManager.setDevice(this.mac, this.letters, powerOn);
-
-                            if(finished >= counter)
-                            {
-                                callback(null);
-                            }
-                        }
-                        else
-                        {
-                            logger.log('error', this.mac, this.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
-
-                            if(finished >= counter)
-                            {
-                                callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
-                            }
-                        }
-
-                    }).bind(this));
-                }
-            }
-        }
-
-        if(counter == 0)
-        {
-            logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
-
-            DeviceManager.setDevice(this.mac, this.letters, powerOn);
-
-            callback(null);
-        }
-    }
-    else
-    {
-        logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
-
-        DeviceManager.setDevice(this.mac, this.letters, powerOn);
+    fetchRequests(this).then(() => {
 
         callback(null);
-    }
+    });
 };
 
 SynTexBaseAccessory.prototype.getHue = function(callback)
@@ -664,22 +548,31 @@ SynTexBaseAccessory.prototype.getBrightness = function(callback)
 SynTexBaseAccessory.prototype.setHue = function(level, callback)
 {
     this.hue = level;
-    setRGB(this);
-    callback(null);
+    
+    fetchRequests(this).then(() => {
+
+        callback(null);
+    });
 };
 
 SynTexBaseAccessory.prototype.setSaturation = function(level, callback)
 {
     this.saturation = level;
-    setRGB(this);
-    callback(null);
+    
+    fetchRequests(this).then(() => {
+
+        callback(null);
+    });
 };
 
 SynTexBaseAccessory.prototype.setBrightness = function(level, callback)
 {
     this.brightness = level;
-    setRGB(this);
-    callback(null);
+    
+    fetchRequests(this).then(() => {
+
+        callback(null);
+    });
 };
 
 SynTexBaseAccessory.prototype.getServices = function()
@@ -782,86 +675,18 @@ function getHSL(state)
 
 function setRGB(accessory)
 {
-    var h = accessory.hue, s = accessory.saturation * 2, l = accessory.power ? accessory.brightness / 4 : 0;
-    var r = 0, g = 0, b = 0;
+    return new Promise(resolve => {
 
-    if(accessory.options.spectrum == 'HSL')
-    {
-        if(accessory.options.url != '')
-        {
-            var theRequest = {
-                method : 'GET',
-                url : accessory.options.url + accessory.hue + ',' + accessory.saturation + ',' + (accessory.power ? accessory.brightness : 0),
-                timeout : 10000
-            };
-        
-            request(theRequest, (function(err, response, body)
-            {
-                var statusCode = response && response.statusCode ? response.statusCode : -1;
-        
-                if(!err && statusCode == 200)
-                {
-                    logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
-        
-                    DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power + ':' + accessory.hue + ':' + accessory.saturation + ':' + accessory.brightness);
-                }
-                else
-                {
-                    logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
-                }
-                
-            }.bind({ url : theRequest.url })));
-        }
-    }
-    else if(accessory.options.spectrum == 'rgb')
-    {
-        s /= 100;
-        l /= 100;
+        var h = accessory.hue, s = accessory.saturation * 2, l = accessory.power ? accessory.brightness / 4 : 0;
+        var r = 0, g = 0, b = 0;
 
-        let c = (1 - Math.abs(2 * l - 1)) * s,
-            x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-            m = l - c/2;
-
-        if(0 <= h && h < 60)
+        if(accessory.options.spectrum == 'HSL')
         {
-            r = c; g = x; b = 0;
-        }
-        else if(60 <= h && h < 120)
-        {
-            r = x; g = c; b = 0;
-        }
-        else if(120 <= h && h < 180)
-        {
-            r = 0; g = c; b = x;
-        }
-        else if(180 <= h && h < 240)
-        {
-            r = 0; g = x; b = c;
-        }
-        else if(240 <= h && h < 300)
-        {
-            r = x; g = 0; b = c;
-        }
-        else if(300 <= h && h < 360)
-        {
-            r = c; g = 0; b = x;
-        }
-
-        r = Math.round((r + m) * 255);
-        g = Math.round((g + m) * 255);
-        b = Math.round((b + m) * 255);
-
-        if(accessory.fetch != accessory.power + ':' + r + ':' + g + ':' + b)
-        {
-            accessory.fetch = accessory.power + ':' + r + ':' + g + ':' + b;
-
-            logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.fetch + '] ( ' + accessory.mac + ' )');
-
             if(accessory.options.url != '')
             {
                 var theRequest = {
                     method : 'GET',
-                    url : accessory.options.url + r + ',' + g + ',' + b,
+                    url : accessory.options.url + accessory.hue + ',' + accessory.saturation + ',' + (accessory.power ? accessory.brightness : 0),
                     timeout : 10000
                 };
             
@@ -873,17 +698,92 @@ function setRGB(accessory)
                     {
                         logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
             
-                        DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.fetch);
+                        DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power + ':' + accessory.hue + ':' + accessory.saturation + ':' + accessory.brightness);
                     }
                     else
                     {
                         logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
                     }
+
+                    resolve();
                     
                 }.bind({ url : theRequest.url })));
             }
         }
-    }
+        else if(accessory.options.spectrum == 'rgb')
+        {
+            s /= 100;
+            l /= 100;
+
+            let c = (1 - Math.abs(2 * l - 1)) * s,
+                x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+                m = l - c/2;
+
+            if(0 <= h && h < 60)
+            {
+                r = c; g = x; b = 0;
+            }
+            else if(60 <= h && h < 120)
+            {
+                r = x; g = c; b = 0;
+            }
+            else if(120 <= h && h < 180)
+            {
+                r = 0; g = c; b = x;
+            }
+            else if(180 <= h && h < 240)
+            {
+                r = 0; g = x; b = c;
+            }
+            else if(240 <= h && h < 300)
+            {
+                r = x; g = 0; b = c;
+            }
+            else if(300 <= h && h < 360)
+            {
+                r = c; g = 0; b = x;
+            }
+
+            r = Math.round((r + m) * 255);
+            g = Math.round((g + m) * 255);
+            b = Math.round((b + m) * 255);
+
+            if(accessory.fetch != accessory.power + ':' + r + ':' + g + ':' + b)
+            {
+                accessory.fetch = accessory.power + ':' + r + ':' + g + ':' + b;
+
+                logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.fetch + '] ( ' + accessory.mac + ' )');
+
+                if(accessory.options.url != '')
+                {
+                    var theRequest = {
+                        method : 'GET',
+                        url : accessory.options.url + r + ',' + g + ',' + b,
+                        timeout : 10000
+                    };
+                
+                    request(theRequest, (function(err, response, body)
+                    {
+                        var statusCode = response && response.statusCode ? response.statusCode : -1;
+                
+                        if(!err && statusCode == 200)
+                        {
+                            logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
+                
+                            DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.fetch);
+                        }
+                        else
+                        {
+                            logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+                        }
+
+                        resolve();
+                        
+                    }.bind({ url : theRequest.url })));
+                }
+            }
+        }
+    });
 }
 
 function validateUpdate(mac, type, state)
@@ -920,5 +820,122 @@ function validateUpdate(mac, type, state)
     else
     {
         return state;
+    }
+}
+
+function fetchRequests(accessory)
+{
+    if(accessory.options.requests)
+    {
+        var counter = 0, finished = 0;
+
+        for(var i = 0; i < accessory.options.requests.length; i++)
+        {
+            if(accessory.options.requests[i].trigger && this.powerOn != undefined
+            && (this.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+            || !this.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+            || accessory.options.requests[i].trigger.toLowerCase() == 'color')
+            {
+                counter++;
+            }
+        }
+
+        for(var i = 0; i < accessory.options.requests.length; i++)
+        {
+            if(accessory.options.requests[i].trigger && this.powerOn != undefined)
+            {
+                if(this.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+                || !this.powerOn && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+                {
+                    var urlMethod = accessory.options.requests[i].method || '';
+                    var urlToCall = accessory.options.requests[i].url || '';
+                    var urlBody = accessory.options.requests[i].body || '';
+                    var urlForm = accessory.options.requests[i].form || '';
+                    var urlHeaders = accessory.options.requests[i].body || '{}';
+
+                    if(urlMethod != '' && urlToCall != '')
+                    {
+                        var theRequest = {
+                            method : urlMethod,
+                            url : urlToCall,
+                            timeout : 5000,
+                            headers: JSON.parse(urlHeaders)
+                        };
+                        
+                        if(urlMethod === 'POST' || urlMethod === 'PUT')
+                        {
+                            if(urlForm)
+                            {
+                                theRequest.form = JSON.parse(urlForm);
+                            }
+                            else if(urlBody)
+                            {
+                                theRequest.body = urlBody;
+                            }
+                        }
+
+                        request(theRequest, (function(err, response, body)
+                        {
+                            var statusCode = response && response.statusCode ? response.statusCode : -1;
+                            
+                            finished++;
+
+                            if(!err && statusCode == 200)
+                            {
+                                logger.log('success', accessory.mac, accessory.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
+
+                                logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + this.powerOn.toString() + '] ( ' + accessory.mac + ' )');
+
+                                DeviceManager.setDevice(accessory.mac, accessory.letters, this.powerOn);
+
+                                if(finished >= counter)
+                                {
+                                    callback(null);
+                                }
+                            }
+                            else
+                            {
+                                logger.log('error', accessory.mac, accessory.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
+
+                                if(finished >= counter)
+                                {
+                                    callback(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+                                }
+                            }
+
+                        }).bind(accessory));
+                    }
+                }
+                else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
+                {
+                    setRGB(accessory).then(() => {
+                        
+                        finished++;
+
+                        if(finished >= counter)
+                        {
+                            callback(null);
+                        }
+                    });
+                }
+            }
+        }
+
+        if(counter == 0)
+        {
+            logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + this.powerOn.toString() + '] ( ' + accessory.mac + ' )');
+
+            DeviceManager.setDevice(accessory.mac, accessory.letters, this.powerOn);
+
+            callback(null);
+        }
+    }
+    else
+    {
+        logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + this.powerOn.toString() + '] ( ' + accessory.mac + ' )');
+
+        DeviceManager.setDevice(accessory.mac, accessory.letters, this.powerOn);
+
+        callback(null);
     }
 }
