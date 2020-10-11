@@ -652,6 +652,14 @@ SynTexBaseAccessory.prototype.setState = function(powerOn, callback, context)
         }
         */
     }
+    else
+    {
+        logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + powerOn.toString() + '] ( ' + this.mac + ' )');
+
+        DeviceManager.setDevice(this.mac, this.letters, powerOn);
+
+        callback(null);
+    }
 };
 
 SynTexBaseAccessory.prototype.getHue = function(callback)
