@@ -35,17 +35,18 @@ module.exports = function(homebridge)
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStatelessSwitch', SynTexWebHookStatelessSwitchAccessory);
 };
 
-function SynTexWebHookPlatform(log, sconfig, api)
+function SynTexWebHookPlatform(log, config, api)
 {
-    this.devices = sconfig['accessories'] || [];
+    this.devices = config['accessories'] || [];
     
-    this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
-    this.logDirectory = sconfig['log_directory'] || './SynTex/log';
-    this.port = sconfig['port'] || 1710;
+    this.cacheDirectory = config['cache_directory'] || './SynTex';
+    this.logDirectory = config['log_directory'] || './SynTex/log';
+    this.port = config['port'] || 1710;
     
     logger.create('SynTexWebHooks', this.logDirectory, api.user.storagePath());
 
     DeviceManager.SETUP(logger, this.cacheDirectory);
+
     Automations.SETUP(logger, this.cacheDirectory, DeviceManager).then(function () {
 
         restart = false;
@@ -171,7 +172,7 @@ SynTexWebHookPlatform.prototype = {
                     }
                     else
                     {
-                        logger.log('error', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+                        logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
                         response.write('Error');
                     }
                     
@@ -253,11 +254,6 @@ function SynTexBaseAccessory(accessoryConfig)
     if(Array.isArray(this.services))
     {
         counter = this.services.length;
-    }
-    else if(this.services instanceof Object)
-    {
-        type = this.services.type;
-        name = this.services.name;
     }
 
     for(var i = 0; i < counter; i++)
@@ -492,14 +488,7 @@ SynTexBaseAccessory.prototype.getHue = function(callback)
 {
     DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
 
-        if(this.options.spectrum == 'HSL')
-        {
-            callback(null, (state == null) ? 0 : (state.split(':')[1] || 0));
-        }
-        else
-        {
-            callback(null, (state == null) ? 0 : (getHSL(state)[0] || 0));
-        }
+        callback(null, (state == null) ? 0 : this.options.spectrum == 'HSL' ? (state.split(':')[1] || 0) : (getHSL(state)[0] || 0));
 
     }.bind(this)).catch(function(e) {
 
@@ -511,14 +500,7 @@ SynTexBaseAccessory.prototype.getSaturation = function(callback)
 {
     DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
 
-        if(this.options.spectrum == 'HSL')
-        {
-            callback(null, (state == null) ? 100 : (state.split(':')[2] || 100));
-        }
-        else
-        {
-            callback(null, (state == null) ? 100 : (getHSL(state)[1] || 100));
-        }
+        callback(null, (state == null) ? 100 : this.options.spectrum == 'HSL' ? (state.split(':')[2] || 100) : (getHSL(state)[1] || 100));
 
     }.bind(this)).catch(function(e) {
 
@@ -530,14 +512,7 @@ SynTexBaseAccessory.prototype.getBrightness = function(callback)
 {
     DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
 
-        if(this.options.spectrum == 'HSL')
-        {
-            callback(null, (state == null) ? 50 : (state.split(':')[3] || 50));
-        }
-        else
-        {
-            callback(null, (state == null) ? 50 : (getHSL(state)[2] || 50));
-        }
+        callback(null, (state == null) ? 50 : this.options.spectrum == 'HSL' ? (state.split(':')[3] || 50) : (getHSL(state)[2] || 50));
 
     }.bind(this)).catch(function(e) {
 
@@ -624,7 +599,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
         {
             if(i - 1 == event)
             {
-               logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + i + '] wurde ausgeführt! ( ' + this.mac + ' )');
+               logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + (i + 1) + '] wurde ausgeführt! ( ' + this.mac + ' )');
 
                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
             }
@@ -698,13 +673,13 @@ function setRGB(accessory, req)
             
                     if(!err && statusCode == 200)
                     {
-                        logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
+                        logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
             
                         DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power + ':' + accessory.hue + ':' + accessory.saturation + ':' + accessory.brightness);
                     }
                     else
                     {
-                        logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+                        logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
                     }
 
                     resolve();
@@ -770,13 +745,13 @@ function setRGB(accessory, req)
                 
                         if(!err && statusCode == 200)
                         {
-                            logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
+                            logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
                 
                             DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.fetch);
                         }
                         else
                         {
-                            logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+                            logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
                         }
 
                         resolve();
@@ -886,7 +861,7 @@ function fetchRequests(accessory)
 
                                 if(!err && statusCode == 200)
                                 {
-                                    logger.log('success', accessory.mac, accessory.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
+                                    logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + urlToCall + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
 
                                     logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
 
@@ -899,7 +874,7 @@ function fetchRequests(accessory)
                                 }
                                 else
                                 {
-                                    logger.log('error', accessory.mac, accessory.letters, 'Anfrage zu [' + urlToCall + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
+                                    logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + urlToCall + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
 
                                     if(finished >= counter)
                                     {

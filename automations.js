@@ -40,8 +40,6 @@ function runAutomations(mac, letters, value)
                         logger.debug('Value Überschritten ' + automations[i].id);
                     }
 
-                    logger.debug(value + '!=' +  automations[i].trigger[j].value);
-
                     if(automations[i].trigger[j].operation == '=' && value != automations[i].trigger[j].value)
                     {
                         eventLock.splice(index, 1);
@@ -214,7 +212,7 @@ function executeResult(automation, trigger)
 
                 if(err || statusCode != 200)
                 {
-                    logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] hat die Anfrage zu [' + this.url + '] wurde mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+                    logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
                 }
                 
             }.bind({ url : theRequest.url, name : automation.name })));
@@ -263,7 +261,7 @@ function SETUP(log, storagePath, Manager)
         }
         else
         {
-            logger.log('error', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+            logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
         }
 
         resolve();
