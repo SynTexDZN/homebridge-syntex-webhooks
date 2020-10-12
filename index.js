@@ -620,9 +620,9 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
 
     this.changeHandler = (function(buttonName, event, value)
     {
-        for(var i = 0; i < this.service.length; i++)
+        for(var i = 1; i < this.service.length - 1; i++)
         {
-            if(i == event)
+            if(i - 1 == event)
             {
                logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + i + '] wurde ausgeführt! ( ' + this.mac + ' )');
 
