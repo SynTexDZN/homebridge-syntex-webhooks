@@ -113,14 +113,6 @@ SynTexWebHookPlatform.prototype = {
                                             accessory = accessories[i].service[j];
                                         }
                                     }
-                                    /*
-                                    console.log(accessories[i].service[j].type, accessories[i].service[j].letters, accessories[i].service[j].name, accessories[i].service[j].displayName, accessories[i].service[j].characteristics);
-                                    if((!urlParams.type || accessories[i].service[j].type == urlParams.type) && (!urlParams.counter || accessories[i].service[j].letters.slice(-1) == urlParams.counter))
-                                    //if((!urlParams.type || accessories[i].service[j].letters[0] == typeToLetter(urlParams.type)) && (!urlParams.counter || accessories[i].service[j].letters[1] == urlParams.counter))
-                                    {
-                                        accessory = accessories[i].service[j];
-                                    }
-                                    */
                                 }
                             }
                         }
@@ -142,7 +134,7 @@ SynTexWebHookPlatform.prototype = {
                     {
                         var state = null;
 
-                        if((state = validateUpdate(urlParams.mac, accessory.type, urlParams.value)) != null)
+                        if((state = validateUpdate(urlParams.mac, accessory.letters, urlParams.value)) != null)
                         {
                             accessory.changeHandler(state);
                         }
@@ -344,7 +336,7 @@ function SynTexBaseAccessory(accessoryConfig)
                 {
                     logger.log('error', this.mac, this.letters, '[' + this.name + '] wurde nicht in der Storage gefunden! ( ' + this.mac + ' )');
                 }
-                else if((state = validateUpdate(this.mac, this.type, state)) != null)
+                else if((state = validateUpdate(this.mac, this.letters, state)) != null)
                 {
                     logger.log('read', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
                 }
@@ -465,7 +457,7 @@ SynTexBaseAccessory.prototype.getState = function(callback)
         {
             logger.log('error', this.mac, this.letters, '[' + this.name + '] wurde nicht in der Storage gefunden! ( ' + this.mac + ' )');
         }
-        else if((state = validateUpdate(this.mac, this.type, state)) != null)
+        else if((state = validateUpdate(this.mac, this.letters, state)) != null)
         {
             logger.log('read', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
         }
@@ -571,8 +563,6 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
     this.service = [];
     this.mac = statelessSwitchConfig['mac'];
     this.name = statelessSwitchConfig['name'];
-    this.type = 'statelessswitch';
-    this.services = 'statelessswitch';
     this.buttons = statelessSwitchConfig['buttons'] || 0;
     this.letters = '60';
 
@@ -772,8 +762,10 @@ function setRGB(accessory, req)
     });
 }
 
-function validateUpdate(mac, type, state)
+function validateUpdate(mac, letters, state)
 {
+    var type = letterToType(letters[0]);
+
     if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
     {
         if(state != true && state != false && state != 'true' && state != 'false')
