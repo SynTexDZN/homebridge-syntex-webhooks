@@ -560,6 +560,7 @@ function SynTexWebHookStatelessSwitchAccessory(statelessSwitchConfig)
     this.name = statelessSwitchConfig['name'];
     this.buttons = statelessSwitchConfig['buttons'] || 0;
     this.letters = '60';
+    this.services = 'statelessswitch';
 
     this.version = statelessSwitchConfig['version'] || '1.0.0';
     this.model = statelessSwitchConfig['model'] || 'HTTP Accessory';
