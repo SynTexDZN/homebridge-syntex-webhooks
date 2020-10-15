@@ -104,14 +104,23 @@ SynTexWebHookPlatform.prototype = {
                             }
                             else
                             {
-                                for(var j = 1; j < accessories[i].service.length; j++)
+                                for(var j = 0; j < accessories[i].service.length; j++)
                                 {
+                                    if(accessories[i].service[j].mac && accessories[i].service[j].letters)
+                                    {
+                                        if((!urlParams.type || accessories[i].service[j].letters[0] == typeToLetter(urlParams.type)) && (!urlParams.counter || accessories[i].service[j].letters[1] == urlParams.counter))
+                                        {
+                                            accessory = accessories[i].service[j];
+                                        }
+                                    }
+                                    /*
                                     console.log(accessories[i].service[j].type, accessories[i].service[j].letters, accessories[i].service[j].name, accessories[i].service[j].displayName, accessories[i].service[j].characteristics);
                                     if((!urlParams.type || accessories[i].service[j].type == urlParams.type) && (!urlParams.counter || accessories[i].service[j].letters.slice(-1) == urlParams.counter))
                                     //if((!urlParams.type || accessories[i].service[j].letters[0] == typeToLetter(urlParams.type)) && (!urlParams.counter || accessories[i].service[j].letters[1] == urlParams.counter))
                                     {
                                         accessory = accessories[i].service[j];
                                     }
+                                    */
                                 }
                             }
                         }
