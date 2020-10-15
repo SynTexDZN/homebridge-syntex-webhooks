@@ -1,6 +1,6 @@
-var logger = exports, prefix;
+var logger = exports, prefix, conf;
 var store = require('json-fs-store');
-var conf;
+
 logger.logs;
 logger.debugLevel = 'success';
 

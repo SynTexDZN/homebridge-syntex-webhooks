@@ -1,11 +1,6 @@
 var Service, Characteristic;
-var request = require('request');
-var http = require('http');
-var url = require('url');
-var logger = require('./logger');
-var DeviceManager = require('./device-manager');
-var Automations = require('./automations');
-const { count } = require('console');
+var DeviceManager = require('./device-manager'), Automations = require('./automations');
+var request = require('request'), http = require('http'), url = require('url'), logger = require('./logger');
 var restart = true;
 
 var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];

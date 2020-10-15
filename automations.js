@@ -1,18 +1,6 @@
 var logger, storage, automations = [], accessories = [], DeviceManager;
 var request = require('request'), store = require('json-fs-store');
 var eventLock = [], positiveFired = false, negativeFired = false;
-var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
-var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
-
-function letterToType(letter)
-{
-    return types[letters.indexOf(letter)];
-}
-
-function typeToLetter(type)
-{
-    return letters[types.indexOf(type)];
-}
 
 function runAutomations(mac, letters, value)
 {
@@ -245,34 +233,6 @@ function setAccessories(devices)
     accessories = devices;
 }
 
-function SETUP(log, storagePath, Manager)
-{
-    return new Promise(async function(resolve)
-    {
-        logger = log;
-        storage = store(storagePath);
-        DeviceManager = Manager;
-
-        if(await loadAutomations())
-        {
-            logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
-        }
-        else
-        {
-            logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
-        }
-
-        resolve();
-    });
-}
-
-module.exports = {
-    SETUP,
-    setAccessories,
-    runAutomations,
-    loadAutomations
-};
-
 function validateUpdate(mac, type, state)
 {
     if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
@@ -309,3 +269,44 @@ function validateUpdate(mac, type, state)
         return state;
     }
 }
+
+var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
+var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
+
+function letterToType(letter)
+{
+    return types[letters.indexOf(letter.toUpperCase())];
+}
+
+function typeToLetter(type)
+{
+    return letters[types.indexOf(type.toLowerCase())];
+}
+
+function SETUP(log, storagePath, Manager)
+{
+    return new Promise(async function(resolve)
+    {
+        logger = log;
+        storage = store(storagePath);
+        DeviceManager = Manager;
+
+        if(await loadAutomations())
+        {
+            logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+        }
+        else
+        {
+            logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+        }
+
+        resolve();
+    });
+}
+
+module.exports = {
+    SETUP,
+    setAccessories,
+    runAutomations,
+    loadAutomations
+};
