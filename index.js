@@ -106,7 +106,7 @@ SynTexWebHookPlatform.prototype = {
                             {
                                 for(var j = 0; j < accessories[i].service.length; j++)
                                 {
-                                    //console.log(accessories[i].service[j]);
+                                    console.log(accessories[i].service[j].type, accessories[i].service[j].letters, accessories[i].service[j].name);
                                     if((!urlParams.type || accessories[i].service[j].type == urlParams.type) && (!urlParams.counter || accessories[i].service[j].letters.slice(-1) == urlParams.counter))
                                     //if((!urlParams.type || accessories[i].service[j].letters[0] == typeToLetter(urlParams.type)) && (!urlParams.counter || accessories[i].service[j].letters[1] == urlParams.counter))
                                     {
