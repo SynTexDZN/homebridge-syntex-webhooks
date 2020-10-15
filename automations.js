@@ -30,21 +30,21 @@ function runAutomations(mac, letters, value)
                     {
                         eventLock.splice(index, 1);
 
-                        logger.debug('Value Unterschritten ' + automations[i].id);
+                        logger.debug('Automation [' + automations[i].name + '] Unterschritten ' + automations[i].id);
                     }
 
                     if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && positiveFired)
                     {
                         eventLock.splice(index, 1);
 
-                        logger.debug('Value Überschritten ' + automations[i].id);
+                        logger.debug('Automation [' + automations[i].name + '] Überschritten ' + automations[i].id);
                     }
 
                     if(automations[i].trigger[j].operation == '=' && value != automations[i].trigger[j].value)
                     {
                         eventLock.splice(index, 1);
 
-                        logger.debug('Value Ungleich ' + automations[i].id);
+                        logger.debug('Automation [' + automations[i].name + '] Ungleich ' + automations[i].id);
                     }
                 }
             }
@@ -60,9 +60,7 @@ function runAutomations(mac, letters, value)
     }
 }
 
-// TODO: Multiple Triggers, Conditions, Results
-
-async function checkTrigger(automation, mac, letters, value)
+function checkTrigger(automation, mac, letters, value)
 {
     var trigger = null;
 

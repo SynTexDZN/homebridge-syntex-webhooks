@@ -106,7 +106,7 @@ SynTexWebHookPlatform.prototype = {
                             {
                                 for(var j = 0; j < accessories[i].service.length; j++)
                                 {
-                                    if((!urlParams.type || accessories[i].service[j].type == urlParams.type) && (!urlParams.counter || accessories[i].service[j].letters.slice(-1) == urlParams.counter))
+                                    if((!urlParams.type || accessories[i].service[j].letters[0] == typeToLetter(urlParams.type)) && (!urlParams.counter || accessories[i].service[j].letters[1] == urlParams.counter))
                                     {
                                         accessory = accessories[i].service[j];
                                     }
@@ -250,6 +250,7 @@ function SynTexBaseAccessory(accessoryConfig)
     var counter = 1, subtypes = {};
     var type = this.services;
     var name = this.name;
+    var s = this.services;
 
     if(Array.isArray(this.services))
     {
@@ -258,9 +259,7 @@ function SynTexBaseAccessory(accessoryConfig)
 
     for(var i = 0; i < counter; i++)
     {
-        var s = this.services;
-
-        if(Array.isArray(s))
+        if(Array.isArray(this.services))
         {
             s = this.services[i];
         }
@@ -916,4 +915,17 @@ function fetchRequests(accessory)
             resolve(null);
         }
     });
+}
+
+var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
+var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
+
+function letterToType(letter)
+{
+    return types[letters.indexOf(letter.toUpperCase())];
+}
+
+function typeToLetter(type)
+{
+    return letters[types.indexOf(type.toLowerCase())];
 }
