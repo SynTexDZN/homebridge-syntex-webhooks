@@ -151,7 +151,7 @@ function executeResult(automation, trigger)
                             {
                                 var state = null;
 
-                                if((state = validateUpdate(automation.result[i].mac, letterToType(automation.result[i].letters[0]), automation.result[i].value)) != null)
+                                if((state = validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value)) != null)
                                 {
                                     accessories[j].service[k].changeHandler(state);
                                 }
@@ -160,7 +160,7 @@ function executeResult(automation, trigger)
                                     logger.log('error', automation.result[i].mac, automation.result[i].letters, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].mac + ' )');
                                 }
 
-                                DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, validateUpdate(automation.result[i].mac, letterToType(automation.result[i].letters[0]), automation.result[i].value));
+                                DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value));
                             }
                         }
                     }
@@ -233,13 +233,15 @@ function setAccessories(devices)
     accessories = devices;
 }
 
-function validateUpdate(mac, type, state)
+function validateUpdate(mac, letters, state)
 {
+    var type = letterToType(letters[0]);
+
     if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
     {
         if(state != true && state != false && state != 'true' && state != 'false')
         {
-            logger.log('warn', mac, '', 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
+            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
 
             return null;
         }
@@ -250,7 +252,7 @@ function validateUpdate(mac, type, state)
     {
         if(isNaN(state))
         {
-            logger.log('warn', mac, '', 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
         }
 
         return !isNaN(state) ? parseFloat(state) : null;
@@ -259,7 +261,7 @@ function validateUpdate(mac, type, state)
     {
         if(isNaN(state))
         {
-            logger.log('warn', mac, '', 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
         }
 
         return !isNaN(state) ? parseInt(state) : null;

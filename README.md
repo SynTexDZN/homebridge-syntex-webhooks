@@ -63,26 +63,54 @@ It stores accessory data you can request to display the content on your website 
             {
                 "mac": "EC:FA:BC:59:3F:3C",
                 "name": "Switch",
-                "services": "switch",
-                "on_method": "GET",
-                "on_url": "http://192.168.178.100/switch?state=true",
-                "off_method": "GET",
-                "off_url": "http://192.168.178.100/switch?state=false"
+                "services": {
+                    "type" : "switch",
+                    requests": [
+                        {
+                            "trigger": "on",
+                            "method": "GET",
+                            "url": "http://192.168.178.100/switch?state=true"
+                        },
+                        {
+                            "trigger": "off",
+                            "method": "GET",
+                            "url": "http://192.168.178.100/switch?state=false"
+                        }
+                    ]
+                }
             },
             {
                 "mac": "EC:FA:BC:59:3F:3C",
                 "name": "Relais",
-                "services": "relais",
-                "on_method": "GET",
-                "on_url": "http://192.168.178.101/switch?state=true",
-                "off_method": "GET",
-                "off_url": "http://192.168.178.101/switch?state=false"
+                "services": {
+                    "type" : "relais",
+                    requests": [
+                        {
+                            "trigger": "on",
+                            "method": "GET",
+                            "url": "http://192.168.178.101/switch?state=true"
+                        },
+                        {
+                            "trigger": "off",
+                            "method": "GET",
+                            "url": "http://192.168.178.101/switch?state=false"
+                        }
+                    ]
+                }
             },
             {
                 "mac": "light1",
                 "name": "Dummy Light",
-                "services": "rgb",
-                "url": "http://192.168.178.163/color"
+                "services": {
+                    "type" : "rgb",
+                    requests": [
+                        {
+                            "trigger": "color",
+                            "method": "GET",
+                            "url": "http://192.168.178.163/color"
+                        }
+                    ]
+                }
             },
             {
                 "mac": "event1",

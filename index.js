@@ -38,9 +38,8 @@ function SynTexWebHookPlatform(log, config, api)
     this.logDirectory = config['log_directory'] || './SynTex/log';
     this.port = config['port'] || 1710;
     
-    logger.create('SynTexWebHooks', this.logDirectory, api.user.storagePath());
-
-    DeviceManager.SETUP(logger, this.cacheDirectory);
+    logger = new logger('SynTexWebHooks', this.logDirectory, api.user.storagePath());
+    DeviceManager = new DeviceManager(logger, this.cacheDirectory);
 
     Automations.SETUP(logger, this.cacheDirectory, DeviceManager).then(function () {
 
@@ -766,7 +765,7 @@ function validateUpdate(mac, letters, state)
     {
         if(state != true && state != false && state != 'true' && state != 'false')
         {
-            logger.log('warn', mac, '', 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
+            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
 
             return null;
         }
@@ -777,7 +776,7 @@ function validateUpdate(mac, letters, state)
     {
         if(isNaN(state))
         {
-            logger.log('warn', mac, '', 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
         }
 
         return !isNaN(state) ? parseFloat(state) : null;
@@ -786,7 +785,7 @@ function validateUpdate(mac, letters, state)
     {
         if(isNaN(state))
         {
-            logger.log('warn', mac, '', 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
         }
 
         return !isNaN(state) ? parseInt(state) : null;

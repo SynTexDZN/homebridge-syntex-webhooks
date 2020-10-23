@@ -1,106 +1,78 @@
-var logger = exports, prefix, conf;
-var store = require('json-fs-store');
+const store = require('json-fs-store');
+var prefix, logs = [], que = [], debugLevel = 'success', inWork = false;
 
-logger.logs;
-logger.debugLevel = 'success';
-
-logger.create = function(pluginName, logDirectory, config)
+module.exports = class Logger
 {
-    prefix = pluginName;
-    conf = store(config);
-    logger.logs = store(logDirectory);
-};
-
-logger.log = function(level, mac, letters, message)
-{
-    var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
-
-    if(levels.indexOf(level) >= levels.indexOf(logger.debugLevel))
+    constructor(pluginName, logDirectory, configDirectory)
     {
-        if(typeof message !== 'string')
-        {
-            message = JSON.stringify(message);
-        };
-
-        var color = '';
-
-        if(level == 'success')
-        {
-            color = '\x1b[92m';
-        }
-        else if(level == 'update')
-        {
-            color = '\x1b[96m';
-        }
-        else if(level == 'read')
-        {
-            color = '\x1b[36m';
-        }
-        else if(level == 'info')
-        {
-            color = '\x1b[93m';
-        }
-        else if(level == 'warn')
-        {
-            color = '\x1b[93m';
-        }
-        else if(level == 'debug')
-        {
-            color = '\x1b[35m';
-        }
-        else
-        {
-            color = '\x1b[31m';
-        }
-
-        console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
-
-        saveLog(level[0].toUpperCase() + level.substring(1), mac, letters, Math.round(new Date().getTime() / 1000), message);
+        prefix = pluginName;
+        logs = store(logDirectory);
     }
-}
 
-logger.err = function(error)
-{
-    var s = (error.stack.split('\n')[1].split('\n')[0].match(/\//g) || []).length;
-    logger.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + ' ( [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + '] bei Zeile [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + '] )');
-}
+    log(level, mac, letters, message)
+    {
+        var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
 
-logger.debug = function(message)
-{
-    logger.log('debug', 'bridge', 'Bridge', message);
-}
-
-logger.list = function()
-{
-    return new Promise(async function(resolve) {
-
-        var logPath = await getLogPath(prefix);
-
-        logger.debug(logPath);
-
-        store(logPath).list(function(err, objects)
+        if(levels.indexOf(level) >= levels.indexOf(debugLevel))
         {
-            if(!objects || err)
+            if(typeof message !== 'string')
             {
-                resolve([]);
+                message = JSON.stringify(message);
+            };
+
+            var color = '';
+
+            if(level == 'success')
+            {
+                color = '\x1b[92m';
+            }
+            else if(level == 'update')
+            {
+                color = '\x1b[96m';
+            }
+            else if(level == 'read')
+            {
+                color = '\x1b[36m';
+            }
+            else if(level == 'info')
+            {
+                color = '\x1b[93m';
+            }
+            else if(level == 'warn')
+            {
+                color = '\x1b[93m';
+            }
+            else if(level == 'debug')
+            {
+                color = '\x1b[35m';
             }
             else
             {
-                resolve(objects);
+                color = '\x1b[31m';
             }
-        });
-    });
-}
 
-logger.load = function(pluginName, group)
-{
-    return new Promise(async function(resolve) {
-        
-        var logPath = await getLogPath(pluginName);
+            console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
 
-        if(logPath != null)
-        {
-            store(logPath).load(pluginName, (err, obj) => {    
+            saveLog(level[0].toUpperCase() + level.substring(1), mac, letters, Math.round(new Date().getTime() / 1000), message);
+        }
+    }
+
+    err(error)
+    {
+        var s = (error.stack.split('\n')[1].split('\n')[0].match(/\//g) || []).length;
+        this.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + ' ( [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + '] bei Zeile [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + '] )');
+    }
+
+    debug(message)
+    {
+        this.log('debug', 'bridge', 'Bridge', message);
+    }
+
+    load(pluginName, group)
+    {
+        return new Promise(async function(resolve) {
+            
+            store(logs).load(pluginName, (err, obj) => {    
 
                 if(obj && !err)
                 {    
@@ -121,38 +93,27 @@ logger.load = function(pluginName, group)
                     resolve(null);
                 }
             });
-        }
-        else
-        {
-            resolve(null);
-        }
-    });
-}
-
-function getLogPath(pluginName)
-{
-    return new Promise(resolve => {
-        
-        conf.load('config', (err, obj) => {    
-
-            if(obj && !err)
-            {                            
-                for(const i in obj.platforms)
-                {
-                    if(obj.platforms[i].platform === pluginName)
-                    {
-                        resolve(obj.platforms[i].log_directory);
-                    }
-                }
-            }
-
-            resolve(null);
         });
-    });
-}
+    }
 
-var inWork = false;
-var que = [];
+    list()
+    {
+        return new Promise(async function(resolve) {
+
+            store(logs).list(function(err, objects)
+            {
+                if(!objects || err)
+                {
+                    resolve([]);
+                }
+                else
+                {
+                    resolve(objects);
+                }
+            });
+        });
+    }
+}
 
 async function saveLog(level, mac, letters, time, message)
 {
@@ -174,7 +135,7 @@ async function saveLog(level, mac, letters, time, message)
             que.shift();
         }
 
-        logger.logs.load(prefix, (err, device) => {    
+        logs.load(prefix, (err, device) => {    
 
             if(device && !err)
             {    
@@ -192,7 +153,7 @@ async function saveLog(level, mac, letters, time, message)
 
                 device[mac][letters][device[mac][letters].length] = { t : time, l : level, m : message };
 
-                logger.logs.add(device, function(err) {
+                logs.add(device, function(err) {
 
                     inWork = false;
 
@@ -215,7 +176,7 @@ async function saveLog(level, mac, letters, time, message)
 
                 entry[mac][letters] = [ { t : time, l : level, m : message } ];
 
-                logger.logs.add(entry, (err) => {
+                logs.add(entry, (err) => {
 
                     inWork = false;
 

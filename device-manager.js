@@ -1,61 +1,81 @@
 var logger, storage, accessories = [];
 var store = require('json-fs-store');
 
-function getDevice(mac, service)
+module.exports = class DeviceManager
 {
-    return new Promise(async function(resolve) {
+    constructor(log, storagePath)
+    {
+        logger = log;
+        storage = store(storagePath);
+    }
 
-        var found = false;
+    getDevice(mac, service)
+    {
+        return new Promise(async function(resolve) {
 
-        for(var i = 0; i < accessories.length; i++)
-        {
-            if(accessories[i].mac == mac && accessories[i].service == service)
+            var found = false;
+
+            for(var i = 0; i < accessories.length; i++)
             {
-                found = true;
+                if(accessories[i].mac == mac && accessories[i].service == service)
+                {
+                    found = true;
 
-                resolve(accessories[i].value);
+                    resolve(accessories[i].value);
+                }
             }
-        }
 
-        if(!found)
-        {
-            var accessory = {
-                mac : mac,
-                service : service,
-                value : await readFS(mac, service)
-            };
+            if(!found)
+            {
+                var accessory = {
+                    mac : mac,
+                    service : service,
+                    value : await readFS(mac, service)
+                };
 
-            accessories.push(accessory);
+                accessories.push(accessory);
 
-            resolve(accessory.value);
-        }
-    });
+                resolve(accessory.value);
+            }
+        });
+    }
+
+    setDevice(mac, service, value)
+    {
+        return new Promise(async function(resolve) {
+
+            var found = false;
+
+            for(var i = 0; i < accessories.length; i++)
+            {
+                if(accessories[i].mac == mac && accessories[i].service == service)
+                {
+                    accessories[i].value = value;
+
+                    found = true;
+                }
+            }
+
+            if(!found)
+            {
+                accessories.push({ mac : mac, service : service, value : value });
+            }
+
+            await writeFS(mac, service, value);
+
+            resolve();
+        });
+    }
 }
 
-function setDevice(mac, service, value)
+function readFS(mac, service)
 {
-    return new Promise(async function(resolve) {
+    return new Promise(resolve => {
 
-        var found = false;
+        storage.load(mac + ':' + service, (err, device) => {    
 
-        for(var i = 0; i < accessories.length; i++)
-        {
-            if(accessories[i].mac == mac && accessories[i].service == service)
-            {
-                accessories[i].value = value;
-
-                found = true;
-            }
-        }
-
-        if(!found)
-        {
-            accessories.push({ mac : mac, service : service, value : value });
-        }
-
-        await writeFS(mac, service, value);
-
-        resolve();
+            resolve(device && !err ? device.value : null);
+        });
     });
 }
 
@@ -79,26 +99,3 @@ function writeFS(mac, service, value)
         });
     });
 }
-
-function readFS(mac, service)
-{
-    return new Promise(resolve => {
-
-        storage.load(mac + ':' + service, (err, device) => {    
-
-            resolve(device && !err ? device.value : null);
-        });
-    });
-}
-
-function SETUP(log, storagePath)
-{
-    logger = log;
-    storage = store(storagePath);
-}
-
-module.exports = {
-    getDevice,
-    setDevice,
-    SETUP
-};
