@@ -251,16 +251,16 @@ function SynTexBaseAccessory(accessoryConfig)
         {
             if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
             {
-                var service = new TypeManager.getPreset(type).service(name);
+                var service = new (TypeManager.getPreset(type).service(name));
             }
             else if(s instanceof Object)
             {
-                var service = new TypeManager.getPreset(type).service(name, i);
+                var service = new (TypeManager.getPreset(type).service(name, i));
             }
             else
             {
                 name +=  ' ' + letters[i];
-                var service = new TypeManager.getPreset(type).service(name, i);
+                var service = new (TypeManager.getPreset(type).service(name, i));
             }
 
             if(type == 'statelessswitch')
