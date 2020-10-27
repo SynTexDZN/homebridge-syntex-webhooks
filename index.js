@@ -22,7 +22,7 @@ function SynTexWebHookPlatform(log, config, api)
     this.logDirectory = config['log_directory'] || './SynTex/log';
     this.port = config['port'] || 1710;
     
-    //TypeManager = new TypeManager();
+    TypeManager = new TypeManager(Service, Characteristic);
     logger = new logger('SynTexWebHooks', this.logDirectory, api.user.storagePath());
     DeviceManager = new DeviceManager(logger, this.cacheDirectory);
     WebServer = new WebServer('SynTexTuya', logger, this.port);

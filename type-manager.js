@@ -1,4 +1,4 @@
-var presets = {};
+var presets = {}, Service, Characteristic;
 
 var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
 var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
@@ -20,9 +20,10 @@ presets.statelessswitch = { letter : '6', service : Service.StatelessProgrammabl
 
 module.exports = class WebServer
 {
-    constructor()
+    constructor(S, C)
     {
-        
+        Service = S;
+        Characteristic = C;
     }
 
     getPreset(type)
