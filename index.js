@@ -1,30 +1,14 @@
 var Service, Characteristic;
-var DeviceManager = require('./device-manager'), Automations = require('./automations');
-var request = require('request'), http = require('http'), url = require('url'), logger = require('./logger');
+var DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations'), WebServer = require('./webserver');
+var request = require('request'), http = require('http'), logger = require('./logger');
 var restart = true;
 
 var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-var presets = {};
 
 module.exports = function(homebridge)
 {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-
-    presets.contact = {letter : 'A', service : Service.ContactSensor, characteristic : Characteristic.ContactSensorState};
-    presets.motion = {letter : 'B', service : Service.MotionSensor, characteristic : Characteristic.MotionDetected};
-    presets.temperature = {letter : 'C', service : Service.TemperatureSensor, characteristic : Characteristic.CurrentTemperature};
-    presets.humidity = {letter : 'D', service : Service.HumiditySensor, characteristic : Characteristic.CurrentRelativeHumidity};
-    presets.rain = {letter : 'E', service : Service.LeakSensor, characteristic : Characteristic.LeakDetected};
-    presets.light = {letter : 'F', service : Service.LightSensor, characteristic : Characteristic.CurrentAmbientLightLevel};
-    presets.occupancy = {letter : '0', service : Service.OccupancySensor, characteristic : Characteristic.OccupancyDetected};
-    presets.smoke = {letter : '1', service : Service.SmokeSensor, characteristic : Characteristic.SmokeDetected};
-    presets.airquality = {letter : '2', service : Service.AirQualitySensor, characteristic : Characteristic.AirQuality};
-    presets.rgb = {letter : '3', service : Service.Lightbulb, characteristic : Characteristic.On};
-    presets.switch = {letter : '4', service : Service.Switch, characteristic : Characteristic.On};
-    presets.relais = {letter : '5', service : Service.Switch, characteristic : Characteristic.On};
-    presets.statelessswitch = {letter : '6', service : Service.StatelessProgrammableSwitch, characteristic : Characteristic.ProgrammableSwitchEvent};
-    //presets.lcd = {letter : '7', service : Service.Switch, characteristic : Characteristic.On};
 
     homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStatelessSwitch', SynTexWebHookStatelessSwitchAccessory);
@@ -38,13 +22,11 @@ function SynTexWebHookPlatform(log, config, api)
     this.logDirectory = config['log_directory'] || './SynTex/log';
     this.port = config['port'] || 1710;
     
+    //TypeManager = new TypeManager();
     logger = new logger('SynTexWebHooks', this.logDirectory, api.user.storagePath());
     DeviceManager = new DeviceManager(logger, this.cacheDirectory);
-
-    Automations.SETUP(logger, this.cacheDirectory, DeviceManager).then(function () {
-
-        restart = false;
-    });
+    WebServer = new WebServer('SynTexTuya', logger, this.port);
+    Automations = new Automations(logger, this.cacheDirectory, DeviceManager).then(() => { restart = false; });
 }
 
 SynTexWebHookPlatform.prototype = {
@@ -68,155 +50,140 @@ SynTexWebHookPlatform.prototype = {
         Automations.setAccessories(accessories);
         
         callback(accessories);
-        
-        var createServerCallback = (async function(request, response)
-        {
-            try
+
+        WebServer.addPage('/devices', async (response, urlParams) => {
+	
+            if(urlParams.mac != null)
             {
-                var urlParts = url.parse(request.url, true);
-                var urlParams = urlParts.query;
-                var urlPath = urlParts.pathname;
-                var body = [];
-                
-                body = Buffer.concat(body).toString();
-
-                response.statusCode = 200;
-                response.setHeader('Content-Type', 'application/json');
-                response.setHeader('Access-Control-Allow-Origin', '*');
-
-                if(urlPath == '/devices' && urlParams.mac)
-                {
-                    var accessory = null;
+                var accessory = null;
                         
-                    for(var i = 0; i < accessories.length; i++)
+                for(var i = 0; i < accessories.length; i++)
+                {
+                    if(accessories[i].mac == urlParams.mac)
                     {
-                        if(accessories[i].mac == urlParams.mac)
+                        if(urlParams.event != null)
                         {
-                            if(urlParams.event)
+                            accessory = accessories[i];
+                        }
+                        else
+                        {
+                            for(var j = 0; j < accessories[i].service.length; j++)
                             {
-                                accessory = accessories[i];
-                            }
-                            else
-                            {
-                                for(var j = 0; j < accessories[i].service.length; j++)
+                                if(accessories[i].service[j].mac != null && accessories[i].service[j].letters != null)
                                 {
-                                    if(accessories[i].service[j].mac && accessories[i].service[j].letters)
+                                    if((urlParams.type == null || accessories[i].service[j].letters[0] == TypeManager.typeToLetter(urlParams.type)) && (urlParams.counter != null || accessories[i].service[j].letters[1] == urlParams.counter))
                                     {
-                                        if((!urlParams.type || accessories[i].service[j].letters[0] == typeToLetter(urlParams.type)) && (!urlParams.counter || accessories[i].service[j].letters[1] == urlParams.counter))
-                                        {
-                                            accessory = accessories[i].service[j];
-                                        }
+                                        accessory = accessories[i].service[j];
                                     }
                                 }
                             }
                         }
                     }
+                }
 
-                    if(accessory == null)
+                if(accessory == null)
+                {
+                    logger.log('error', urlParams.mac, '', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.mac + ' )');
+
+                    response.write('Error');
+                }
+                else if(urlParams.event != null)
+                {
+                    accessory.changeHandler(accessory.name, urlParams.event, urlParams.value || 0);
+
+                    response.write('Success');
+                }
+                else if(urlParams.value != null)
+                {
+                    var state = null;
+
+                    if((state = validateUpdate(urlParams.mac, accessory.letters, urlParams.value)) != null)
                     {
-                        logger.log('error', urlParams.mac, '', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.mac + ' )');
-
-                        response.write('Error');
-                    }
-                    else if(urlParams.event)
-                    {
-                        accessory.changeHandler(accessory.name, urlParams.event, urlParams.value || 0);
-
-                        response.write('Success');
-                    }
-                    else if(urlParams.value)
-                    {
-                        var state = null;
-
-                        if((state = validateUpdate(urlParams.mac, accessory.letters, urlParams.value)) != null)
-                        {
-                            accessory.changeHandler(state);
-                        }
-                        else
-                        {
-                            logger.log('error', urlParams.mac, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
-                        }
-
-                        DeviceManager.setDevice(urlParams.mac, accessory.letters, urlParams.value);
-                         
-                        response.write(state != null ? 'Success' : 'Error');
+                        accessory.changeHandler(state);
                     }
                     else
                     {
-                        var state = await DeviceManager.getDevice(urlParams.mac, accessory.letters);
-
-                        response.write(state != null ? state.toString() : 'Error');
+                        logger.log('error', urlParams.mac, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
                     }
 
-                    response.end();
+                    DeviceManager.setDevice(urlParams.mac, accessory.letters, urlParams.value);
+                        
+                    response.write(state != null ? 'Success' : 'Error');
                 }
-                else if(urlPath == '/version')
+                else
                 {
-                    response.write(require('./package.json').version);
-                    response.end();
+                    var state = await DeviceManager.getDevice(urlParams.mac, accessory.letters);
+
+                    response.write(state != null ? state.toString() : 'Error');
                 }
-                else if(urlPath == '/check-restart')
-                {
-                    response.write(restart.toString());
-                    response.end();
-                }
-                else if(urlPath == '/reload-automation')
-                {
-                    if(await Automations.loadAutomations())
-                    {
-                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
-                        response.write('Success');
-                    }
-                    else
-                    {
-                        logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
-                        response.write('Error');
-                    }
-                    
-                    response.end();
-                }
-                else if(urlPath == '/update')
-                {
-                    var version = urlParams.version ? urlParams.version : 'latest';
 
-                    const { exec } = require('child_process');
-                    
-                    exec('sudo npm install homebridge-syntex-webhooks@' + version + ' -g', (error, stdout, stderr) => {
-
-                        try
-                        {
-                            if(error || stderr.includes('ERR!'))
-                            {
-                                logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
-                            }
-                            else
-                            {
-                                logger.log('success', 'bridge', 'Bridge', 'Die Homebridge wurde auf die Version [' + version + '] aktualisiert!');
-
-                                restart = true;
-
-                                logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-
-                                exec('sudo systemctl restart homebridge');
-                            }
-
-                            response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
-                            response.end();
-                        }
-                        catch(e)
-                        {
-                            logger.err(e);
-                        }
-                    });
-                }
+                response.end();
             }
-            catch(e)
+        });
+
+        WebServer.addPage('/version', (response, urlParams) => {
+
+            response.write(require('./package.json').version);
+            response.end();
+        });
+
+        WebServer.addPage('/check-restart', (response, urlParams) => {
+
+            response.write(restart.toString());
+            response.end();
+        });
+
+        WebServer.addPage('/reload-automation', async (response, urlParams) => {
+
+            if(await Automations.loadAutomations())
             {
-                logger.err(e);
+                logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+                response.write('Success');
+            }
+            else
+            {
+                logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+                response.write('Error');
             }
             
-        }).bind(this);
+            response.end();
+        });
 
+        WebServer.addPage('/update', async (response, urlParams) => {
+
+            var version = urlParams.version != null ? urlParams.version : 'latest';
+
+            const { exec } = require('child_process');
+            
+            exec('sudo npm install homebridge-syntex-webhooks@' + version + ' -g', (error, stdout, stderr) => {
+
+                try
+                {
+                    if(error || stderr.includes('ERR!'))
+                    {
+                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
+                    }
+                    else
+                    {
+                        logger.log('success', 'bridge', 'Bridge', 'Die Homebridge wurde auf die Version [' + version + '] aktualisiert!');
+
+                        restart = true;
+
+                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+
+                        exec('sudo systemctl restart homebridge');
+                    }
+
+                    response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
+                    response.end();
+                }
+                catch(e)
+                {
+                    logger.err(e);
+                }
+            });
+        });
+        
         http.createServer(createServerCallback).listen(this.port, '0.0.0.0');
            
         logger.log('info', 'bridge', 'Bridge', 'Data Link Server läuft auf Port [' + this.port + ']');
@@ -280,20 +247,20 @@ function SynTexBaseAccessory(accessoryConfig)
             name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
         }
 
-        if(presets[type] != undefined)
+        if(TypeManager.getPreset(type) != null)
         {
             if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
             {
-                var service = new presets[type].service(name);
+                var service = new TypeManager.getPreset(type).service(name);
             }
             else if(s instanceof Object)
             {
-                var service = new presets[type].service(name, i);
+                var service = new TypeManager.getPreset(type).service(name, i);
             }
             else
             {
                 name +=  ' ' + letters[i];
-                var service = new presets[type].service(name, i);
+                var service = new TypeManager.getPreset(type).service(name, i);
             }
 
             if(type == 'statelessswitch')
@@ -305,8 +272,8 @@ function SynTexBaseAccessory(accessoryConfig)
             service.mac = this.mac;
             service.type = type;
             service.name = name;
-            service.characteristic = presets[type].characteristic;
-            service.letters = presets[type].letter + (subtypes[type] || 0);
+            service.characteristic = TypeManager.getPreset(type).characteristic;
+            service.letters = TypeManager.getPreset(type).letter + (subtypes[type] || 0);
 
             service.options = {
                 requests : [],
@@ -759,7 +726,7 @@ function setRGB(accessory, req)
 
 function validateUpdate(mac, letters, state)
 {
-    var type = letterToType(letters[0]);
+    var type = TypeManager.letterToType(letters[0]);
 
     if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
     {
@@ -914,17 +881,4 @@ function fetchRequests(accessory)
             resolve(null);
         }
     });
-}
-
-var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
-var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
-
-function letterToType(letter)
-{
-    return types[letters.indexOf(letter.toUpperCase())];
-}
-
-function typeToLetter(type)
-{
-    return letters[types.indexOf(type.toLowerCase())];
 }

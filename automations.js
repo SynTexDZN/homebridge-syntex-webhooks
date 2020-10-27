@@ -1,52 +1,104 @@
 var logger, storage, automations = [], accessories = [], DeviceManager;
 var request = require('request'), store = require('json-fs-store');
+var TypeManager = require('./type-manager');
 var eventLock = [], positiveFired = false, negativeFired = false;
 
-function runAutomations(mac, letters, value)
+module.exports = class Automations
 {
-    for(var i = 0; i < automations.length; i++)
+    constructor(log, storagePath, Manager)
     {
-        if(eventLock.includes(automations[i].id))
+        const self = this;
+
+        return new Promise(async function(resolve)
         {
-            for(var j = 0; j < automations[i].trigger.length; j++)
+            logger = log;
+            storage = store(storagePath);
+            DeviceManager = Manager;
+
+            if(await self.loadAutomations())
             {
-                if(automations[i].trigger[j].mac == mac && automations[i].trigger[j].letters == letters)
+                logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+            }
+            else
+            {
+                logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+            }
+
+            resolve();
+        });
+    }
+
+    setAccessories(devices)
+    {
+        accessories = devices;
+    }
+
+    loadAutomations()
+    {
+        return new Promise(resolve => {
+            
+            storage.load('automations', (err, obj) => {  
+
+                if(!obj || err)
                 {
-                    var index = eventLock.indexOf(automations[i].id);
+                    resolve(false);
+                }
+                else
+                {
+                    automations = obj.automations;
 
-                    if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && negativeFired)
+                    resolve(true);
+                }
+            });
+        });
+    }
+
+    runAutomations(mac, letters, value)
+    {
+        for(var i = 0; i < automations.length; i++)
+        {
+            if(eventLock.includes(automations[i].id))
+            {
+                for(var j = 0; j < automations[i].trigger.length; j++)
+                {
+                    if(automations[i].trigger[j].mac == mac && automations[i].trigger[j].letters == letters)
                     {
-                        eventLock.splice(index, 1);
+                        var index = eventLock.indexOf(automations[i].id);
 
-                        logger.debug('Automation [' + automations[i].name + '] Unterschritten ' + automations[i].id);
-                    }
+                        if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && negativeFired)
+                        {
+                            eventLock.splice(index, 1);
 
-                    if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && positiveFired)
-                    {
-                        eventLock.splice(index, 1);
+                            logger.debug('Automation [' + automations[i].name + '] Unterschritten ' + automations[i].id);
+                        }
 
-                        logger.debug('Automation [' + automations[i].name + '] Überschritten ' + automations[i].id);
-                    }
+                        if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && positiveFired)
+                        {
+                            eventLock.splice(index, 1);
 
-                    if(automations[i].trigger[j].operation == '=' && value != automations[i].trigger[j].value)
-                    {
-                        eventLock.splice(index, 1);
+                            logger.debug('Automation [' + automations[i].name + '] Überschritten ' + automations[i].id);
+                        }
 
-                        logger.debug('Automation [' + automations[i].name + '] Ungleich ' + automations[i].id);
+                        if(automations[i].trigger[j].operation == '=' && value != automations[i].trigger[j].value)
+                        {
+                            eventLock.splice(index, 1);
+
+                            logger.debug('Automation [' + automations[i].name + '] Ungleich ' + automations[i].id);
+                        }
                     }
                 }
             }
         }
-    }
 
-    for(var i = 0; i < automations.length; i++)
-    {
-        if(automations[i].active && !eventLock.includes(automations[i].id))
+        for(var i = 0; i < automations.length; i++)
         {
-            checkTrigger(automations[i], mac, letters, value.toString());
+            if(automations[i].active && !eventLock.includes(automations[i].id))
+            {
+                checkTrigger(automations[i], mac, letters, value.toString());
+            }
         }
     }
-}
+};
 
 function checkTrigger(automation, mac, letters, value)
 {
@@ -135,9 +187,9 @@ function executeResult(automation, trigger)
         {
             for(var j = 0; j < accessories.length; j++)
             {
-                if(accessories[j].mac == automation.result[i].mac && JSON.stringify(accessories[j].services).includes(letterToType(automation.result[i].letters[0])))
+                if(accessories[j].mac == automation.result[i].mac && JSON.stringify(accessories[j].services).includes(TypeManager.letterToType(automation.result[i].letters[0])))
                 {
-                    if(letterToType(automation.result[i].letters[0]) == 'statelessswitch')
+                    if(TypeManager.letterToType(automation.result[i].letters[0]) == 'statelessswitch')
                     {
                         accessories[j].changeHandler(accessories[j].name, automation.result[i].value, 0);
                     }
@@ -208,34 +260,9 @@ function executeResult(automation, trigger)
     logger.log('success', trigger.mac, trigger.letters, '[' + trigger.name + '] hat den Prozess [' + automation.name + '] ausgeführt!');
 }
 
-function loadAutomations()
-{
-    return new Promise(resolve => {
-        
-        storage.load('automations', (err, obj) => {  
-
-            if(!obj || err)
-            {
-                resolve(false);
-            }
-            else
-            {
-                automations = obj.automations;
-
-                resolve(true);
-            }
-        });
-    });
-}
-
-function setAccessories(devices)
-{
-    accessories = devices;
-}
-
 function validateUpdate(mac, letters, state)
 {
-    var type = letterToType(letters[0]);
+    var type = TypeManager.letterToType(letters[0]);
 
     if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
     {
@@ -271,44 +298,3 @@ function validateUpdate(mac, letters, state)
         return state;
     }
 }
-
-var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
-var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
-
-function letterToType(letter)
-{
-    return types[letters.indexOf(letter.toUpperCase())];
-}
-
-function typeToLetter(type)
-{
-    return letters[types.indexOf(type.toLowerCase())];
-}
-
-function SETUP(log, storagePath, Manager)
-{
-    return new Promise(async function(resolve)
-    {
-        logger = log;
-        storage = store(storagePath);
-        DeviceManager = Manager;
-
-        if(await loadAutomations())
-        {
-            logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
-        }
-        else
-        {
-            logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
-        }
-
-        resolve();
-    });
-}
-
-module.exports = {
-    SETUP,
-    setAccessories,
-    runAutomations,
-    loadAutomations
-};
