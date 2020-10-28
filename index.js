@@ -25,7 +25,7 @@ function SynTexWebHookPlatform(log, config, api)
     //TypeManager = new TypeManager();
     logger = new logger('SynTexWebHooks', this.logDirectory, api.user.storagePath());
     DeviceManager = new DeviceManager(logger, this.cacheDirectory);
-    WebServer = new WebServer('SynTexTuya', logger, this.port);
+    WebServer = new WebServer('SynTexTuya', logger, this.port, false);
     Automations = new Automations(logger, this.cacheDirectory, DeviceManager).then(() => { restart = false; });
 }
 
@@ -121,19 +121,19 @@ SynTexWebHookPlatform.prototype = {
             }
         });
 
-        WebServer.addPage('/version', (response, urlParams) => {
+        WebServer.addPage('/version', (response) => {
 
             response.write(require('./package.json').version);
             response.end();
         });
 
-        WebServer.addPage('/check-restart', (response, urlParams) => {
+        WebServer.addPage('/check-restart', (response) => {
 
             response.write(restart.toString());
             response.end();
         });
 
-        WebServer.addPage('/reload-automation', async (response, urlParams) => {
+        WebServer.addPage('/reload-automation', async (response) => {
 
             if(await Automations.loadAutomations())
             {

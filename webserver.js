@@ -3,7 +3,7 @@ var logger, pages = [];
 
 module.exports = class WebServer
 {
-    constructor(prefix, log, port)
+    constructor(prefix, log, port, filesystem)
     {
         logger = log;
 
@@ -20,10 +20,39 @@ module.exports = class WebServer
             response.setHeader('Content-Type', 'application/json');
             response.setHeader('Access-Control-Allow-Origin', '*');
 
+            var content = '', found = false;
+
+            if(filesystem)
+            {
+                HTMLQuery.exists(urlPath.substring(1)).then(async function(relPath)
+                {            
+                    if(relPath)
+                    {
+                        var data = await HTMLQuery.read(relPath);
+                        var head = await HTMLQuery.read(__dirname + '/includes/head.html');
+                        var mimeType = {
+                            ".html": "text/html; charset=utf-8",
+                            ".jpeg": "image/jpeg",
+                            ".jpg": "image/jpeg",
+                            ".png": "image/png",
+                            ".js": "text/javascript",
+                            ".css": "text/css",
+                            ".ttf": "font/ttf"
+                        };
+
+                        response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
+
+                        content = head + data;
+                    }
+                });
+            }
+
             for(var i = 0; i < pages.length; i++)
             {
-                if(urlPath == pages[i].path)
+                if(urlPath == pages[i].path || urlPath == pages[i].path + '.html')
                 {
+                    found = true;
+
                     if(request.method == 'POST')
                     {
                         var post = '', page = pages[i];
@@ -49,14 +78,29 @@ module.exports = class WebServer
                                 }
                             }
                             
-                            page.callback(response, urlParams, json);
+                            page.callback(response, urlParams, content, json);
                         });
                     }
                     else
                     {
-                        pages[i].callback(response, urlParams, null);
+                        pages[i].callback(response, urlParams, content, null);
                     }
                 }
+            }
+
+            if(!found)
+            {
+                if(content == '')
+                {
+                    content = await HTMLQuery.read(__dirname + '/includes/head.html');
+                    content += await HTMLQuery.read(__dirname + '/includes/not-found.html');
+                    
+                    response.write(content);
+                    response.end();
+                }
+
+                response.write(content);
+                response.end();
             }
 
         }).bind(this);
