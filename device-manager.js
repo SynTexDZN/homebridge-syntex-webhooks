@@ -1,5 +1,5 @@
+const store = require('json-fs-store');
 var logger, storage, accessories = [];
-var store = require('json-fs-store');
 
 module.exports = class DeviceManager
 {

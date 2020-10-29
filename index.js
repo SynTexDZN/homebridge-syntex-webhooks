@@ -1,6 +1,6 @@
+const DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations'), WebServer = require('./webserver');
+const request = require('request'), http = require('http'), logger = require('./logger');
 var Service, Characteristic;
-var DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations'), WebServer = require('./webserver');
-var request = require('request'), http = require('http'), logger = require('./logger');
 var restart = true;
 
 var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];

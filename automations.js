@@ -1,6 +1,6 @@
+const TypeManager = require('./type-manager');
+const request = require('request'), store = require('json-fs-store');
 var logger, storage, automations = [], accessories = [], DeviceManager;
-var request = require('request'), store = require('json-fs-store');
-var TypeManager = require('./type-manager');
 var eventLock = [], positiveFired = false, negativeFired = false;
 
 module.exports = class Automations
