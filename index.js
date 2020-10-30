@@ -1,5 +1,5 @@
-const DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations'), WebServer = require('./webserver');
-const request = require('request'), http = require('http'), logger = require('./logger');
+let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations'), WebServer = require('./webserver'), logger = require('./logger');
+const request = require('request'), http = require('http');
 var Service, Characteristic;
 var restart = true;
 

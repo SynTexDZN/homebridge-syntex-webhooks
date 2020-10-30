@@ -1,4 +1,4 @@
-const TypeManager = require('./type-manager');
+let TypeManager = require('./type-manager');
 const request = require('request'), store = require('json-fs-store');
 var logger, storage, automations = [], accessories = [], DeviceManager;
 var eventLock = [], positiveFired = false, negativeFired = false;
