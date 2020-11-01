@@ -110,6 +110,8 @@ SynTexWebHookPlatform.prototype = {
                     }
                 }
 
+                console.log(accessories);
+
                 if(accessory == null)
                 {
                     logger.log('error', urlParams.mac, '', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.mac + ' )');
