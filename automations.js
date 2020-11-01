@@ -7,15 +7,13 @@ module.exports = class Automations
 {
     constructor(log, storagePath, Manager)
     {
-        const self = this;
+        logger = log;
+        storage = store(storagePath);
+        DeviceManager = Manager;
+        
+        this.loadAutomations().then((loaded) => {
 
-        return new Promise(async function(resolve)
-        {
-            logger = log;
-            storage = store(storagePath);
-            DeviceManager = Manager;
-
-            if(await self.loadAutomations())
+            if(loaded)
             {
                 logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
             }
@@ -23,8 +21,6 @@ module.exports = class Automations
             {
                 logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
             }
-
-            resolve();
         });
     }
 
