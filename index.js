@@ -26,7 +26,21 @@ function SynTexWebHookPlatform(log, config, api)
     logger = new logger('SynTexWebHooks', this.logDirectory, api.user.storagePath());
     DeviceManager = new DeviceManager(logger, this.cacheDirectory);
     WebServer = new WebServer('SynTexTuya', logger, this.port, false);
-    Automations = new Automations(logger, this.cacheDirectory, DeviceManager).then(() => { restart = false; });
+    Automations = new Automations(logger, this.cacheDirectory, DeviceManager);
+
+    Automations.loadAutomations().then((loaded) => {
+        
+        if(loaded)
+        {
+            logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+        }
+        else
+        {
+            logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+        }
+
+        restart = false;
+    });
 }
 
 SynTexWebHookPlatform.prototype = {

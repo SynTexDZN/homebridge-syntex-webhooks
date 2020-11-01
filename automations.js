@@ -10,18 +10,6 @@ module.exports = class Automations
         logger = log;
         storage = store(storagePath);
         DeviceManager = Manager;
-        
-        this.loadAutomations().then((loaded) => {
-
-            if(loaded)
-            {
-                logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
-            }
-            else
-            {
-                logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
-            }
-        });
     }
 
     setAccessories(devices)
