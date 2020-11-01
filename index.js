@@ -98,6 +98,8 @@ SynTexWebHookPlatform.prototype = {
                         {
                             for(var j = 0; j < accessories[i].service.length; j++)
                             {
+                                console.log(accessories[i].service[j].mac, accessories[i].service[j].letters);
+
                                 if(accessories[i].service[j].mac != null && accessories[i].service[j].letters != null)
                                 {
                                     if((urlParams.type == null || accessories[i].service[j].letters[0] == TypeManager.typeToLetter(urlParams.type)) && (urlParams.counter != null || accessories[i].service[j].letters[1] == urlParams.counter))
