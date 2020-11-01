@@ -301,7 +301,7 @@ function SynTexBaseAccessory(accessoryConfig)
             service.mac = this.mac;
             service.type = type;
             service.name = name;
-            service.characteristic = TypeManager.getPreset(type).characteristic;
+            service.characteristic = presets[type].characteristic;
             service.letters = TypeManager.getPreset(type).letter + (subtypes[type] || 0);
 
             service.options = {
