@@ -10,6 +10,8 @@ module.exports = class Automations
         logger = log;
         storage = store(storagePath);
         DeviceManager = Manager;
+
+        TypeManager = new TypeManager({}, {});
     }
 
     setAccessories(devices)
