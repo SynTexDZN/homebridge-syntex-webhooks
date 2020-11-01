@@ -275,9 +275,9 @@ function SynTexBaseAccessory(accessoryConfig)
         {
             name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
         }
-
+        /*
         if(TypeManager.getPreset(type) != null)
-        {
+        {*/
             if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
             {
                 var service = new presets[type].service(name);
@@ -435,7 +435,7 @@ function SynTexBaseAccessory(accessoryConfig)
             subtypes[type] = (subtypes[type] || 0) + 1;
 
             this.service.push(service);
-        }
+        //}
     }
 }
 
