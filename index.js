@@ -435,7 +435,7 @@ function SynTexBaseAccessory(accessoryConfig)
             subtypes[type] = (subtypes[type] || 0) + 1;
 
             this.service.push(service);
-        //}
+        }
     }
 }
 
