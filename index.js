@@ -88,8 +88,6 @@ SynTexWebHookPlatform.prototype = {
                         
                 for(var i = 0; i < accessories.length; i++)
                 {
-                    console.log(accessories[i].mac, urlParams.mac);
-
                     if(accessories[i].mac == urlParams.mac)
                     {
                         if(urlParams.event != null)
@@ -100,17 +98,10 @@ SynTexWebHookPlatform.prototype = {
                         {
                             for(var j = 0; j < accessories[i].service.length; j++)
                             {
-                                console.log(accessories[i].service[j].mac, accessories[i].service[j].letters);
-
                                 if(accessories[i].service[j].mac != null && accessories[i].service[j].letters != null)
                                 {
-                                    console.log(accessories[i].service[j].letters[0], TypeManager.typeToLetter(urlParams.type));
-                                    console.log(urlParams.type == null, accessories[i].service[j].letters[0], TypeManager.typeToLetter(urlParams.type), urlParams.counter == null, accessories[i].service[j].letters[1], urlParams.counter);
-
                                     if((urlParams.type == null || accessories[i].service[j].letters[0] == TypeManager.typeToLetter(urlParams.type)) && (urlParams.counter == null || accessories[i].service[j].letters[1] == urlParams.counter))
                                     {
-                                        console.log('FOUND');
-
                                         accessory = accessories[i].service[j];
                                     }
                                 }
@@ -118,8 +109,6 @@ SynTexWebHookPlatform.prototype = {
                         }
                     }
                 }
-
-                console.log(accessories);
 
                 if(accessory == null)
                 {
