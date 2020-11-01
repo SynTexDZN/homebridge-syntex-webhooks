@@ -121,18 +121,6 @@ SynTexWebHookPlatform.prototype = {
             }
         });
 
-        WebServer.addPage('/version', (response) => {
-
-            response.write(require('./package.json').version);
-            response.end();
-        });
-
-        WebServer.addPage('/check-restart', (response) => {
-
-            response.write(restart.toString());
-            response.end();
-        });
-
         WebServer.addPage('/reload-automation', async (response) => {
 
             if(await Automations.loadAutomations())
@@ -149,7 +137,19 @@ SynTexWebHookPlatform.prototype = {
             response.end();
         });
 
-        WebServer.addPage('/update', async (response, urlParams) => {
+        WebServer.addPage('/serverside/version', (response) => {
+
+            response.write(require('./package.json').version);
+            response.end();
+        });
+
+        WebServer.addPage('/serverside/check-restart', (response) => {
+
+            response.write(restart.toString());
+            response.end();
+        });
+
+        WebServer.addPage('/serverside/update', async (response, urlParams) => {
 
             var version = urlParams.version != null ? urlParams.version : 'latest';
 
