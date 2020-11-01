@@ -11,7 +11,7 @@ module.exports = class Automations
         storage = store(storagePath);
         DeviceManager = Manager;
 
-        TypeManager = new TypeManager({}, {});
+        TypeManager = new TypeManager();
     }
 
     setAccessories(devices)

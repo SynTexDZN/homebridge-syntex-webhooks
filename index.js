@@ -37,7 +37,7 @@ function SynTexWebHookPlatform(log, config, api)
     this.logDirectory = config['log_directory'] || './SynTex/log';
     this.port = config['port'] || 1710;
     
-    TypeManager = new TypeManager(Service, Characteristic);
+    TypeManager = new TypeManager();
     logger = new logger('SynTexWebHooks', this.logDirectory, api.user.storagePath());
     DeviceManager = new DeviceManager(logger, this.cacheDirectory);
     WebServer = new WebServer('SynTexTuya', logger, this.port, false);
@@ -302,7 +302,7 @@ function SynTexBaseAccessory(accessoryConfig)
             service.type = type;
             service.name = name;
             service.characteristic = presets[type].characteristic;
-            service.letters = TypeManager.getPreset(type).letter + (subtypes[type] || 0);
+            service.letters = TypeManager.typeToLetter(type) + (subtypes[type] || 0);
 
             service.options = {
                 requests : [],
