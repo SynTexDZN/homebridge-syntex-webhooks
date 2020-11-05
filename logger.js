@@ -1,5 +1,5 @@
 const store = require('json-fs-store');
-var prefix, logs = [], que = [], debugLevel = 'success', inWork = false;
+var prefix, logs, que = [], debugLevel = 'success', inWork = false;
 
 module.exports = class Logger
 {
@@ -60,6 +60,7 @@ module.exports = class Logger
     err(error)
     {
         var s = (error.stack.split('\n')[1].split('\n')[0].match(/\//g) || []).length;
+        console.log(error);
         this.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + ' ( [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + '] bei Zeile [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + '] )');
     }
 
@@ -72,7 +73,7 @@ module.exports = class Logger
     {
         return new Promise(async function(resolve) {
             
-            store(logs).load(pluginName, (err, obj) => {    
+            logs.load(pluginName, (err, obj) => {    
 
                 if(obj && !err)
                 {    
@@ -100,7 +101,7 @@ module.exports = class Logger
     {
         return new Promise(async function(resolve) {
 
-            store(logs).list(function(err, objects)
+            logs.list(function(err, objects)
             {
                 if(!objects || err)
                 {

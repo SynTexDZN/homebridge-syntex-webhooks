@@ -105,7 +105,7 @@ module.exports = class WebServer
                     };
 
                     response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
-                    response.write(data);
+                    response.write(path.parse(relPath).ext == '.html' ? content : data);
                 }
                 
                 response.end();
