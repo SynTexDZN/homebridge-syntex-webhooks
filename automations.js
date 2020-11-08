@@ -183,11 +183,8 @@ function executeResult(automation, trigger)
                     {
                         var count = Array.isArray(accessories[j].services) ? accessories[j].services.length : 1;
 
-                        console.log(accessories[i], i, count);
-
                         for(var k = 1; k <= count; k++)
                         {
-                            console.log(accessories[j].service[k], k);
                             if(accessories[j].service[k] != null)
                             {
                                 if(accessories[j].service[k].letters == automation.result[i].letters)
