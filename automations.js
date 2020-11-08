@@ -188,21 +188,23 @@ function executeResult(automation, trigger)
                         for(var k = 1; k <= count; k++)
                         {
                             console.log(accessories[j].service[k], k);
-
-                            if(accessories[j].service[k].letters == automation.result[i].letters)
+                            if(accessories[j].service[k] != null)
                             {
-                                var state = null;
-
-                                if((state = validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value)) != null)
+                                if(accessories[j].service[k].letters == automation.result[i].letters)
                                 {
-                                    accessories[j].service[k].changeHandler(state);
-                                }
-                                else
-                                {
-                                    logger.log('error', automation.result[i].mac, automation.result[i].letters, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].mac + ' )');
-                                }
+                                    var state = null;
 
-                                DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value));
+                                    if((state = validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value)) != null)
+                                    {
+                                        accessories[j].service[k].changeHandler(state);
+                                    }
+                                    else
+                                    {
+                                        logger.log('error', automation.result[i].mac, automation.result[i].letters, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].mac + ' )');
+                                    }
+
+                                    DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value));
+                                }
                             }
                         }
                     }
