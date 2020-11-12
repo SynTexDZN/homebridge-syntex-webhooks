@@ -42,9 +42,14 @@ module.exports = class WebServer
                 response.setHeader('Content-Type', 'application/json');
             }
 
+            if(urlPath.includes('.'))
+            {
+                urlPath = urlPath.split('.')[0];
+            }
+
             for(var i = 0; i < pages.length; i++)
             {
-                if(urlPath == pages[i].path || urlPath == pages[i].path + '.html')
+                if(urlPath == pages[i].path || (Array.isArray(pages[i].path) && pages[i].path.includes(urlPath))) // TODO : Array .html Abfrage
                 {
                     found = true;
 
