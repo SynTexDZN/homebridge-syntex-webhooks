@@ -1,5 +1,5 @@
 const store = require('json-fs-store');
-var prefix, logs, que = [], debugLevel = 'success', inWork = false;
+var prefix, logs, logger, que = [], debugLevel = 'success', inWork = false;
 
 module.exports = class Logger
 {
@@ -7,6 +7,8 @@ module.exports = class Logger
     {
         prefix = pluginName;
         logs = store(logDirectory);
+
+        logger = this;
     }
 
     log(level, mac, letters, message)

@@ -798,7 +798,7 @@ function fetchRequests(accessory)
 
         if(accessory.options.requests)
         {
-            var counter = 0, finished = 0;
+            var counter = 0, finished = 0, success = 0;
 
             for(var i = 0; i < accessory.options.requests.length; i++)
             {
@@ -853,6 +853,8 @@ function fetchRequests(accessory)
 
                                 if(!err && statusCode == 200)
                                 {
+                                    success++;
+
                                     logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + urlToCall + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
 
                                     logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
@@ -870,7 +872,14 @@ function fetchRequests(accessory)
 
                                     if(finished >= counter)
                                     {
-                                        resolve(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+                                        if(success == 0)
+                                        {
+                                            resolve(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+                                        }
+                                        else
+                                        {
+                                            resolve(null);
+                                        }
                                     }
                                 }
 
