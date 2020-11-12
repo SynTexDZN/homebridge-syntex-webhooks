@@ -873,7 +873,7 @@ function fetchRequests(accessory)
 
                                     if(finished >= counter)
                                     {
-                                        if(success == 0 && TypeManager.lettersToType(accessory.letters) == 'relais')
+                                        if(success == 0 && TypeManager.letterToType(accessory.letters) == 'relais')
                                         {
                                             resolve(err || new Error("Request to '" + urlToCall + "' was not succesful."));
                                         }
