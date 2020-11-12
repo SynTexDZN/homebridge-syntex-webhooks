@@ -1,5 +1,5 @@
 const store = require('json-fs-store');
-var prefix, logs, que = [], debugLevel = 'success', inWork = false;
+var prefix, logs, logger, que = [], debugLevel = 'success', inWork = false;
 
 module.exports = class Logger
 {
@@ -7,6 +7,8 @@ module.exports = class Logger
     {
         prefix = pluginName;
         logs = store(logDirectory);
+
+        logger = this;
     }
 
     log(level, mac, letters, message)
@@ -60,10 +62,8 @@ module.exports = class Logger
     err(error)
     {
         var s = (error.stack.split('\n')[1].split('\n')[0].match(/\//g) || []).length;
-        
-        this.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + ' ( [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + '] bei Zeile [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + '] )');
-    
         console.log(error);
+        this.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + ' ( [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + '] bei Zeile [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + '] )');
     }
 
     debug(message)
