@@ -858,12 +858,12 @@ function fetchRequests(accessory)
 
                                     logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + urlToCall + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
 
-                                    logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
-
-                                    DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
-
                                     if(finished >= counter)
                                     {
+                                        logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
+
+                                        DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
+
                                         resolve(null);
                                     }
                                 }
@@ -879,6 +879,10 @@ function fetchRequests(accessory)
                                         }
                                         else
                                         {
+                                            logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.power.toString() + '] ( ' + accessory.mac + ' )');
+
+                                            DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power);
+
                                             resolve(null);
                                         }
                                     }
