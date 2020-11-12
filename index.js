@@ -1,5 +1,6 @@
 let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations'), WebServer = require('./webserver'), logger = require('./logger');
 const request = require('request'), http = require('http');
+const { access } = require('fs');
 var Service, Characteristic;
 var restart = true, presets = {};
 
@@ -872,7 +873,7 @@ function fetchRequests(accessory)
 
                                     if(finished >= counter)
                                     {
-                                        if(success == 0)
+                                        if(success == 0 && TypeManager.lettersToType(accessory.letters) == 'relais')
                                         {
                                             resolve(err || new Error("Request to '" + urlToCall + "' was not succesful."));
                                         }
