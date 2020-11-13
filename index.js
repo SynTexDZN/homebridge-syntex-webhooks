@@ -361,6 +361,7 @@ function SynTexBaseAccessory(accessoryConfig)
                     if(this.type == 'relais' || this.type == 'switch')
                     {
                         this.power = state;
+                        console.log('added power');
                     }
 
                     this.getCharacteristic(this.characteristic).updateValue(state);
@@ -400,11 +401,19 @@ function SynTexBaseAccessory(accessoryConfig)
                 */
                 else
                 {
+                    if(this.type == 'relais' || this.type == 'switch')
+                    {
+                        this.power = state;
+                        console.log('added power');
+                    }
+
                     this.getCharacteristic(this.characteristic).updateValue(state);
                 }
 
                 if(!restart)
                 {
+                    console.log(this.power);
+
                     fetchRequests(this);
 
                     Automations.runAutomations(this.mac, this.letters, state);
