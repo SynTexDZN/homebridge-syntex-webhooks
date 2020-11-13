@@ -241,6 +241,8 @@ function SynTexBaseAccessory(accessoryConfig)
 
     this.service.push(informationService);
 
+    const self = this;
+
     var counter = 1, subtypes = {};
     var type = this.services;
     var name = this.name;
@@ -398,8 +400,8 @@ function SynTexBaseAccessory(accessoryConfig)
 
                 if(!restart)
                 {
-                    fetchRequests(this);
-                    
+                    fetchRequests(self);
+
                     Automations.runAutomations(this.mac, this.letters, state);
                 }
 
