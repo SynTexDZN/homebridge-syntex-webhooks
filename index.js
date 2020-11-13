@@ -334,7 +334,7 @@ function SynTexBaseAccessory(accessoryConfig)
                     logger.log('read', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
                 }
                 
-                if(this.type == 'rgb')
+                if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                 {
                     var arr = [0, 100, 50];
 
@@ -361,7 +361,6 @@ function SynTexBaseAccessory(accessoryConfig)
                     if(this.type == 'relais' || this.type == 'switch')
                     {
                         this.power = state;
-                        console.log('added power');
                     }
 
                     this.getCharacteristic(this.characteristic).updateValue(state);
@@ -373,7 +372,7 @@ function SynTexBaseAccessory(accessoryConfig)
             {
                 logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.mac + ' )');
 
-                if(this.type == 'rgb')
+                if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                 {
                     this.power = state.split(':')[0] == 'true';
                     this.hue = getHSL(state)[0] || 0;
@@ -404,7 +403,6 @@ function SynTexBaseAccessory(accessoryConfig)
                     if(this.type == 'relais' || this.type == 'switch')
                     {
                         this.power = state;
-                        console.log('added power');
                     }
 
                     this.getCharacteristic(this.characteristic).updateValue(state);
@@ -412,8 +410,6 @@ function SynTexBaseAccessory(accessoryConfig)
 
                 if(!restart)
                 {
-                    console.log(this.power);
-
                     if(this.type == 'relais' || this.type == 'switch' || this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                     {
                         fetchRequests(this);
@@ -431,12 +427,12 @@ function SynTexBaseAccessory(accessoryConfig)
                 service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
             }
 
-            if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb')
+            if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb' || service.type == 'rgbw' || service.type == 'rgbww' || service.type == 'rgbcw')
             {
                 service.getCharacteristic(service.characteristic).on('set', this.setState.bind(service));
             }
 
-            if(service.type == 'rgb')
+            if(service.type == 'rgb' || service.type == 'rgbw' || service.type == 'rgbww' || service.type == 'rgbcw')
             {
                 service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(service)).on('set', this.setHue.bind(service));
                 service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(service)).on('set', this.setSaturation.bind(service));
@@ -474,7 +470,7 @@ SynTexBaseAccessory.prototype.getState = function(callback)
             logger.log('read', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
         }
 
-        if(this.type == 'rgb')
+        if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
         {
             callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
         }
@@ -699,7 +695,7 @@ function setRGB(accessory, req)
                 }.bind({ url : theRequest.url })));
             }
         }
-        else if(accessory.options.spectrum == 'rgb')
+        else if(accessory.options.spectrum == 'RGB')
         {
             s /= 100;
             l /= 100;
