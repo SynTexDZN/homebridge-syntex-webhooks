@@ -191,11 +191,11 @@ SynTexWebHookPlatform.prototype = {
                 {
                     if(error || stderr.includes('ERR!'))
                     {
-                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
+                        logger.log('warn', 'bridge', 'Bridge', 'Das Plugin SynTexWebHooks konnte nicht aktualisiert werden! ' + (error || stderr));
                     }
                     else
                     {
-                        logger.log('success', 'bridge', 'Bridge', 'Die Homebridge wurde auf die Version [' + version + '] aktualisiert!');
+                        logger.log('success', 'bridge', 'Bridge', 'Das Plugin SynTexWebHooks wurde auf die Version [' + version + '] aktualisiert!');
 
                         restart = true;
 
