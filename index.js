@@ -414,7 +414,10 @@ function SynTexBaseAccessory(accessoryConfig)
                 {
                     console.log(this.power);
 
-                    fetchRequests(this);
+                    if(this.type == 'relais' || this.type == 'switch' || this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
+                    {
+                        fetchRequests(this);
+                    }
 
                     Automations.runAutomations(this.mac, this.letters, state);
                 }
