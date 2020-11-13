@@ -398,6 +398,8 @@ function SynTexBaseAccessory(accessoryConfig)
 
                 if(!restart)
                 {
+                    fetchRequests(this);
+                    
                     Automations.runAutomations(this.mac, this.letters, state);
                 }
 
