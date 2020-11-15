@@ -241,8 +241,6 @@ function SynTexBaseAccessory(accessoryConfig)
 
     this.service.push(informationService);
 
-    const self = this;
-
     var counter = 1, subtypes = {};
     var type = this.services;
     var name = this.name;
@@ -873,7 +871,7 @@ function fetchRequests(accessory)
                                 {
                                     success++;
 
-                                    logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + urlToCall + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
+                                    logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
 
                                     if(finished >= counter)
                                     {
@@ -886,13 +884,13 @@ function fetchRequests(accessory)
                                 }
                                 else
                                 {
-                                    logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + urlToCall + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
+                                    logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
 
                                     if(finished >= counter)
                                     {
                                         if(success == 0 && TypeManager.letterToType(accessory.letters) == 'relais')
                                         {
-                                            resolve(err || new Error("Request to '" + urlToCall + "' was not succesful."));
+                                            resolve(err || new Error("Request to '" + this.url + "' was not succesful."));
                                         }
                                         else
                                         {
@@ -905,7 +903,7 @@ function fetchRequests(accessory)
                                     }
                                 }
 
-                            }).bind(accessory));
+                            }).bind({ url : urlToCall }));
                         }
                     }
                     else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
