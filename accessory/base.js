@@ -1,6 +1,10 @@
+let DeviceManager = require('../device-manager'), TypeManager = require('../type-manager'), Automations = require('../automations'), logger = require('../logger');
+var Service, Characteristic;
+var presets = {};
+
 module.exports = class Base
 {
-    constructor(accessoryConfig)
+    constructor(accessoryConfig, Manager)
     {
         this.service = [];
         this.mac = accessoryConfig['mac'];
@@ -11,6 +15,28 @@ module.exports = class Base
         this.model = accessoryConfig['model'] || 'HTTP Accessory';
         this.manufacturer = accessoryConfig['manufacturer'] || 'SynTex';
 
+        Service = Manager.Service;
+        Characteristic = Manager.Characteristic;
+        TypeManager = Manager.TypeManager;
+        logger = Manager.logger;
+        DeviceManager = Manager.DeviceManager;
+        Automations = Manager.Automations;
+
+        presets.contact = { letter : 'A', service : Service.ContactSensor, characteristic : Characteristic.ContactSensorState };
+        presets.motion = { letter : 'B', service : Service.MotionSensor, characteristic : Characteristic.MotionDetected };
+        presets.temperature = { letter : 'C', service : Service.TemperatureSensor, characteristic : Characteristic.CurrentTemperature };
+        presets.humidity = { letter : 'D', service : Service.HumiditySensor, characteristic : Characteristic.CurrentRelativeHumidity };
+        presets.rain = { letter : 'E', service : Service.LeakSensor, characteristic : Characteristic.LeakDetected };
+        presets.light = { letter : 'F', service : Service.LightSensor, characteristic : Characteristic.CurrentAmbientLightLevel };
+        presets.occupancy = { letter : '0', service : Service.OccupancySensor, characteristic : Characteristic.OccupancyDetected };
+        presets.smoke = { letter : '1', service : Service.SmokeSensor, characteristic : Characteristic.SmokeDetected };
+        presets.airquality = { letter : '2', service : Service.AirQualitySensor, characteristic : Characteristic.AirQuality };
+        presets.rgb = { letter : '3', service : Service.Lightbulb, characteristic : Characteristic.On };
+        presets.switch = { letter : '4', service : Service.Switch, characteristic : Characteristic.On };
+        presets.relais = { letter : '5', service : Service.Switch, characteristic : Characteristic.On };
+        presets.statelessswitch = { letter : '6', service : Service.StatelessProgrammableSwitch, characteristic : Characteristic.ProgrammableSwitchEvent };
+        //presets.lcd = { letter : '7', service : Service.Switch, characteristic : Characteristic.On };
+
         var informationService = new Service.AccessoryInformation();
         
         informationService
@@ -18,7 +44,7 @@ module.exports = class Base
             .setCharacteristic(Characteristic.Model, this.model)
             .setCharacteristic(Characteristic.FirmwareRevision, this.version)
             .setCharacteristic(Characteristic.SerialNumber, this.mac);
-
+        
         this.service.push(informationService);
 
         var counter = 1, subtypes = {};
@@ -175,7 +201,7 @@ module.exports = class Base
                             }
                         }
                     }
-                    */
+                    /*
                     else
                     {
                         if(this.type == 'relais' || this.type == 'switch')
@@ -185,7 +211,7 @@ module.exports = class Base
 
                         this.getCharacteristic(this.characteristic).updateValue(state);
                     }
-
+                    */
                     if(!restart)
                     {
                         if(this.type == 'relais' || this.type == 'switch' || this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
@@ -265,6 +291,6 @@ module.exports = class Base
 
     getServices()
     {
-        return [this.service];
+        return this.service;
     }
 }

@@ -3,6 +3,7 @@ const request = require('request'), http = require('http');
 const { access } = require('fs');
 var Service, Characteristic;
 var restart = true, presets = {};
+const SynTexSwitchAccessory = require('./accessory/switch');
 
 var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
@@ -67,7 +68,11 @@ SynTexWebHookPlatform.prototype = {
 
         for(var i = 0; i < this.devices.length; i++)
         {
-            if(this.devices[i].services == 'statelessswitch')
+            if(this.devices[i].services == 'switch')
+            {
+                accessories.push(new SynTexSwitchAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
+            }
+            else if(this.devices[i].services == 'statelessswitch')
             {
                 accessories.push(new SynTexWebHookStatelessSwitchAccessory(this.devices[i]));
             }
@@ -76,6 +81,8 @@ SynTexWebHookPlatform.prototype = {
                 accessories.push(new SynTexBaseAccessory(this.devices[i]));
             }
         }
+
+        console.log(accessories);
 
         Automations.setAccessories(accessories);
         
