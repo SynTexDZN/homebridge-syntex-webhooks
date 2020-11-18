@@ -354,16 +354,6 @@ module.exports = class Accessory extends Base
     {
         return this.service;
     }
-
-    getModel()
-    {
-        return 'HTTP Accessory';
-    }
-
-    getVersion()
-    {
-        return this.version;
-    }
 }
 
 function getHSL(state)

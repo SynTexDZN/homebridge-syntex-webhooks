@@ -9,6 +9,10 @@ module.exports = class SynTexBaseAccessory
         this.name = accessoryConfig['name'];
         this.services = accessoryConfig['services'];
 
+        this.version = accessoryConfig['version'] || '1.0.0';
+        this.model = accessoryConfig['model'] || 'HTTP Accessory';
+        this.manufacturer = accessoryConfig['manufacturer'] || 'SynTex';
+
         Service = Manager.Service;
         Characteristic = Manager.Characteristic;
 
@@ -35,17 +39,17 @@ module.exports = class SynTexBaseAccessory
 
     getManufacturer()
     {
-        return 'SynTex';
+        return this.manufacturer;
     }
 
     getModel()
     {
-        throw new Error('Die getModel() Methode muss überschrieben werden!');
+        return this.model;
     }
 
     getVersion()
     {
-        throw new Error('Die getVersion() Methode muss überschrieben werden!');
+        return this.version;
     }
     
     getServices()
