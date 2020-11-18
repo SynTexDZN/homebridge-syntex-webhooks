@@ -42,9 +42,4 @@ module.exports = class Statelessswitch extends Base
 
         }).bind(this);
     }
-
-    getServices()
-    {
-        return this.service;
-    }
 }

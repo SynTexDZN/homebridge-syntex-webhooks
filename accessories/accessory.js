@@ -349,11 +349,6 @@ module.exports = class Accessory extends Base
             callback(result);
         });
     }
-
-    getServices()
-    {
-        return this.service;
-    }
 }
 
 function getHSL(state)

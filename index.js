@@ -1,13 +1,16 @@
 let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations'), WebServer = require('./webserver'), logger = require('./logger');
 var Service, Characteristic, restart = true;
-const SynTexAccessory = require('./accessory/accessory'), SynTexStatelessswitchAccessory = require('./accessory/statelessswitch');
+const SynTexAccessory = require('./accessories/accessory'), SynTexStatelessswitchAccessory = require('./accessories/statelessswitch');
+
+const pluginID = 'homebridge-syntex-webhooks';
+const pluginName = 'SynTexWebHooks';
 
 module.exports = function(homebridge)
 {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
 
-    homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
+    homebridge.registerPlatform(pluginID, pluginName, SynTexWebHookPlatform);
 };
 
 function SynTexWebHookPlatform(log, config, api)
@@ -19,9 +22,9 @@ function SynTexWebHookPlatform(log, config, api)
     this.port = config['port'] || 1710;
     
     TypeManager = new TypeManager();
-    logger = new logger('SynTexWebHooks', this.logDirectory, api.user.storagePath());
+    logger = new logger(pluginName, this.logDirectory, api.user.storagePath());
     DeviceManager = new DeviceManager(logger, this.cacheDirectory);
-    WebServer = new WebServer('SynTexTuya', logger, this.port, false);
+    WebServer = new WebServer(pluginName, logger, this.port, false);
     Automations = new Automations(logger, this.cacheDirectory, DeviceManager);
 
     Automations.loadAutomations().then((loaded) => {
@@ -165,17 +168,17 @@ SynTexWebHookPlatform.prototype = {
 
             const { exec } = require('child_process');
             
-            exec('sudo npm install homebridge-syntex-webhooks@' + version + ' -g', (error, stdout, stderr) => {
+            exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
 
                 try
                 {
                     if(error || stderr.includes('ERR!'))
                     {
-                        logger.log('warn', 'bridge', 'Bridge', 'Das Plugin SynTexWebHooks konnte nicht aktualisiert werden! ' + (error || stderr));
+                        logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
                     }
                     else
                     {
-                        logger.log('success', 'bridge', 'Bridge', 'Das Plugin SynTexWebHooks wurde auf die Version [' + version + '] aktualisiert!');
+                        logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
 
                         restart = true;
 
