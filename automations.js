@@ -1,7 +1,7 @@
 let TypeManager = require('./type-manager');
 const request = require('request'), store = require('json-fs-store');
 var logger, storage, automations = [], accessories = [], DeviceManager;
-var eventLock = [], positiveFired = false, negativeFired = false;
+var eventLock = [], positiveFired = false, negativeFired = false, ready = false;
 
 module.exports = class Automations
 {
@@ -35,6 +35,8 @@ module.exports = class Automations
 
                     resolve(true);
                 }
+
+                ready = true;
             });
         });
     }
@@ -83,6 +85,11 @@ module.exports = class Automations
                 checkTrigger(automations[i], mac, letters, value.toString());
             }
         }
+    }
+
+    isReady()
+    {
+        return ready;
     }
 };
 

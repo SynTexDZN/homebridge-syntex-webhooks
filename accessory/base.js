@@ -213,13 +213,13 @@ module.exports = class Base
                         this.getCharacteristic(this.characteristic).updateValue(state);
                     }
 
-                    if(!restart)
+                    if(this.type == 'relais' || this.type == 'switch' || this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                     {
-                        if(this.type == 'relais' || this.type == 'switch' || this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
-                        {
-                            fetchRequests(this);
-                        }
+                        fetchRequests(this);
+                    }
 
+                    if(Automations.isReady())
+                    {
                         Automations.runAutomations(this.mac, this.letters, state);
                     }
 
