@@ -57,8 +57,6 @@ SynTexWebHookPlatform.prototype = {
             }
         }
 
-        console.log(accessories);
-
         Automations.setAccessories(accessories);
         
         callback(accessories);
@@ -109,7 +107,7 @@ SynTexWebHookPlatform.prototype = {
                 {
                     var state = null;
 
-                    if((state = validateUpdate(urlParams.mac, accessory.letters, urlParams.value)) != null)
+                    if((state = TypeManager.validateUpdate(urlParams.mac, accessory.letters, urlParams.value)) != null)
                     {
                         accessory.changeHandler(state);
                     }

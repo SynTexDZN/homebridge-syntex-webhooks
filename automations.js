@@ -191,7 +191,7 @@ function executeResult(automation, trigger)
                                 {
                                     var state = null;
 
-                                    if((state = validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value)) != null)
+                                    if((state = TypeManager.validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value)) != null)
                                     {
                                         accessories[j].service[k].changeHandler(state);
                                     }
@@ -200,7 +200,7 @@ function executeResult(automation, trigger)
                                         logger.log('error', automation.result[i].mac, automation.result[i].letters, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].mac + ' )');
                                     }
 
-                                    DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value));
+                                    DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, TypeManager.validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value));
                                 }
                             }
                         }
@@ -247,43 +247,4 @@ function executeResult(automation, trigger)
     }
 
     logger.log('success', trigger.mac, trigger.letters, '[' + trigger.name + '] hat den Prozess [' + automation.name + '] ausgeführt!');
-}
-
-function validateUpdate(mac, letters, state)
-{
-    var type = TypeManager.letterToType(letters[0]);
-
-    if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
-    {
-        if(state != true && state != false && state != 'true' && state != 'false')
-        {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
-
-            return null;
-        }
-
-        return (state == 'true' || state == true ? true : false);
-    }
-    else if(type === 'light' || type === 'temperature')
-    {
-        if(isNaN(state))
-        {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
-        }
-
-        return !isNaN(state) ? parseFloat(state) : null;
-    }
-    else if(type === 'humidity' || type === 'airquality')
-    {
-        if(isNaN(state))
-        {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
-        }
-
-        return !isNaN(state) ? parseInt(state) : null;
-    }
-    else
-    {
-        return state;
-    }
 }

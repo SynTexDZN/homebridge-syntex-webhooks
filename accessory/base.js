@@ -134,7 +134,7 @@ module.exports = class Base
                     {
                         logger.log('error', this.mac, this.letters, '[' + this.name + '] wurde nicht in der Storage gefunden! ( ' + this.mac + ' )');
                     }
-                    else if((state = validateUpdate(this.mac, this.letters, state)) != null)
+                    else if((state = TypeManager.validateUpdate(this.mac, this.letters, state)) != null)
                     {
                         logger.log('read', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
                     }
@@ -270,7 +270,7 @@ module.exports = class Base
             {
                 logger.log('error', this.mac, this.letters, '[' + this.name + '] wurde nicht in der Storage gefunden! ( ' + this.mac + ' )');
             }
-            else if((state = validateUpdate(this.mac, this.letters, state)) != null)
+            else if((state = TypeManager.validateUpdate(this.mac, this.letters, state)) != null)
             {
                 logger.log('read', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
             }
@@ -523,45 +523,6 @@ function setRGB(accessory, req)
             }
         }
     });
-}
-
-function validateUpdate(mac, letters, state)
-{
-    var type = TypeManager.letterToType(letters[0]);
-
-    if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
-    {
-        if(state != true && state != false && state != 'true' && state != 'false')
-        {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
-
-            return null;
-        }
-
-        return (state == 'true' || state == true ? true : false);
-    }
-    else if(type === 'light' || type === 'temperature')
-    {
-        if(isNaN(state))
-        {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
-        }
-
-        return !isNaN(state) ? parseFloat(state) : null;
-    }
-    else if(type === 'humidity' || type === 'airquality')
-    {
-        if(isNaN(state))
-        {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
-        }
-
-        return !isNaN(state) ? parseInt(state) : null;
-    }
-    else
-    {
-        return state;
-    }
 }
 
 function fetchRequests(accessory)
