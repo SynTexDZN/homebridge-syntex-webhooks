@@ -1,6 +1,6 @@
 let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations'), WebServer = require('./webserver'), logger = require('./logger');
 var Service, Characteristic, restart = true;
-const SynTexBaseAccessory = require('./accessory/base'), SynTexStatelessswitchAccessory = require('./accessory/statelessswitch');
+const SynTexAccessory = require('./accessory/accessory'), SynTexStatelessswitchAccessory = require('./accessory/statelessswitch');
 
 module.exports = function(homebridge)
 {
@@ -53,7 +53,7 @@ SynTexWebHookPlatform.prototype = {
             }
             else
             {
-                accessories.push(new SynTexBaseAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
+                accessories.push(new SynTexAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
             }
         }
 

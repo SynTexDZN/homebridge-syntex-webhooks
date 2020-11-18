@@ -4,30 +4,14 @@ module.exports = class Statelessswitch
 {
     constructor(accessoryConfig, Manager)
     {
+        super(accessoryConfig, Manager);
+
         Service = Manager.Service;
         Characteristic = Manager.Characteristic;
         logger = Manager.logger;
 
-        this.service = [];
-        this.mac =  accessoryConfig['mac'];
-        this.name =  accessoryConfig['name'];
         this.buttons =  accessoryConfig['buttons'] || 0;
         this.letters = '60';
-        this.services = 'statelessswitch';
-
-        this.version =  accessoryConfig['version'] || '1.0.0';
-        this.model =  accessoryConfig['model'] || 'HTTP Accessory';
-        this.manufacturer =  accessoryConfig['manufacturer'] || 'SynTex';
-
-        var informationService = new Service.AccessoryInformation();
-        
-        informationService
-            .setCharacteristic(Characteristic.Manufacturer, this.manufacturer)
-            .setCharacteristic(Characteristic.Model, this.model)
-            .setCharacteristic(Characteristic.FirmwareRevision, this.version)
-            .setCharacteristic(Characteristic.SerialNumber, this.mac);
-
-        this.service.push(informationService);
 
         for(var i = 0; i < this.buttons; i++)
         {
@@ -49,9 +33,9 @@ module.exports = class Statelessswitch
             {
                 if(i - 1 == event)
                 {
-                logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + (i + 1) + '] wurde ausgeführt! ( ' + this.mac + ' )');
+                    logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + (i + 1) + '] wurde ausgeführt! ( ' + this.mac + ' )');
 
-                this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
+                    this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
                 }
             }
 
