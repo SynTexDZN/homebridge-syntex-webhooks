@@ -1,6 +1,7 @@
+const Base = require('./base');
 var Service, Characteristic, logger;
 
-module.exports = class Statelessswitch
+module.exports = class Statelessswitch extends Base
 {
     constructor(accessoryConfig, Manager)
     {
