@@ -55,7 +55,7 @@ It stores accessory data you can request to display the content on your website 
                     {"type" : "switch", "name" : "First"},
                     {"type" : "motion", "name" : "Second"},
                     {"type" : "light", "name" : "Third"},
-                    {"type" : "leak", "name" : "Leak"},
+                    {"type" : "rain", "name" : "Leak"},
                     {"type" : "smoke", "name" : "Smoke"},
                     {"type" : "occupancy", "name" : "Present"}
                 ]
@@ -65,7 +65,7 @@ It stores accessory data you can request to display the content on your website 
                 "name": "Switch",
                 "services": {
                     "type" : "switch",
-                    requests": [
+                    "requests": [
                         {
                             "trigger": "on",
                             "method": "GET",
@@ -84,7 +84,7 @@ It stores accessory data you can request to display the content on your website 
                 "name": "Relais",
                 "services": {
                     "type" : "relais",
-                    requests": [
+                    "requests": [
                         {
                             "trigger": "on",
                             "method": "GET",
@@ -103,7 +103,7 @@ It stores accessory data you can request to display the content on your website 
                 "name": "Dummy Light",
                 "services": {
                     "type" : "rgb",
-                    requests": [
+                    "requests": [
                         {
                             "trigger": "color",
                             "method": "GET",
