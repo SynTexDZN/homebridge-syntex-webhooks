@@ -209,8 +209,6 @@ module.exports = class Accessory extends Base
 
                     if(this.type == 'relais' || this.type == 'switch' || this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                     {
-                        console.log(1, 'INIT');
-
                         fetchRequests(this);
                     }
 
@@ -288,16 +286,21 @@ module.exports = class Accessory extends Base
 
     setState(powerOn, callback, context)
     {
-        console.log(1, 'STATE', powerOn);
+        console.log('POWER', this.power, powerOn);
 
-        this.power = powerOn;
+        if(this.power != powerOn)
+        {
+            this.power = powerOn;
 
-        console.log(2, 'STATE', powerOn);
+            fetchRequests(this).then((result) => {
 
-        fetchRequests(this).then((result) => {
-
-            callback(result);
-        });
+                callback(result);
+            });
+        }
+        else
+        {
+            callback(null);
+        }
     }
 
     getHue(callback)
@@ -544,7 +547,7 @@ function setRGB(accessory, req)
 
 function fetchRequests(accessory)
 {
-    console.log(2, accessory.power, accessory.hue, accessory.saturation, accessory.brightness);
+    console.log(3, accessory.power, accessory.hue, accessory.saturation, accessory.brightness);
 
     return new Promise(resolve => {
 
