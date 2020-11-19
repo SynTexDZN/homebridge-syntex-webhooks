@@ -133,7 +133,13 @@ module.exports = class Accessory extends Base
                             arr.shift();
                         }
 
+                        console.log(3, arr);
+
                         var value = service.options.spectrum == 'RGB' ? getHSL(state) : arr;
+
+                        console.log(4, value);
+
+                        console.log(5, state.split(':')[0], state.split(':')[0] == 'true');
 
                         this.power = state ? state.split(':')[0] == 'true' : 'false';
                         this.hue = value[0];
