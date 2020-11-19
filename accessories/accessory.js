@@ -199,6 +199,8 @@ module.exports = class Accessory extends Base
 
                     if(this.type == 'relais' || this.type == 'switch' || this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                     {
+                        console.log(1, 'INIT');
+
                         fetchRequests(this);
                     }
 
@@ -280,6 +282,8 @@ module.exports = class Accessory extends Base
 
         this.power = powerOn;
 
+        console.log(1, 'STATE');
+
         fetchRequests(this).then((result) => {
 
             callback(result);
@@ -303,6 +307,8 @@ module.exports = class Accessory extends Base
         console.log('SET HUE', level);
 
         this.hue = level;
+
+        console.log(1, 'HUE');
         
         fetchRequests(this).then((result) => {
 
@@ -327,6 +333,8 @@ module.exports = class Accessory extends Base
         console.log('SET SATURATION', level);
 
         this.saturation = level;
+
+        console.log(1, 'SATURATION');
         
         fetchRequests(this).then((result) => {
 
@@ -351,6 +359,8 @@ module.exports = class Accessory extends Base
         console.log('SET BRIGHTNESS', level);
 
         this.brightness = level;
+
+        console.log(1, 'BRIGHTNESS');
         
         fetchRequests(this).then((result) => {
 
@@ -509,6 +519,8 @@ function setRGB(accessory, req)
 
 function fetchRequests(accessory)
 {
+    console.log(2, accessory.powerOn, accessory.hue, accessory.saturation, accessory.brightness);
+
     return new Promise(resolve => {
 
         if(accessory.options.requests)
