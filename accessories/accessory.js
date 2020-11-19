@@ -68,7 +68,7 @@ module.exports = class Accessory extends Base
                 name = this.name + ' ' + type[0].toUpperCase() + type.substring(1);
             }
             
-            if(presets[type] != undefined)
+            if(presets[type] != null)
             {
                 if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length == 1)
                 {
@@ -555,7 +555,7 @@ function fetchRequests(accessory)
 
             for(var i = 0; i < accessory.options.requests.length; i++)
             {
-                if(accessory.options.requests[i].trigger && accessory.power != undefined
+                if(accessory.options.requests[i].trigger && accessory.power != null
                 && (accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
                 || !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
                 || accessory.options.requests[i].trigger.toLowerCase() == 'color'))
@@ -566,7 +566,7 @@ function fetchRequests(accessory)
 
             for(var i = 0; i < accessory.options.requests.length; i++)
             {
-                if(accessory.options.requests[i].trigger && accessory.power != undefined)
+                if(accessory.options.requests[i].trigger && accessory.power != null)
                 {
                     if(accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
                     || !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')

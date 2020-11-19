@@ -11,7 +11,7 @@ module.exports = class DeviceManager
 
     getDevice(mac, service)
     {
-        return new Promise(async function(resolve) {
+        return new Promise(async (resolve) => {
 
             var found = false;
 
@@ -42,7 +42,7 @@ module.exports = class DeviceManager
 
     setDevice(mac, service, value)
     {
-        return new Promise(async function(resolve) {
+        return new Promise(async (resolve) => {
 
             var found = false;
 

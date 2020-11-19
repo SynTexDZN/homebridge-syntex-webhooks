@@ -121,7 +121,7 @@ SynTexWebHookPlatform.prototype = {
 
                     DeviceManager.setDevice(urlParams.mac, accessory.letters, urlParams.value);
                         
-                    response.write(state != null ? state.toString() : 'Error');
+                    response.write(state != null ? JSON.stringify(state) : 'Error');
                 }
                 else
                 {

@@ -240,7 +240,7 @@ function executeResult(automation, trigger)
                 timeout : 10000
             };
 
-            request(theRequest, (function(err, response, body)
+            request(theRequest, function(err, response, body)
             {
                 var statusCode = response && response.statusCode ? response.statusCode : -1;
 
@@ -249,7 +249,7 @@ function executeResult(automation, trigger)
                     logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
                 }
                 
-            }.bind({ url : theRequest.url, name : automation.name })));
+            }.bind({ url : theRequest.url, name : automation.name }));
         }
     }
 

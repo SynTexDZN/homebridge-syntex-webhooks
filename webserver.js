@@ -7,8 +7,8 @@ module.exports = class WebServer
     {
         logger = log;
 
-        var createServerCallback = (async function(request, response)
-        {
+        var createServerCallback = async (request, response) => {
+
             var urlParts = url.parse(request.url, true);
             var urlParams = urlParts.query;
             var urlPath = urlParts.pathname;
@@ -116,7 +116,7 @@ module.exports = class WebServer
                 response.end();
             }
 
-        }).bind(this);
+        };
 
         http.createServer(createServerCallback).listen(port, '0.0.0.0');
         
@@ -150,8 +150,8 @@ function exists(reqPath)
             noext = true;
         }
 
-        fs.exists(pathname, function(exist)
-        {
+        fs.exists(pathname, (exist) => {
+
             if(exist && fs.statSync(pathname).isDirectory())
             {
                 resolve(exists(reqPath + 'index.html'));
@@ -176,8 +176,8 @@ function read(reqPath)
 {
     return new Promise(resolve => {
         
-        fs.readFile(reqPath, function(err, res)
-        {          
+        fs.readFile(reqPath, (err, res) => {
+
             if(!res || err)
             {
                 res = "";
