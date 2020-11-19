@@ -136,7 +136,9 @@ module.exports = class Accessory extends Base
 
                         var value = this.options.spectrum == 'RGB' ? getHSL(state) : defaults;
 
-                        this.power = state ? state.power == 'true' : false;
+                        console.log(state, state.power);
+
+                        this.power = state != null ? state.power == 'true' : false;
                         this.hue = value[0];
                         this.saturation = value[1];
                         this.brightness = value[2];
