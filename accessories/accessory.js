@@ -135,7 +135,9 @@ module.exports = class Accessory extends Base
 
                         console.log(3, arr);
 
-                        var value = service.options.spectrum == 'RGB' ? getHSL(state) : arr;
+                        console.log(6, service.options.spectrum, this.options.spectrum);
+
+                        var value = this.options.spectrum == 'RGB' ? getHSL(state) : arr;
 
                         console.log(4, value);
 
