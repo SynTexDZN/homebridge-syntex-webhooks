@@ -60,7 +60,16 @@ module.exports = class TypeManager
         }
         else
         {
-            return state;
+            try
+            {
+                var obj = JSON.parse(state);
+
+                return obj;
+            }
+            catch(e)
+            {
+                return state;
+            }
         }
     }
 };

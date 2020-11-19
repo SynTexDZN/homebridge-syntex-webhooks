@@ -166,19 +166,25 @@ module.exports = class Accessory extends Base
 
                     if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                     {
-                        this.power = state.power || false;
+                        var value = { power : state.split(':')[0] };
+
+                        value[this.options.spectrum == 'HSL' ? 'hue' : 'red'] = state.split(':')[1];
+                        value[this.options.spectrum == 'HSL' ? 'saturation' : 'green'] = state.split(':')[2];
+                        value[this.options.spectrum == 'HSL' ? 'brightness' : 'blue'] = state.split(':')[3];
+
+                        this.power = value.power || false;
 
                         if(this.options.spectrum == 'HSL')
                         {
-                            this.hue = state.hue || 0;
-                            this.saturation = state.saturation || 100;
-                            this.brightness = state.brightness || 50;
+                            this.hue = value.hue || 0;
+                            this.saturation = value.saturation || 100;
+                            this.brightness = value.brightness || 50;
                         }
                         else if(this.options.spectrum == 'RGB')
                         {
-                            this.hue = getHSL(state)[0] || 0;
-                            this.saturation = getHSL(state)[1] || 100;
-                            this.brightness = getHSL(state)[2] || 50;
+                            this.hue = getHSL(value)[0] || 0;
+                            this.saturation = getHSL(value)[1] || 100;
+                            this.brightness = getHSL(value)[2] || 50;
                         }
 
                         this.getCharacteristic(Characteristic.On).updateValue(this.power);
