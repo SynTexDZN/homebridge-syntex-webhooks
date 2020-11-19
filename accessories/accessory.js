@@ -136,9 +136,9 @@ module.exports = class Accessory extends Base
 
                         var value = this.options.spectrum == 'RGB' ? getHSL(state) : defaults;
 
-                        console.log(state, state.power, value, state != null ? state.power == 'true' : false);
+                        console.log(state, state.power, value, state != null ? state.power : false);
 
-                        this.power = state != null ? state.power == 'true' : false;
+                        this.power = state != null ? state.power : false;
                         this.hue = value[0];
                         this.saturation = value[1];
                         this.brightness = value[2];
@@ -166,7 +166,7 @@ module.exports = class Accessory extends Base
 
                     if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                     {
-                        this.power = state.power == 'true';
+                        this.power = state.power || false;
 
                         if(this.options.spectrum == 'HSL')
                         {
@@ -274,7 +274,7 @@ module.exports = class Accessory extends Base
     
             if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
             {
-                callback(null, state == null ? false : (state.power == 'true'));
+                callback(null, state != null ? state.power : false );
             }
             else
             {
