@@ -5,8 +5,8 @@ const SynTexAccessory = require('./accessories/accessory'), SynTexStatelessswitc
 const pluginID = 'homebridge-syntex-webhooks';
 const pluginName = 'SynTexWebHooks';
 
-module.exports = (homebridge) => {
-
+module.exports = (homebridge) =>
+{
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
 
@@ -44,8 +44,8 @@ function SynTexWebHookPlatform(log, config, api)
 
 SynTexWebHookPlatform.prototype = {
     
-    accessories : (callback) => {
-        
+    accessories : function(callback)
+    {
         var accessories = [];
 
         for(var i = 0; i < this.devices.length; i++)
