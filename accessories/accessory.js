@@ -125,17 +125,18 @@ module.exports = class Accessory extends Base
                     
                     if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                     {
-                        var arr = [0, 100, 50];
+                        var defaults = [0, 100, 50];
 
-                        if(state != null)
+                        if(this.options.spectrum == 'HSL' && state != null)
                         {
-                            arr = state.split(':');
-                            arr.shift();
+                            defaults[0] = state.hue;
+                            defaults[1] = state.saturation;
+                            defaults[2] = state.brightness;
                         }
 
-                        var value = this.options.spectrum == 'RGB' ? getHSL(state) : arr;
+                        var value = this.options.spectrum == 'RGB' ? getHSL(state) : defaults;
 
-                        this.power = state ? state.split(':')[0] == 'true' : false;
+                        this.power = state ? state.power == 'true' : false;
                         this.hue = value[0];
                         this.saturation = value[1];
                         this.brightness = value[2];
@@ -163,16 +164,16 @@ module.exports = class Accessory extends Base
 
                     if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                     {
+                        this.power = state.power == 'true';
+
                         if(this.options.spectrum == 'HSL')
                         {
-                            this.power = state.split(':')[0] == 'true';
-                            this.hue = state.split(':')[1] || 0;
-                            this.saturation = state.split(':')[2] || 100;
-                            this.brightness = state.split(':')[3] || 50;
+                            this.hue = state.hue || 0;
+                            this.saturation = state.saturation || 100;
+                            this.brightness = state.brightness || 50;
                         }
                         else if(this.options.spectrum == 'RGB')
                         {
-                            this.power = state.split(':')[0] == 'true';
                             this.hue = getHSL(state)[0] || 0;
                             this.saturation = getHSL(state)[1] || 100;
                             this.brightness = getHSL(state)[2] || 50;
@@ -271,7 +272,7 @@ module.exports = class Accessory extends Base
     
             if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
             {
-                callback(null, state == null ? false : (state.split(':')[0] == 'true' || false));
+                callback(null, state == null ? false : (state.power == 'true'));
             }
             else
             {
@@ -286,8 +287,6 @@ module.exports = class Accessory extends Base
 
     setState(powerOn, callback, context)
     {
-        console.log('POWER', this.power, powerOn);
-
         if(this.power != powerOn)
         {
             this.power = powerOn;
@@ -307,7 +306,7 @@ module.exports = class Accessory extends Base
     {
         DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
 
-            callback(null, (state == null) ? 0 : this.options.spectrum == 'HSL' ? (state.split(':')[1] || 0) : (getHSL(state)[0] || 0));
+            callback(null, (state == null) ? 0 : this.options.spectrum == 'HSL' ? (state.hue || 0) : (getHSL(state)[0] || 0));
 
         }.bind(this)).catch(function(e) {
 
@@ -317,8 +316,6 @@ module.exports = class Accessory extends Base
 
     setHue(level, callback)
     {
-        console.log('HUE', this.hue, level);
-
         if(this.hue != level)
         {
             this.hue = level;
@@ -338,7 +335,7 @@ module.exports = class Accessory extends Base
     {
         DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
 
-            callback(null, (state == null) ? 100 : this.options.spectrum == 'HSL' ? (state.split(':')[2] || 100) : (getHSL(state)[1] || 100));
+            callback(null, (state == null) ? 100 : this.options.spectrum == 'HSL' ? (state.saturation || 100) : (getHSL(state)[1] || 100));
 
         }.bind(this)).catch(function(e) {
 
@@ -348,8 +345,6 @@ module.exports = class Accessory extends Base
 
     setSaturation(level, callback)
     {
-        console.log('SATURATION', this.saturation, level);
-
         if(this.saturation != level)
         {
             this.saturation = level;
@@ -369,7 +364,7 @@ module.exports = class Accessory extends Base
     {
         DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
 
-            callback(null, (state == null) ? 50 : this.options.spectrum == 'HSL' ? (state.split(':')[3] || 50) : (getHSL(state)[2] || 50));
+            callback(null, (state == null) ? 50 : this.options.spectrum == 'HSL' ? (state.brightness || 50) : (getHSL(state)[2] || 50));
 
         }.bind(this)).catch(function(e) {
 
@@ -379,8 +374,6 @@ module.exports = class Accessory extends Base
 
     setBrightness(level, callback)
     {
-        console.log('BRIGHTNESS', this.brightness, level);
-
         if(this.brightness != level)
         {
             this.brightness = level;
@@ -399,7 +392,7 @@ module.exports = class Accessory extends Base
 
 function getHSL(state)
 {
-    var r = state.split(':')[1] / 255, g = state.split(':')[2] / 255, b = state.split(':')[3] / 255;
+    var r = state.red / 255, g = state.green / 255, b = state.blue / 255;
 
     let cmin = Math.min(r, g, b),
         cmax = Math.max(r, g, b),
@@ -457,7 +450,7 @@ function setRGB(accessory, req)
                     {
                         logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
             
-                        DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.power + ':' + accessory.hue + ':' + accessory.saturation + ':' + accessory.brightness);
+                        DeviceManager.setDevice(accessory.mac, accessory.letters, { power : accessory.power, hue : accessory.hue, saturation : accessory.saturation, brightness : accessory.brightness });
                     }
                     else
                     {
@@ -507,39 +500,36 @@ function setRGB(accessory, req)
             g = Math.round((g + m) * 255);
             b = Math.round((b + m) * 255);
 
-            if(accessory.fetch != accessory.power + ':' + r + ':' + g + ':' + b)
+            accessory.fetch = { power : accessory.power, red : r, green : g, blue : b };
+
+            logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [power: ' + accessory.fetch.power + ', red: ' + accessory.fetch.red + ', green: ' + accessory.fetch.green + ', blue: ' + accessory.fetch.blue + '] ( ' + accessory.mac + ' )');
+
+            if(req.url != '')
             {
-                accessory.fetch = accessory.power + ':' + r + ':' + g + ':' + b;
-
-                logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [' + accessory.fetch + '] ( ' + accessory.mac + ' )');
-
-                if(req.url != '')
+                var theRequest = {
+                    method : 'GET',
+                    url : req.url + r + ',' + g + ',' + b,
+                    timeout : 10000
+                };
+            
+                request(theRequest, (function(err, response, body)
                 {
-                    var theRequest = {
-                        method : 'GET',
-                        url : req.url + r + ',' + g + ',' + b,
-                        timeout : 10000
-                    };
-                
-                    request(theRequest, (function(err, response, body)
+                    var statusCode = response && response.statusCode ? response.statusCode : -1;
+            
+                    if(!err && statusCode == 200)
                     {
-                        var statusCode = response && response.statusCode ? response.statusCode : -1;
-                
-                        if(!err && statusCode == 200)
-                        {
-                            logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
-                
-                            DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.fetch);
-                        }
-                        else
-                        {
-                            logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
-                        }
+                        logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
+            
+                        DeviceManager.setDevice(accessory.mac, accessory.letters, accessory.fetch);
+                    }
+                    else
+                    {
+                        logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+                    }
 
-                        resolve();
-                        
-                    }.bind({ url : theRequest.url })));
-                }
+                    resolve();
+                    
+                }.bind({ url : theRequest.url })));
             }
         }
     });
@@ -547,8 +537,6 @@ function setRGB(accessory, req)
 
 function fetchRequests(accessory)
 {
-    console.log(3, accessory.power, accessory.hue, accessory.saturation, accessory.brightness);
-
     return new Promise(resolve => {
 
         if(accessory.options.requests)
