@@ -276,6 +276,8 @@ module.exports = class Accessory extends Base
 
     setState(powerOn, callback, context)
     {
+        console.log('SET STATE', powerOn);
+
         this.power = powerOn;
 
         fetchRequests(this).then((result) => {
@@ -298,6 +300,8 @@ module.exports = class Accessory extends Base
 
     setHue(level, callback)
     {
+        console.log('SET HUE', level);
+
         this.hue = level;
         
         fetchRequests(this).then((result) => {
@@ -320,6 +324,8 @@ module.exports = class Accessory extends Base
 
     setSaturation(level, callback)
     {
+        console.log('SET SATURATION', level);
+
         this.saturation = level;
         
         fetchRequests(this).then((result) => {
@@ -342,6 +348,8 @@ module.exports = class Accessory extends Base
 
     setBrightness(level, callback)
     {
+        console.log('SET BRIGHTNESS', level);
+
         this.brightness = level;
         
         fetchRequests(this).then((result) => {
