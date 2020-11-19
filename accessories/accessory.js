@@ -133,17 +133,9 @@ module.exports = class Accessory extends Base
                             arr.shift();
                         }
 
-                        console.log(3, arr);
-
-                        console.log(6, service.options.spectrum, this.options.spectrum);
-
                         var value = this.options.spectrum == 'RGB' ? getHSL(state) : arr;
 
-                        console.log(4, value);
-
-                        console.log(5, state.split(':')[0], state.split(':')[0] == 'true');
-
-                        this.power = state ? state.split(':')[0] == 'true' : 'false';
+                        this.power = state ? state.split(':')[0] == 'true' : false;
                         this.hue = value[0];
                         this.saturation = value[1];
                         this.brightness = value[2];
@@ -296,11 +288,11 @@ module.exports = class Accessory extends Base
 
     setState(powerOn, callback, context)
     {
-        console.log('SET STATE', powerOn);
+        console.log(1, 'STATE', powerOn);
 
         this.power = powerOn;
 
-        console.log(1, 'STATE');
+        console.log(2, 'STATE', powerOn);
 
         fetchRequests(this).then((result) => {
 
@@ -322,16 +314,21 @@ module.exports = class Accessory extends Base
 
     setHue(level, callback)
     {
-        console.log('SET HUE', level);
+        console.log('HUE', this.hue, level);
 
-        this.hue = level;
+        if(this.hue != level)
+        {
+            this.hue = level;
 
-        console.log(1, 'HUE');
-        
-        fetchRequests(this).then((result) => {
+            fetchRequests(this).then((result) => {
 
-            callback(result);
-        });
+                callback(result);
+            });
+        }
+        else
+        {
+            callback(null);
+        }
     }
 
     getSaturation(callback)
@@ -348,16 +345,21 @@ module.exports = class Accessory extends Base
 
     setSaturation(level, callback)
     {
-        console.log('SET SATURATION', level);
+        console.log('SATURATION', this.saturation, level);
 
-        this.saturation = level;
+        if(this.saturation != level)
+        {
+            this.saturation = level;
 
-        console.log(1, 'SATURATION');
-        
-        fetchRequests(this).then((result) => {
+            fetchRequests(this).then((result) => {
 
-            callback(result);
-        });
+                callback(result);
+            });
+        }
+        else
+        {
+            callback(null);
+        }
     }
 
     getBrightness(callback)
@@ -374,16 +376,21 @@ module.exports = class Accessory extends Base
 
     setBrightness(level, callback)
     {
-        console.log('SET BRIGHTNESS', level);
+        console.log('BRIGHTNESS', this.brightness, level);
 
-        this.brightness = level;
+        if(this.brightness != level)
+        {
+            this.brightness = level;
 
-        console.log(1, 'BRIGHTNESS');
-        
-        fetchRequests(this).then((result) => {
+            fetchRequests(this).then((result) => {
 
-            callback(result);
-        });
+                callback(result);
+            });
+        }
+        else
+        {
+            callback(null);
+        }
     }
 }
 
