@@ -163,10 +163,20 @@ module.exports = class Accessory extends Base
 
                     if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                     {
-                        this.power = state.split(':')[0] == 'true';
-                        this.hue = getHSL(state)[0] || 0;
-                        this.saturation = getHSL(state)[1] || 100;
-                        this.brightness = getHSL(state)[2] || 50;
+                        if(this.options.spectrum == 'HSL')
+                        {
+                            this.power = state.split(':')[0] == 'true';
+                            this.hue = state.split(':')[1] || 0;
+                            this.saturation = state.split(':')[2] || 100;
+                            this.brightness = state.split(':')[3] || 50;
+                        }
+                        else if(this.options.spectrum == 'RGB')
+                        {
+                            this.power = state.split(':')[0] == 'true';
+                            this.hue = getHSL(state)[0] || 0;
+                            this.saturation = getHSL(state)[1] || 100;
+                            this.brightness = getHSL(state)[2] || 50;
+                        }
 
                         this.getCharacteristic(Characteristic.On).updateValue(this.power);
                         this.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
@@ -519,7 +529,7 @@ function setRGB(accessory, req)
 
 function fetchRequests(accessory)
 {
-    console.log(2, accessory.powerOn, accessory.hue, accessory.saturation, accessory.brightness);
+    console.log(2, accessory.power, accessory.hue, accessory.saturation, accessory.brightness);
 
     return new Promise(resolve => {
 
