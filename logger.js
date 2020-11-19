@@ -62,8 +62,10 @@ module.exports = class Logger
     err(error)
     {
         var s = (error.stack.split('\n')[1].split('\n')[0].match(/\//g) || []).length;
-        console.log(error);
+        
         this.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + ' ( [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + '] bei Zeile [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + '] )');
+    
+        console.log(error);
     }
 
     debug(message)
