@@ -434,6 +434,8 @@ function setRGB(accessory, req)
 
         if(accessory.options.spectrum == 'HSL')
         {
+            logger.log('update', accessory.mac, accessory.letters, 'HomeKit Status für [' + accessory.name + '] geändert zu [power: ' + accessory.power + ', hue: ' + accessory.hue + ', saturation: ' + accessory.saturation + ', brightness: ' + accessory.brightness + '] ( ' + accessory.mac + ' )');
+
             if(req.url != '')
             {
                 var theRequest = {
