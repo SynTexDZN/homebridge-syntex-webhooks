@@ -211,6 +211,8 @@ module.exports = class Accessory extends Base
                             this.power = state;
                         }
 
+                        console.log(state, typeof state);
+
                         this.getCharacteristic(this.characteristic).updateValue(state);
                     }
 
