@@ -301,7 +301,7 @@ module.exports = class Accessory extends Base
 
             if(Automations.isReady())
             {
-                Automations.runAutomations(this.mac, this.letters, state);
+                Automations.runAutomations(this.mac, this.letters, this.power);
             }
 
             fetchRequests(this).then((result) => {
