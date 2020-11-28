@@ -80,8 +80,6 @@ module.exports = class Automations
 
         for(var i = 0; i < automations.length; i++)
         {
-            console.log(automations[i].active, !eventLock.includes(automations[i].id));
-
             if(automations[i].active && !eventLock.includes(automations[i].id))
             {
                 checkTrigger(automations[i], mac, letters, value.toString());
