@@ -219,6 +219,8 @@ module.exports = class Accessory extends Base
                         fetchRequests(this);
                     }
 
+                    console.log(Automations.isReady());
+
                     if(Automations.isReady())
                     {
                         Automations.runAutomations(this.mac, this.letters, state);
