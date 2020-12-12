@@ -8,16 +8,13 @@ It stores accessory data you can request to display the content on your website 
 1. Install homebridge using: `sudo npm install -g homebridge`
 2. Install this plugin using: `sudo npm install -g homebridge-syntex-webhooks`
 3. Update your `config.json` file. See snippet below.
-4. Restart the Homebridge Service with `sudo systemctl restart homebridge; sudo journalctl -fau homebridge`.
+4. Restart the Homebridge Service with: `sudo systemctl restart homebridge; sudo journalctl -fau homebridge`
 
 
 ## Example Config
 **Info:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
 - `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
 - `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
-- For the mac address you can use either a `real mac address` or another `random unique text`
-- Every device needs these configurations: `mac`, `name` and `services`
-- For lights GET parameters are included to the URL ( *[ url ]?r=0&b=0&b=0* )
 
 ```
 "platforms": [
@@ -123,6 +120,11 @@ It stores accessory data you can request to display the content on your website 
 ]
 ```
 
+- For the mac address you can use either a `real mac address` or another `random unique text`
+- Every device needs these configurations: `mac`, `name` and `services`
+- For lights GET parameters are included to the URL ( *[ url ]?r=0&b=0&b=0* )
+
+
 ## Update HTTP Devices
 1. Open `http://`  **Bridge IP**  `/devices?mac=`  **Device Mac**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device Mac`
@@ -135,7 +137,7 @@ It stores accessory data you can request to display the content on your website 
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
 ( *First of that type = 0, second = 1 ..* )
 
-**Example:**  `http://homebridge.local/devices?mac=multi2&type=light&counter=0&value=20.5`\
+**Example:**  `http://homebridge.local:1710/devices?mac=multi2&type=light&counter=0&value=20.5`\
 ( *Updates the value of `Third` to `20.5 LUX` from the Example Config* )
 
 
@@ -147,7 +149,7 @@ It stores accessory data you can request to display the content on your website 
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
 ( *First of that type = 0, second = 1 ..* )
 
-**Example:**  `http://homebridge.local/devices?mac=multi1&type=switch&counter=1`\
+**Example:**  `http://homebridge.local:1710/devices?mac=multi1&type=switch&counter=1`\
 ( *Reads the value of `Second` from the Example Config* )
 
 
