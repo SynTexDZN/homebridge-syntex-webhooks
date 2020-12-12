@@ -1,6 +1,6 @@
 {
   "name": "homebridge-syntex-webhooks",
-  "version": "2.2.17-b5",
+  "version": "2.2.17",
   "description": "A webhook plugin for HTTP devices",
   "main": "index.js",
   "author": {
@@ -13,7 +13,7 @@
   "dependencies": {
     "json-fs-store": "^1.0.1",
     "request": "^2.88.0",
-		"homebridge-syntex-dynamic-platform": "1.0.1-b1"
+    "homebridge-syntex-dynamic-platform": "1.0.1-b1"
   },
   "keywords": [
     "syntex",
