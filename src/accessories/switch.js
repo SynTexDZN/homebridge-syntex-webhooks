@@ -17,20 +17,9 @@ module.exports = class SynTexOutletService extends SwitchService
 		{
 			if(state.value != null)
 			{
-				this.power = state.value;
+                this.homebridgeAccessory.getServiceById(Service.Switch, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.value);
 
-                this.homebridgeAccessory.getServiceById(Service.Switch, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
-
-                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
-            
-                super.setValue('state', this.power);
-
-                if(Automations.isReady())
-                {
-                    Automations.runAutomations(this.id, this.letters, this.power);
-                }
-
-                DeviceManager.fetchRequests(this);
+                this.setState(state.value, () => {});
             }
 		};
     }
