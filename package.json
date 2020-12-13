@@ -13,7 +13,7 @@
   "dependencies": {
     "json-fs-store": "^1.0.1",
     "request": "^2.88.0",
-    "homebridge-syntex-dynamic-platform": "1.0.1-b3"
+    "homebridge-syntex-dynamic-platform": "1.0.1-b4"
   },
   "keywords": [
     "syntex",
