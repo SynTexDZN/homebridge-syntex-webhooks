@@ -42,8 +42,6 @@ module.exports = class SynTexOutletService extends LightBulbService
 	{
         this.power = value;
 
-        super.setState(value, () => {});
-
         if(Automations.isReady())
         {
             Automations.runAutomations(this.id, this.letters, this.power);
@@ -53,7 +51,8 @@ module.exports = class SynTexOutletService extends LightBulbService
 
             if(result == null)
             {
-                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
+                super.setState(value, 
+                    () => this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )'));
             }
 
             callback(result);
