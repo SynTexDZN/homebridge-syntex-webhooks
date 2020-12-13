@@ -42,6 +42,8 @@ module.exports = class SynTexOutletService extends SwitchService
     
     setState(value, callback)
 	{
+        this.power = value;
+        
 		super.setState(value, () => {
 
             this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
