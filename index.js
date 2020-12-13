@@ -1,5 +1,4 @@
 let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations');
-var Service, Characteristic, restart = true;
 
 const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
 
@@ -8,10 +7,9 @@ const SynTexUniversalAccessory = require('./src/universal');
 const pluginID = 'homebridge-syntex-webhooks';
 const pluginName = 'SynTexWebHooks';
 
-module.exports = (homebridge) =>
-{
-	Service = homebridge.hap.Service;
-	Characteristic = homebridge.hap.Characteristic;
+var restart = true;
+
+module.exports = (homebridge) => {
 
 	homebridge.registerPlatform(pluginID, pluginName, SynTexWebHookPlatform, true);
 };
@@ -36,6 +34,8 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 				this.initWebServer();
 
+				this.loadAccessories();
+
 				Automations.loadAutomations().then((loaded) => {
 					
 					if(loaded)
@@ -57,27 +57,27 @@ class SynTexWebHookPlatform extends DynamicPlatform
 	{
 		this.WebServer.addPage('/devices', async (response, urlParams) => {
 	
-			if(urlParams.mac != null)
+			if(urlParams.id != null)
 			{
 				var accessory = null;
 						
-				for(var i = 0; i < accessories.length; i++)
+				for(const a of this.accessories)
 				{
-					if(accessories[i].mac == urlParams.mac)
+					if(a[1].id == urlParams.id)
 					{
 						if(urlParams.event != null)
 						{
-							accessory = accessories[i];
+							accessory = a[1];
 						}
 						else
 						{
-							for(var j = 0; j < accessories[i].service.length; j++)
+							for(var j = 0; j < a[1].service.length; j++)
 							{
-								if(accessories[i].service[j].mac != null && accessories[i].service[j].letters != null)
+								if(a[1].service[j].id != null && a[1].service[j].letters != null)
 								{
-									if((urlParams.type == null || accessories[i].service[j].letters[0] == TypeManager.typeToLetter(urlParams.type)) && (urlParams.counter == null || accessories[i].service[j].letters[1] == urlParams.counter))
+									if((urlParams.type == null || a[1].service[j].letters[0] == TypeManager.typeToLetter(urlParams.type)) && (urlParams.counter == null || a[1].service[j].letters[1] == urlParams.counter))
 									{
-										accessory = accessories[i].service[j];
+										accessory = a[1].service[j];
 									}
 								}
 							}
@@ -87,7 +87,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 				if(accessory == null)
 				{
-					this.logger.log('error', urlParams.mac, '', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.mac + ' )');
+					this.logger.log('error', urlParams.id, '', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.id + ' )');
 
 					response.write('Error');
 				}
@@ -99,24 +99,24 @@ class SynTexWebHookPlatform extends DynamicPlatform
 				}
 				else if(urlParams.value != null)
 				{
-					var state = null;
+					var state = { value : urlParams.value };
 
-					if((state = TypeManager.validateUpdate(urlParams.mac, accessory.letters, urlParams.value)) != null)
+					if((state = this.validateUpdate(urlParams.id, accessory.letters, state)) != null)
 					{
-						accessory.changeHandler(state);
+						accessory.updateState(state);
 					}
 					else
 					{
-						this.logger.log('error', urlParams.mac, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
+						this.logger.log('error', urlParams.id, accessory.letters, '[' + accessory.name + '] konnte nicht aktualisiert werden! ( ' + urlParams.id + ' )');
 					}
+	
+					DeviceManager.setDevice(urlParams.id, accessory.letters, urlParams.value);
 
-					DeviceManager.setDevice(urlParams.mac, accessory.letters, urlParams.value);
-						
-					response.write(state != null ? JSON.stringify(state) : 'Error');
+					response.write(state != null ? 'Success' : 'Error')
 				}
 				else
 				{
-					var state = await DeviceManager.getDevice(urlParams.mac, accessory.letters);
+					var state = await DeviceManager.getDevice(urlParams.id, accessory.letters);
 
 					response.write(state != null ? JSON.stringify(state) : 'Error');
 				}
@@ -207,9 +207,61 @@ class SynTexWebHookPlatform extends DynamicPlatform
 		{
 			const homebridgeAccessory = this.getAccessory(device.id);
 
-			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager : DeviceManager }));
+			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager : DeviceManager, Automations : Automations, TypeManager : TypeManager }));
 		}
 		
 		Automations.setAccessories(this.accessories);
+	}
+
+	validateUpdate(id, letters, state)
+	{
+		var data = {
+			A : { type : 'contact', format : 'boolean' },
+			B : { type : 'motion', format : 'boolean' },
+			C : { type : 'temperature', format : 'number' },
+			D : { type : 'humidity', format : 'number' },
+			E : { type : 'rain', format : 'boolean' },
+			F : { type : 'light', format : 'number' },
+			0 : { type : 'occupancy', format : 'boolean' },
+			1 : { type : 'smoke', format : 'boolean' },
+			2 : { type : 'airquality', format : 'number' },
+			3 : { type : 'rgb', format : { power : 'boolean', brightness : 'number', saturation : 'number', hue : 'number' } },
+			4 : { type : 'switch', format : 'boolean' },
+			5 : { type : 'relais', format : 'boolean' },
+			6 : { type : 'statelessswitch', format : 'number' },
+			7 : { type : 'outlet', format : 'boolean' },
+			8 : { type : 'led', format : 'boolean' },
+			9 : { type : 'dimmer', format : { power : 'boolean', brightness : 'number' } }
+		};
+
+		for(const i in state)
+		{
+			try
+			{
+				state[i] = JSON.parse(state[i]);
+			}
+			catch(e)
+			{
+				this.logger.log('warn', id, letters, 'Konvertierungsfehler: [' + state[i] + '] konnte nicht gelesen werden! ( ' + id + ' )');
+
+				return null;
+			}
+
+			var format = data[letters[0].toUpperCase()].format;
+
+			if(format instanceof Object)
+			{
+				format = format[i];
+			}
+
+			if(typeof state[i] != format)
+			{
+				this.logger.log('warn', id, letters, 'Konvertierungsfehler: [' + state[i] + '] ist keine ' + (format == 'boolean' ? 'boolsche' : format == 'number' ? 'numerische' : 'korrekte') + ' Variable! ( ' + id + ' )');
+
+				return null;
+			}
+		}
+
+		return state;
 	}
 }
