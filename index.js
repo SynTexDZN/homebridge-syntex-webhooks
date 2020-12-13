@@ -3,7 +3,7 @@ var Service, Characteristic, restart = true;
 
 const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
 
-const SynTexAccessory = require('./accessories/accessory'), SynTexStatelessswitchAccessory = require('./accessories/statelessswitch');
+const SynTexUniversalAccessory = require('./src/universal');
 
 const pluginID = 'homebridge-syntex-webhooks';
 const pluginName = 'SynTexWebHooks';
@@ -31,8 +31,8 @@ class SynTexWebHookPlatform extends DynamicPlatform
 			this.api.on('didFinishLaunching', () => {
 
 				TypeManager = new TypeManager();
-				DeviceManager = new DeviceManager(logger, this.cacheDirectory);
-				Automations = new Automations(logger, this.cacheDirectory, DeviceManager);
+				DeviceManager = new DeviceManager(this.logger, this.cacheDirectory);
+				Automations = new Automations(this.logger, this.cacheDirectory, DeviceManager);
 
 				this.initWebServer();
 
@@ -40,11 +40,11 @@ class SynTexWebHookPlatform extends DynamicPlatform
 					
 					if(loaded)
 					{
-						logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+						this.logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
 					}
 					else
 					{
-						logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+						this.logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
 					}
 
 					restart = false;
@@ -87,7 +87,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 				if(accessory == null)
 				{
-					logger.log('error', urlParams.mac, '', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.mac + ' )');
+					this.logger.log('error', urlParams.mac, '', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.mac + ' )');
 
 					response.write('Error');
 				}
@@ -107,7 +107,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 					}
 					else
 					{
-						logger.log('error', urlParams.mac, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
+						this.logger.log('error', urlParams.mac, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
 					}
 
 					DeviceManager.setDevice(urlParams.mac, accessory.letters, urlParams.value);
@@ -129,12 +129,12 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 			if(await Automations.loadAutomations())
 			{
-				logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+				this.logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
 				response.write('Success');
 			}
 			else
 			{
-				logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+				this.logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
 				response.write('Error');
 			}
 			
@@ -207,14 +207,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 		{
 			const homebridgeAccessory = this.getAccessory(device.id);
 
-			if(device.services == 'statelessswitch')
-			{
-				this.addAccessory(new SynTexStatelessswitchAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
-			}
-			else
-			{
-				this.addAccessory(new SynTexAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
-			}
+			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager : DeviceManager }));
 		}
 		
 		Automations.setAccessories(this.accessories);
