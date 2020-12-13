@@ -175,7 +175,7 @@ function executeResult(automation, trigger)
         {
             url = automation.result[i].url;
         }
-        
+
         if(automation.result[i].id && automation.result[i].letters && automation.result[i].value && automation.result[i].name)
         {
             for(const accessory of accessories)
@@ -200,7 +200,7 @@ function executeResult(automation, trigger)
 
                                     if((state = TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, automation.result[i].value)) != null)
                                     {
-                                        accessory[1].service[k].changeHandler(state);
+                                        accessory[1].service[k].changeHandler({ value : state });
                                     }
                                     else
                                     {
