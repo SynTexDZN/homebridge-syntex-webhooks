@@ -1,13 +1,11 @@
 var presets = {};
 
-var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
-var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
-
 module.exports = class TypeManager
 {
     constructor()
     {
-        
+        this.types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
+        this.letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
     }
 
     getPreset(type)
@@ -17,14 +15,15 @@ module.exports = class TypeManager
 
     letterToType(letter)
     {
-        return types[letters.indexOf(letter.toUpperCase())];
+        return this.types[this.letters.indexOf(letter.toUpperCase())];
     }
 
     typeToLetter(type)
     {
-        return letters[types.indexOf(type.toLowerCase())];
+        return this.letters[this.types.indexOf(type.toLowerCase())];
     }
 
+    
     validateUpdate(mac, letters, state)
     {
         var type = this.letterToType(letters[0]);

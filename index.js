@@ -59,33 +59,24 @@ class SynTexWebHookPlatform extends DynamicPlatform
 	
 			if(urlParams.id != null)
 			{
-				var accessory = null;
+				var accessory = this.getAccessory(urlParams.id);
+				var service = accessory.service[1];
 						
-				for(const a of this.accessories)
+				if(urlParams.event == null)
 				{
-					if(a[1].id == urlParams.id)
+					for(var j = 0; j < accessory.service.length; j++)
 					{
-						if(urlParams.event != null)
+						if(accessory.service[j].id != null && accessory.service[j].letters != null)
 						{
-							accessory = a[1];
-						}
-						else
-						{
-							for(var j = 0; j < a[1].service.length; j++)
+							if((urlParams.type == null || accessory.service[j].letters[0] == TypeManager.typeToLetter(urlParams.type)) && (urlParams.counter == null || accessory.service[j].letters[1] == urlParams.counter))
 							{
-								if(a[1].service[j].id != null && a[1].service[j].letters != null)
-								{
-									if((urlParams.type == null || a[1].service[j].letters[0] == TypeManager.typeToLetter(urlParams.type)) && (urlParams.counter == null || a[1].service[j].letters[1] == urlParams.counter))
-									{
-										accessory = a[1].service[j];
-									}
-								}
+								service = accessory.service[j];
 							}
 						}
 					}
 				}
 
-				if(accessory == null)
+				if(service == null)
 				{
 					this.logger.log('error', urlParams.id, '', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.id + ' )');
 
@@ -116,13 +107,13 @@ class SynTexWebHookPlatform extends DynamicPlatform
 						state.brightness = urlParams.brightness;
 					}
 
-					if((state = this.validateUpdate(urlParams.id, accessory.letters, state)) != null)
+					if((state = this.validateUpdate(urlParams.id, service.letters, state)) != null)
 					{
-						accessory.changeHandler(state);
+						service.changeHandler(state);
 					}
 					else
 					{
-						this.logger.log('error', urlParams.id, accessory.letters, '[' + accessory.name + '] konnte nicht aktualisiert werden! ( ' + urlParams.id + ' )');
+						this.logger.log('error', urlParams.id, service.letters, '[' + service.name + '] konnte nicht aktualisiert werden! ( ' + urlParams.id + ' )');
 					}
 
 					response.write(state != null ? 'Success' : 'Error');
@@ -131,7 +122,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 				{
 					if(urlParams.remove == 'CONFIRM')
 					{
-						//this.removeAccessory(accessory);
+						this.removeAccessory(accessory);
 					}
 
 					response.write(urlParams.remove == 'CONFIRM' ? 'Success' : 'Error');
@@ -143,17 +134,21 @@ class SynTexWebHookPlatform extends DynamicPlatform
 					if(accessory.homebridgeAccessory != null
 						&& accessory.homebridgeAccessory.context != null
 						&& accessory.homebridgeAccessory.context.data != null
-						&& accessory != null
-						&& accessory.letters != null)
+						&& service != null
+						&& service.letters != null)
 					{
-						state = accessory.homebridgeAccessory.context.data[accessory.letters];
+						state = accessory.homebridgeAccessory.context.data[service.letters];
 					}
 
 					response.write(state != null ? JSON.stringify(state) : 'Error');
 				}
-
-				response.end();
 			}
+			else
+			{
+				response.write('Error');
+			}
+
+			response.end();
 		});
 
 		this.WebServer.addPage('/reload-automation', async (response) => {
