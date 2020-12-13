@@ -103,7 +103,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 					if((state = this.validateUpdate(urlParams.id, accessory.letters, state)) != null)
 					{
-						accessory.updateState(state);
+						accessory.changeHandler(state);
 					}
 					else
 					{
