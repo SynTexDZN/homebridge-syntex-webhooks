@@ -155,7 +155,7 @@ module.exports = class DeviceManager
                                         }
                                     }
 
-                                }).bind({ url : urlToCall, logger : this.logger }));
+                                }).bind({ url : urlToCall, logger : logger }));
                             }
                         }
                         else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')

@@ -29,8 +29,6 @@ module.exports = class SynTexOutletService extends LightService
                 {
                     Automations.runAutomations(this.id, this.letters, this.value);
                 }
-
-                DeviceManager.fetchRequests(this);
             }
 		};
     }

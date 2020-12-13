@@ -184,11 +184,6 @@ module.exports = class Accessory extends Base
                             this.saturation = getHSL(value)[1] || 100;
                             this.brightness = getHSL(value)[2] || 50;
                         }
-
-                        this.getCharacteristic(Characteristic.On).updateValue(this.power);
-                        this.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
-                        this.getCharacteristic(Characteristic.Saturation).updateValue(this.saturation);
-                        this.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
                     }
                     /*
                     else if(this.type == 'statelessswitch')
@@ -204,45 +199,17 @@ module.exports = class Accessory extends Base
                         }
                     }
                     */
-                    else
-                    {
-                        if(this.type == 'relais' || this.type == 'switch')
-                        {
-                            this.power = state;
-                        }
-
-                        this.getCharacteristic(this.characteristic).updateValue(state);
-                    }
 
                     if(this.type == 'relais' || this.type == 'switch' || this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
                     {
                         fetchRequests(this);
                     }
 
-                    if(Automations.isReady())
-                    {
-                        Automations.runAutomations(this.mac, this.letters, state);
-                    }
-
                 }.bind(service));
-
-                service.getCharacteristic(service.characteristic).on('get', this.getState.bind(service));
 
                 if(service.type == 'temperature')
                 {
                     service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
-                }
-
-                if(service.type == 'switch' || service.type == 'relais' || service.type == 'rgb' || service.type == 'rgbw' || service.type == 'rgbww' || service.type == 'rgbcw')
-                {
-                    service.getCharacteristic(service.characteristic).on('set', this.setState.bind(service));
-                }
-
-                if(service.type == 'rgb' || service.type == 'rgbw' || service.type == 'rgbww' || service.type == 'rgbcw')
-                {
-                    service.addCharacteristic(new Characteristic.Hue()).on('get', this.getHue.bind(service)).on('set', this.setHue.bind(service));
-                    service.addCharacteristic(new Characteristic.Saturation()).on('get', this.getSaturation.bind(service)).on('set', this.setSaturation.bind(service));
-                    service.addCharacteristic(new Characteristic.Brightness()).on('get', this.getBrightness.bind(service)).on('set', this.setBrightness.bind(service));
                 }
 
                 if(service.type == 'statelessswitch')
