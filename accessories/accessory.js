@@ -206,11 +206,6 @@ module.exports = class Accessory
 
                 }.bind(service));
 
-                if(service.type == 'temperature')
-                {
-                    service.getCharacteristic(service.characteristic).setProps({ minValue : -100, maxValue : 140 });
-                }
-
                 if(service.type == 'statelessswitch')
                 {
                     var props = {
