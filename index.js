@@ -107,7 +107,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 						state.brightness = urlParams.brightness;
 					}
 
-					if((state = this.validateUpdate(urlParams.id, service.letters, state)) != null)
+					if((state = TypeManager.validateUpdate(urlParams.id, service.letters, state)) != null)
 					{
 						service.changeHandler(state);
 					}
@@ -237,57 +237,5 @@ class SynTexWebHookPlatform extends DynamicPlatform
 		}
 		
 		Automations.setAccessories(this.accessories);
-	}
-
-	validateUpdate(id, letters, state)
-	{
-		var data = {
-			A : { type : 'contact', format : 'boolean' },
-			B : { type : 'motion', format : 'boolean' },
-			C : { type : 'temperature', format : 'number' },
-			D : { type : 'humidity', format : 'number' },
-			E : { type : 'rain', format : 'boolean' },
-			F : { type : 'light', format : 'number' },
-			0 : { type : 'occupancy', format : 'boolean' },
-			1 : { type : 'smoke', format : 'boolean' },
-			2 : { type : 'airquality', format : 'number' },
-			3 : { type : 'rgb', format : { power : 'boolean', brightness : 'number', saturation : 'number', hue : 'number' } },
-			4 : { type : 'switch', format : 'boolean' },
-			5 : { type : 'relais', format : 'boolean' },
-			6 : { type : 'statelessswitch', format : 'number' },
-			7 : { type : 'outlet', format : 'boolean' },
-			8 : { type : 'led', format : 'boolean' },
-			9 : { type : 'dimmer', format : { power : 'boolean', brightness : 'number' } }
-		};
-
-		for(const i in state)
-		{
-			try
-			{
-				state[i] = JSON.parse(state[i]);
-			}
-			catch(e)
-			{
-				this.logger.log('warn', id, letters, 'Konvertierungsfehler: [' + state[i] + '] konnte nicht gelesen werden! ( ' + id + ' )');
-
-				return null;
-			}
-
-			var format = data[letters[0].toUpperCase()].format;
-
-			if(format instanceof Object)
-			{
-				format = format[i];
-			}
-
-			if(typeof state[i] != format)
-			{
-				this.logger.log('warn', id, letters, 'Konvertierungsfehler: [' + state[i] + '] ist keine ' + (format == 'boolean' ? 'boolsche' : format == 'number' ? 'numerische' : 'korrekte') + ' Variable! ( ' + id + ' )');
-
-				return null;
-			}
-		}
-
-		return state;
 	}
 }

@@ -1,10 +1,9 @@
 const request = require('request');
-const Base = require('./base');
 var Service, Characteristic, DeviceManager, TypeManager, Automations, logger;
 var presets = {};
 var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
-module.exports = class Accessory extends Base
+module.exports = class Accessory
 {
     constructor(accessoryConfig, Manager)
     {
