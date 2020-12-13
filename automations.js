@@ -41,7 +41,7 @@ module.exports = class Automations
         });
     }
 
-    runAutomations(mac, letters, value)
+    runAutomations(id, letters, value)
     {
         for(var i = 0; i < automations.length; i++)
         {
@@ -49,7 +49,7 @@ module.exports = class Automations
             {
                 for(var j = 0; j < automations[i].trigger.length; j++)
                 {
-                    if(automations[i].trigger[j].mac == mac && automations[i].trigger[j].letters == letters)
+                    if(automations[i].trigger[j].id == id && automations[i].trigger[j].letters == letters)
                     {
                         var index = eventLock.indexOf(automations[i].id);
 
@@ -82,7 +82,7 @@ module.exports = class Automations
         {
             if(automations[i].active && !eventLock.includes(automations[i].id))
             {
-                checkTrigger(automations[i], mac, letters, value.toString());
+                checkTrigger(automations[i], id, letters, value.toString());
             }
         }
     }
@@ -93,13 +93,13 @@ module.exports = class Automations
     }
 };
 
-function checkTrigger(automation, mac, letters, value)
+function checkTrigger(automation, id, letters, value)
 {
     var trigger = null;
 
     for(var i = 0; i < automation.trigger.length; i++)
     {
-        if(automation.trigger[i].mac == mac && automation.trigger[i].letters == letters)
+        if(automation.trigger[i].id == id && automation.trigger[i].letters == letters)
         {
             if(automation.trigger[i].operation == '>' && parseFloat(value) > parseFloat(automation.trigger[i].value))
             {
@@ -139,7 +139,7 @@ async function checkCondition(automation, trigger)
 
     for(var i = 0; i < automation.condition.length; i++)
     {
-        var value = (await DeviceManager.getDevice(automation.condition[i].mac, automation.condition[i].letters)).toString();
+        var value = (await DeviceManager.getDevice(automation.condition[i].id, automation.condition[i].letters)).toString();
 
         if(automation.condition[i].operation == '>' && parseFloat(value) > parseFloat(automation.condition[i].value))
         {
@@ -176,38 +176,38 @@ function executeResult(automation, trigger)
             url = automation.result[i].url;
         }
         
-        if(automation.result[i].mac && automation.result[i].letters && automation.result[i].value && automation.result[i].name)
+        if(automation.result[i].id && automation.result[i].letters && automation.result[i].value && automation.result[i].name)
         {
             for(const accessory of accessories)
             {
-                if(accessory.mac == automation.result[i].mac && JSON.stringify(accessory.services).includes(TypeManager.letterToType(automation.result[i].letters[0])))
+                if(accessory[1].id == automation.result[i].id && JSON.stringify(accessory[1].services).includes(TypeManager.letterToType(automation.result[i].letters[0])))
                 {
                     if(TypeManager.letterToType(automation.result[i].letters[0]) == 'statelessswitch')
                     {
-                        accessory.changeHandler(accessory.name, automation.result[i].value, 0);
+                        accessory[1].changeHandler(accessory[1].name, automation.result[i].value, 0);
                     }
                     else
                     {
-                        var count = Array.isArray(accessory.services) ? accessory.services.length : 1;
+                        var count = Array.isArray(accessory[1].services) ? accessory[1].services.length : 1;
 
                         for(var k = 1; k <= count; k++)
                         {
-                            if(accessory.service[k] != null)
+                            if(accessory[1].service[k] != null)
                             {
-                                if(accessory.service[k].letters == automation.result[i].letters)
+                                if(accessory[1].service[k].letters == automation.result[i].letters)
                                 {
                                     var state = null;
 
-                                    if((state = TypeManager.validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value)) != null)
+                                    if((state = TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, automation.result[i].value)) != null)
                                     {
-                                        accessory.service[k].changeHandler(state);
+                                        accessory[1].service[k].changeHandler(state);
                                     }
                                     else
                                     {
-                                        logger.log('error', automation.result[i].mac, automation.result[i].letters, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].mac + ' )');
+                                        logger.log('error', automation.result[i].id, automation.result[i].letters, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].id + ' )');
                                     }
 
-                                    DeviceManager.setDevice(automation.result[i].mac, automation.result[i].letters, TypeManager.validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value));
+                                    DeviceManager.setDevice(automation.result[i].id, automation.result[i].letters, TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, automation.result[i].value));
                                 }
                             }
                         }
@@ -253,5 +253,5 @@ function executeResult(automation, trigger)
         }
     }
 
-    logger.log('success', trigger.mac, trigger.letters, '[' + trigger.name + '] hat den Prozess [' + automation.name + '] ausgeführt!');
+    logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] hat den Prozess [' + automation.name + '] ausgeführt!');
 }
