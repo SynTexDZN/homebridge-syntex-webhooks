@@ -101,6 +101,21 @@ class SynTexWebHookPlatform extends DynamicPlatform
 				{
 					var state = { value : urlParams.value };
 
+					if(urlParams.hue != null)
+					{
+						state.hue = urlParams.hue;
+					}
+					
+					if(urlParams.saturation != null)
+					{
+						state.saturation = urlParams.saturation;
+					}
+
+					if(urlParams.brightness != null)
+					{
+						state.brightness = urlParams.brightness;
+					}
+
 					if((state = this.validateUpdate(urlParams.id, accessory.letters, state)) != null)
 					{
 						accessory.changeHandler(state);
@@ -109,14 +124,30 @@ class SynTexWebHookPlatform extends DynamicPlatform
 					{
 						this.logger.log('error', urlParams.id, accessory.letters, '[' + accessory.name + '] konnte nicht aktualisiert werden! ( ' + urlParams.id + ' )');
 					}
-	
-					DeviceManager.setDevice(urlParams.id, accessory.letters, urlParams.value);
 
-					response.write(state != null ? 'Success' : 'Error')
+					response.write(state != null ? 'Success' : 'Error');
+				}
+				else if(urlParams.remove != null)
+				{
+					if(urlParams.remove == 'CONFIRM')
+					{
+						//this.removeAccessory(accessory);
+					}
+
+					response.write(urlParams.remove == 'CONFIRM' ? 'Success' : 'Error');
 				}
 				else
 				{
-					var state = await DeviceManager.getDevice(urlParams.id, accessory.letters);
+					var state = null;
+					
+					if(accessory.homebridgeAccessory != null
+						&& accessory.homebridgeAccessory.context != null
+						&& accessory.homebridgeAccessory.context.data != null
+						&& accessory != null
+						&& accessory.letters != null)
+					{
+						state = accessory.homebridgeAccessory.context.data[accessory.letters];
+					}
 
 					response.write(state != null ? JSON.stringify(state) : 'Error');
 				}
