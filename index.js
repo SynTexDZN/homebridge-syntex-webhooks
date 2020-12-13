@@ -1,5 +1,8 @@
-let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations'), WebServer = require('./webserver'), logger = require('./logger');
+let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations');
 var Service, Characteristic, restart = true;
+
+const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
+
 const SynTexAccessory = require('./accessories/accessory'), SynTexStatelessswitchAccessory = require('./accessories/statelessswitch');
 
 const pluginID = 'homebridge-syntex-webhooks';
@@ -10,61 +13,49 @@ module.exports = (homebridge) =>
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
 
-    homebridge.registerPlatform(pluginID, pluginName, SynTexWebHookPlatform);
+    homebridge.registerPlatform(pluginID, pluginName, SynTexWebHookPlatform, true);
 };
 
-function SynTexWebHookPlatform(log, config, api)
+class SynTexWebHookPlatform extends DynamicPlatform
 {
-    this.devices = config['accessories'] || [];
-    
-    this.cacheDirectory = config['cache_directory'] || './SynTex';
-    this.logDirectory = config['log_directory'] || './SynTex/log';
-    this.port = config['port'] || 1710;
-    
-    TypeManager = new TypeManager();
-    logger = new logger(pluginName, this.logDirectory, api.user.storagePath());
-    DeviceManager = new DeviceManager(logger, this.cacheDirectory);
-    WebServer = new WebServer(pluginName, logger, this.port, false);
-    Automations = new Automations(logger, this.cacheDirectory, DeviceManager);
-
-    Automations.loadAutomations().then((loaded) => {
-        
-        if(loaded)
-        {
-            logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
-        }
-        else
-        {
-            logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
-        }
-
-        restart = false;
-    });
-}
-
-SynTexWebHookPlatform.prototype = {
-    
-    accessories : function(callback)
+    constructor(log, config, api)
     {
-        var accessories = [];
+        super(config, api, pluginID, pluginName);
 
-        for(var i = 0; i < this.devices.length; i++)
-        {
-            if(this.devices[i].services == 'statelessswitch')
-            {
-                accessories.push(new SynTexStatelessswitchAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
-            }
-            else
-            {
-                accessories.push(new SynTexAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
-            }
-        }
-
-        Automations.setAccessories(accessories);
+        this.devices = config['accessories'] || [];
+    
+        this.cacheDirectory = config['cache_directory'] || './SynTex';
         
-        callback(accessories);
+        if(this.api && this.logger)
+		{
+			this.api.on('didFinishLaunching', () => {
 
-        WebServer.addPage('/devices', async (response, urlParams) => {
+                TypeManager = new TypeManager();
+                DeviceManager = new DeviceManager(logger, this.cacheDirectory);
+                Automations = new Automations(logger, this.cacheDirectory, DeviceManager);
+
+                this.initWebServer();
+
+                Automations.loadAutomations().then((loaded) => {
+                    
+                    if(loaded)
+                    {
+                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+                    }
+                    else
+                    {
+                        logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+                    }
+
+                    restart = false;
+                });
+            });
+        }
+    }
+
+    initWebServer()
+    {
+        this.WebServer.addPage('/devices', async (response, urlParams) => {
 	
             if(urlParams.mac != null)
             {
@@ -134,7 +125,7 @@ SynTexWebHookPlatform.prototype = {
             }
         });
 
-        WebServer.addPage('/reload-automation', async (response) => {
+        this.WebServer.addPage('/reload-automation', async (response) => {
 
             if(await Automations.loadAutomations())
             {
@@ -150,19 +141,38 @@ SynTexWebHookPlatform.prototype = {
             response.end();
         });
 
-        WebServer.addPage('/serverside/version', (response) => {
+        this.WebServer.addPage('/accessories', (response) => {
+	
+			var accessories = [];
+
+			for(const accessory of this.accessories)
+			{
+				accessories.push({
+					id: accessory[1].id,
+					name: accessory[1].name,
+					services: accessory[1].services,
+					version: '99.99.99',
+					plugin: pluginName
+				});
+			}
+	
+			response.write(JSON.stringify(accessories));
+			response.end();
+		});
+
+        this.WebServer.addPage('/serverside/version', (response) => {
 
             response.write(require('./package.json').version);
             response.end();
         });
 
-        WebServer.addPage('/serverside/check-restart', (response) => {
+        this.WebServer.addPage('/serverside/check-restart', (response) => {
 
             response.write(restart.toString());
             response.end();
         });
 
-        WebServer.addPage('/serverside/update', (response, urlParams) => {
+        this.WebServer.addPage('/serverside/update', (response, urlParams) => {
 
             var version = urlParams.version != null ? urlParams.version : 'latest';
 
@@ -197,4 +207,23 @@ SynTexWebHookPlatform.prototype = {
             });
         });
     }
+
+    loadAccessories()
+	{
+		for(const device of this.devices)
+		{
+			const homebridgeAccessory = this.getAccessory(device.id);
+
+            if(device.services == 'statelessswitch')
+            {
+                this.addAccessory(new SynTexStatelessswitchAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
+            }
+            else
+            {
+                this.addAccessory(new SynTexAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
+            }
+        }
+        
+        Automations.setAccessories(this.accessories);
+	}
 }

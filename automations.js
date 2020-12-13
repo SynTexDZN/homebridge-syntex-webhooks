@@ -178,29 +178,29 @@ function executeResult(automation, trigger)
         
         if(automation.result[i].mac && automation.result[i].letters && automation.result[i].value && automation.result[i].name)
         {
-            for(var j = 0; j < accessories.length; j++)
+            for(const accessory of accessories)
             {
-                if(accessories[j].mac == automation.result[i].mac && JSON.stringify(accessories[j].services).includes(TypeManager.letterToType(automation.result[i].letters[0])))
+                if(accessory.mac == automation.result[i].mac && JSON.stringify(accessory.services).includes(TypeManager.letterToType(automation.result[i].letters[0])))
                 {
                     if(TypeManager.letterToType(automation.result[i].letters[0]) == 'statelessswitch')
                     {
-                        accessories[j].changeHandler(accessories[j].name, automation.result[i].value, 0);
+                        accessory.changeHandler(accessory.name, automation.result[i].value, 0);
                     }
                     else
                     {
-                        var count = Array.isArray(accessories[j].services) ? accessories[j].services.length : 1;
+                        var count = Array.isArray(accessory.services) ? accessory.services.length : 1;
 
                         for(var k = 1; k <= count; k++)
                         {
-                            if(accessories[j].service[k] != null)
+                            if(accessory.service[k] != null)
                             {
-                                if(accessories[j].service[k].letters == automation.result[i].letters)
+                                if(accessory.service[k].letters == automation.result[i].letters)
                                 {
                                     var state = null;
 
                                     if((state = TypeManager.validateUpdate(automation.result[i].mac, automation.result[i].letters, automation.result[i].value)) != null)
                                     {
-                                        accessories[j].service[k].changeHandler(state);
+                                        accessory.service[k].changeHandler(state);
                                     }
                                     else
                                     {
