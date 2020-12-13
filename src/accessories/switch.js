@@ -1,4 +1,4 @@
-let Service, Characteristic;
+let Service, Characteristic, Automations;
 
 const { SwitchService } = require('homebridge-syntex-dynamic-platform');
 
@@ -9,19 +9,10 @@ module.exports = class SynTexOutletService extends SwitchService
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
         Service = manager.platform.api.hap.Service;
-		Characteristic = manager.platform.api.hap.Characteristic;
+        Characteristic = manager.platform.api.hap.Characteristic;
+        Automations = manager.Automations;
 		
         super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
-
-        console.log(deviceConfig);
-        console.log(serviceConfig);
-
-        this.options = {};
-
-        if(serviceConfig.requests != null)
-        {
-            this.options.requests = serviceConfig.requests;
-        }
 
         this.changeHandler = (state) =>
 		{
@@ -56,7 +47,14 @@ module.exports = class SynTexOutletService extends SwitchService
 	{
         this.power = value;
 
-        super.setState(value, () => this.fetchRequests(this).then((result) => {
+        super.setState(value, () => {});
+
+        if(Automations.isReady())
+        {
+            Automations.runAutomations(this.id, this.letters, this.power);
+        }
+        
+        this.fetchRequests(this).then((result) => {
 
             if(result == null)
             {
@@ -64,7 +62,7 @@ module.exports = class SynTexOutletService extends SwitchService
             }
 
             callback(result);
-        }));
+        });
     }
     
     fetchRequests(accessory)

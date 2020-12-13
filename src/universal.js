@@ -4,6 +4,7 @@ const { UniversalAccessory } = require('homebridge-syntex-dynamic-platform');
 
 const ContactService = require('./accessories/contact');
 const SwitchService = require('./accessories/switch');
+const LightService = require('./accessories/light');
 //const SynTexStatelessswitchAccessory = require('../accessories/statelessswitch');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
@@ -44,6 +45,10 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(type == 'switch')
 		{
 			service = new SwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+		}
+		else if(type == 'light')
+		{
+			service = new LightService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else if(type == 'statelessswitch')
 		{
