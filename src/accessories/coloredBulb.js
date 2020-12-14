@@ -11,7 +11,9 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		Automations = manager.Automations;
 		DeviceManager = manager.DeviceManager;
 		
-		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
+        super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
+        
+        this.options.spectrum = serviceConfig.spectrum || 'RGB';
 
 		this.changeHandler = (state) =>
 		{

@@ -89,9 +89,6 @@ module.exports = class Accessory
                     service = new Service.StatelessProgrammableSwitch(name + (subtypes[type] || 0), '' + (subtypes[type] || 0));
                 }
 
-                service.mac = this.mac;
-                service.type = type;
-                service.name = name;
                 service.characteristic = presets[type].characteristic;
                 service.letters = TypeManager.typeToLetter(type) + (subtypes[type] || 0);
 
@@ -99,12 +96,6 @@ module.exports = class Accessory
                     requests : [],
                     spectrum : 'RGB'
                 };
-
-                if(s instanceof Object)
-                {
-                    service.options.requests = s.requests || [];
-                    service.options.spectrum = s.spectrum || 'RGB';
-                }
 
                 if(type == 'statelessswitch')
                 {
@@ -221,56 +212,6 @@ module.exports = class Accessory
 
                 this.service.push(service);
             }
-        }
-    }
-
-    getState(callback)
-    {
-        DeviceManager.getDevice(this.mac, this.letters).then(function(state) {
-
-            if(state == null)
-            {
-                logger.log('error', this.mac, this.letters, '[' + this.name + '] wurde nicht in der Storage gefunden! ( ' + this.mac + ' )');
-            }
-            else if((state = TypeManager.validateUpdate(this.mac, this.letters, state)) != null)
-            {
-                logger.log('read', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.mac + ' )');
-            }
-    
-            if(this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
-            {
-                callback(null, state != null ? state.power : false );
-            }
-            else
-            {
-                callback(null, state);
-            }
-    
-        }.bind(this)).catch(function(e) {
-    
-            logger.err(e);
-        });
-    }
-
-    setState(powerOn, callback, context)
-    {
-        if(this.power != powerOn)
-        {
-            this.power = powerOn;
-
-            if(Automations.isReady())
-            {
-                Automations.runAutomations(this.mac, this.letters, this.power);
-            }
-
-            fetchRequests(this).then((result) => {
-
-                callback(result);
-            });
-        }
-        else
-        {
-            callback(null);
         }
     }
 
