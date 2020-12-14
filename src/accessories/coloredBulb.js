@@ -2,6 +2,8 @@ let Service, Characteristic, DeviceManager, Automations;
 
 const { ColoredBulbService } = require('homebridge-syntex-dynamic-platform');
 
+const convert = require('color-convert');
+
 module.exports = class SynTexColoredBulbService extends ColoredBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
@@ -13,7 +15,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		
         super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
         
-        this.options.spectrum = serviceConfig.spectrum || 'RGB';
+        this.options.spectrum = serviceConfig.spectrum || 'HSL';
 
 		this.changeHandler = (state) =>
 		{
@@ -64,18 +66,11 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	
 	setState(value, callback)
 	{
-		DeviceManager.fetchRequests(this).then((result) => {
+        this.power = value;
 
-			if(result == null)
-			{
-				this.power = value;
-
-				super.setState(this.power, 
-					() => this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
-			}
-
-			callback(result);
-		});
+        setToCurrentColor({ power : this.power }, 
+            () => super.setState(this.power, 
+            () => callback()));
 
 		if(Automations.isReady())
 		{
@@ -96,11 +91,13 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		});
 	}
 
-	getHue(value, callback)
+	setHue(value, callback)
 	{
 		this.hue = value;
 
-		super.setBrightness(this.hue, () => callback());
+        setToCurrentColor({ hue : this.hue }, 
+            () => super.setHue(this.hue, 
+            () => callback()));
     }
     
     getSaturation(callback)
@@ -120,7 +117,9 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	{
 		this.saturation = value;
 
-		super.setBrightness(this.saturation, () => callback());
+        setToCurrentColor({ saturation : this.saturation }, 
+            () => super.setSaturation(this.saturation, 
+            () => callback()));
 	}
 
 	getBrightness(callback)
@@ -140,6 +139,74 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	{
 		this.brightness = value;
 
-		super.setBrightness(this.brightness, () => callback());
+        setToCurrentColor({ brightness : this.brightness }, 
+            () => super.setBrightness(this.brightness, 
+            () => callback()))
+    }
+    
+    setToCurrentColor(state, callback)
+	{
+		if(this.power != state.power)
+		{
+			this.power = state.power;
+
+			this.changed = true;
+		}
+
+		if(this.hue != state.hue)
+		{
+			this.hue = state.hue;
+
+			this.changed = true;
+		}
+
+		if(this.saturation != state.saturation)
+		{
+			this.saturation = state.saturation;
+
+			this.changed = true;
+		}
+
+		if(this.brightness != state.brightness)
+		{
+			this.brightness = state.brightness;
+
+			this.changed = true;
+		}
+
+		if(this.changed)
+		{
+			setTimeout(() => {
+
+				if(!this.running)
+				{
+					this.running = true;
+
+					if(this.changed)
+					{
+                        DeviceManager.fetchRequests(this).then((result) => {
+
+                            if(result == null)
+                            {
+                                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+                            }
+                        });
+
+                        this.changed = false;
+					}
+
+                    this.running = false;
+				}
+				else if(callback)
+				{
+					callback();
+				}
+	
+			}, 100);
+		}
+		else if(callback)
+		{
+			callback();
+		}
 	}
 };

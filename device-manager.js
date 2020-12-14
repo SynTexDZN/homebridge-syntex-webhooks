@@ -91,36 +91,36 @@ module.exports = class DeviceManager
 				{
 					if(accessory.options.requests[i].trigger && accessory.power != null)
 					{
-						if(accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-						|| !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+						var urlMethod = accessory.options.requests[i].method || '';
+						var urlToCall = accessory.options.requests[i].url || '';
+						var urlBody = accessory.options.requests[i].body || '';
+						var urlForm = accessory.options.requests[i].form || '';
+						var urlHeaders = accessory.options.requests[i].body || '{}';
+
+						if(urlMethod != '' && urlToCall != '')
 						{
-							var urlMethod = accessory.options.requests[i].method || '';
-							var urlToCall = accessory.options.requests[i].url || '';
-							var urlBody = accessory.options.requests[i].body || '';
-							var urlForm = accessory.options.requests[i].form || '';
-							var urlHeaders = accessory.options.requests[i].body || '{}';
+							var theRequest = {
+								method : urlMethod,
+								url : urlToCall,
+								timeout : 5000,
+								headers: JSON.parse(urlHeaders)
+							};
 
-							if(urlMethod != '' && urlToCall != '')
+							if(urlMethod === 'POST' || urlMethod === 'PUT')
 							{
-								var theRequest = {
-									method : urlMethod,
-									url : urlToCall,
-									timeout : 5000,
-									headers: JSON.parse(urlHeaders)
-								};
-								
-								if(urlMethod === 'POST' || urlMethod === 'PUT')
+								if(urlForm)
 								{
-									if(urlForm)
-									{
-										theRequest.form = JSON.parse(urlForm);
-									}
-									else if(urlBody)
-									{
-										theRequest.body = urlBody;
-									}
+									theRequest.form = JSON.parse(urlForm);
 								}
+								else if(urlBody)
+								{
+									theRequest.body = urlBody;
+								}
+							}
 
+							if(accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+							|| !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+							{
 								request(theRequest, (function(err, response, body) {
 
 									var statusCode = response && response.statusCode ? response.statusCode : -1;
@@ -160,6 +160,36 @@ module.exports = class DeviceManager
 						}
 						else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
 						{
+							var colors = [accessory.hue, accessory.saturation, accessory.brightness];
+
+							if(this.options.spectrum == 'RGB')
+							{
+								colors = convert.hsv.rgb([accessory.hue, accessory.saturation, accessory.brightness]);
+							}
+
+							theRequest.url += colors[0] + ',' + colors[1] + ',' + (accessory.power ? colors[2] : 0);
+						
+							request(theRequest, (function(err, response, body)
+							{
+								var statusCode = response && response.statusCode ? response.statusCode : -1;
+
+								if(!err && statusCode == 200)
+								{
+									logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
+								}
+								else
+								{
+									logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+								}
+			
+								finished++;
+
+								if(finished >= counter)
+								{
+									resolve(null);
+								}
+								
+							}.bind({ url : theRequest.url })));
 							/*
 							setRGB(accessory, accessory.options.requests[i]).then(() => {
 								
