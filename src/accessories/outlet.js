@@ -1,8 +1,8 @@
 let Service, Characteristic, DeviceManager, Automations;
 
-const { SwitchService } = require('homebridge-syntex-dynamic-platform');
+const { OutletService } = require('homebridge-syntex-dynamic-platform');
 
-module.exports = class SynTexSwitchService extends SwitchService
+module.exports = class SynTexSwitchService extends OutletService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
