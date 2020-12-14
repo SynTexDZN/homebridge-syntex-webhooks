@@ -10,6 +10,7 @@ const TemperatureService = require('./accessories/temperature');
 const HumidityService = require('./accessories/humidity');
 const LightBulbService = require('./accessories/lightBulb');
 const DimmedBulbService = require('./accessories/dimmedBulb');
+const ColoredBulbService = require('./accessories/coloredBulb');
 const LeakService = require('./accessories/leak');
 const OutletService = require('./accessories/outlet');
 const OccupancyService = require('./accessories/occupancy');
@@ -81,6 +82,10 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(type == 'dimmer')
 		{
 			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+		}
+		else if(type == 'rgb')
+		{
+			service = new ColoredBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else if(type == 'rain')
 		{
