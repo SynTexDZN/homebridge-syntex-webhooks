@@ -2,7 +2,7 @@ let Service, Characteristic, DeviceManager, Automations;
 
 const { MotionService } = require('homebridge-syntex-dynamic-platform');
 
-module.exports = class SynTexOutletService extends MotionService
+module.exports = class SynTexMotionService extends MotionService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
@@ -17,20 +17,22 @@ module.exports = class SynTexOutletService extends MotionService
 		{
 			if(state.value != null)
 			{
-				this.value = state.value;
+                DeviceManager.fetchRequests(this).then((result) => {
 
-                this.homebridgeAccessory.getServiceById(Service.MotionSensor, serviceConfig.subtype).getCharacteristic(Characteristic.MotionDetected).updateValue(this.value);
+                    if(result == null)
+                    {
+                        this.value = state.value;
 
-                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.value + '] ( ' + this.id + ' )');
-            
-                super.setValue('state', this.value);
+                        this.homebridgeAccessory.getServiceById(Service.MotionSensor, serviceConfig.subtype).getCharacteristic(Characteristic.MotionDetected).updateValue(this.value);
+
+                        super.setValue('state', this.value, true);
+                    }
+                });
 
                 if(Automations.isReady())
                 {
-                    Automations.runAutomations(this.id, this.letters, this.value);
+                    Automations.runAutomations(this.id, this.letters, state.value);
                 }
-
-                DeviceManager.fetchRequests(this);
             }
 		};
     }

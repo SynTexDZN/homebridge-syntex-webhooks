@@ -21,9 +21,7 @@ module.exports = class SynTexHumidityService extends HumidityService
 
                 this.homebridgeAccessory.getServiceById(Service.HumiditySensor, serviceConfig.subtype).getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(this.value);
 
-                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.value + '] ( ' + this.id + ' )');
-            
-                super.setValue('state', this.value);
+                super.setValue('state', this.value, true);
 
                 if(Automations.isReady())
                 {

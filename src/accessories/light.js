@@ -2,7 +2,7 @@ let Service, Characteristic, DeviceManager, Automations;
 
 const { LightService } = require('homebridge-syntex-dynamic-platform');
 
-module.exports = class SynTexOutletService extends LightService
+module.exports = class SynTexLightService extends LightService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
@@ -21,10 +21,8 @@ module.exports = class SynTexOutletService extends LightService
 
                 this.homebridgeAccessory.getServiceById(Service.LightSensor, serviceConfig.subtype).getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(this.value);
 
-                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.value + '] ( ' + this.id + ' )');
+                super.setValue('state', this.value, true);
             
-                super.setValue('state', this.value);
-
                 if(Automations.isReady())
                 {
                     Automations.runAutomations(this.id, this.letters, this.value);

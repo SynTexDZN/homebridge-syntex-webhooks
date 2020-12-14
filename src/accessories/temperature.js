@@ -2,7 +2,7 @@ let Service, Characteristic, DeviceManager, Automations;
 
 const { TemperatureService } = require('homebridge-syntex-dynamic-platform');
 
-module.exports = class SynTexOutletService extends TemperatureService
+module.exports = class SynTexTemperatureService extends TemperatureService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
@@ -21,10 +21,8 @@ module.exports = class SynTexOutletService extends TemperatureService
 
                 this.homebridgeAccessory.getServiceById(Service.TemperatureSensor, serviceConfig.subtype).getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.value);
 
-                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.value + '] ( ' + this.id + ' )');
+                super.setValue('state', this.value, true);
             
-                super.setValue('state', this.value);
-
                 if(Automations.isReady())
                 {
                     Automations.runAutomations(this.id, this.letters, this.value);

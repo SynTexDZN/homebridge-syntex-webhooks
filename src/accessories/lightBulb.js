@@ -2,7 +2,7 @@ let Service, Characteristic, DeviceManager, Automations;
 
 const { LightBulbService } = require('homebridge-syntex-dynamic-platform');
 
-module.exports = class SynTexOutletService extends LightBulbService
+module.exports = class SynTexLightBulbService extends LightBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
@@ -40,22 +40,22 @@ module.exports = class SynTexOutletService extends LightBulbService
     
     setState(value, callback)
 	{
-        this.power = value;
-
-        if(Automations.isReady())
-        {
-            Automations.runAutomations(this.id, this.letters, this.power);
-        }
-        
         DeviceManager.fetchRequests(this).then((result) => {
 
             if(result == null)
             {
-                super.setState(value, 
+                this.power = value;
+
+                super.setState(this.power, 
                     () => this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )'));
             }
 
             callback(result);
         });
+
+        if(Automations.isReady())
+        {
+            Automations.runAutomations(this.id, this.letters, value);
+        }
     }
 };
