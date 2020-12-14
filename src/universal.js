@@ -9,6 +9,7 @@ const MotionService = require('./accessories/motion');
 const TemperatureService = require('./accessories/temperature');
 const HumidityService = require('./accessories/humidity');
 const LightBulbService = require('./accessories/lightBulb');
+const DimmedBulbService = require('./accessories/dimmedBulb');
 const LeakService = require('./accessories/leak');
 const OutletService = require('./accessories/outlet');
 //const SynTexStatelessswitchAccessory = require('../accessories/statelessswitch');
@@ -71,6 +72,10 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(type == 'led')
 		{
 			service = new LightBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+		}
+		else if(type == 'dimmer')
+		{
+			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else if(type == 'rain')
 		{
