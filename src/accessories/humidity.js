@@ -6,32 +6,32 @@ module.exports = class SynTexHumidityService extends HumidityService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-        Service = manager.platform.api.hap.Service;
-        Characteristic = manager.platform.api.hap.Characteristic;
-        Automations = manager.Automations;
-        DeviceManager = manager.DeviceManager;
+		Service = manager.platform.api.hap.Service;
+		Characteristic = manager.platform.api.hap.Characteristic;
+		Automations = manager.Automations;
+		DeviceManager = manager.DeviceManager;
 		
-        super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
+		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-        this.changeHandler = (state) =>
+		this.changeHandler = (state) =>
 		{
 			if(state.value != null)
 			{
 				this.value = state.value;
 
-                this.homebridgeAccessory.getServiceById(Service.HumiditySensor, serviceConfig.subtype).getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(this.value);
+				this.homebridgeAccessory.getServiceById(Service.HumiditySensor, serviceConfig.subtype).getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(this.value);
 
-                super.setValue('state', this.value, true);
+				super.setValue('state', this.value, true);
 
-                if(Automations.isReady())
-                {
-                    Automations.runAutomations(this.id, this.letters, this.value);
-                }
-            }
+				if(Automations.isReady())
+				{
+					Automations.runAutomations(this.id, this.letters, this.value);
+				}
+			}
 		};
-    }
+	}
 
-    getState(callback)
+	getState(callback)
 	{
 		super.getState((value) => {
 

@@ -18,8 +18,8 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
 	constructor(homebridgeAccessory, deviceConfig, manager)
 	{
-        Service = manager.platform.api.hap.Service;
-        Characteristic = manager.platform.api.hap.Characteristic;
+		Service = manager.platform.api.hap.Service;
+		Characteristic = manager.platform.api.hap.Characteristic;
 
 		super(homebridgeAccessory, deviceConfig, manager);
 	}

@@ -1,40 +1,40 @@
 {
-  "name": "homebridge-syntex-webhooks",
-  "version": "2.3.0-b4",
-  "description": "A webhook plugin for HTTP devices",
-  "main": "index.js",
-  "author": {
-    "name": "SynTexDZN"
-  },
-  "engines": {
-    "homebridge": ">=0.3.0",
-    "node": ">=9.11.2"
-  },
-  "dependencies": {
-    "json-fs-store": "^1.0.1",
-    "request": "^2.88.0",
-    "homebridge-syntex-dynamic-platform": "1.0.1-b5"
-  },
-  "keywords": [
-    "syntex",
-    "syntex-webhooks",
-    "homebridge-plugin",
-    "homebridge",
-    "plugin",
-    "http",
-    "webhook",
-    "webhooks",
-    "homekit",
-    "smarthome",
-    "siri"
-  ],
-  "homepage": "https://github.com/SynTexDZN/homebridge-syntex-webhooks#readme",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/SynTexDZN/homebridge-syntex-webhooks.git"
-  },
-  "bugs": {
-    "url": "https://github.com/SynTexDZN/homebridge-syntex-webhooks/issues"
-  },
-  "license": "ISC"
+	"name": "homebridge-syntex-webhooks",
+	"version": "2.3.0-b4",
+	"description": "A webhook plugin for HTTP devices",
+	"main": "index.js",
+	"author": {
+		"name": "SynTexDZN"
+	},
+	"engines": {
+		"homebridge": ">=0.3.0",
+		"node": ">=9.11.2"
+	},
+	"dependencies": {
+		"json-fs-store": "^1.0.1",
+		"request": "^2.88.0",
+		"homebridge-syntex-dynamic-platform": "1.0.1-b5"
+	},
+	"keywords": [
+		"syntex",
+		"syntex-webhooks",
+		"homebridge-plugin",
+		"homebridge",
+		"plugin",
+		"http",
+		"webhook",
+		"webhooks",
+		"homekit",
+		"smarthome",
+		"siri"
+	],
+	"homepage": "https://github.com/SynTexDZN/homebridge-syntex-webhooks#readme",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/SynTexDZN/homebridge-syntex-webhooks.git"
+	},
+	"bugs": {
+		"url": "https://github.com/SynTexDZN/homebridge-syntex-webhooks/issues"
+	},
+	"license": "ISC"
 }

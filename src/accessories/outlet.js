@@ -6,25 +6,25 @@ module.exports = class SynTexSwitchService extends SwitchService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-        Service = manager.platform.api.hap.Service;
-        Characteristic = manager.platform.api.hap.Characteristic;
-        Automations = manager.Automations;
-        DeviceManager = manager.DeviceManager;
+		Service = manager.platform.api.hap.Service;
+		Characteristic = manager.platform.api.hap.Characteristic;
+		Automations = manager.Automations;
+		DeviceManager = manager.DeviceManager;
 		
-        super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
+		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-        this.changeHandler = (state) =>
+		this.changeHandler = (state) =>
 		{
 			if(state.value != null)
 			{
-                this.homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.value);
+				this.homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.value);
 
-                this.setState(state.value, () => {});
-            }
+				this.setState(state.value, () => {});
+			}
 		};
-    }
+	}
 
-    getState(callback)
+	getState(callback)
 	{
 		super.getState((value) => {
 
@@ -36,26 +36,26 @@ module.exports = class SynTexSwitchService extends SwitchService
 			callback(null, value != null ? value : false);
 
 		}, true);
-    }
-    
-    setState(value, callback)
+	}
+	
+	setState(value, callback)
 	{
-        DeviceManager.fetchRequests(this).then((result) => {
+		DeviceManager.fetchRequests(this).then((result) => {
 
-            if(result == null)
-            {
-                this.power = value;
+			if(result == null)
+			{
+				this.power = value;
 
-                super.setState(this.power, 
-                    () => this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )'));
-            }
+				super.setState(this.power, 
+					() => this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )'));
+			}
 
-            callback(result);
-        });
+			callback(result);
+		});
 
-        if(Automations.isReady())
-        {
-            Automations.runAutomations(this.id, this.letters, value);
-        }
-    }
+		if(Automations.isReady())
+		{
+			Automations.runAutomations(this.id, this.letters, value);
+		}
+	}
 };

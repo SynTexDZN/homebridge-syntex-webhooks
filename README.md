@@ -18,105 +18,105 @@ It stores accessory data you can request to display the content on your website 
 
 ```
 "platforms": [
-    {
-        "platform": "SynTexWebHooks",
-        "port": 1710,
-        "cache_directory": "./SynTex/",
-        "log_directory": "./SynTex/log",
-        "accessories": [
-            {
-                "mac": "sensor1",
-                "name": "Contact",
-                "services": "contact"
-            },
-            {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Climate",
-                "services": [
-                    "temperature",
-                    "humidity"
-                ]
-            },
-            {
-                "mac": "multi1",
-                "name": "Multi Switch",
-                "services": [
-                    {"type" : "switch", "name" : "First"},
-                    {"type" : "switch", "name" : "Second"}
-                ]
-            },
-            {
-                "mac": "multi2",
-                "name": "Multi Device",
-                "services": [
-                    {"type" : "switch", "name" : "First"},
-                    {"type" : "motion", "name" : "Second"},
-                    {"type" : "light", "name" : "Third"},
-                    {"type" : "rain", "name" : "Leak"},
-                    {"type" : "smoke", "name" : "Smoke"},
-                    {"type" : "occupancy", "name" : "Present"}
-                ]
-            },
-            {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Switch",
-                "services": {
-                    "type" : "switch",
-                    "requests": [
-                        {
-                            "trigger": "on",
-                            "method": "GET",
-                            "url": "http://192.168.178.100/switch?state=true"
-                        },
-                        {
-                            "trigger": "off",
-                            "method": "GET",
-                            "url": "http://192.168.178.100/switch?state=false"
-                        }
-                    ]
-                }
-            },
-            {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Relais",
-                "services": {
-                    "type" : "relais",
-                    "requests": [
-                        {
-                            "trigger": "on",
-                            "method": "GET",
-                            "url": "http://192.168.178.101/switch?state=true"
-                        },
-                        {
-                            "trigger": "off",
-                            "method": "GET",
-                            "url": "http://192.168.178.101/switch?state=false"
-                        }
-                    ]
-                }
-            },
-            {
-                "mac": "light1",
-                "name": "Dummy Light",
-                "services": {
-                    "type" : "rgb",
-                    "requests": [
-                        {
-                            "trigger": "color",
-                            "method": "GET",
-                            "url": "http://192.168.178.163/color"
-                        }
-                    ]
-                }
-            },
-            {
-                "mac": "event1",
-                "name": "Events",
-                "services": "statelessswitch",
-                "buttons": 1
-            }
-        ]
-    }
+	{
+		"platform": "SynTexWebHooks",
+		"port": 1710,
+		"cache_directory": "./SynTex/",
+		"log_directory": "./SynTex/log",
+		"accessories": [
+			{
+				"mac": "sensor1",
+				"name": "Contact",
+				"services": "contact"
+			},
+			{
+				"mac": "EC:FA:BC:59:3F:3C",
+				"name": "Climate",
+				"services": [
+					"temperature",
+					"humidity"
+				]
+			},
+			{
+				"mac": "multi1",
+				"name": "Multi Switch",
+				"services": [
+					{"type" : "switch", "name" : "First"},
+					{"type" : "switch", "name" : "Second"}
+				]
+			},
+			{
+				"mac": "multi2",
+				"name": "Multi Device",
+				"services": [
+					{"type" : "switch", "name" : "First"},
+					{"type" : "motion", "name" : "Second"},
+					{"type" : "light", "name" : "Third"},
+					{"type" : "rain", "name" : "Leak"},
+					{"type" : "smoke", "name" : "Smoke"},
+					{"type" : "occupancy", "name" : "Present"}
+				]
+			},
+			{
+				"mac": "EC:FA:BC:59:3F:3C",
+				"name": "Switch",
+				"services": {
+					"type" : "switch",
+					"requests": [
+						{
+							"trigger": "on",
+							"method": "GET",
+							"url": "http://192.168.178.100/switch?state=true"
+						},
+						{
+							"trigger": "off",
+							"method": "GET",
+							"url": "http://192.168.178.100/switch?state=false"
+						}
+					]
+				}
+			},
+			{
+				"mac": "EC:FA:BC:59:3F:3C",
+				"name": "Relais",
+				"services": {
+					"type" : "relais",
+					"requests": [
+						{
+							"trigger": "on",
+							"method": "GET",
+							"url": "http://192.168.178.101/switch?state=true"
+						},
+						{
+							"trigger": "off",
+							"method": "GET",
+							"url": "http://192.168.178.101/switch?state=false"
+						}
+					]
+				}
+			},
+			{
+				"mac": "light1",
+				"name": "Dummy Light",
+				"services": {
+					"type" : "rgb",
+					"requests": [
+						{
+							"trigger": "color",
+							"method": "GET",
+							"url": "http://192.168.178.163/color"
+						}
+					]
+				}
+			},
+			{
+				"mac": "event1",
+				"name": "Events",
+				"services": "statelessswitch",
+				"buttons": 1
+			}
+		]
+	}
 ]
 ```
 
