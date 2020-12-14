@@ -14,7 +14,7 @@ const ColoredBulbService = require('./accessories/coloredBulb');
 const LeakService = require('./accessories/leak');
 const OutletService = require('./accessories/outlet');
 const OccupancyService = require('./accessories/occupancy');
-//const SynTexStatelessswitchAccessory = require('../accessories/statelessswitch');
+const SynTexStatelessSwitchAccessory = require('./accessories/statelessswitch');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
@@ -101,7 +101,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		}
 		else if(type == 'statelessswitch')
 		{
-			//service = new SynTexStatelessswitchAccessory(this.deviceConfig, { Service, Characteristic, logger : this.logger, TypeManager : this.manager.TypeManager, DeviceManager : this.manager.DeviceManager, Automations : this.manager.Automations });
+			service = new SynTexStatelessSwitchAccessory(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else
 		{
