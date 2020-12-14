@@ -10,6 +10,7 @@ const TemperatureService = require('./accessories/temperature');
 const HumidityService = require('./accessories/humidity');
 const LightBulbService = require('./accessories/lightBulb');
 const LeakService = require('./accessories/leak');
+const OutletService = require('./accessories/outlet');
 //const SynTexStatelessswitchAccessory = require('../accessories/statelessswitch');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
@@ -74,6 +75,10 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(type == 'rain')
 		{
 			service = new LeakService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+		}
+		else if(type == 'relais')
+		{
+			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else if(type == 'statelessswitch')
 		{
