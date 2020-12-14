@@ -17,7 +17,7 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 		{
 			if(state.value != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
+				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
 
 				this.setState(state.value, () => {});
 			}

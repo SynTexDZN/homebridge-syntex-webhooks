@@ -17,14 +17,14 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		{
 			if(state.value != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
+				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
 
 				this.setState(state.value, () => {});
 			}
 
 			if(state.brightness != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
 
 				this.setBrightness(state.brightness, () => {});
 			}
