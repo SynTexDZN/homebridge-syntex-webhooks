@@ -66,16 +66,9 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	
 	setState(value, callback)
 	{
-        this.power = value;
-
-        setToCurrentColor({ power : this.power }, 
-            () => super.setState(this.power, 
+        this.setToCurrentColor({ power : value }, 
+            () => super.setState(value, 
             () => callback()));
-
-		if(Automations.isReady())
-		{
-			Automations.runAutomations(this.id, this.letters, value);
-		}
     }
     
     getHue(callback)
@@ -93,10 +86,8 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 	setHue(value, callback)
 	{
-		this.hue = value;
-
-        setToCurrentColor({ hue : this.hue }, 
-            () => super.setHue(this.hue, 
+        this.setToCurrentColor({ hue : value }, 
+            () => super.setHue(value, 
             () => callback()));
     }
     
@@ -115,10 +106,8 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 	setSaturation(value, callback)
 	{
-		this.saturation = value;
-
-        setToCurrentColor({ saturation : this.saturation }, 
-            () => super.setSaturation(this.saturation, 
+        this.setToCurrentColor({ saturation : value }, 
+            () => super.setSaturation(value, 
             () => callback()));
 	}
 
@@ -137,43 +126,41 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 	setBrightness(value, callback)
 	{
-		this.brightness = value;
-
-        setToCurrentColor({ brightness : this.brightness }, 
-            () => super.setBrightness(this.brightness, 
-            () => callback()))
+        this.setToCurrentColor({ brightness : value }, 
+            () => super.setBrightness(value, 
+            () => callback()));
     }
     
     setToCurrentColor(state, callback)
 	{
-		if(this.power != state.power)
+		if(state.power != null && this.power != state.power)
 		{
 			this.power = state.power;
 
 			this.changed = true;
 		}
 
-		if(this.hue != state.hue)
+		if(state.hue != null && this.hue != state.hue)
 		{
 			this.hue = state.hue;
 
 			this.changed = true;
 		}
 
-		if(this.saturation != state.saturation)
+		if(state.saturation != null && this.saturation != state.saturation)
 		{
 			this.saturation = state.saturation;
 
 			this.changed = true;
 		}
 
-		if(this.brightness != state.brightness)
+		if(state.brightness != null && this.brightness != state.brightness)
 		{
 			this.brightness = state.brightness;
 
 			this.changed = true;
-		}
-
+        }
+        
 		if(this.changed)
 		{
 			setTimeout(() => {
@@ -182,20 +169,27 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 				{
 					this.running = true;
 
-					if(this.changed)
-					{
-                        DeviceManager.fetchRequests(this).then((result) => {
+                    DeviceManager.fetchRequests(this).then((result) => {
 
-                            if(result == null)
-                            {
-                                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-                            }
-                        });
+                        if(result == null)
+                        {
+                            this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+                        }
+
+                        if(callback)
+                        {
+                            callback();
+                        }
 
                         this.changed = false;
-					}
 
-                    this.running = false;
+                        this.running = false;
+                    });
+
+                    if(Automations.isReady() && this.power != null)
+                    {
+                        Automations.runAutomations(this.id, this.letters, this.power);
+                    }
 				}
 				else if(callback)
 				{

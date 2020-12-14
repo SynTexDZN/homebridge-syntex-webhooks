@@ -157,50 +157,39 @@ module.exports = class DeviceManager
 
 								}).bind({ url : urlToCall, logger : logger }));
 							}
-						}
-						else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
-						{
-							var colors = [accessory.hue, accessory.saturation, accessory.brightness];
-
-							if(this.options.spectrum == 'RGB')
+							else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
 							{
-								colors = convert.hsv.rgb([accessory.hue, accessory.saturation, accessory.brightness]);
+								var colors = [accessory.hue, accessory.saturation, accessory.brightness];
+
+								if(accessory.options.spectrum == 'RGB')
+								{
+									colors = convert.hsv.rgb([accessory.hue, accessory.saturation, accessory.brightness]);
+								}
+
+								theRequest.url += colors[0] + ',' + colors[1] + ',' + (accessory.power ? colors[2] : 0);
+							
+								request(theRequest, (function(err, response, body)
+								{
+									var statusCode = response && response.statusCode ? response.statusCode : -1;
+
+									if(!err && statusCode == 200)
+									{
+										logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
+									}
+									else
+									{
+										logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+									}
+				
+									finished++;
+
+									if(finished >= counter)
+									{
+										resolve(null);
+									}
+									
+								}.bind({ url : theRequest.url })));
 							}
-
-							theRequest.url += colors[0] + ',' + colors[1] + ',' + (accessory.power ? colors[2] : 0);
-						
-							request(theRequest, (function(err, response, body)
-							{
-								var statusCode = response && response.statusCode ? response.statusCode : -1;
-
-								if(!err && statusCode == 200)
-								{
-									logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
-								}
-								else
-								{
-									logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
-								}
-			
-								finished++;
-
-								if(finished >= counter)
-								{
-									resolve(null);
-								}
-								
-							}.bind({ url : theRequest.url })));
-							/*
-							setRGB(accessory, accessory.options.requests[i]).then(() => {
-								
-								finished++;
-
-								if(finished >= counter)
-								{
-									resolve(null);
-								}
-							});
-							*/
 						}
 					}
 				}
