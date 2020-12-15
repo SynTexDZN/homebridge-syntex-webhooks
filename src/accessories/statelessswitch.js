@@ -10,7 +10,7 @@ module.exports = class SynTexSwitchService extends StatelessSwitchService
 		Characteristic = manager.platform.api.hap.Characteristic;
 		Automations = manager.Automations;
 		DeviceManager = manager.DeviceManager;
-		
+
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
         /*
 		this.changeHandler = (state) =>

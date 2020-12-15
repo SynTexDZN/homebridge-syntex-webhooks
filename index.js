@@ -122,7 +122,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 				{
 					if(urlParams.remove == 'CONFIRM')
 					{
-						this.removeAccessory(accessory);
+						this.removeAccessory(accessory.homebridgeAccessory);
 					}
 
 					response.write(urlParams.remove == 'CONFIRM' ? 'Success' : 'Error');

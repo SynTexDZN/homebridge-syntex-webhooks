@@ -14,7 +14,7 @@ const ColoredBulbService = require('./accessories/coloredBulb');
 const LeakService = require('./accessories/leak');
 const OutletService = require('./accessories/outlet');
 const OccupancyService = require('./accessories/occupancy');
-const SynTexStatelessSwitchAccessory = require('./accessories/statelessswitch');
+const StatelessSwitchAccessory = require('./accessories/statelessswitch');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
@@ -99,7 +99,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			serviceConfig.buttons = config.buttons;
 
-			service = new SynTexStatelessSwitchAccessory(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+			service = new StatelessSwitchAccessory(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else
 		{
