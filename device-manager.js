@@ -72,134 +72,127 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 
-			if(accessory.options.requests)
+			var counter = 0, finished = 0, success = 0;
+
+			for(var i = 0; i < accessory.options.requests.length; i++)
 			{
-				var counter = 0, finished = 0, success = 0;
-
-				for(var i = 0; i < accessory.options.requests.length; i++)
+				if(accessory.options.requests[i].trigger && accessory.power != null
+				&& (accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+				|| !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
+				|| accessory.options.requests[i].trigger.toLowerCase() == 'color'))
 				{
-					if(accessory.options.requests[i].trigger && accessory.power != null
-					&& (accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-					|| !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
-					|| accessory.options.requests[i].trigger.toLowerCase() == 'color'))
-					{
-						counter++;
-					}
+					counter++;
 				}
+			}
 
-				for(var i = 0; i < accessory.options.requests.length; i++)
+			for(var i = 0; i < accessory.options.requests.length; i++)
+			{
+				if(accessory.options.requests[i].trigger && accessory.power != null)
 				{
-					if(accessory.options.requests[i].trigger && accessory.power != null)
+					var urlMethod = accessory.options.requests[i].method || '';
+					var urlToCall = accessory.options.requests[i].url || '';
+					var urlBody = accessory.options.requests[i].body || '';
+					var urlForm = accessory.options.requests[i].form || '';
+					var urlHeaders = accessory.options.requests[i].body || '{}';
+
+					if(urlMethod != '' && urlToCall != '')
 					{
-						var urlMethod = accessory.options.requests[i].method || '';
-						var urlToCall = accessory.options.requests[i].url || '';
-						var urlBody = accessory.options.requests[i].body || '';
-						var urlForm = accessory.options.requests[i].form || '';
-						var urlHeaders = accessory.options.requests[i].body || '{}';
+						var theRequest = {
+							method : urlMethod,
+							url : urlToCall,
+							timeout : 5000,
+							headers: JSON.parse(urlHeaders)
+						};
 
-						if(urlMethod != '' && urlToCall != '')
+						if(urlMethod === 'POST' || urlMethod === 'PUT')
 						{
-							var theRequest = {
-								method : urlMethod,
-								url : urlToCall,
-								timeout : 5000,
-								headers: JSON.parse(urlHeaders)
-							};
-
-							if(urlMethod === 'POST' || urlMethod === 'PUT')
+							if(urlForm)
 							{
-								if(urlForm)
-								{
-									theRequest.form = JSON.parse(urlForm);
-								}
-								else if(urlBody)
-								{
-									theRequest.body = urlBody;
-								}
+								theRequest.form = JSON.parse(urlForm);
 							}
-
-							if(accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-							|| !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+							else if(urlBody)
 							{
-								request(theRequest, (function(err, response, body) {
-
-									var statusCode = response && response.statusCode ? response.statusCode : -1;
-									
-									finished++;
-
-									if(!err && statusCode == 200)
-									{
-										success++;
-
-										this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
-
-										if(finished >= counter)
-										{
-											resolve(null);
-										}
-									}
-									else
-									{
-										this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
-
-										if(finished >= counter)
-										{
-											if(success == 0 && TypeManager.letterToType(accessory.letters) == 'relais')
-											{
-												resolve(err || new Error("Request to '" + this.url + "' was not succesful."));
-											}
-											else
-											{
-												resolve(null);
-											}
-										}
-									}
-
-								}).bind({ url : urlToCall, logger : logger }));
+								theRequest.body = urlBody;
 							}
-							else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
-							{
-								var colors = [accessory.hue, accessory.saturation, accessory.brightness];
+						}
 
-								if(accessory.options.spectrum == 'RGB')
+						if(accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+						|| !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+						{
+							request(theRequest, (function(err, response, body) {
+
+								var statusCode = response && response.statusCode ? response.statusCode : -1;
+								
+								finished++;
+
+								if(!err && statusCode == 200)
 								{
-									colors = convert.hsv.rgb([accessory.hue, accessory.saturation, accessory.brightness]);
-								}
+									success++;
 
-								theRequest.url += colors[0] + ',' + colors[1] + ',' + (accessory.power ? colors[2] : 0);
-							
-								request(theRequest, (function(err, response, body)
-								{
-									var statusCode = response && response.statusCode ? response.statusCode : -1;
-
-									if(!err && statusCode == 200)
-									{
-										logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
-									}
-									else
-									{
-										logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
-									}
-				
-									finished++;
+									this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
 
 									if(finished >= counter)
 									{
 										resolve(null);
 									}
-									
-								}.bind({ url : theRequest.url })));
+								}
+								else
+								{
+									this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
+
+									if(finished >= counter)
+									{
+										if(success == 0 && TypeManager.letterToType(accessory.letters) == 'relais')
+										{
+											resolve(err || new Error("Request to '" + this.url + "' was not succesful."));
+										}
+										else
+										{
+											resolve(null);
+										}
+									}
+								}
+
+							}).bind({ url : urlToCall, logger : logger }));
+						}
+						else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
+						{
+							var colors = [accessory.hue, accessory.saturation, accessory.brightness];
+
+							if(accessory.options.spectrum == 'RGB')
+							{
+								colors = convert.hsv.rgb([accessory.hue, accessory.saturation, accessory.brightness]);
 							}
+
+							theRequest.url += colors[0] + ',' + colors[1] + ',' + (accessory.power ? colors[2] : 0);
+						
+							request(theRequest, (function(err, response, body)
+							{
+								var statusCode = response && response.statusCode ? response.statusCode : -1;
+
+								if(!err && statusCode == 200)
+								{
+									logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
+								}
+								else
+								{
+									logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+								}
+			
+								finished++;
+
+								if(finished >= counter)
+								{
+									resolve(null);
+								}
+								
+							}.bind({ url : theRequest.url })));
 						}
 					}
 				}
-
-				if(counter == 0)
-				{
-					resolve(null);
-				}
 			}
-			else
+
+			if(counter == 0)
 			{
 				resolve(null);
 			}
