@@ -15,12 +15,15 @@ module.exports = class SynTexSwitchService extends StatelessSwitchService
         /*
 		this.changeHandler = (state) =>
 		{
-			if(state.value != null)
-			{
-				this.homebridgeAccessory.getServiceById(Service.Switch, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.value);
+			for(var i = 1; i < this.service.length - 1; i++)
+            {
+                if(i - 1 == event)
+                {
+                    logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + (i + 1) + '] wurde ausgeführt! ( ' + this.mac + ' )');
 
-				this.setState(state.value, () => {});
-			}
+                    this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
+                }
+            }
         };
         */
 	}
