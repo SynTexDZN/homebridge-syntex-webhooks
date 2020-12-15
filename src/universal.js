@@ -89,18 +89,16 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		}
 		else if(type == 'rain')
 		{
-			//serviceConfig.type = 'leak';
-
 			service = new LeakService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else if(type == 'relais')
 		{
-			//serviceConfig.type = 'outlet';
-
 			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else if(type == 'statelessswitch')
 		{
+			serviceConfig.buttons = config.buttons;
+
 			service = new SynTexStatelessSwitchAccessory(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else
