@@ -1,8 +1,8 @@
 let Service, Characteristic, DeviceManager, Automations;
 
-const { OccupancyService } = require('homebridge-syntex-dynamic-platform');
+const { AirQualityService } = require('homebridge-syntex-dynamic-platform');
 
-module.exports = class SynTexOccupancyService extends OccupancyService
+module.exports = class SynTexAirQualityService extends AirQualityService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
@@ -17,21 +17,15 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 		{
 			if(state.value != null)
 			{
-				DeviceManager.fetchRequests(this).then((result) => {
+				this.value = state.value;
 
-					if(result == null)
-					{
-						this.value = state.value;
+				this.homebridgeAccessory.getServiceById(Service.AirQualitySensor, serviceConfig.subtype).getCharacteristic(Characteristic.AirQuality).updateValue(this.value);
 
-						this.homebridgeAccessory.getServiceById(Service.OccupancySensor, serviceConfig.subtype).getCharacteristic(Characteristic.OccupancyDetected).updateValue(this.value);
-
-						super.setValue('state', this.value, true);
-					}
-				});
-
+				super.setValue('state', this.value, true);
+			
 				if(Automations.isReady())
 				{
-					Automations.runAutomations(this.id, this.letters, state.value);
+					Automations.runAutomations(this.id, this.letters, this.value);
 				}
 			}
 		};
@@ -46,7 +40,7 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 				this.value = value;
 			}
 				
-			callback(null, value != null ? value : false);
+			callback(null, value != null ? value : 0);
 
 		}, true);
 	}

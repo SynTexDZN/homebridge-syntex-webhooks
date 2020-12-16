@@ -14,7 +14,9 @@ const ColoredBulbService = require('./accessories/coloredBulb');
 const LeakService = require('./accessories/leak');
 const OutletService = require('./accessories/outlet');
 const OccupancyService = require('./accessories/occupancy');
-const StatelessSwitchAccessory = require('./accessories/statelessswitch');
+const StatelessSwitchService = require('./accessories/statelessswitch');
+const SmokeService = require('./accessories/smoke');
+const AirQualityService = require('./accessories/airquality');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
@@ -113,7 +115,15 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			serviceConfig.buttons = config.buttons;
 
-			service = new StatelessSwitchAccessory(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+			service = new StatelessSwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+		}
+		else if(type == 'smoke')
+		{
+			service = new SmokeService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+		}
+		else if(type == 'airquality')
+		{
+			service = new AirQualityService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else
 		{

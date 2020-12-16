@@ -1,8 +1,8 @@
 let Service, Characteristic, DeviceManager, Automations;
 
-const { OccupancyService } = require('homebridge-syntex-dynamic-platform');
+const { SmokeService } = require('homebridge-syntex-dynamic-platform');
 
-module.exports = class SynTexOccupancyService extends OccupancyService
+module.exports = class SynTexSmokeService extends SmokeService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
@@ -23,7 +23,7 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 					{
 						this.value = state.value;
 
-						this.homebridgeAccessory.getServiceById(Service.OccupancySensor, serviceConfig.subtype).getCharacteristic(Characteristic.OccupancyDetected).updateValue(this.value);
+						this.homebridgeAccessory.getServiceById(Service.SmokeSensor, serviceConfig.subtype).getCharacteristic(Characteristic.SmokeDetected).updateValue(this.value);
 
 						super.setValue('state', this.value, true);
 					}
