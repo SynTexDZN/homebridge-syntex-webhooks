@@ -44,6 +44,18 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 			}
 		}
 
+		if(this.services.length > 1 && this.name == name)
+		{
+			name = name + ' ' + type[0].toUpperCase() + type.substring(1);
+
+			if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length > 1)
+			{
+				var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
+				name += ' ' + letters[subtype];
+			}
+		}
+
 		var service = null;
 		var serviceConfig = { name : name, type : type, subtype : subtype, requests : config.requests };
 
@@ -85,6 +97,8 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		}
 		else if(type == 'rgb')
 		{
+			serviceConfig.spectrum = config.spectrum;
+
 			service = new ColoredBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else if(type == 'rain')

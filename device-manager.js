@@ -1,5 +1,6 @@
 const store = require('json-fs-store');
 const request = require('request');
+const convert = require('color-convert');
 var logger, storage, accessories = [];
 
 module.exports = class DeviceManager

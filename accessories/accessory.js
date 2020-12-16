@@ -1,6 +1,5 @@
 var Service, Characteristic, DeviceManager, TypeManager, Automations, logger;
 var presets = {};
-var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
 module.exports = class Accessory
 {
@@ -10,10 +9,6 @@ module.exports = class Accessory
 
         Service = Manager.Service;
         Characteristic = Manager.Characteristic;
-        DeviceManager = Manager.DeviceManager;
-        TypeManager = Manager.TypeManager;
-        Automations = Manager.Automations;
-        logger = Manager.logger;
 
         presets.contact = { letter : 'A', service : Service.ContactSensor, characteristic : Characteristic.ContactSensorState };
         presets.motion = { letter : 'B', service : Service.MotionSensor, characteristic : Characteristic.MotionDetected };
@@ -81,16 +76,7 @@ module.exports = class Accessory
                     name +=  ' ' + letters[i];
                     var service = new presets[type].service(name, i);
                 }
-
-                if(type == 'statelessswitch')
-                {
-                    service = null;
-                    service = new Service.StatelessProgrammableSwitch(name + (subtypes[type] || 0), '' + (subtypes[type] || 0));
-                }
-
-                service.characteristic = presets[type].characteristic;
-                service.letters = TypeManager.typeToLetter(type) + (subtypes[type] || 0);
-
+                /*
                 DeviceManager.getDevice(this.mac, service.letters).then(function(state) {
 
                     if(state == null)
@@ -136,7 +122,7 @@ module.exports = class Accessory
                     }
             
                 }.bind(service));
-
+                */
                 service.changeHandler = (function(state)
                 {
                     logger.log('update', this.mac, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.mac + ' )');
@@ -163,25 +149,6 @@ module.exports = class Accessory
                             this.saturation = getHSL(value)[1] || 100;
                             this.brightness = getHSL(value)[2] || 50;
                         }
-                    }
-                    /*
-                    else if(this.type == 'statelessswitch')
-                    {
-                        for(var i = 0; i < this.service.length; i++)
-                        {
-                            if(i == event)
-                            {
-                                logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + i + '] wurde ausgeführt! ( ' + this.mac + ' )');
-
-                                this.getCharacteristic(this.characteristic).updateValue(value);
-                            }
-                        }
-                    }
-                    */
-
-                    if(this.type == 'relais' || this.type == 'switch' || this.type == 'rgb' || this.type == 'rgbw' || this.type == 'rgbww' || this.type == 'rgbcw')
-                    {
-                        fetchRequests(this);
                     }
 
                 }.bind(service));
