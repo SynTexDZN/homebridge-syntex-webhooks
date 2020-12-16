@@ -28,7 +28,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 		{
 			this.api.on('didFinishLaunching', () => {
 
-				TypeManager = new TypeManager();
+				TypeManager = new TypeManager(this.logger);
 				DeviceManager = new DeviceManager(this.logger, this.cacheDirectory);
 				Automations = new Automations(this.logger, this.cacheDirectory, DeviceManager);
 
@@ -82,12 +82,6 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 					response.write('Error');
 				}
-				else if(urlParams.event != null)
-				{
-					accessory.changeHandler(accessory.name, urlParams.event, urlParams.value || 0);
-
-					response.write('Success');
-				}
 				else if(urlParams.value != null)
 				{
 					var state = { value : urlParams.value };
@@ -105,6 +99,11 @@ class SynTexWebHookPlatform extends DynamicPlatform
 					if(urlParams.brightness != null)
 					{
 						state.brightness = urlParams.brightness;
+					}
+
+					if(urlParams.event != null)
+					{
+						state.event = urlParams.event;
 					}
 
 					if((state = TypeManager.validateUpdate(urlParams.id, service.letters, state)) != null)

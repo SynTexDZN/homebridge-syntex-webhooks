@@ -19,7 +19,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		{
 			if(state.value != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
+				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.value);
 
 				this.setState(state.value, () => {});
 			}
@@ -54,10 +54,10 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			if(value != null)
 			{
 				this.power = value;
-				
-				this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+
+				this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', hue: ' + super.getValue('hue') +  ', saturation: ' + super.getValue('saturation') + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
 			}
-				
+
 			callback(null, value != null ? value : false);
 		});
 	}
