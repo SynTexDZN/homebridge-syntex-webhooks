@@ -13,8 +13,6 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		
         super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 		
-		console.log(serviceConfig);
-
         this.options.spectrum = serviceConfig.spectrum || 'HSL';
 
 		this.changeHandler = (state) =>
