@@ -46,7 +46,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 			}
 		}
 
-		if(this.services.length > 1 && this.name == name)
+		if(Array.isArray(this.services) && this.services.length > 1 && this.name == name)
 		{
 			name = name + ' ' + type[0].toUpperCase() + type.substring(1);
 

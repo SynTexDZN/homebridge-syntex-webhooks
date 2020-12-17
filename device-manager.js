@@ -117,8 +117,8 @@ module.exports = class DeviceManager
 							}
 						}
 
-						if(accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-						|| !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+						if(!accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+						|| accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
 						{
 							request(theRequest, (function(err, response, body) {
 

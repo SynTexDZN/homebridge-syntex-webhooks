@@ -11,7 +11,7 @@ module.exports = class Automations
 		storage = store(storagePath);
 		DeviceManager = Manager;
 
-		TypeManager = new TypeManager();
+		TypeManager = new TypeManager(logger);
 	}
 
 	setAccessories(devices)
@@ -182,33 +182,34 @@ function executeResult(automation, trigger)
 			{
 				if(accessory[1].id == automation.result[i].id && JSON.stringify(accessory[1].services).includes(TypeManager.letterToType(automation.result[i].letters[0])))
 				{
-					if(TypeManager.letterToType(automation.result[i].letters[0]) == 'statelessswitch')
-					{
-						accessory[1].changeHandler(accessory[1].name, automation.result[i].value, 0);
-					}
-					else
-					{
-						var count = Array.isArray(accessory[1].services) ? accessory[1].services.length : 1;
+					var count = Array.isArray(accessory[1].services) ? accessory[1].services.length : 1;
 
-						for(var k = 1; k <= count; k++)
+					for(var k = 1; k <= count; k++)
+					{
+						if(accessory[1].service[k] != null)
 						{
-							if(accessory[1].service[k] != null)
+							if(accessory[1].service[k].letters == automation.result[i].letters)
 							{
-								if(accessory[1].service[k].letters == automation.result[i].letters)
+								var state = null;
+
+								if((state = TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, { value : automation.result[i].value })) != null)
 								{
-									var state = null;
+									var state = { value : state };
 
-									if((state = TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, automation.result[i].value)) != null)
+									if(TypeManager.letterToType(automation.result[i].letters[0]) == 'statelessswitch')
 									{
-										accessory[1].service[k].changeHandler({ value : state });
-									}
-									else
-									{
-										logger.log('error', automation.result[i].id, automation.result[i].letters, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].id + ' )');
+										state.event = parseInt(automation.result[i].value);
+										state.value = 0;
 									}
 
-									//DeviceManager.setDevice(automation.result[i].id, automation.result[i].letters, TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, automation.result[i].value));
+									accessory[1].service[k].changeHandler(state);
 								}
+								else
+								{
+									logger.log('error', automation.result[i].id, automation.result[i].letters, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].id + ' )');
+								}
+
+								//DeviceManager.setDevice(automation.result[i].id, automation.result[i].letters, TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, automation.result[i].value));
 							}
 						}
 					}
