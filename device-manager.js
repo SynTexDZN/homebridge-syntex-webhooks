@@ -78,8 +78,8 @@ module.exports = class DeviceManager
 			for(var i = 0; i < accessory.options.requests.length; i++)
 			{
 				if(accessory.options.requests[i].trigger && accessory.power != null
-				&& (accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-				|| !accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
+				&& (!accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+				|| accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
 				|| accessory.options.requests[i].trigger.toLowerCase() == 'color'))
 				{
 					counter++;
