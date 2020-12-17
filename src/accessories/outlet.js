@@ -40,7 +40,7 @@ module.exports = class SynTexOutletService extends OutletService
 	
 	setState(value, callback)
 	{
-		DeviceManager.fetchRequests(this).then((result) => {
+		DeviceManager.fetchRequests({ power : value }, this).then((result) => {
 
 			if(result == null)
 			{

@@ -17,7 +17,7 @@ module.exports = class SynTexMotionService extends MotionService
 		{
 			if(state.value != null)
 			{
-				DeviceManager.fetchRequests(this).then((result) => {
+				DeviceManager.fetchRequests({ power : state.value }, this).then((result) => {
 
 					if(result == null)
 					{

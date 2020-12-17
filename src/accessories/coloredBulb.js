@@ -157,48 +157,47 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			this.brightness = state.brightness;
 
 			this.changed = true;
-        }
+		}
+		
+		setTimeout(() => {
+
+			if(!this.running)
+			{
+				this.running = true;
+
+				DeviceManager.fetchRequests({ power : this.power, hue : this.hue, saturation : this.saturation, brightness : this.brightness }, this).then((result) => {
         
-		if(this.changed)
-		{
-			setTimeout(() => {
-
-				if(!this.running)
-				{
-					this.running = true;
-
-                    DeviceManager.fetchRequests(this).then((result) => {
-
-                        if(result == null)
-                        {
-                            this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-                        }
-
-                        if(callback)
-                        {
-                            callback();
-                        }
-
-                        this.changed = false;
-
-                        this.running = false;
-                    });
-
-                    if(Automations.isReady() && this.power != null)
-                    {
-                        Automations.runAutomations(this.id, this.letters, this.power);
-                    }
-				}
-				else if(callback)
-				{
-					callback();
-				}
+					if(this.changed)
+					{
+						if(result == null)
+						{
+							this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+						}
 	
-			}, 100);
-		}
-		else if(callback)
-		{
-			callback();
-		}
+						if(callback)
+						{
+							callback();
+						}
+					}
+					else if(callback)
+					{
+						callback();
+					}
+	
+					if(Automations.isReady() && this.power != null)
+					{
+						Automations.runAutomations(this.id, this.letters, this.power);
+					}
+					
+					this.changed = false;
+					this.running = false;
+				});
+			}
+			else if(callback)
+			{
+				callback();
+			}
+			
+		}, 100);
 	}
 };

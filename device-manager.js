@@ -69,7 +69,7 @@ module.exports = class DeviceManager
 		});
 	}
 
-	fetchRequests(accessory)
+	fetchRequests(state, accessory)
 	{
 		return new Promise(resolve => {
 
@@ -77,9 +77,9 @@ module.exports = class DeviceManager
 
 			for(var i = 0; i < accessory.options.requests.length; i++)
 			{
-				if(accessory.options.requests[i].trigger && accessory.power != null
-				&& (!accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-				|| accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
+				if(accessory.options.requests[i].trigger != null && state.power != null
+				&& (state.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+				|| !state.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
 				|| accessory.options.requests[i].trigger.toLowerCase() == 'color'))
 				{
 					counter++;
@@ -88,7 +88,7 @@ module.exports = class DeviceManager
 
 			for(var i = 0; i < accessory.options.requests.length; i++)
 			{
-				if(accessory.options.requests[i].trigger && accessory.power != null)
+				if(accessory.options.requests[i].trigger != null && state.power != null)
 				{
 					var urlMethod = accessory.options.requests[i].method || '';
 					var urlToCall = accessory.options.requests[i].url || '';
@@ -117,8 +117,8 @@ module.exports = class DeviceManager
 							}
 						}
 
-						if(!accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-						|| accessory.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+						if(state.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+						|| !state.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
 						{
 							request(theRequest, (function(err, response, body) {
 
@@ -158,14 +158,14 @@ module.exports = class DeviceManager
 						}
 						else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
 						{
-							var colors = [accessory.hue, accessory.saturation, accessory.brightness];
+							var colors = [state.hue, state.saturation, state.brightness];
 
 							if(accessory.options.spectrum == 'RGB')
 							{
-								colors = convert.hsv.rgb([accessory.hue, accessory.saturation, accessory.brightness]);
+								colors = convert.hsv.rgb([state.hue, state.saturation, state.brightness]);
 							}
 
-							theRequest.url += colors[0] + ',' + colors[1] + ',' + (accessory.power ? colors[2] : 0);
+							theRequest.url += colors[0] + ',' + colors[1] + ',' + (state.power ? colors[2] : 0);
 						
 							request(theRequest, (function(err, response, body)
 							{
