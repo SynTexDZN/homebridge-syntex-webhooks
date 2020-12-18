@@ -17,9 +17,7 @@ module.exports = class SynTexAirQualityService extends AirQualityService
 
 			this.value = value || 0;
 
-			this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + this.value + '] ( ' + this.id + ' )');
-
-		});
+		}, true);
 
 		this.changeHandler = (state) =>
 		{

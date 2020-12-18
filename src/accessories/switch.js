@@ -17,9 +17,7 @@ module.exports = class SynTexSwitchService extends SwitchService
 
 			this.power = power || false;
 
-			this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + this.power + '] ( ' + this.id + ' )');
-
-		});
+		}, true);
 
 		this.changeHandler = (state) =>
 		{

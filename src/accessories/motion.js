@@ -16,10 +16,8 @@ module.exports = class SynTexMotionService extends MotionService
 		super.getState((value) => {
 
 			this.value = value || false;
-
-			this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + this.value + '] ( ' + this.id + ' )');
-
-		});
+			
+		}, true);
 
 		this.changeHandler = (state) =>
 		{
