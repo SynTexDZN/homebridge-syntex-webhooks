@@ -13,7 +13,18 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		
         super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 		
-        this.options.spectrum = serviceConfig.spectrum || 'HSL';
+		this.options.spectrum = serviceConfig.spectrum || 'HSL';
+		
+		super.getState((power) => super.getHue((hue) => super.getSaturation((saturation) => super.getBrightness((brightness) => {
+
+			this.power = power || false;
+			this.hue = hue || 0;
+			this.saturation = saturation || 100;
+			this.brightness = brightness || 50;
+
+			this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+
+		}))));
 
 		this.changeHandler = (state) =>
 		{

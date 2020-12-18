@@ -13,6 +13,14 @@ module.exports = class SynTexSwitchService extends SwitchService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
+		super.getState((power) => {
+
+			this.power = power || false;
+
+			this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + this.power + '] ( ' + this.id + ' )');
+
+		});
+
 		this.changeHandler = (state) =>
 		{
 			if(state.value != null)

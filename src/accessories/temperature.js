@@ -13,6 +13,14 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
+		super.getState((value) => {
+
+			this.value = value || 0;
+
+			this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + this.value + '] ( ' + this.id + ' )');
+
+		});
+
 		this.changeHandler = (state) =>
 		{
 			if(state.value != null)
