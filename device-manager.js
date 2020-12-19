@@ -188,7 +188,7 @@ module.exports = class DeviceManager
 									resolve(null);
 								}
 								
-							}.bind({ url : theRequest.url })));
+							}.bind({ url : theRequest.url, logger : this.logger })));
 						}
 					}
 				}
