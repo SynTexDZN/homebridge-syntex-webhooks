@@ -69,9 +69,11 @@ class SynTexWebHookPlatform extends DynamicPlatform
 				}
 				else
 				{
+					var service = null;
+
 					if(accessory.service != null)
 					{
-						var service = accessory.service[1];
+						service = accessory.service[1];
 						
 						if(urlParams.event == null)
 						{
