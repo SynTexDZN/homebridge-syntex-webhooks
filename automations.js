@@ -194,8 +194,6 @@ function executeResult(automation, trigger)
 
 								if((state = TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, { value : automation.result[i].value })) != null)
 								{
-									var state = { value : state };
-
 									if(TypeManager.letterToType(automation.result[i].letters[0]) == 'statelessswitch')
 									{
 										state.event = parseInt(automation.result[i].value);
