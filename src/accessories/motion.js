@@ -29,7 +29,7 @@ module.exports = class SynTexMotionService extends MotionService
 					{
 						this.value = state.value;
 
-						this.homebridgeAccessory.getServiceById(Service.MotionSensor, serviceConfig.subtype).getCharacteristic(Characteristic.MotionDetected).updateValue(this.value);
+						this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(this.value);
 
 						super.setValue('state', this.value, true);
 					}

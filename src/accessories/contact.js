@@ -29,7 +29,7 @@ module.exports = class SynTexContactService extends ContactService
 					{
 						this.value = state.value;
 
-						this.homebridgeAccessory.getServiceById(Service.ContactSensor, serviceConfig.subtype).getCharacteristic(Characteristic.ContactSensorState).updateValue(this.value);
+						this.service.getCharacteristic(Characteristic.ContactSensorState).updateValue(this.value);
 
 						super.setValue('state', this.value, true);
 					}

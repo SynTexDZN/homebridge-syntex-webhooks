@@ -25,7 +25,7 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 			{
 				this.value = state.value;
 
-				this.homebridgeAccessory.getServiceById(Service.TemperatureSensor, serviceConfig.subtype).getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.value);
+				this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.value);
 
 				super.setValue('state', this.value, true);
 			

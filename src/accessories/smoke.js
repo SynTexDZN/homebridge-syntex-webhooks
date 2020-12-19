@@ -29,7 +29,7 @@ module.exports = class SynTexSmokeService extends SmokeService
 					{
 						this.value = state.value;
 
-						this.homebridgeAccessory.getServiceById(Service.SmokeSensor, serviceConfig.subtype).getCharacteristic(Characteristic.SmokeDetected).updateValue(this.value);
+						this.service.getCharacteristic(Characteristic.SmokeDetected).updateValue(this.value);
 
 						super.setValue('state', this.value, true);
 					}

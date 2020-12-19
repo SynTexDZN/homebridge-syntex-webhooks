@@ -23,7 +23,7 @@ module.exports = class SynTexSwitchService extends SwitchService
 		{
 			if(state.value != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Switch, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.value);
+				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
 
 				this.setState(state.value, () => {});
 			}

@@ -25,7 +25,7 @@ module.exports = class SynTexHumidityService extends HumidityService
 			{
 				this.value = state.value;
 
-				this.homebridgeAccessory.getServiceById(Service.HumiditySensor, serviceConfig.subtype).getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(this.value);
+				this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(this.value);
 
 				super.setValue('state', this.value, true);
 

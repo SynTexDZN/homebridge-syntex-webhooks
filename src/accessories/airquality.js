@@ -25,7 +25,7 @@ module.exports = class SynTexAirQualityService extends AirQualityService
 			{
 				this.value = state.value;
 
-				this.homebridgeAccessory.getServiceById(Service.AirQualitySensor, serviceConfig.subtype).getCharacteristic(Characteristic.AirQuality).updateValue(this.value);
+				this.service.getCharacteristic(Characteristic.AirQuality).updateValue(this.value);
 
 				super.setValue('state', this.value, true);
 			

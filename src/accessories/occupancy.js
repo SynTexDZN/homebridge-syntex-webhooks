@@ -29,7 +29,7 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 					{
 						this.value = state.value;
 
-						this.homebridgeAccessory.getServiceById(Service.OccupancySensor, serviceConfig.subtype).getCharacteristic(Characteristic.OccupancyDetected).updateValue(this.value);
+						this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(this.value);
 
 						super.setValue('state', this.value, true);
 					}

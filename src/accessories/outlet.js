@@ -23,7 +23,7 @@ module.exports = class SynTexOutletService extends OutletService
 		{
 			if(state.value != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.value);
+				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
 
 				this.setState(state.value, () => {});
 			}

@@ -29,7 +29,7 @@ module.exports = class SynTexLeakService extends LeakService
 					{
 						this.value = state.value;
 
-						this.homebridgeAccessory.getServiceById(Service.LeakSensor, serviceConfig.subtype).getCharacteristic(Characteristic.LeakDetected).updateValue(this.value);
+						this.service.getCharacteristic(Characteristic.LeakDetected).updateValue(this.value);
 
 						super.setValue('state', this.value, true);
 					}

@@ -30,28 +30,28 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		{
 			if(state.value != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.value);
+				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
 
 				this.setState(state.value, () => {});
 			}
 
             if(state.hue != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Hue).updateValue(state.hue);
+				this.service.getCharacteristic(Characteristic.Hue).updateValue(state.hue);
 
 				this.setHue(state.hue, () => {});
             }
             
             if(state.saturation != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Saturation).updateValue(state.saturation);
+				this.service.getCharacteristic(Characteristic.Saturation).updateValue(state.saturation);
 
 				this.setSaturation(state.saturation, () => {});
 			}
 
 			if(state.brightness != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+				this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
 
 				this.setBrightness(state.brightness, () => {});
 			}

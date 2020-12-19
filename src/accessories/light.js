@@ -25,7 +25,7 @@ module.exports = class SynTexLightService extends LightService
 			{
 				this.value = state.value;
 
-				this.homebridgeAccessory.getServiceById(Service.LightSensor, serviceConfig.subtype).getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(this.value);
+				this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(this.value);
 
 				super.setValue('state', this.value, true);
 			
