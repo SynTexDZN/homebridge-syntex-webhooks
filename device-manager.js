@@ -1,13 +1,14 @@
 const store = require('json-fs-store');
 const request = require('request');
 const convert = require('color-convert');
-var logger, storage, accessories = [];
+var TypeManager, storage, accessories = [];
 
 module.exports = class DeviceManager
 {
-	constructor(log, storagePath)
+	constructor(logger, typeManager, storagePath)
 	{
-		logger = log;
+		this.logger = logger;
+		TypeManager = typeManager;
 		storage = store(storagePath);
 	}
 
@@ -154,7 +155,7 @@ module.exports = class DeviceManager
 									}
 								}
 
-							}).bind({ url : urlToCall, logger : logger }));
+							}).bind({ url : urlToCall, logger : this.logger }));
 						}
 						else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
 						{
@@ -173,11 +174,11 @@ module.exports = class DeviceManager
 
 								if(!err && statusCode == 200)
 								{
-									logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
+									this.logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
 								}
 								else
 								{
-									logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+									this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
 								}
 			
 								finished++;
@@ -225,7 +226,7 @@ function writeFS(mac, service, value)
 
 			if(err)
 			{
-				logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht aktualisiert werden! ' + err);
+				this.logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht aktualisiert werden! ' + err);
 			}
 
 			resolve(err ? false : true);
