@@ -3,6 +3,13 @@ A simple plugin to control and to create HTTP devices.<br>
 This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge<br>
 It stores accessory data you can request to display the content on your website / app.
 
+[![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex-webhooks?label=release&color=brightgreen)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
+[![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex-webhooks/beta?color=orange&label=beta)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
+[![GitHub Commits](https://badgen.net/github/commits/SynTexDZN/homebridge-syntex-webhooks?color=yellow)](https://github.com/SynTexDZN/homebridge-syntex-webhooks/commits)
+[![NPM Downloads](https://badgen.net/npm/dt/homebridge-syntex-webhooks?color=purple)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
+[![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-webhooks?color=0af)](https://github.com/SynTexDZN/homebridge-syntex-webhooks)
+
+<br>
 
 ## Installation
 1. Install homebridge using: `sudo npm install -g homebridge`
