@@ -1,200 +1,255 @@
-let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations'), WebServer = require('./webserver'), logger = require('./logger');
-var Service, Characteristic, restart = true;
-const SynTexAccessory = require('./accessories/accessory'), SynTexStatelessswitchAccessory = require('./accessories/statelessswitch');
+let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations');
+
+const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
+
+const SynTexUniversalAccessory = require('./src/universal');
 
 const pluginID = 'homebridge-syntex-webhooks';
 const pluginName = 'SynTexWebHooks';
 
-module.exports = (homebridge) =>
-{
-    Service = homebridge.hap.Service;
-    Characteristic = homebridge.hap.Characteristic;
+var restart = true;
 
-    homebridge.registerPlatform(pluginID, pluginName, SynTexWebHookPlatform);
+module.exports = (homebridge) => {
+
+	homebridge.registerPlatform(pluginID, pluginName, SynTexWebHookPlatform, true);
 };
 
-function SynTexWebHookPlatform(log, config, api)
+class SynTexWebHookPlatform extends DynamicPlatform
 {
-    this.devices = config['accessories'] || [];
-    
-    this.cacheDirectory = config['cache_directory'] || './SynTex';
-    this.logDirectory = config['log_directory'] || './SynTex/log';
-    this.port = config['port'] || 1710;
-    
-    TypeManager = new TypeManager();
-    logger = new logger(pluginName, this.logDirectory, api.user.storagePath());
-    DeviceManager = new DeviceManager(logger, this.cacheDirectory);
-    WebServer = new WebServer(pluginName, logger, this.port, false);
-    Automations = new Automations(logger, this.cacheDirectory, DeviceManager);
+	constructor(log, config, api)
+	{
+		super(config, api, pluginID, pluginName);
 
-    Automations.loadAutomations().then((loaded) => {
-        
-        if(loaded)
-        {
-            logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
-        }
-        else
-        {
-            logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
-        }
-
-        restart = false;
-    });
-}
-
-SynTexWebHookPlatform.prototype = {
-    
-    accessories : function(callback)
-    {
-        var accessories = [];
-
-        for(var i = 0; i < this.devices.length; i++)
-        {
-            if(this.devices[i].services == 'statelessswitch')
-            {
-                accessories.push(new SynTexStatelessswitchAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
-            }
-            else
-            {
-                accessories.push(new SynTexAccessory(this.devices[i], { Service, Characteristic, TypeManager, logger, DeviceManager, Automations }));
-            }
-        }
-
-        Automations.setAccessories(accessories);
-        
-        callback(accessories);
-
-        WebServer.addPage('/devices', async (response, urlParams) => {
+		this.devices = config['accessories'] || [];
 	
-            if(urlParams.mac != null)
-            {
-                var accessory = null;
-                        
-                for(var i = 0; i < accessories.length; i++)
-                {
-                    if(accessories[i].mac == urlParams.mac)
-                    {
-                        if(urlParams.event != null)
-                        {
-                            accessory = accessories[i];
-                        }
-                        else
-                        {
-                            for(var j = 0; j < accessories[i].service.length; j++)
-                            {
-                                if(accessories[i].service[j].mac != null && accessories[i].service[j].letters != null)
-                                {
-                                    if((urlParams.type == null || accessories[i].service[j].letters[0] == TypeManager.typeToLetter(urlParams.type)) && (urlParams.counter == null || accessories[i].service[j].letters[1] == urlParams.counter))
-                                    {
-                                        accessory = accessories[i].service[j];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+		this.cacheDirectory = config['cache_directory'] || './SynTex';
+		
+		if(this.api && this.logger)
+		{
+			this.api.on('didFinishLaunching', () => {
 
-                if(accessory == null)
-                {
-                    logger.log('error', urlParams.mac, '', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.mac + ' )');
+				TypeManager = new TypeManager(this.logger);
+				DeviceManager = new DeviceManager(this.logger, TypeManager, this.cacheDirectory);
+				Automations = new Automations(this.logger, this.cacheDirectory, this);
 
-                    response.write('Error');
-                }
-                else if(urlParams.event != null)
-                {
-                    accessory.changeHandler(accessory.name, urlParams.event, urlParams.value || 0);
+				this.initWebServer();
 
-                    response.write('Success');
-                }
-                else if(urlParams.value != null)
-                {
-                    var state = null;
+				this.loadAccessories();
 
-                    if((state = TypeManager.validateUpdate(urlParams.mac, accessory.letters, urlParams.value)) != null)
-                    {
-                        accessory.changeHandler(state);
-                    }
-                    else
-                    {
-                        logger.log('error', urlParams.mac, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
-                    }
+				Automations.loadAutomations().then((loaded) => {
+					
+					if(loaded)
+					{
+						this.logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+					}
+					else
+					{
+						this.logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+					}
 
-                    DeviceManager.setDevice(urlParams.mac, accessory.letters, urlParams.value);
-                        
-                    response.write(state != null ? JSON.stringify(state) : 'Error');
-                }
-                else
-                {
-                    var state = await DeviceManager.getDevice(urlParams.mac, accessory.letters);
+					restart = false;
+				});
+			});
+		}
+	}
 
-                    response.write(state != null ? JSON.stringify(state) : 'Error');
-                }
+	initWebServer()
+	{
+		this.WebServer.addPage('/devices', async (response, urlParams) => {
+	
+			if(urlParams.id != null)
+			{
+				var accessory = this.getAccessory(urlParams.id);
 
-                response.end();
-            }
-        });
+				if(accessory == null)
+				{
+					this.logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
 
-        WebServer.addPage('/reload-automation', async (response) => {
+					response.write('Error');
+				}
+				else
+				{
+					var service = null;
 
-            if(await Automations.loadAutomations())
-            {
-                logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
-                response.write('Success');
-            }
-            else
-            {
-                logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
-                response.write('Error');
-            }
-            
-            response.end();
-        });
+					if(accessory.service != null)
+					{
+						service = accessory.service[1];
+						
+						if(urlParams.event == null)
+						{
+							for(var j = 0; j < accessory.service.length; j++)
+							{
+								if(accessory.service[j].id != null && accessory.service[j].letters != null)
+								{
+									if((urlParams.type == null || accessory.service[j].letters[0] == TypeManager.typeToLetter(urlParams.type)) && (urlParams.counter == null || accessory.service[j].letters[1] == urlParams.counter))
+									{
+										service = accessory.service[j];
+									}
+								}
+							}
+						}
+					}
+					
+					if(service == null && urlParams.remove == null)
+					{
+						this.logger.log('error', urlParams.id, '', 'Es wurde kein passendes ' + (urlParams.event ? 'Event' : 'Gerät') + ' in der Config gefunden! ( ' + urlParams.id + ' )');
 
-        WebServer.addPage('/serverside/version', (response) => {
+						response.write('Error');
+					}
+					else if(urlParams.value != null)
+					{
+						var state = { value : urlParams.value };
 
-            response.write(require('./package.json').version);
-            response.end();
-        });
+						if(urlParams.hue != null)
+						{
+							state.hue = urlParams.hue;
+						}
+						
+						if(urlParams.saturation != null)
+						{
+							state.saturation = urlParams.saturation;
+						}
 
-        WebServer.addPage('/serverside/check-restart', (response) => {
+						if(urlParams.brightness != null)
+						{
+							state.brightness = urlParams.brightness;
+						}
 
-            response.write(restart.toString());
-            response.end();
-        });
+						if(urlParams.event != null)
+						{
+							state.event = urlParams.event;
+						}
 
-        WebServer.addPage('/serverside/update', (response, urlParams) => {
+						if((state = TypeManager.validateUpdate(urlParams.id, service.letters, state)) != null)
+						{
+							service.changeHandler(state);
+						}
+						else
+						{
+							this.logger.log('error', urlParams.id, service.letters, '[' + service.name + '] konnte nicht aktualisiert werden! ( ' + urlParams.id + ' )');
+						}
 
-            var version = urlParams.version != null ? urlParams.version : 'latest';
+						response.write(state != null ? 'Success' : 'Error');
+					}
+					else if(urlParams.remove != null)
+					{
+						if(urlParams.remove == 'CONFIRM')
+						{
+							this.removeAccessory(accessory.homebridgeAccessory != null ? accessory.homebridgeAccessory : accessory);
+						}
 
-            const { exec } = require('child_process');
-            
-            exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
+						response.write(urlParams.remove == 'CONFIRM' ? 'Success' : 'Error');
+					}
+					else
+					{
+						var state = null;
+						
+						if(accessory.homebridgeAccessory != null
+							&& accessory.homebridgeAccessory.context != null
+							&& accessory.homebridgeAccessory.context.data != null
+							&& service != null
+							&& service.letters != null)
+						{
+							state = accessory.homebridgeAccessory.context.data[service.letters];
+						}
 
-                try
-                {
-                    if(error || stderr.includes('ERR!'))
-                    {
-                        logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
-                    }
-                    else
-                    {
-                        logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
+						response.write(state != null ? JSON.stringify(state) : 'Error');
+					}
+				}
+			}
+			else
+			{
+				response.write('Error');
+			}
 
-                        restart = true;
+			response.end();
+		});
 
-                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+		this.WebServer.addPage('/reload-automation', async (response) => {
 
-                        exec('sudo systemctl restart homebridge');
-                    }
+			if(await Automations.loadAutomations())
+			{
+				this.logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+				response.write('Success');
+			}
+			else
+			{
+				this.logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+				response.write('Error');
+			}
+			
+			response.end();
+		});
 
-                    response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
-                    response.end();
-                }
-                catch(e)
-                {
-                    logger.err(e);
-                }
-            });
-        });
-    }
+		this.WebServer.addPage('/accessories', (response) => {
+	
+			var accessories = [];
+
+			for(const accessory of this.accessories)
+			{
+				accessories.push({
+					id: accessory[1].id,
+					name: accessory[1].name,
+					services: accessory[1].services,
+					version: '99.99.99',
+					plugin: pluginName
+				});
+			}
+	
+			response.write(JSON.stringify(accessories));
+			response.end();
+		});
+
+		this.WebServer.addPage('/serverside/version', (response) => {
+
+			response.write(require('./package.json').version);
+			response.end();
+		});
+
+		this.WebServer.addPage('/serverside/check-restart', (response) => {
+
+			response.write(restart.toString());
+			response.end();
+		});
+
+		this.WebServer.addPage('/serverside/update', (response, urlParams) => {
+
+			var version = urlParams.version != null ? urlParams.version : 'latest';
+
+			const { exec } = require('child_process');
+
+			exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
+
+				response.write(error || (stderr && stderr.includes('ERR!')) ? 'Error' : 'Success');
+				response.end();
+
+				if(error || (stderr && stderr.includes('ERR!')))
+				{
+					this.logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
+				}
+				else
+				{
+					this.logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
+
+					restart = true;
+
+					this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+
+					exec('sudo systemctl restart homebridge');
+				}
+			});
+		});
+	}
+
+	loadAccessories()
+	{
+		for(const device of this.devices)
+		{
+			const homebridgeAccessory = this.getAccessory(device.id);
+
+			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager : DeviceManager, Automations : Automations, TypeManager : TypeManager }));
+		}
+		
+		Automations.setAccessories(this.accessories);
+	}
 }

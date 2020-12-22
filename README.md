@@ -25,105 +25,105 @@ It stores accessory data you can request to display the content on your website 
 
 ```
 "platforms": [
-    {
-        "platform": "SynTexWebHooks",
-        "port": 1710,
-        "cache_directory": "./SynTex/",
-        "log_directory": "./SynTex/log",
-        "accessories": [
-            {
-                "mac": "sensor1",
-                "name": "Contact",
-                "services": "contact"
-            },
-            {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Climate",
-                "services": [
-                    "temperature",
-                    "humidity"
-                ]
-            },
-            {
-                "mac": "multi1",
-                "name": "Multi Switch",
-                "services": [
-                    {"type" : "switch", "name" : "First"},
-                    {"type" : "switch", "name" : "Second"}
-                ]
-            },
-            {
-                "mac": "multi2",
-                "name": "Multi Device",
-                "services": [
-                    {"type" : "switch", "name" : "First"},
-                    {"type" : "motion", "name" : "Second"},
-                    {"type" : "light", "name" : "Third"},
-                    {"type" : "rain", "name" : "Leak"},
-                    {"type" : "smoke", "name" : "Smoke"},
-                    {"type" : "occupancy", "name" : "Present"}
-                ]
-            },
-            {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Switch",
-                "services": {
-                    "type" : "switch",
-                    "requests": [
-                        {
-                            "trigger": "on",
-                            "method": "GET",
-                            "url": "http://192.168.178.100/switch?state=true"
-                        },
-                        {
-                            "trigger": "off",
-                            "method": "GET",
-                            "url": "http://192.168.178.100/switch?state=false"
-                        }
-                    ]
-                }
-            },
-            {
-                "mac": "EC:FA:BC:59:3F:3C",
-                "name": "Relais",
-                "services": {
-                    "type" : "relais",
-                    "requests": [
-                        {
-                            "trigger": "on",
-                            "method": "GET",
-                            "url": "http://192.168.178.101/switch?state=true"
-                        },
-                        {
-                            "trigger": "off",
-                            "method": "GET",
-                            "url": "http://192.168.178.101/switch?state=false"
-                        }
-                    ]
-                }
-            },
-            {
-                "mac": "light1",
-                "name": "Dummy Light",
-                "services": {
-                    "type" : "rgb",
-                    "requests": [
-                        {
-                            "trigger": "color",
-                            "method": "GET",
-                            "url": "http://192.168.178.163/color"
-                        }
-                    ]
-                }
-            },
-            {
-                "mac": "event1",
-                "name": "Events",
-                "services": "statelessswitch",
-                "buttons": 1
-            }
-        ]
-    }
+	{
+		"platform": "SynTexWebHooks",
+		"port": 1710,
+		"cache_directory": "./SynTex/",
+		"log_directory": "./SynTex/log",
+		"accessories": [
+			{
+				"mac": "sensor1",
+				"name": "Contact",
+				"services": "contact"
+			},
+			{
+				"mac": "EC:FA:BC:59:3F:3C",
+				"name": "Climate",
+				"services": [
+					"temperature",
+					"humidity"
+				]
+			},
+			{
+				"mac": "multi1",
+				"name": "Multi Switch",
+				"services": [
+					{"type" : "switch", "name" : "First"},
+					{"type" : "switch", "name" : "Second"}
+				]
+			},
+			{
+				"mac": "multi2",
+				"name": "Multi Device",
+				"services": [
+					{"type" : "switch", "name" : "First"},
+					{"type" : "motion", "name" : "Second"},
+					{"type" : "light", "name" : "Third"},
+					{"type" : "rain", "name" : "Leak"},
+					{"type" : "smoke", "name" : "Smoke"},
+					{"type" : "occupancy", "name" : "Present"}
+				]
+			},
+			{
+				"mac": "EC:FA:BC:59:3F:3C",
+				"name": "Switch",
+				"services": {
+					"type" : "switch",
+					"requests": [
+						{
+							"trigger": "on",
+							"method": "GET",
+							"url": "http://192.168.178.100/switch?state=true"
+						},
+						{
+							"trigger": "off",
+							"method": "GET",
+							"url": "http://192.168.178.100/switch?state=false"
+						}
+					]
+				}
+			},
+			{
+				"mac": "EC:FA:BC:59:3F:3C",
+				"name": "Relais",
+				"services": {
+					"type" : "relais",
+					"requests": [
+						{
+							"trigger": "on",
+							"method": "GET",
+							"url": "http://192.168.178.101/switch?state=true"
+						},
+						{
+							"trigger": "off",
+							"method": "GET",
+							"url": "http://192.168.178.101/switch?state=false"
+						}
+					]
+				}
+			},
+			{
+				"mac": "light1",
+				"name": "Dummy Light",
+				"services": {
+					"type" : "rgb",
+					"requests": [
+						{
+							"trigger": "color",
+							"method": "GET",
+							"url": "http://192.168.178.163/color"
+						}
+					]
+				}
+			},
+			{
+				"mac": "event1",
+				"name": "Events",
+				"services": "statelessswitch",
+				"buttons": 1
+			}
+		]
+	}
 ]
 ```
 
@@ -133,8 +133,8 @@ It stores accessory data you can request to display the content on your website 
 
 
 ## Update HTTP Devices
-1. Open `http://`  **Bridge IP**  `/devices?mac=`  **Device Mac**  `&value=`  **New Value**
-2. Insert the `Bridge IP` and `Device Mac`
+1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
+2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type these patterns:
 - For boolean devices: `true` / `false` ( *leak, motion, contact, smoke, occupancy, switch* )
 - For numeric devices: `10` / `12.4` ( *temperature, humidity, light* )
@@ -143,21 +143,32 @@ It stores accessory data you can request to display the content on your website 
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
 ( *First of that type = 0, second = 1 ..* )
+- For dimmable and colored lights add `&brightness=`  **New Brightness** ( *has to be a number* )
+- For colored lights add `&hue=`  **New Hue** ( *has to be a number* )
+- For colored lights add `&saturation=`  **New Saturation** ( *has to be a number* )
 
-**Example:**  `http://homebridge.local:1710/devices?mac=multi2&type=light&counter=0&value=20.5`\
+**Example:**  `http://homebridge.local:1710/devices?id=multi2&type=light&counter=0&value=20.5`\
 ( *Updates the value of `Third` to `20.5 LUX` from the Example Config* )
 
 
 ## Read HTTP Device Values
-1. Open `http://`  **Bridge IP**  `/devices?mac=`  **Device Mac**
-2. Insert the `Bridge IP` and `Device Mac`
+1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
+2. Insert the `Bridge IP` and `Device ID`
 ---
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
 ( *First of that type = 0, second = 1 ..* )
 
-**Example:**  `http://homebridge.local:1710/devices?mac=multi1&type=switch&counter=1`\
+**Example:**  `http://homebridge.local:1710/devices?id=multi1&type=switch&counter=1`\
 ( *Reads the value of `Second` from the Example Config* )
+
+
+## Remove Tuya Device
+1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&remove=CONFIRM`
+2. Insert the `Bridge IP` and `Device ID`
+
+**Example:**  `http://homebridge.local:1710/devices?id=sensor1&remove=CONFIRM`\
+( *Removes `Contact` from the home app* )
 
 
 ## Currently Supported
@@ -170,8 +181,5 @@ It stores accessory data you can request to display the content on your website 
 - Smoke Sensor
 - Occupancy Sensor
 - Airquality Sensor
-- Switch / Relais
-- RGB Lights
-
-## NEW
-- Added support for complex accessory with multiple services
+- Switch / Relais / Outlet
+- LED Lights / Dimmable Lights / RGB Lights

@@ -1,75 +1,79 @@
 var presets = {};
 
-var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
-var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
-
 module.exports = class TypeManager
 {
-    constructor()
-    {
-        
-    }
+	constructor(logger)
+	{
+		this.logger = logger;
 
-    getPreset(type)
-    {
-        return presets[type];
-    }
+		this.types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
+		this.letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+	}
 
-    letterToType(letter)
-    {
-        return types[letters.indexOf(letter.toUpperCase())];
-    }
+	getPreset(type)
+	{
+		return presets[type];
+	}
 
-    typeToLetter(type)
-    {
-        return letters[types.indexOf(type.toLowerCase())];
-    }
+	letterToType(letter)
+	{
+		return this.types[this.letters.indexOf(letter.toUpperCase())];
+	}
 
-    validateUpdate(mac, letters, state)
-    {
-        var type = this.letterToType(letters[0]);
+	typeToLetter(type)
+	{
+		return this.letters[this.types.indexOf(type.toLowerCase())];
+	}
+	
+	validateUpdate(id, letters, state)
+	{
+		var data = {
+			A : { type : 'contact', format : 'boolean' },
+			B : { type : 'motion', format : 'boolean' },
+			C : { type : 'temperature', format : 'number' },
+			D : { type : 'humidity', format : 'number' },
+			E : { type : 'rain', format : 'boolean' },
+			F : { type : 'light', format : 'number' },
+			0 : { type : 'occupancy', format : 'boolean' },
+			1 : { type : 'smoke', format : 'boolean' },
+			2 : { type : 'airquality', format : 'number' },
+			3 : { type : 'rgb', format : { value : 'boolean', brightness : 'number', saturation : 'number', hue : 'number' } },
+			4 : { type : 'switch', format : 'boolean' },
+			5 : { type : 'relais', format : 'boolean' },
+			6 : { type : 'statelessswitch', format : 'number' },
+			7 : { type : 'outlet', format : 'boolean' },
+			8 : { type : 'led', format : 'boolean' },
+			9 : { type : 'dimmer', format : { value : 'boolean', brightness : 'number' } }
+		};
 
-        if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
-        {
-            if(state != true && state != false && state != 'true' && state != 'false')
-            {
-                logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
+		for(const i in state)
+		{
+			try
+			{
+				state[i] = JSON.parse(state[i]);
+			}
+			catch(e)
+			{
+				this.logger.log('warn', id, letters, 'Konvertierungsfehler: [' + state[i] + '] konnte nicht gelesen werden! ( ' + id + ' )');
 
-                return null;
-            }
+				return null;
+			}
+			
+			var format = data[letters[0].toUpperCase()].format;
 
-            return (state == 'true' || state == true ? true : false);
-        }
-        else if(type === 'light' || type === 'temperature')
-        {
-            if(isNaN(state))
-            {
-                logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
-            }
+			if(format instanceof Object)
+			{
+				format = format[i];
+			}
 
-            return !isNaN(state) ? parseFloat(state) : null;
-        }
-        else if(type === 'humidity' || type === 'airquality')
-        {
-            if(isNaN(state))
-            {
-                logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
-            }
+			if(typeof state[i] != format)
+			{
+				this.logger.log('warn', id, letters, 'Konvertierungsfehler: [' + state[i] + '] ist keine ' + (format == 'boolean' ? 'boolsche' : format == 'number' ? 'numerische' : 'korrekte') + ' Variable! ( ' + id + ' )');
 
-            return !isNaN(state) ? parseInt(state) : null;
-        }
-        else
-        {
-            try
-            {
-                var obj = JSON.parse(state);
+				return null;
+			}
+		}
 
-                return obj;
-            }
-            catch(e)
-            {
-                return state;
-            }
-        }
-    }
+		return state;
+	}
 };
