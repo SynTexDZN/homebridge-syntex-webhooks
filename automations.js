@@ -43,6 +43,8 @@ module.exports = class Automations
 
 	runAutomations(id, letters, value)
 	{
+		value = value.toString();
+		
 		for(var i = 0; i < automations.length; i++)
 		{
 			if(eventLock.includes(automations[i].id))
@@ -139,21 +141,26 @@ async function checkCondition(automation, trigger)
 
 	for(var i = 0; i < automation.condition.length; i++)
 	{
-		var value = (await DeviceManager.getDevice(automation.condition[i].id, automation.condition[i].letters)).toString();
+		var value = DeviceManager.readAccessoryService(automation.condition[i].id, automation.condition[i].letters, true);
 
-		if(automation.condition[i].operation == '>' && parseFloat(value) > parseFloat(automation.condition[i].value))
+		if(value != null)
 		{
-			condition++;
-		}
+			value = value.toString();
 
-		if(automation.condition[i].operation == '<' && parseFloat(value) < parseFloat(automation.condition[i].value))
-		{
-			condition++;
-		}
+			if(automation.condition[i].operation == '>' && parseFloat(value) > parseFloat(automation.condition[i].value))
+			{
+				condition++;
+			}
 
-		if(automation.condition[i].operation == '=' && value == automation.condition[i].value)
-		{
-			condition++;
+			if(automation.condition[i].operation == '<' && parseFloat(value) < parseFloat(automation.condition[i].value))
+			{
+				condition++;
+			}
+
+			if(automation.condition[i].operation == '=' && value == automation.condition[i].value)
+			{
+				condition++;
+			}
 		}
 	}
 
