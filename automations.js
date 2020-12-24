@@ -15,9 +15,12 @@ module.exports = class Automations
 
 		storage.load('automation-lock', (err, obj) => {
 
-			eventLock = obj.eventLock;
-			positiveFired = obj.positiveFired;
-			negativeFired = obj.negativeFired;
+			if(obj != null)
+			{
+				eventLock = obj.eventLock || [];
+				positiveFired = obj.positiveFired || [];
+				negativeFired = obj.negativeFired || [];
+			}
 		});
 	}
 
@@ -233,7 +236,7 @@ function executeResult(automation, trigger)
 		{
 			eventLock.push(automation.id);
 
-			var obj = { id : 'automation-lock', eventLock : eventLock };
+			var obj = { id : 'automation-lock', eventLock : eventLock, positiveFired : positiveFired, negativeFired : negativeFired };
 
 			storage.add(obj, (err) => {
 
@@ -242,20 +245,38 @@ function executeResult(automation, trigger)
 
 		if(trigger.operation == '<')
 		{
-			negativeFired.push(trigger.id);
+			if(!negativeFired.includes(trigger.id))
+			{
+				negativeFired.push(trigger.id);
 
-			var index = positiveFired.indexOf(trigger.id);
+				var index = positiveFired.indexOf(trigger.id);
 
-			positiveFired.splice(index, 1);
+				if(index > -1)
+				{
+					positiveFired.splice(index, 1);
+				}
+			}
 		}
 		else if(trigger.operation == '>')
 		{
-			positiveFired.push(trigger.id);
+			if(!positiveFired.includes(trigger.id))
+			{
+				positiveFired.push(trigger.id);
 
-			var index = negativeFired.indexOf(trigger.id);
+				var index = negativeFired.indexOf(trigger.id);
 
-			negativeFired.splice(index, 1);
+				if(index > -1)
+				{
+					negativeFired.splice(index, 1);
+				}
+			}
 		}
+
+		var obj = { id : 'automation-lock', eventLock : eventLock, positiveFired : positiveFired, negativeFired : negativeFired };
+
+		storage.add(obj, (err) => {
+
+		});
 
 		if(url != '')
 		{
