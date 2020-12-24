@@ -1,7 +1,7 @@
 let TypeManager = require('./type-manager');
 const request = require('request'), store = require('json-fs-store');
 var logger, storage, automations = [], accessories = [], DeviceManager;
-var eventLock = [], positiveFired = false, negativeFired = false, ready = false;
+var eventLock = [], positiveFired = [], negativeFired = [], ready = false;
 
 module.exports = class Automations
 {
@@ -12,6 +12,13 @@ module.exports = class Automations
 		DeviceManager = Manager;
 
 		TypeManager = new TypeManager(logger);
+
+		storage.load('automation-lock', (err, obj) => {
+
+			eventLock = obj.eventLock;
+			positiveFired = obj.positiveFired;
+			negativeFired = obj.negativeFired;
+		});
 	}
 
 	setAccessories(devices)
@@ -55,14 +62,14 @@ module.exports = class Automations
 					{
 						var index = eventLock.indexOf(automations[i].id);
 
-						if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && negativeFired)
+						if(automations[i].trigger[j].operation == '>' && parseFloat(value) < parseFloat(automations[i].trigger[j].value) && negativeFired.includes(automations[i].trigger[j].id))
 						{
 							eventLock.splice(index, 1);
 
 							logger.debug('Automation [' + automations[i].name + '] Unterschritten ' + automations[i].id);
 						}
 
-						if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && positiveFired)
+						if(automations[i].trigger[j].operation == '<' && parseFloat(value) > parseFloat(automations[i].trigger[j].value) && positiveFired.includes(automations[i].trigger[j].id))
 						{
 							eventLock.splice(index, 1);
 
@@ -225,17 +232,29 @@ function executeResult(automation, trigger)
 		if(!eventLock.includes(automation.id))
 		{
 			eventLock.push(automation.id);
+
+			var obj = { id : 'automation-lock', eventLock : eventLock };
+
+			storage.add(obj, (err) => {
+
+			});
 		}
 
 		if(trigger.operation == '<')
 		{
-			negativeFired = true;
-			positiveFired = false;
+			negativeFired.push(trigger.id);
+
+			var index = positiveFired.indexOf(trigger.id);
+
+			positiveFired.splice(index, 1);
 		}
 		else if(trigger.operation == '>')
 		{
-			positiveFired = true;
-			negativeFired = false;
+			positiveFired.push(trigger.id);
+
+			var index = negativeFired.indexOf(trigger.id);
+
+			negativeFired.splice(index, 1);
 		}
 
 		if(url != '')
