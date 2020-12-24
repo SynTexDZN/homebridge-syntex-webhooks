@@ -15,7 +15,11 @@ module.exports = class Automations
 
 		storage.load('automation-lock', (err, obj) => {
 
-			if(obj != null)
+			if(!obj || err)
+			{
+				logger.log('error', 'bridge', 'Bridge', 'Automation-Lock.json konnte nicht geladen werden! ' + err);
+			}
+			else
 			{
 				eventLock = obj.eventLock || [];
 				positiveFired = obj.positiveFired || [];
@@ -236,10 +240,12 @@ function executeResult(automation, trigger)
 		{
 			eventLock.push(automation.id);
 
-			var obj = { id : 'automation-lock', eventLock : eventLock, positiveFired : positiveFired, negativeFired : negativeFired };
+			storage.add({ id : 'automation-lock', eventLock : eventLock, positiveFired : positiveFired, negativeFired : negativeFired }, (err) => {
 
-			storage.add(obj, (err) => {
-
+				if(err)
+				{
+					logger.log('error', 'bridge', 'Bridge', 'Automation-Lock.json konnte nicht aktualisiert werden! ' + err);
+				}
 			});
 		}
 
@@ -272,10 +278,12 @@ function executeResult(automation, trigger)
 			}
 		}
 
-		var obj = { id : 'automation-lock', eventLock : eventLock, positiveFired : positiveFired, negativeFired : negativeFired };
-
-		storage.add(obj, (err) => {
-
+		storage.add({ id : 'automation-lock', eventLock : eventLock, positiveFired : positiveFired, negativeFired : negativeFired }, (err) => {
+			
+			if(err)
+			{
+				logger.log('error', 'bridge', 'Bridge', 'Automation-Lock.json konnte nicht aktualisiert werden! ' + err);
+			}
 		});
 
 		if(url != '')
