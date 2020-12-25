@@ -8,6 +8,7 @@ It stores accessory data you can request to display the content on your website 
 [![GitHub Commits](https://badgen.net/github/commits/SynTexDZN/homebridge-syntex-webhooks?color=yellow)](https://github.com/SynTexDZN/homebridge-syntex-webhooks/commits)
 [![NPM Downloads](https://badgen.net/npm/dt/homebridge-syntex-webhooks?color=purple)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
 [![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-webhooks?color=0af)](https://github.com/SynTexDZN/homebridge-syntex-webhooks)
+[![Discord](https://img.shields.io/discord/442095224953634828?color=728ED5&label=discord)](https://discord.gg/Yh8aZAZq)
 
 <br>
 
