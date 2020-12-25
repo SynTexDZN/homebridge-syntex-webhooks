@@ -33,12 +33,12 @@ It stores accessory data you can request to display the content on your website 
 		"log_directory": "./SynTex/log",
 		"accessories": [
 			{
-				"mac": "sensor1",
+				"id": "sensor1",
 				"name": "Contact",
 				"services": "contact"
 			},
 			{
-				"mac": "EC:FA:BC:59:3F:3C",
+				"id": "EC:FA:BC:59:3F:3C",
 				"name": "Climate",
 				"services": [
 					"temperature",
@@ -46,7 +46,7 @@ It stores accessory data you can request to display the content on your website 
 				]
 			},
 			{
-				"mac": "multi1",
+				"id": "multi1",
 				"name": "Multi Switch",
 				"services": [
 					{"type" : "switch", "name" : "First"},
@@ -54,7 +54,7 @@ It stores accessory data you can request to display the content on your website 
 				]
 			},
 			{
-				"mac": "multi2",
+				"id": "multi2",
 				"name": "Multi Device",
 				"services": [
 					{"type" : "switch", "name" : "First"},
@@ -66,7 +66,7 @@ It stores accessory data you can request to display the content on your website 
 				]
 			},
 			{
-				"mac": "EC:FA:BC:59:3F:3C",
+				"id": "EC:FA:BC:59:3F:3C",
 				"name": "Switch",
 				"services": {
 					"type" : "switch",
@@ -85,7 +85,7 @@ It stores accessory data you can request to display the content on your website 
 				}
 			},
 			{
-				"mac": "EC:FA:BC:59:3F:3C",
+				"id": "EC:FA:BC:59:3F:3C",
 				"name": "Relais",
 				"services": {
 					"type" : "relais",
@@ -104,7 +104,7 @@ It stores accessory data you can request to display the content on your website 
 				}
 			},
 			{
-				"mac": "light1",
+				"id": "light1",
 				"name": "Dummy Light",
 				"services": {
 					"type" : "rgb",
@@ -118,18 +118,20 @@ It stores accessory data you can request to display the content on your website 
 				}
 			},
 			{
-				"mac": "event1",
+				"id": "event1",
 				"name": "Events",
-				"services": "statelessswitch",
-				"buttons": 1
+				"services": {
+					"type": "statelessswitch",
+					"buttons": 1
+				}
 			}
 		]
 	}
 ]
 ```
 
-- For the mac address you can use either a `real mac address` or another `random unique text`
-- Every device needs these configurations: `mac`, `name` and `services`
+- For the id address you can use either a `real mac address` or another `random unique text`
+- Every device needs these configurations: `id`, `name` and `services`
 - For lights GET parameters are included to the URL ( *[ url ]?r=0&b=0&b=0* )
 
 
