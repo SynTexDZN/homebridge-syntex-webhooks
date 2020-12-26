@@ -8,10 +8,7 @@ const pluginID = 'homebridge-syntex-webhooks';
 const pluginName = 'SynTexWebHooks';
 const pluginVersion = require('./package.json').version;
 
-module.exports = (homebridge) => {
-
-	homebridge.registerPlatform(pluginID, pluginName, SynTexWebHookPlatform, true);
-};
+module.exports = (homebridge) => homebridge.registerPlatform(pluginID, pluginName, SynTexWebHookPlatform, true);
 
 class SynTexWebHookPlatform extends DynamicPlatform
 {
@@ -59,11 +56,13 @@ class SynTexWebHookPlatform extends DynamicPlatform
 			if(await Automations.loadAutomations())
 			{
 				this.logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+				
 				response.write('Success');
 			}
 			else
 			{
 				this.logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+				
 				response.write('Error');
 			}
 			
