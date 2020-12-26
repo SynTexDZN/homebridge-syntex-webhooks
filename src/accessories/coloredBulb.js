@@ -11,7 +11,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		Automations = manager.Automations;
 		DeviceManager = manager.DeviceManager;
 		
-        super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
+		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 		
 		this.options.spectrum = serviceConfig.spectrum || 'HSL';
 		
@@ -35,14 +35,14 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 				this.setState(state.value, () => {});
 			}
 
-            if(state.hue != null)
+			if(state.hue != null)
 			{
 				this.service.getCharacteristic(Characteristic.Hue).updateValue(state.hue);
 
 				this.setHue(state.hue, () => {});
-            }
-            
-            if(state.saturation != null)
+			}
+
+			if(state.saturation != null)
 			{
 				this.service.getCharacteristic(Characteristic.Saturation).updateValue(state.saturation);
 
@@ -75,12 +75,12 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	
 	setState(value, callback)
 	{
-        this.setToCurrentColor({ power : value }, 
-            () => super.setState(value, 
-            () => callback()));
-    }
-    
-    getHue(callback)
+		this.setToCurrentColor({ power : value }, 
+			() => super.setState(value, 
+			() => callback()));
+	}
+
+	getHue(callback)
 	{
 		super.getHue((value) => {
 
@@ -95,12 +95,12 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 	setHue(value, callback)
 	{
-        this.setToCurrentColor({ hue : value }, 
-            () => super.setHue(value, 
-            () => callback()));
-    }
-    
-    getSaturation(callback)
+		this.setToCurrentColor({ hue : value }, 
+			() => super.setHue(value, 
+			() => callback()));
+	}
+
+	getSaturation(callback)
 	{
 		super.getSaturation((value) => {
 
@@ -115,9 +115,9 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 	setSaturation(value, callback)
 	{
-        this.setToCurrentColor({ saturation : value }, 
-            () => super.setSaturation(value, 
-            () => callback()));
+		this.setToCurrentColor({ saturation : value }, 
+			() => super.setSaturation(value, 
+			() => callback()));
 	}
 
 	getBrightness(callback)
@@ -135,12 +135,12 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 	setBrightness(value, callback)
 	{
-        this.setToCurrentColor({ brightness : value }, 
-            () => super.setBrightness(value, 
-            () => callback()));
-    }
-    
-    setToCurrentColor(state, callback)
+		this.setToCurrentColor({ brightness : value }, 
+			() => super.setBrightness(value, 
+			() => callback()));
+	}
+
+	setToCurrentColor(state, callback)
 	{
 		if(state.power != null && this.power != state.power)
 		{
@@ -177,7 +177,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 				this.running = true;
 
 				DeviceManager.fetchRequests({ power : this.power, hue : this.hue, saturation : this.saturation, brightness : this.brightness }, this).then((result) => {
-        
+
 					if(this.changed)
 					{
 						if(result == null)

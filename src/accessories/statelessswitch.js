@@ -12,19 +12,19 @@ module.exports = class SynTexStatelessSwitchService extends StatelessSwitchServi
 		DeviceManager = manager.DeviceManager;
 
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
-        /*
+		/*
 		this.changeHandler = (state) =>
 		{
 			for(var i = 1; i < this.service.length - 1; i++)
-            {
-                if(i - 1 == event)
-                {
-                    logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + (i + 1) + '] wurde ausgeführt! ( ' + this.mac + ' )');
+			{
+				if(i - 1 == event)
+				{
+					logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + (i + 1) + '] wurde ausgeführt! ( ' + this.mac + ' )');
 
-                    this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
-                }
-            }
-        };
-        */
+					this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
+				}
+			}
+		};
+		*/
 	}
 };
