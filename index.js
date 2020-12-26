@@ -6,8 +6,7 @@ const SynTexUniversalAccessory = require('./src/universal');
 
 const pluginID = 'homebridge-syntex-webhooks';
 const pluginName = 'SynTexWebHooks';
-
-var restart = true;
+const pluginVersion = require('./package.json').version;
 
 module.exports = (homebridge) => {
 
@@ -18,7 +17,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 {
 	constructor(log, config, api)
 	{
-		super(config, api, pluginID, pluginName, require('./package.json').version);
+		super(config, api, pluginID, pluginName, pluginVersion);
 
 		this.devices = config['accessories'] || [];
 	
@@ -47,7 +46,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 						this.logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
 					}
 
-					restart = false;
+					this.finishInit();
 				});
 			});
 		}
@@ -68,12 +67,6 @@ class SynTexWebHookPlatform extends DynamicPlatform
 				response.write('Error');
 			}
 			
-			response.end();
-		});
-
-		this.WebServer.addPage('/serverside/check-restart', (response) => {
-
-			response.write(restart.toString());
 			response.end();
 		});
 	}
