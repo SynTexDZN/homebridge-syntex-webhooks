@@ -191,7 +191,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 					id: accessory[1].id,
 					name: accessory[1].name,
 					services: accessory[1].services,
-					version: '99.99.99',
+					version: accessory[1].version || '99.99.99',
 					plugin: pluginName
 				});
 			}
