@@ -49,27 +49,27 @@ It stores accessory data you can request to display the content on your website 
 				"id": "multi1",
 				"name": "Multi Switch",
 				"services": [
-					{"type" : "switch", "name" : "First"},
-					{"type" : "switch", "name" : "Second"}
+					{"type": "switch", "name": "First"},
+					{"type": "switch", "name": "Second"}
 				]
 			},
 			{
 				"id": "multi2",
 				"name": "Multi Device",
 				"services": [
-					{"type" : "switch", "name" : "First"},
-					{"type" : "motion", "name" : "Second"},
-					{"type" : "light", "name" : "Third"},
-					{"type" : "rain", "name" : "Leak"},
-					{"type" : "smoke", "name" : "Smoke"},
-					{"type" : "occupancy", "name" : "Present"}
+					{"type": "switch", "name": "First"},
+					{"type": "motion", "name": "Second"},
+					{"type": "light", "name": "Third"},
+					{"type": "rain", "name": "Leak"},
+					{"type": "smoke", "name": "Smoke"},
+					{"type": "occupancy", "name": "Present"}
 				]
 			},
 			{
-				"id": "EC:FA:BC:59:3F:3C",
+				"id": "EC:FA:BC:59:3F:3F",
 				"name": "Switch",
 				"services": {
-					"type" : "switch",
+					"type": "switch",
 					"requests": [
 						{
 							"trigger": "on",
@@ -85,10 +85,10 @@ It stores accessory data you can request to display the content on your website 
 				}
 			},
 			{
-				"id": "EC:FA:BC:59:3F:3C",
+				"id": "EC:FA:BC:59:3F:30",
 				"name": "Relais",
 				"services": {
-					"type" : "relais",
+					"type": "relais",
 					"requests": [
 						{
 							"trigger": "on",
@@ -107,7 +107,8 @@ It stores accessory data you can request to display the content on your website 
 				"id": "light1",
 				"name": "Dummy Light",
 				"services": {
-					"type" : "rgb",
+					"type": "rgb",
+					"spectrum":  "RGB",
 					"requests": [
 						{
 							"trigger": "color",
@@ -130,18 +131,20 @@ It stores accessory data you can request to display the content on your website 
 ]
 ```
 
-- For the id address you can use either a `real mac address` or another `random unique text`
+- For the ID you can use either a `real mac address` or another `random unique text`
 - Every device needs these configurations: `id`, `name` and `services`
-- For lights GET parameters are included to the URL ( *[ url ]?r=0&b=0&b=0* )
+- For Stateless Switches you have to add `buttons` attribute
+- For RGB Lights you can add `spectrum` attribute ( *to convert to the right output format: RGB / HSL* )
+- For Boolean Devices you can add `requests` ( *trigger can be: on, off, color* )
 
 
 ## Update HTTP Devices
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type these patterns:
-- For boolean devices: `true` / `false` ( *leak, motion, contact, smoke, occupancy, switch* )
-- For numeric devices: `10` / `12.4` ( *temperature, humidity, light* )
-- For RGB lights devices: `true:210:78:50` ( *power state, hue, saturation, brightness* )
+- For boolean devices: `true` / `false` ( *leak, motion, contact, smoke, occupancy, switch, outlet* )
+- For numeric devices: `10` / `12.4` ( *temperature, humidity, light, airquality* )
+- For all light bulbs: `true` / `false` ( *led, dimmer, rgb* )
 ---
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
@@ -171,7 +174,7 @@ It stores accessory data you can request to display the content on your website 
 2. Insert the `Bridge IP` and `Device ID`
 
 **Example:**  `http://homebridge.local:1710/devices?id=sensor1&remove=CONFIRM`\
-( *Removes `Contact` from the home app* )
+( *Removes `Contact` from the Example Config* )
 
 
 ## Currently Supported
