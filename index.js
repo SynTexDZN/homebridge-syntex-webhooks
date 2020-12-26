@@ -18,7 +18,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 {
 	constructor(log, config, api)
 	{
-		super(config, api, pluginID, pluginName);
+		super(config, api, pluginID, pluginName, require('./package.json').version);
 
 		this.devices = config['accessories'] || [];
 	
@@ -200,44 +200,10 @@ class SynTexWebHookPlatform extends DynamicPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/version', (response) => {
-
-			response.write(require('./package.json').version);
-			response.end();
-		});
-
 		this.WebServer.addPage('/serverside/check-restart', (response) => {
 
 			response.write(restart.toString());
 			response.end();
-		});
-
-		this.WebServer.addPage('/serverside/update', (response, urlParams) => {
-
-			var version = urlParams.version != null ? urlParams.version : 'latest';
-
-			const { exec } = require('child_process');
-
-			exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
-
-				response.write(error || (stderr && stderr.includes('ERR!')) ? 'Error' : 'Success');
-				response.end();
-
-				if(error || (stderr && stderr.includes('ERR!')))
-				{
-					this.logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
-				}
-				else
-				{
-					this.logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
-
-					restart = true;
-
-					this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-
-					exec('sudo systemctl restart homebridge');
-				}
-			});
 		});
 	}
 
