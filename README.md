@@ -162,7 +162,6 @@ It stores accessory data you can request to display the content on your website 
 - For boolean devices: `true` / `false` ( *leak, motion, contact, smoke, occupancy, switch, outlet* )
 - For numeric devices: `10` / `12.4` ( *temperature, humidity, light, airquality* )
 - For all light bulbs: `true` / `false` ( *led, dimmer, rgb* )
----
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
 ( *First of that type = 0, second = 1 ..* )
