@@ -19,7 +19,7 @@ module.exports = class SynTexStatelessSwitchService extends StatelessSwitchServi
 			{
 				if(i - 1 == event)
 				{
-					logger.log('update', this.mac, this.letters, '[' + buttonName + ']: Event [' + (i + 1) + '] wurde ausgeführt! ( ' + this.mac + ' )');
+					logger.log('update', this.mac, this.letters, '[' + buttonName + ']: %event_fired[0]% [' + (i + 1) + '] %event_fired[1]%! ( ' + this.mac + ' )');
 
 					this.service[i].getCharacteristic(Characteristic.ProgrammableSwitchEvent).updateValue(value);
 				}

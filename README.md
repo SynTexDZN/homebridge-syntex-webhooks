@@ -29,6 +29,7 @@ It stores accessory data you can request to display the content on your website 
 	{
 		"platform": "SynTexWebHooks",
 		"port": 1710,
+		"language": "us",
 		"cache_directory": "./SynTex/",
 		"log_directory": "./SynTex/log",
 		"accessories": [
@@ -131,6 +132,9 @@ It stores accessory data you can request to display the content on your website 
 ]
 ```
 
+- For the `language` you can use your country initials ( *Currently supported: `us`, `en`, `de`* )
+- If you need further information for troubleshooting and bug reports you can enable the `debug` attribute
+---
 - For the ID you can use either a `real mac address` or another `random unique text`
 - Every device needs these configurations: `id`, `name` and `services`
 - For Stateless Switches you have to add `buttons` attribute

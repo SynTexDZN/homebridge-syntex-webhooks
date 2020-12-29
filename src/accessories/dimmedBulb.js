@@ -18,7 +18,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			this.power = power || false;
 			this.brightness = brightness || 100;
 
-			this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 
 		}));
 
@@ -48,7 +48,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.power = value;
 				
-				this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
 			}
 				
 			callback(null, value != null ? value : false);
@@ -64,7 +64,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				this.power = value;
 
 				super.setState(this.power, 
-					() => this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
+					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
 			}
 
 			callback(result);

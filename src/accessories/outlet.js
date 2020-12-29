@@ -53,7 +53,7 @@ module.exports = class SynTexOutletService extends OutletService
 				this.power = value;
 
 				super.setState(this.power, 
-					() => this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )'));
+					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
 			}
 
 			callback(result);

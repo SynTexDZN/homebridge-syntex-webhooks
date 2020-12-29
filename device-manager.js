@@ -131,7 +131,7 @@ module.exports = class DeviceManager
 								{
 									success++;
 
-									this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + ']');
+									this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + ']');
 
 									if(finished >= counter)
 									{
@@ -140,7 +140,7 @@ module.exports = class DeviceManager
 								}
 								else
 								{
-									this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err || ''));
+									this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ' + (err || ''));
 
 									if(finished >= counter)
 									{
@@ -174,11 +174,11 @@ module.exports = class DeviceManager
 
 								if(!err && statusCode == 200)
 								{
-									this.logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ');
+									this.logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ');
 								}
 								else
 								{
-									this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+									this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ' + (err ? err : ''));
 								}
 			
 								finished++;
@@ -226,7 +226,7 @@ function writeFS(mac, service, value)
 
 			if(err)
 			{
-				this.logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht aktualisiert werden! ' + err);
+				this.logger.log('error', 'bridge', 'Bridge', mac + '.json %update_error%! ' + err);
 			}
 
 			resolve(err ? false : true);

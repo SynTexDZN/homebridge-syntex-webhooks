@@ -17,7 +17,7 @@ module.exports = class Automations
 
 			if(!obj || err)
 			{
-				logger.log('error', 'bridge', 'Bridge', 'Automation-Lock.json konnte nicht geladen werden! ' + err);
+				logger.log('error', 'bridge', 'Bridge', 'Automation-Lock.json %read_error%! ' + err);
 			}
 			else
 			{
@@ -225,7 +225,7 @@ function executeResult(automation, trigger)
 								}
 								else
 								{
-									logger.log('error', automation.result[i].id, automation.result[i].letters, '[' + automation.result[i].value + '] ist kein gültiger Wert! ( ' + automation.result[i].id + ' )');
+									logger.log('error', automation.result[i].id, automation.result[i].letters, '[' + automation.result[i].value + '] %invalid-value%! ( ' + automation.result[i].id + ' )');
 								}
 
 								//DeviceManager.setDevice(automation.result[i].id, automation.result[i].letters, TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, automation.result[i].value));
@@ -244,7 +244,7 @@ function executeResult(automation, trigger)
 
 				if(err)
 				{
-					logger.log('error', 'bridge', 'Bridge', 'Automation-Lock.json konnte nicht aktualisiert werden! ' + err);
+					logger.log('error', 'bridge', 'Bridge', 'Automation-Lock.json %update_error%! ' + err);
 				}
 			});
 		}
@@ -282,7 +282,7 @@ function executeResult(automation, trigger)
 			
 			if(err)
 			{
-				logger.log('error', 'bridge', 'Bridge', 'Automation-Lock.json konnte nicht aktualisiert werden! ' + err);
+				logger.log('error', 'bridge', 'Bridge', 'Automation-Lock.json %update_error%! ' + err);
 			}
 		});
 
@@ -300,12 +300,12 @@ function executeResult(automation, trigger)
 
 				if(err || statusCode != 200)
 				{
-					logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] hat die Anfrage zu [' + this.url + '] mit dem Status Code [' + statusCode + '] beendet: [' + (body || '') + '] ' + (err ? err : ''));
+					logger.log('error', 'bridge', 'Bridge', '[' + this.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ' + (err ? err : ''));
 				}
 				
 			}.bind({ url : theRequest.url, name : automation.name }));
 		}
 	}
 
-	logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] hat den Prozess [' + automation.name + '] ausgeführt!');
+	logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + automation.name + '] %automation_executed[1]%!');
 }

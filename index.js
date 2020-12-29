@@ -36,11 +36,11 @@ class SynTexWebHookPlatform extends DynamicPlatform
 					
 					if(loaded)
 					{
-						this.logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+						this.logger.log('success', 'bridge', 'Bridge', '%automation_load_success%!');
 					}
 					else
 					{
-						this.logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+						this.logger.log('warn', 'bridge', 'Bridge', '%automation_load_error%!');
 					}
 
 					this.finishInit();
@@ -55,13 +55,13 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 			if(await Automations.loadAutomations())
 			{
-				this.logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich geladen und aktiviert!');
+				this.logger.log('success', 'bridge', 'Bridge', '%automation_load_success%!');
 				
 				response.write('Success');
 			}
 			else
 			{
-				this.logger.log('warn', 'bridge', 'Bridge', 'Es wurden keine Hintergrundprozesse geladen!');
+				this.logger.log('warn', 'bridge', 'Bridge', '%automation_load_error%!');
 				
 				response.write('Error');
 			}
