@@ -20,7 +20,7 @@ It stores accessory data you can request to display the content on your website 
 
 
 ## Example Config
-**Info:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
+**Info:** If the `log_directory` for the storage can't be created you have to do it by yourself and give it full write permissions!
 - `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
 - `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
 
@@ -131,15 +131,28 @@ It stores accessory data you can request to display the content on your website 
 	}
 ]
 ```
+### Required Parameters
+- `platform` is always `SynTexMagicHome`
+- `log_directory` The path where your logs are stored.
+- `accessories` For the accessory config.
 
-- For the `language` you can use your country initials ( *Currently supported: `us`, `en`, `de`* )
-- If you need further information for troubleshooting and bug reports you can enable the `debug` attribute
----
-- For the ID you can use either a `real mac address` or another `random unique text`
-- Every device needs these configurations: `id`, `name` and `services`
-- For Stateless Switches you have to add `buttons` attribute
-- For RGB Lights you can add `spectrum` attribute ( *to convert to the right output format: RGB / HSL* )
+### Optional Parameters
+- `port` To control your accessory over HTTP calls.
+- `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
+- `debug` For further information because of troubleshooting and bug reports.
+- `polling_interval` defines how often the plugin should chech the Magic Home Device state *( in seconds )*
+
+### Accessory Config
+- Every device needs these parameters: `id`, `name` and `services` *( required )*
+- `id` has to be either a `real mac address` or another `random unique text` *( no duplicates! )*
+- `name` could be anything.
+- `services` Should be one of these: `temperature`, `humidity`, `light`, `leak`, `motion`, `contact`, `smoke`, `occupancy`, `airquality`, `switch`, `relais`, `outlet`, `led`, `dimmer`, `rgb`, `statelessswitch`
 - For Boolean Devices you can add `requests` ( *trigger can be: on, off, color* )
+- For RGB Lights you can add `spectrum` attribute ( *to convert to the right output format: RGB / HSL* )
+- For Stateless Switches you have to add `buttons` attribute.
+
+
+---
 
 
 ## Update HTTP Devices
@@ -164,7 +177,6 @@ It stores accessory data you can request to display the content on your website 
 ## Read HTTP Device Values
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
----
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
 ( *First of that type = 0, second = 1 ..* )
@@ -191,5 +203,6 @@ It stores accessory data you can request to display the content on your website 
 - Smoke Sensor
 - Occupancy Sensor
 - Airquality Sensor
+- Stateless Switch
 - Switch / Relais / Outlet
 - LED Lights / Dimmable Lights / RGB Lights
