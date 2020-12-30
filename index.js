@@ -18,7 +18,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 		this.devices = config['accessories'] || [];
 	
-		this.cacheDirectory = config['cache_directory'] || './SynTex';
+		this.cacheDirectory = config['cacheDirectory'] || './SynTex';
 		
 		if(this.api && this.logger)
 		{

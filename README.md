@@ -20,7 +20,7 @@ It stores accessory data you can request to display the content on your website 
 
 
 ## Example Config
-**Info:** If the `log_directory` for the storage can't be created you have to do it by yourself and give it full write permissions!
+**Info:** If the `logDirectory` for the storage can't be created you have to do it by yourself and give it full write permissions!
 - `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
 - `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
 
@@ -30,8 +30,8 @@ It stores accessory data you can request to display the content on your website 
         "platform": "SynTexWebHooks",
         "port": 1710,
         "language": "us",
-        "cache_directory": "./SynTex/",
-        "log_directory": "./SynTex/log",
+        "cacheDirectory": "./SynTex/",
+        "logDirectory": "./SynTex/log",
         "accessories": [
             {
                 "id": "sensor1",
@@ -133,14 +133,13 @@ It stores accessory data you can request to display the content on your website 
 ```
 ### Required Parameters
 - `platform` is always `SynTexMagicHome`
-- `log_directory` The path where your logs are stored.
+- `logDirectory` The path where your logs are stored.
 - `accessories` For the accessory config.
 
 ### Optional Parameters
 - `port` To control your accessory over HTTP calls.
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
 - `debug` For further information because of troubleshooting and bug reports.
-- `polling_interval` defines how often the plugin should chech the Magic Home Device state *( in seconds )*
 
 ### Accessory Config
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
