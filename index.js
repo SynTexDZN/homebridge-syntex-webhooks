@@ -78,7 +78,5 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager : DeviceManager, Automations : Automations, TypeManager : TypeManager }));
 		}
-		
-		Automations.setAccessories(this.accessories);
 	}
 }
