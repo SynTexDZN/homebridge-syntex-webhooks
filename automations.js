@@ -1,4 +1,4 @@
-let TypeManager = require('./type-manager');
+let TypeManager = require('./type-manager'), AutomationSystem = require('syntex-automation');
 const request = require('request'), store = require('json-fs-store');
 var logger, storage, automations = [], accessories = [], DeviceManager;
 var eventLock = [], positiveFired = [], negativeFired = [], ready = false;

@@ -1,7 +1,6 @@
 let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations');
 
 const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
-const AutomationSystem = require('syntex-automations');
 
 const SynTexUniversalAccessory = require('./src/universal');
 
@@ -43,8 +42,6 @@ class SynTexWebHookPlatform extends DynamicPlatform
 					{
 						this.logger.log('warn', 'bridge', 'Bridge', '%automation_load_error%!');
 					}
-
-					AutomationSystem = new AutomationSystem();
 
 					this.finishInit();
 				});
