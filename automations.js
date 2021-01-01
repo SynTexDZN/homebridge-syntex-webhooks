@@ -199,40 +199,21 @@ function executeResult(automation, trigger)
 
 		if(automation.result[i].id && automation.result[i].letters && automation.result[i].value && automation.result[i].name)
 		{
-			for(const accessory of accessories)
+			var state = null;
+
+			if((state = TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, { value : automation.result[i].value })) != null)
 			{
-				if(accessory[1].id == automation.result[i].id && JSON.stringify(accessory[1].services).includes(TypeManager.letterToType(automation.result[i].letters[0])))
+				if(TypeManager.letterToType(automation.result[i].letters[0]) == 'statelessswitch')
 				{
-					var count = Array.isArray(accessory[1].services) ? accessory[1].services.length : 1;
-
-					for(var k = 1; k <= count; k++)
-					{
-						if(accessory[1].service[k] != null)
-						{
-							if(accessory[1].service[k].letters == automation.result[i].letters)
-							{
-								var state = null;
-
-								if((state = TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, { value : automation.result[i].value })) != null)
-								{
-									if(TypeManager.letterToType(automation.result[i].letters[0]) == 'statelessswitch')
-									{
-										state.event = parseInt(automation.result[i].value);
-										state.value = 0;
-									}
-
-									accessory[1].service[k].changeHandler(state);
-								}
-								else
-								{
-									logger.log('error', automation.result[i].id, automation.result[i].letters, '[' + automation.result[i].value + '] %invalid-value%! ( ' + automation.result[i].id + ' )');
-								}
-
-								//DeviceManager.setDevice(automation.result[i].id, automation.result[i].letters, TypeManager.validateUpdate(automation.result[i].id, automation.result[i].letters, automation.result[i].value));
-							}
-						}
-					}
+					state.event = parseInt(automation.result[i].value);
+					state.value = 0;
 				}
+
+				AutomationSystem.setOutputStream('SynTexAutomation', { id : automation.result[i].id, letters : automation.result[i].letters }, state);
+			}
+			else
+			{
+				logger.log('error', automation.result[i].id, automation.result[i].letters, '[' + automation.result[i].value + '] %invalid-value%! ( ' + automation.result[i].id + ' )');
 			}
 		}
 
