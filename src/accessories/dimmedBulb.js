@@ -22,21 +22,26 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		}));
 
-		this.changeHandler = (state) =>
+		this.changeHandler = (state) => 
 		{
-			if(state.value != null)
-			{
-				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
+			state.power = state.value;
 
-				this.setState(state.value, () => {});
-			}
+			this.setToCurrentBrightness(state, () => {
 
-			if(state.brightness != null)
-			{
-				this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+				if(state.value != null)
+				{
+					this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
 
-				this.setBrightness(state.brightness, () => {});
-			}
+					super.setState(state.value, () => {});
+				}
+
+				if(state.brightness != null)
+				{
+					this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+
+					super.setBrightness(state.brightness, () => {});
+				}
+			});
 		};
 	}
 
@@ -57,23 +62,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	
 	setState(value, callback)
 	{
-		DeviceManager.fetchRequests({ power : value }, this).then((result) => {
-
-			if(result == null)
-			{
-				this.power = value;
-
-				super.setState(this.power, 
-					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
-			}
-
-			callback(result);
-		});
-
-		if(Automations.isReady())
-		{
-			Automations.runAutomations(this.id, this.letters, value);
-		}
+		this.setToCurrentColor({ power : value }, 
+			() => super.setState(value, 
+			() => callback()));
 	}
 
 	getBrightness(callback)
@@ -94,5 +85,63 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		this.brightness = value;
 
 		super.setBrightness(this.brightness, () => callback());
+	}
+
+	setToCurrentBrightness(state, callback)
+	{
+		if(state.power != null && this.power != state.power)
+		{
+			this.power = state.power;
+
+			this.changed = true;
+		}
+
+		if(state.brightness != null && this.brightness != state.brightness)
+		{
+			this.brightness = state.brightness;
+
+			this.changed = true;
+		}
+
+		setTimeout(() => {
+
+			if(!this.running)
+			{
+				this.running = true;
+
+				DeviceManager.fetchRequests({ power : this.power, brightness : this.brightness }, this).then((result) => {
+
+					if(this.changed)
+					{
+						if(result == null)
+						{
+							this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+						}
+	
+						if(callback)
+						{
+							callback();
+						}
+					}
+					else if(callback)
+					{
+						callback();
+					}
+	
+					if(Automations.isReady() && this.power != null)
+					{
+						Automations.runAutomations(this.id, this.letters, this.power);
+					}
+					
+					this.changed = false;
+					this.running = false;
+				});
+			}
+			else if(callback)
+			{
+				callback();
+			}
+
+		}, 100);
 	}
 };
