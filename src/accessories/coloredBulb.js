@@ -26,35 +26,40 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 		}))));
 
-		this.changeHandler = (state) =>
-		{
-			if(state.value != null)
-			{
-				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
+		this.changeHandler = (state) => {
 
-				this.setState(state.value, () => {});
-			}
+			state.power = state.value;
 
-			if(state.hue != null)
-			{
-				this.service.getCharacteristic(Characteristic.Hue).updateValue(state.hue);
+			this.setToCurrentColor(state, () => {
 
-				this.setHue(state.hue, () => {});
-			}
+				if(state.value != null)
+				{
+					this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
 
-			if(state.saturation != null)
-			{
-				this.service.getCharacteristic(Characteristic.Saturation).updateValue(state.saturation);
+					super.setState(state.value, () => {});
+				}
 
-				this.setSaturation(state.saturation, () => {});
-			}
+				if(state.hue != null)
+				{
+					this.service.getCharacteristic(Characteristic.Hue).updateValue(state.hue);
 
-			if(state.brightness != null)
-			{
-				this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+					super.setHue(state.hue, () => {});
+				}
 
-				this.setBrightness(state.brightness, () => {});
-			}
+				if(state.saturation != null)
+				{
+					this.service.getCharacteristic(Characteristic.Saturation).updateValue(state.saturation);
+
+					super.setSaturation(state.saturation, () => {});
+				}
+
+				if(state.brightness != null)
+				{
+					this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+
+					super.setBrightness(state.brightness, () => {});
+				}
+			});
 		};
 	}
 
