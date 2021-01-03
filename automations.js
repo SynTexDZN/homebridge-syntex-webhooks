@@ -1,15 +1,15 @@
 let TypeManager = require('./type-manager'), AutomationSystem = require('syntex-automation');
 const request = require('request'), store = require('json-fs-store');
-var logger, storage, automations = [];
+var logger, storage, platform, automations = [];
 var eventLock = [], positiveFired = [], negativeFired = [], ready = false;
 
-module.exports = class Automations
+module.exports = class Automation
 {
-	constructor(log, storagePath, platform)
+	constructor(log, storagePath, plat)
 	{
 		logger = log;
 		storage = store(storagePath);
-		this.platform = platform;
+		platform = plat;
 
 		TypeManager = new TypeManager(logger);
 
@@ -150,7 +150,7 @@ async function checkCondition(automation, trigger)
 
 	for(var i = 0; i < automation.condition.length; i++)
 	{
-		var value = this.platform.readAccessoryService(automation.condition[i].id, automation.condition[i].letters, true);
+		var value = platform.readAccessoryService(automation.condition[i].id, automation.condition[i].letters, true);
 
 		if(value != null)
 		{
