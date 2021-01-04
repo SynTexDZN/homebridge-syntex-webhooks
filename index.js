@@ -1,4 +1,4 @@
-let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('./automations');
+let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), Automations = require('syntex-automation');
 
 const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
 
@@ -26,12 +26,12 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 				TypeManager = new TypeManager(this.logger);
 				DeviceManager = new DeviceManager(this.logger, TypeManager, this.cacheDirectory);
-				Automations = new Automations(this.logger, this.cacheDirectory, this);
+				Automations = new Automations(this.logger, this.cacheDirectory);
 
 				this.initWebServer();
 
 				this.loadAccessories();
-
+				/*
 				Automations.loadAutomations().then((loaded) => {
 					
 					if(loaded)
@@ -45,6 +45,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 					this.finishInit();
 				});
+				*/
 			});
 		}
 	}
