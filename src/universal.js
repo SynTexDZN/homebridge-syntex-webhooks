@@ -22,8 +22,6 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
 	constructor(homebridgeAccessory, deviceConfig, manager)
 	{
-		console.log(1, manager.AutomationSystem);
-
 		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
 

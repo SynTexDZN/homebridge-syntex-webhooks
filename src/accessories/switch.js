@@ -6,8 +6,6 @@ module.exports = class SynTexSwitchService extends SwitchService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		console.log(2, manager.AutomationSystem);
-
 		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
 		AutomationSystem = manager.AutomationSystem;
