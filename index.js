@@ -28,24 +28,9 @@ class SynTexWebHookPlatform extends DynamicPlatform
 				DeviceManager = new DeviceManager(this.logger, TypeManager, this.cacheDirectory);
 				AutomationSystem = new AutomationSystem(this.logger, '/var/SynTex/automation');
 
-				this.initWebServer();
-
 				this.loadAccessories();
-				/*
-				AutomationSystem.loadAutomations().then((loaded) => {
-					
-					if(loaded)
-					{
-						this.logger.log('success', 'bridge', 'Bridge', '%automation_load_success%!');
-					}
-					else
-					{
-						this.logger.log('warn', 'bridge', 'Bridge', '%automation_load_error%!');
-					}
-
-					this.finishInit();
-				});
-				*/
+				this.initWebServer();
+				this.finishInit();
 			});
 		}
 	}
@@ -54,19 +39,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 	{
 		this.WebServer.addPage('/reload-automation', async (response) => {
 
-			if(await AutomationSystem.loadAutomations())
-			{
-				this.logger.log('success', 'bridge', 'Bridge', '%automation_load_success%!');
-				
-				response.write('Success');
-			}
-			else
-			{
-				this.logger.log('warn', 'bridge', 'Bridge', '%automation_load_error%!');
-				
-				response.write('Error');
-			}
-			
+			response.write(await AutomationSystem.LogikEngine.loadAutomations() ? 'Success' : 'Error');
 			response.end();
 		});
 	}
