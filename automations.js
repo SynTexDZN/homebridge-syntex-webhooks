@@ -52,6 +52,8 @@ module.exports = class Automation
 
 	runAutomations(id, letters, value)
 	{
+		AutomationSystem.sendToAutomationServer(id, letters, { value : value });
+
 		value = value.toString();
 		
 		for(var i = 0; i < automations.length; i++)
