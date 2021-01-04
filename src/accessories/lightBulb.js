@@ -1,4 +1,4 @@
-let Service, Characteristic, DeviceManager, Automations;
+let Service, Characteristic, DeviceManager, AutomationSystem;
 
 const { LightBulbService } = require('homebridge-syntex-dynamic-platform');
 
@@ -8,7 +8,7 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 	{
 		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
-		Automations = manager.Automations;
+		AutomationSystem = manager.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -59,9 +59,9 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 			callback(result);
 		});
 
-		if(Automations.isReady())
+		if(AutomationSystem.LogikEngine.isReady())
 		{
-			Automations.runAutomations(this.id, this.letters, value);
+			AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, value);
 		}
 	}
 };

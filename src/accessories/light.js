@@ -1,4 +1,4 @@
-let Service, Characteristic, DeviceManager, Automations;
+let Service, Characteristic, DeviceManager, AutomationSystem;
 
 const { LightService } = require('homebridge-syntex-dynamic-platform');
 
@@ -8,7 +8,7 @@ module.exports = class SynTexLightService extends LightService
 	{
 		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
-		Automations = manager.Automations;
+		AutomationSystem = manager.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -29,9 +29,9 @@ module.exports = class SynTexLightService extends LightService
 
 				super.setValue('state', this.value, true);
 			
-				if(Automations.isReady())
+				if(AutomationSystem.LogikEngine.isReady())
 				{
-					Automations.runAutomations(this.id, this.letters, this.value);
+					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, this.value);
 				}
 			}
 		};

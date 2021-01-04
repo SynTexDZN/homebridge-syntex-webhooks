@@ -1,4 +1,4 @@
-let Service, Characteristic, DeviceManager, Automations;
+let Service, Characteristic, DeviceManager, AutomationSystem;
 
 const { StatelessSwitchService } = require('homebridge-syntex-dynamic-platform');
 
@@ -8,7 +8,7 @@ module.exports = class SynTexStatelessSwitchService extends StatelessSwitchServi
 	{
 		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
-		Automations = manager.Automations;
+		AutomationSystem = manager.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);

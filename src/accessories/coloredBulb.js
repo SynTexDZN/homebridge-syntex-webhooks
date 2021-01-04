@@ -1,4 +1,4 @@
-let Service, Characteristic, DeviceManager, Automations;
+let Service, Characteristic, DeviceManager, AutomationSystem;
 
 const { ColoredBulbService } = require('homebridge-syntex-dynamic-platform');
 
@@ -8,7 +8,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	{
 		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
-		Automations = manager.Automations;
+		AutomationSystem = manager.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -200,9 +200,9 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 						callback();
 					}
 	
-					if(Automations.isReady() && this.power != null)
+					if(AutomationSystem.LogikEngine.isReady() && this.power != null)
 					{
-						Automations.runAutomations(this.id, this.letters, this.power);
+						AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, this.power);
 					}
 					
 					this.changed = false;

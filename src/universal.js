@@ -22,6 +22,8 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
 	constructor(homebridgeAccessory, deviceConfig, manager)
 	{
+		console.log(1, manager.AutomationSystem);
+
 		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
 
@@ -127,7 +129,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		}
 		else
 		{
-			//service = new SynTexAccessory(this.deviceConfig, { Service, Characteristic, logger : this.logger, TypeManager : this.manager.TypeManager, DeviceManager : this.manager.DeviceManager, Automations : this.manager.Automations });
+			//service = new SynTexAccessory(this.deviceConfig, { Service, Characteristic, logger : this.logger, TypeManager : this.manager.TypeManager, DeviceManager : this.manager.DeviceManager, AutomationSystem : this.manager.AutomationSystem });
 		}
 
 		if(service != null)
