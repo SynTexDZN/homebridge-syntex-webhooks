@@ -107,7 +107,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			service = new LeakService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'relais')
+		else if(type == 'outlet' || type == 'relais')
 		{
 			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
