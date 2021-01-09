@@ -35,10 +35,7 @@ module.exports = class SynTexMotionService extends MotionService
 					}
 				});
 
-				if(AutomationSystem.LogikEngine.isReady())
-				{
-					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state.value);
-				}
+				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state.value);
 			}
 		};
 	}

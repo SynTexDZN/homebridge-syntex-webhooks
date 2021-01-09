@@ -29,10 +29,7 @@ module.exports = class SynTexHumidityService extends HumidityService
 
 				super.setValue('state', this.value, true);
 
-				if(AutomationSystem.LogikEngine.isReady())
-				{
-					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, this.value);
-				}
+				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, this.value);
 			}
 		};
 	}

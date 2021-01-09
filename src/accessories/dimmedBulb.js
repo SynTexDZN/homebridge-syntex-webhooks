@@ -128,10 +128,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 						callback();
 					}
 	
-					if(AutomationSystem.LogikEngine.isReady() && this.power != null)
-					{
-						AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, this.power);
-					}
+					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, this.power);
 					
 					this.changed = false;
 					this.running = false;
