@@ -30,8 +30,8 @@ It stores accessory data you can request to display the content on your website 
         "platform": "SynTexWebHooks",
         "port": 1710,
         "language": "us",
-        "cacheDirectory": "./SynTex/",
         "logDirectory": "./SynTex/log",
+        "automationDirectory": "./SynTex/automation",
         "accessories": [
             {
                 "id": "sensor1",
