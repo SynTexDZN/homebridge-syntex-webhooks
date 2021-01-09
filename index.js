@@ -18,14 +18,12 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 		this.devices = config['accessories'] || [];
 	
-		this.cacheDirectory = config['cacheDirectory'] || './SynTex';
-		
 		if(this.api && this.logger)
 		{
 			this.api.on('didFinishLaunching', () => {
 
 				TypeManager = new TypeManager(this.logger);
-				DeviceManager = new DeviceManager(this.logger, TypeManager, this.cacheDirectory);
+				DeviceManager = new DeviceManager(this.logger, TypeManager);
 				AutomationSystem = new AutomationSystem(this.logger, this.automationDirectory, this);
 
 				this.loadAccessories();
