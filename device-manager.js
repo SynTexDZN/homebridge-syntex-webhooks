@@ -1,73 +1,12 @@
-const store = require('json-fs-store');
 const request = require('request');
 const convert = require('color-convert');
-var TypeManager, storage, accessories = [];
 
 module.exports = class DeviceManager
 {
-	constructor(logger, typeManager, storagePath)
+	constructor(logger, typeManager)
 	{
 		this.logger = logger;
-		TypeManager = typeManager;
-		storage = store(storagePath);
-	}
-
-	getDevice(mac, service)
-	{
-		return new Promise(async (resolve) => {
-
-			var found = false;
-
-			for(var i = 0; i < accessories.length; i++)
-			{
-				if(accessories[i].mac == mac && accessories[i].service == service)
-				{
-					found = true;
-
-					resolve(accessories[i].value);
-				}
-			}
-
-			if(!found)
-			{
-				var accessory = {
-					mac : mac,
-					service : service,
-					value : await readFS(mac, service)
-				};
-
-				accessories.push(accessory);
-
-				resolve(accessory.value);
-			}
-		});
-	}
-
-	setDevice(mac, service, value)
-	{
-		return new Promise(async (resolve) => {
-
-			var found = false;
-
-			for(var i = 0; i < accessories.length; i++)
-			{
-				if(accessories[i].mac == mac && accessories[i].service == service)
-				{
-					accessories[i].value = value;
-
-					found = true;
-				}
-			}
-
-			if(!found)
-			{
-				accessories.push({ mac : mac, service : service, value : value });
-			}
-
-			await writeFS(mac, service, value);
-
-			resolve();
-		});
+		this.typeManager = typeManager;
 	}
 
 	fetchRequests(state, accessory)
@@ -144,7 +83,7 @@ module.exports = class DeviceManager
 
 									if(finished >= counter)
 									{
-										if(success == 0 && TypeManager.letterToType(accessory.letters) == 'relais')
+										if(success == 0 && this.typeManager.letterToType(accessory.letters) == 'relais')
 										{
 											resolve(err || new Error("Request to '" + this.url + "' was not succesful."));
 										}
@@ -200,36 +139,4 @@ module.exports = class DeviceManager
 			}
 		});
 	}
-}
-
-function readFS(mac, service)
-{
-	return new Promise(resolve => {
-
-		storage.load(mac + ':' + service, (err, device) => {    
-
-			resolve(device && !err ? device.value : null);
-		});
-	});
-}
-
-function writeFS(mac, service, value)
-{
-	return new Promise(resolve => {
-		
-		var device = {
-			id: mac + ':' + service,
-			value: value
-		};
-		
-		storage.add(device, (err) => {
-
-			if(err)
-			{
-				this.logger.log('error', 'bridge', 'Bridge', mac + '.json %update_error%! ' + err);
-			}
-
-			resolve(err ? false : true);
-		});
-	});
 }
