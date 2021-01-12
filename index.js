@@ -37,7 +37,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 	{
 		this.WebServer.addPage('/reload-automation', async (response) => {
 
-			response.write(await AutomationSystem.LogikEngine.loadAutomations() ? 'Success' : 'Error');
+			response.write(await AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
 			response.end();
 		});
 	}
