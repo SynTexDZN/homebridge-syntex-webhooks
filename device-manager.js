@@ -41,15 +41,30 @@ module.exports = class DeviceManager
 						var theRequest = {
 							method : urlMethod,
 							url : urlToCall,
-							timeout : 5000,
-							headers: JSON.parse(urlHeaders)
+							timeout : 5000
 						};
+
+						try
+						{
+							theRequest.headers = JSON.parse(urlHeaders);
+						}
+						catch(error)
+						{
+							this.logger.log('error', 'bridge', 'Bridge', 'Request Headers %json_parse_error%! ( ' + theRequest.headers + ') ' + error);
+						}
 
 						if(urlMethod === 'POST' || urlMethod === 'PUT')
 						{
 							if(urlForm)
 							{
-								theRequest.form = JSON.parse(urlForm);
+								try
+								{
+									theRequest.form = JSON.parse(urlForm);
+								}
+								catch(error)
+								{
+									this.logger.log('error', 'bridge', 'Bridge', 'Request Form %json_parse_error%! ( ' + theRequest.headers + ') ' + error);
+								}
 							}
 							else if(urlBody)
 							{
