@@ -85,17 +85,15 @@ module.exports = class DeviceManager
 								{
 									success++;
 
-									this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + ']');
-
 									if(finished >= counter)
 									{
 										resolve(null);
 									}
+
+									this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + ']');
 								}
 								else
 								{
-									this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ' + (err || ''));
-
 									if(finished >= counter)
 									{
 										if(success == 0 && this.typeManager.letterToType(accessory.letters) == 'relais')
@@ -107,6 +105,8 @@ module.exports = class DeviceManager
 											resolve(null);
 										}
 									}
+
+									this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ' + (err || ''));
 								}
 
 							}).bind({ url : urlToCall, logger : this.logger }));
@@ -126,6 +126,13 @@ module.exports = class DeviceManager
 							{
 								var statusCode = response && response.statusCode ? response.statusCode : -1;
 
+								finished++;
+
+								if(finished >= counter)
+								{
+									resolve(null);
+								}
+
 								if(!err && statusCode == 200)
 								{
 									this.logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ');
@@ -133,13 +140,6 @@ module.exports = class DeviceManager
 								else
 								{
 									this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ' + (err ? err : ''));
-								}
-			
-								finished++;
-
-								if(finished >= counter)
-								{
-									resolve(null);
 								}
 								
 							}.bind({ url : theRequest.url, logger : this.logger })));

@@ -23,7 +23,6 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			this.brightness = brightness || 50;
 
 			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-
 		}))));
 
 		this.changeHandler = (state) => {
@@ -67,14 +66,14 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	{
 		super.getState((value) => {
 
+			callback(null, value != null ? value : false);
+
 			if(value != null)
 			{
 				this.power = value;
 
 				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', hue: ' + super.getValue('hue') +  ', saturation: ' + super.getValue('saturation') + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
 			}
-
-			callback(null, value != null ? value : false);
 		});
 	}
 	
@@ -185,14 +184,14 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 					if(this.changed)
 					{
-						if(result == null)
-						{
-							this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-						}
-	
 						if(callback)
 						{
 							callback();
+						}
+						
+						if(result == null)
+						{
+							this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 						}
 					}
 					else if(callback)
