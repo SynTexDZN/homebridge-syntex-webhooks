@@ -35,7 +35,7 @@ module.exports = class SynTexLeakService extends LeakService
 					}
 				});
 
-				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state.value);
+				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 			}
 		};
 	}

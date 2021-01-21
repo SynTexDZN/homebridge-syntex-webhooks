@@ -29,7 +29,7 @@ module.exports = class SynTexLightService extends LightService
 
 				super.setValue('state', this.value, true);
 			
-				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, this.value);
+				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 			}
 		};
 	}

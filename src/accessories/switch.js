@@ -59,6 +59,6 @@ module.exports = class SynTexSwitchService extends SwitchService
 			callback(result);
 		});
 
-		AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, value);
+		AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
 	}
 };

@@ -59,6 +59,6 @@ module.exports = class SynTexOutletService extends OutletService
 			callback(result);
 		});
 
-		AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, value);
+		AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
 	}
 };

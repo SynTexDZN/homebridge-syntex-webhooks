@@ -199,7 +199,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 						callback();
 					}
 	
-					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, this.power);
+					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
 					
 					this.changed = false;
 					this.running = false;
