@@ -109,7 +109,7 @@ module.exports = class DeviceManager
 									this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ' + (err || ''));
 								}
 
-							}).bind({ url : urlToCall, logger : this.logger }));
+							}).bind({ url : urlToCall, logger : this.logger, typeManager : this.typeManager }));
 						}
 						else if(accessory.options.requests[i].trigger.toLowerCase() == 'color')
 						{
