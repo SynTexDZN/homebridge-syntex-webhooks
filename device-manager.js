@@ -20,7 +20,8 @@ module.exports = class DeviceManager
 				if(accessory.options.requests[i].trigger != null && state.power != null
 				&& (state.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
 				|| !state.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
-				|| accessory.options.requests[i].trigger.toLowerCase() == 'color'))
+				|| accessory.options.requests[i].trigger.toLowerCase() == 'color'
+				|| accessory.options.requests[i].trigger.toLowerCase() == 'dimmer'))
 				{
 					counter++;
 				}
@@ -121,6 +122,34 @@ module.exports = class DeviceManager
 							}
 
 							theRequest.url += colors[0] + ',' + colors[1] + ',' + (state.power ? colors[2] : 0);
+						
+							request(theRequest, (function(err, response, body)
+							{
+								var statusCode = response && response.statusCode ? response.statusCode : -1;
+
+								finished++;
+
+								if(finished >= counter)
+								{
+									resolve(null);
+								}
+
+								if(!err && statusCode == 200)
+								{
+									this.logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ');
+								}
+								else
+								{
+									this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + statusCode + '] %request_result[2]%: [' + (body || '') + '] ' + (err ? err : ''));
+								}
+								
+							}.bind({ url : theRequest.url, logger : this.logger })));
+						}
+						else if(accessory.options.requests[i].trigger.toLowerCase() == 'dimmer')
+						{
+							theRequest.url += state.brightness;
+
+							console.log('FETCH REQUESR', theRequest.url);
 						
 							request(theRequest, (function(err, response, body)
 							{

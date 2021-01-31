@@ -61,7 +61,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	
 	setState(value, callback)
 	{
-		this.setToCurrentColor({ power : value }, 
+		this.setToCurrentBrightness({ power : value }, 
 			() => super.setState(value, 
 			() => callback()));
 	}
@@ -81,9 +81,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setBrightness(value, callback)
 	{
-		this.brightness = value;
-
-		super.setBrightness(this.brightness, () => callback());
+		this.setToCurrentBrightness({ brightness : value }, 
+			() => super.setBrightness(value, 
+			() => callback()));
 	}
 
 	setToCurrentBrightness(state, callback)
