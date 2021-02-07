@@ -149,7 +149,7 @@ module.exports = class DeviceManager
 						{
 							theRequest.url += state.brightness;
 
-							console.log('FETCH REQUESR', theRequest.url);
+							console.log('FETCH REQUEST', theRequest.url);
 						
 							request(theRequest, (function(err, response, body)
 							{
