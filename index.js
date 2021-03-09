@@ -48,6 +48,8 @@ class SynTexWebHookPlatform extends DynamicPlatform
 		{
 			const homebridgeAccessory = this.getAccessory(device.id);
 
+			device.manufacturer = pluginName;
+
 			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager : DeviceManager, AutomationSystem : AutomationSystem, TypeManager : TypeManager }));
 		}
 	}
