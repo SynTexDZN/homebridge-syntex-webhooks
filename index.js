@@ -28,7 +28,6 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 				this.loadAccessories();
 				this.initWebServer();
-				this.finishInit();
 			});
 		}
 	}

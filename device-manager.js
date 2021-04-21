@@ -82,7 +82,7 @@ module.exports = class DeviceManager
 							
 							}.bind({ url : urlToCall, logger : this.logger })).catch(function(err) {
 
-								this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + err.response.status + '] %request_result[2]%: [' + (err.response.data || '') + '] ' + (err || ''));
+								this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1)+ '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + '] ' + (err || ''));
 							
 							}.bind({ url : urlToCall, logger : this.logger })).then(function() {
 
@@ -117,7 +117,7 @@ module.exports = class DeviceManager
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).catch(function(err) {
 
-								this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + err.response.status + '] %request_result[2]%: [' + (err.response.data || '') + '] ' + (err || ''));
+								this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + '] ' + (err || ''));
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).then(function() {
 
@@ -137,7 +137,7 @@ module.exports = class DeviceManager
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).catch(function(err) {
 
-								this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + err.response.status + '] %request_result[2]%: [' + (err.response.data || '') + '] ' + (err || ''));
+								this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + '] ' + (err || ''));
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).then(function() {
 
