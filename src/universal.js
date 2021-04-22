@@ -138,6 +138,31 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 	
 	getModel()
 	{
-		return 'HTTP ' + (this.services == 'switch' ? 'Switch' : this.services == 'contact' ? 'Contact Sensor' : 'Accessory');
+		var name = 'Accessory';
+		var sensors = ['airquality', 'contact', 'humidity', 'leak', 'motion', 'occupancy', 'smoke', 'temperature'];
+
+		if(this.services != null)
+		{
+			name = this.services;
+		}
+
+		if(this.services instanceof Object && this.services.type != null)
+		{
+			name = this.services.type;
+		}
+
+		if(Array.isArray(this.services))
+		{
+			name = 'Multi Accessory';
+		}
+
+		name = name[0].toUpperCase() + name.substring(1);
+
+		if(sensors.includes(name.toLowerCase()))
+		{
+			name += ' Sensor';
+		}
+
+		return 'HTTP ' + name;
 	}
 };
