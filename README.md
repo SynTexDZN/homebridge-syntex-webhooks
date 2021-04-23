@@ -154,6 +154,12 @@ It stores accessory data you can request to display the content on your website 
 ---
 
 
+## SynTex UI
+Control and set up your devices by installing `homebridge-syntex`
+This plugin is made for plugin management, automation system and device control.
+Check out it's GitHub page for more information: https://github.com/SynTexDZN/homebridge-syntex
+
+
 ## Update HTTP Devices
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
