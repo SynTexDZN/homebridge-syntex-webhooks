@@ -156,8 +156,8 @@ It stores accessory data you can request to display the content on your website 
 
 ## SynTex UI
 Control and set up your devices by installing `homebridge-syntex`<br>
-This plugin is made for plugin management, automation system and device control.<br>
-Check out it's GitHub page for more information:<br>
+This plugin is made for plugin management, automation system and device control.<br><br>
+Check out the GitHub page for more information:<br>
 https://github.com/SynTexDZN/homebridge-syntex
 
 
