@@ -79,6 +79,20 @@
 				},
 				{
 					"id": "light1",
+					"name": "Dummy Dimmer",
+					"services": {
+						"type": "dimmer",
+						"requests": [
+							{
+								"trigger": "dimmer",
+								"method": "GET",
+								"url": "http://192.168.178.163/brightness="
+							}
+						]
+					}
+				},
+				{
+					"id": "light2",
 					"name": "Dummy Light",
 					"services": {
 						"type": "rgb",

@@ -106,6 +106,20 @@ It stores accessory data you can request to display the content on your website 
             },
             {
                 "id": "light1",
+                "name": "Dummy Dimmer",
+                "services": {
+                    "type": "dimmer",
+                    "requests": [
+                        {
+                            "trigger": "dimmer",
+                            "method": "GET",
+                            "url": "http://192.168.178.163/brightness="
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "light1",
                 "name": "Dummy Light",
                 "services": {
                     "type": "rgb",
