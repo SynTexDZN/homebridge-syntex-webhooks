@@ -3,8 +3,8 @@
 		{
 			"platform": "SynTexWebHooks",
 			"port": 1710,
-			"logDirectory": "./SynTex/log",
-			"automationDirectory": "./SynTex/automation",
+			"logDirectory": "/var/homebridge/SynTex/log",
+			"automationDirectory": "/var/homebridge/SynTex/automation",
 			"accessories": [
 				{
 					"id": "sensor1",
