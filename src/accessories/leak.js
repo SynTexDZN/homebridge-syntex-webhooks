@@ -31,7 +31,7 @@ module.exports = class SynTexLeakService extends LeakService
 
 						this.service.getCharacteristic(Characteristic.LeakDetected).updateValue(this.value);
 
-						super.setValue('state', this.value, true);
+						super.setValue('value', this.value, true);
 					}
 				});
 

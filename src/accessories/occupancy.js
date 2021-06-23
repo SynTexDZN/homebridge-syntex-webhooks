@@ -31,7 +31,7 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 
 						this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(this.value);
 
-						super.setValue('state', this.value, true);
+						super.setValue('value', this.value, true);
 					}
 				});
 

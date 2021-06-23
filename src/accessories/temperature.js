@@ -27,7 +27,7 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 
 				this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.value);
 
-				super.setValue('state', this.value, true);
+				super.setValue('value', this.value, true);
 			
 				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 			}

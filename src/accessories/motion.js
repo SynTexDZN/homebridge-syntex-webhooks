@@ -31,7 +31,7 @@ module.exports = class SynTexMotionService extends MotionService
 
 						this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(this.value);
 
-						super.setValue('state', this.value, true);
+						super.setValue('value', this.value, true);
 					}
 				});
 
