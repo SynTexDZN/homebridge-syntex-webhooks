@@ -43,7 +43,7 @@ module.exports = class SynTexLightService extends LightService
 				this.value = value;
 			}
 				
-			callback(null, value != null ? value : 0);
+			callback(null, this.value);
 
 		}, true);
 	}

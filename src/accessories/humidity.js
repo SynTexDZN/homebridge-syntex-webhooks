@@ -43,7 +43,7 @@ module.exports = class SynTexHumidityService extends HumidityService
 				this.value = value;
 			}
 				
-			callback(null, value != null ? value : 0);
+			callback(null, this.value);
 
 		}, true);
 	}

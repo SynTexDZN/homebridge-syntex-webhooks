@@ -49,7 +49,7 @@ module.exports = class SynTexLeakService extends LeakService
 				this.value = value;
 			}
 				
-			callback(null, value != null ? value : false);
+			callback(null, this.value);
 
 		}, true);
 	}

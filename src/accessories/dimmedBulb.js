@@ -48,7 +48,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	{
 		super.getState((value) => {
 
-			callback(null, value != null ? value : false);
+			callback(null, value != null ? value : this.power);
 
 			if(value != null)
 			{
@@ -75,7 +75,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				this.brightness = value;
 			}
 				
-			callback(null, value != null ? value : 50);
+			callback(null, this.brightness);
 		});
 	}
 

@@ -39,7 +39,7 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 				this.power = value;
 			}
 				
-			callback(null, value != null ? value : false);
+			callback(null, this.power);
 
 		}, true);
 	}

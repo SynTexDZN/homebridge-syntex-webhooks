@@ -66,7 +66,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	{
 		super.getState((value) => {
 
-			callback(null, value != null ? value : false);
+			callback(null, value != null ? value : this.power);
 
 			if(value != null)
 			{
@@ -93,7 +93,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 				this.hue = value;
 			}
 				
-			callback(null, value != null ? value : 0);
+			callback(null, this.hue);
 		});
 	}
 
@@ -113,7 +113,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 				this.saturation = value;
 			}
 				
-			callback(null, value != null ? value : 100);
+			callback(null, this.saturation);
 		});
 	}
 
@@ -133,7 +133,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 				this.brightness = value;
 			}
 				
-			callback(null, value != null ? value : 50);
+			callback(null, this.brightness);
 		});
 	}
 
