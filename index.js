@@ -24,7 +24,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 				TypeManager = new TypeManager(this.logger);
 				DeviceManager = new DeviceManager(this.logger, TypeManager);
-				AutomationSystem = new AutomationSystem(this.logger, this.automationDirectory, this, pluginName, this.api.user.storagePath());
+				AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
 
 				this.loadAccessories();
 				this.initWebServer();
