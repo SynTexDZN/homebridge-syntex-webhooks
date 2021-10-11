@@ -20,9 +20,10 @@ It stores accessory data you can request to display the content on your website 
 
 
 ## Example Config
-**Info:** If the `logDirectory` for the storage can't be created you have to do it by yourself and give it full write permissions!
-- `sudo chown -R homebridge /var/homebridge/SynTex/` ( *permissions only for homebridge* )
-- `sudo chmod 777 -R homebridge /var/homebridge/SynTex/` ( *permissions for many processes* )
+**Info:** If the `baseDirectory` for the storage can't be created you have to do it by yourself and give it full write permissions!
+- `sudo mkdir -p /var/homebridge/SynTex/` *( create the directory )*
+- `sudo chown -R homebridge /var/homebridge/SynTex/` *( permissions only for homebridge )*
+- `sudo chmod 777 -R homebridge /var/homebridge/SynTex/` *( permissions for many processes )*
 
 ```
 "platforms": [
@@ -146,7 +147,7 @@ It stores accessory data you can request to display the content on your website 
 ```
 ### Required Parameters
 - `platform` is always `SynTexMagicHome`
-- `logDirectory` The path where your logs are stored.
+- `baseDirectory` The path where cache data is stored.
 - `accessories` For the accessory config.
 
 ### Optional Parameters
@@ -159,8 +160,8 @@ It stores accessory data you can request to display the content on your website 
 - `id` has to be either a `real mac address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
 - `services` Should be one of these: `temperature`, `humidity`, `light`, `leak`, `motion`, `contact`, `smoke`, `occupancy`, `airquality`, `switch`, `relais`, `outlet`, `led`, `dimmer`, `rgb`, `statelessswitch`
-- For Boolean Devices you can add `requests` ( *trigger can be: on, off, color* )
-- For RGB Lights you can add `spectrum` attribute ( *to convert to the right output format: RGB / HSL* )
+- For Boolean Devices you can add `requests` *( trigger can be: on, off, color )*
+- For RGB Lights you can add `spectrum` attribute *( to convert to the right output format: RGB / HSL )*
 - For Stateless Switches you have to add `buttons` attribute.
 
 
@@ -179,18 +180,18 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type these patterns:
-- For boolean devices: `true` / `false` ( *leak, motion, contact, smoke, occupancy, switch, outlet* )
-- For numeric devices: `10` / `12.4` ( *temperature, humidity, light, airquality* )
-- For all light bulbs: `true` / `false` ( *led, dimmer, rgb* )
+- For boolean devices: `true` / `false` *( leak, motion, contact, smoke, occupancy, switch, outlet )*
+- For numeric devices: `10` / `12.4` *( temperature, humidity, light, airquality )*
+- For all light bulbs: `true` / `false` *( led, dimmer, rgb )*
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
-( *First of that type = 0, second = 1 ..* )
-- For dimmable and colored lights add `&brightness=`  **New Brightness** ( *has to be a number* )
-- For colored lights add `&hue=`  **New Hue** ( *has to be a number* )
-- For colored lights add `&saturation=`  **New Saturation** ( *has to be a number* )
+*( First of that type = 0, second = 1 .. )*
+- For dimmable and colored lights add `&brightness=`  **New Brightness** *( has to be a number )*
+- For colored lights add `&hue=`  **New Hue** *( has to be a number )*
+- For colored lights add `&saturation=`  **New Saturation** *( has to be a number )*
 
 **Example:**  `http://homebridge.local:1710/devices?id=multi2&type=light&counter=0&value=20.5`\
-( *Updates the value of `Third` to `20.5 LUX` from the Example Config* )
+*( Updates the value of `Third` to `20.5 LUX` from the Example Config )*
 
 
 ## Read HTTP Device Values
@@ -198,10 +199,10 @@ https://github.com/SynTexDZN/homebridge-syntex
 2. Insert the `Bridge IP` and `Device ID`
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
-( *First of that type = 0, second = 1 ..* )
+*( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1710/devices?id=multi1&type=switch&counter=1`\
-( *Reads the value of `Second` from the Example Config* )
+*( Reads the value of `Second` from the Example Config )*
 
 
 ## Remove Tuya Device
@@ -209,7 +210,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 2. Insert the `Bridge IP` and `Device ID`
 
 **Example:**  `http://homebridge.local:1710/devices?id=sensor1&remove=CONFIRM`\
-( *Removes `Contact` from the Example Config* )
+*( Removes `Contact` from the Example Config )*
 
 
 ---
