@@ -30,8 +30,7 @@ It stores accessory data you can request to display the content on your website 
         "platform": "SynTexWebHooks",
         "port": 1710,
         "language": "us",
-        "logDirectory": "/var/homebridge/SynTex/log",
-        "automationDirectory": "/var/homebridge/SynTex/automation",
+        "baseDirectory": "/var/homebridge/SynTex",
         "accessories": [
             {
                 "id": "sensor1",
@@ -217,7 +216,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 
 
 ## Automation
-To enable the automation module you have to create a file named `automation.json` in your `automationDirectory` or install the `homebridge-syntex` plugin to create them via UI *( only between syntex plugins )*<br><br>
+To enable the automation module you have to create a file named `automation.json` in your `baseDirectory >> automation` or install the `homebridge-syntex` plugin to create them via UI *( only between syntex plugins )*<br><br>
 **Example:**  For manual configuration update your `automation.json` file. See snippet below.   
 
 ```
