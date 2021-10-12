@@ -47,9 +47,9 @@ module.exports = class DeviceManager
 						{
 							theRequest.headers = JSON.parse(urlHeaders);
 						}
-						catch(error)
+						catch(e)
 						{
-							this.logger.log('error', 'bridge', 'Bridge', 'Request Headers %json_parse_error%! ( ' + theRequest.headers + ') ' + error);
+							this.logger.log('error', 'bridge', 'Bridge', 'Request Headers %json_parse_error%! ( ' + theRequest.headers + ')', e);
 						}
 
 						if(urlMethod === 'POST' || urlMethod === 'PUT')
@@ -60,9 +60,9 @@ module.exports = class DeviceManager
 								{
 									theRequest.data = JSON.parse(urlForm);
 								}
-								catch(error)
+								catch(e)
 								{
-									this.logger.log('error', 'bridge', 'Bridge', 'Request Form %json_parse_error%! ( ' + theRequest.headers + ') ' + error);
+									this.logger.log('error', 'bridge', 'Bridge', 'Request Form %json_parse_error%! ( ' + theRequest.headers + ')', e);
 								}
 							}
 							else if(urlBody)
@@ -82,7 +82,7 @@ module.exports = class DeviceManager
 							
 							}.bind({ url : urlToCall, logger : this.logger })).catch(function(err) {
 
-								this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1)+ '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + '] ' + (err || ''));
+								this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1)+ '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err);
 							
 							}.bind({ url : urlToCall, logger : this.logger })).then(function() {
 
@@ -117,7 +117,7 @@ module.exports = class DeviceManager
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).catch(function(err) {
 
-								this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + '] ' + (err || ''));
+								this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err);
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).then(function() {
 
@@ -137,7 +137,7 @@ module.exports = class DeviceManager
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).catch(function(err) {
 
-								this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + '] ' + (err || ''));
+								this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err);
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).then(function() {
 
