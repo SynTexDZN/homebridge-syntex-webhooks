@@ -12,6 +12,16 @@ It stores accessory data you can request to display the content on your website 
 
 <br>
 
+## Troubleshooting
+#### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex-knx?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-knx/issues)
+- `Report` us your `Issues`
+- `Join` our `Discord Server`
+#### [![Discord](https://img.shields.io/discord/442095224953634828?color=5865F2&logoColor=white&label=discord&logo=discord&style=for-the-badge)](https://discord.gg/XUqghtw4DE)
+
+
+---
+
+
 ## Installation
 1. Install homebridge using: `sudo npm install -g homebridge`
 2. Install this plugin using: `sudo npm install -g homebridge-syntex-webhooks`
