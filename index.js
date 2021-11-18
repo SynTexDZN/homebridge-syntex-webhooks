@@ -18,7 +18,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 		this.devices = config['accessories'] || [];
 	
-		if(this.api && this.logger)
+		if(this.api != null && this.logger != null && this.files != null)
 		{
 			this.api.on('didFinishLaunching', () => {
 
@@ -29,6 +29,10 @@ class SynTexWebHookPlatform extends DynamicPlatform
 				this.loadAccessories();
 				this.initWebServer();
 			});
+		}
+		else
+		{
+			throw new Error('Minimal parameters not configurated. Please check the README! https://github.com/SynTexDZN/homebridge-syntex-webhooks/blob/master/README.md');
 		}
 	}
 
