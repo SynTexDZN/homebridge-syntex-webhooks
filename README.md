@@ -2,7 +2,7 @@
 [![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex-webhooks?label=release&color=brightgree&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex-webhooks/beta?color=orange&label=beta&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
 [![NPM Downloads](https://img.shields.io/npm/dt/homebridge-syntex-webhooks?color=9944ee&&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
-[![GitHub Commits](https://img.shields.io/github/commits-since/SynTexDZN/homebridge-syntex-webhooks/1.0.0?color=yellow&label=commits&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-webhooks/commits)
+[![GitHub Commits](https://img.shields.io/github/commits-since/SynTexDZN/homebridge-syntex-webhooks/0.0.0?color=yellow&label=commits&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-webhooks/commits)
 [![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-webhooks?color=0af&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-webhooks)
 
 A simple plugin to control and to create HTTP devices.<br>
