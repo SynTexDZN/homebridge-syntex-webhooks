@@ -1,15 +1,14 @@
 # Homebridge SynTex Webhooks
-A simple plugin to control and to create HTTP devices.<br>
-This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge<br>
-It stores accessory data you can request to display the content on your website / app.
-
 [![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex-webhooks?label=release&color=brightgree&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex-webhooks/beta?color=orange&label=beta&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
 [![NPM Downloads](https://img.shields.io/npm/dt/homebridge-syntex-webhooks?color=9944ee&&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
 [![GitHub Commits](https://img.shields.io/github/commits-since/SynTexDZN/homebridge-syntex-webhooks/1.0.0?color=yellow&label=commits&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-webhooks/commits)
 [![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-webhooks?color=0af&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-webhooks)
 
-<br>
+A simple plugin to control and to create HTTP devices.<br>
+This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge<br>
+It stores accessory data you can request to display the content on your website / app.
+
 
 ## Troubleshooting
 #### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex-knx?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-knx/issues)
@@ -34,7 +33,7 @@ It stores accessory data you can request to display the content on your website 
 - `sudo chown -R homebridge /var/homebridge/SynTex/` *( permissions only for homebridge )*
 - `sudo chmod 777 -R homebridge /var/homebridge/SynTex/` *( permissions for many processes )*
 
-```
+```json
 "platforms": [
     {
         "platform": "SynTexWebHooks",
@@ -169,6 +168,8 @@ It stores accessory data you can request to display the content on your website 
 - `id` has to be either a `real mac address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
 - `services` Should be one of these: `temperature`, `humidity`, `light`, `leak`, `motion`, `contact`, `smoke`, `occupancy`, `airquality`, `switch`, `relais`, `outlet`, `led`, `dimmer`, `rgb`, `statelessswitch`
+
+### Service Config
 - For Boolean Devices you can add `requests` *( trigger can be: on, off, color )*
 - For RGB Lights you can add `spectrum` attribute *( to convert to the right output format: RGB / HSL )*
 - For Stateless Switches you have to add `buttons` attribute.
@@ -229,7 +230,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 To enable the automation module you have to create a file named `automation.json` in your `baseDirectory >> automation` or install the `homebridge-syntex` plugin to create them via UI *( only between syntex plugins )*<br><br>
 **Example:**  For manual configuration update your `automation.json` file. See snippet below.   
 
-```
+```json
 {
   "id": "automation",
   "automation": [
