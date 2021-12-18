@@ -49,7 +49,7 @@ module.exports = class DeviceManager
 						}
 						catch(e)
 						{
-							this.logger.log('error', 'bridge', 'Bridge', 'Request Headers %json_parse_error%! ( ' + theRequest.headers + ')', e);
+							this.logger.log('error', accessory.id, accessory.letters, 'Request Headers %json_parse_error%! ( ' + theRequest.headers + ')', e);
 						}
 
 						if(urlMethod === 'POST' || urlMethod === 'PUT')
@@ -62,7 +62,7 @@ module.exports = class DeviceManager
 								}
 								catch(e)
 								{
-									this.logger.log('error', 'bridge', 'Bridge', 'Request Form %json_parse_error%! ( ' + theRequest.headers + ')', e);
+									this.logger.log('error', accessory.id, accessory.letters, 'Request Form %json_parse_error%! ( ' + theRequest.headers + ')', e);
 								}
 							}
 							else if(urlBody)
@@ -113,11 +113,11 @@ module.exports = class DeviceManager
 
 							axios.get(urlToCall + colors[0] + ',' + colors[1] + ',' + (state.power ? colors[2] : 0), theRequest).then(function(response) {
 
-								this.logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + '] ');
+								this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + '] ');
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).catch(function(err) {
 
-								this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err);
+								this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err);
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).then(function() {
 
@@ -133,11 +133,11 @@ module.exports = class DeviceManager
 						{
 							axios.get(urlToCall + state.brightness, theRequest).then(function() {
 
-								this.logger.log('success', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + '] ');
+								this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + '] ');
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).catch(function(err) {
 
-								this.logger.log('error', accessory.mac, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err);
+								this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err);
 							
 							}.bind({ url : theRequest.url, logger : this.logger })).then(function() {
 
