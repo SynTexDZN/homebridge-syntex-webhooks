@@ -36,18 +36,6 @@ class SynTexWebHookPlatform extends DynamicPlatform
 		}
 	}
 
-	initWebServer()
-	{
-		if(this.port != null)
-		{
-			this.WebServer.addPage('/reload-automation', async (response) => {
-
-				response.write(await AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
-				response.end();
-			});
-		}
-	}
-
 	loadAccessories()
 	{
 		for(const device of this.devices)
@@ -56,7 +44,18 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 			device.manufacturer = pluginName;
 
-			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager : DeviceManager, AutomationSystem : AutomationSystem, TypeManager : TypeManager, ContextManager : ContextManager }));
+			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager, AutomationSystem, TypeManager, ContextManager }));
+		}
+	}
+
+	initWebServer()
+	{
+		if(this.port != null)
+		{
+			this.WebServer.addPage('/reload-automation', async (response) => {
+
+				response.end(await AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
+			});
 		}
 	}
 }

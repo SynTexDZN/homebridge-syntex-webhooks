@@ -59,7 +59,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		}
 
 		var service = null;
-		var serviceConfig = { name : name, type : type, subtype : subtype, requests : config.requests };
+		var serviceConfig = { name, type, subtype, requests : config.requests };
 
 		if(type == 'contact')
 		{
