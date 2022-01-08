@@ -321,6 +321,7 @@ The letters are split into two parts *( numbers )*
 **Example:**  The first switch in your config has the letters `40`, the second `41` and so on ..
 
 ### Supported Plugins
+- SynTexKNX *( `homebridge-syntex-knx` )*
 - SynTexMagicHome *( `homebridge-syntex-webhooks` )*
 - SynTexTuya *( `homebridge-syntex-tuya` )*
 - SynTexWebHooks *( `homebridge-syntex-webhooks` )*
