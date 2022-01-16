@@ -126,7 +126,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 	getModel()
 	{
 		var name = 'Accessory';
-		var sensors = ['airquality', 'contact', 'humidity', 'leak', 'motion', 'occupancy', 'smoke', 'temperature'];
+		var sensors = ['airquality', 'contact', 'humidity', 'leak', 'light', 'motion', 'occupancy', 'smoke', 'temperature'];
 
 		if(this.services != null)
 		{
