@@ -83,12 +83,12 @@ It stores accessory data you can request to display the content on your website 
                         {
                             "trigger": "on",
                             "method": "GET",
-                            "url": "http://192.168.178.100/switch?state=true"
+                            "url": "http://192.168.1.100/switch?state=true"
                         },
                         {
                             "trigger": "off",
                             "method": "GET",
-                            "url": "http://192.168.178.100/switch?state=false"
+                            "url": "http://192.168.1.100/switch?state=false"
                         }
                     ]
                 }
@@ -102,12 +102,12 @@ It stores accessory data you can request to display the content on your website 
                         {
                             "trigger": "on",
                             "method": "GET",
-                            "url": "http://192.168.178.101/switch?state=true"
+                            "url": "http://192.168.1.100/switch?state=true"
                         },
                         {
                             "trigger": "off",
                             "method": "GET",
-                            "url": "http://192.168.178.101/switch?state=false"
+                            "url": "http://192.168.1.100/switch?state=false"
                         }
                     ]
                 }
@@ -121,7 +121,7 @@ It stores accessory data you can request to display the content on your website 
                         {
                             "trigger": "dimmer",
                             "method": "GET",
-                            "url": "http://192.168.178.163/brightness="
+                            "url": "http://192.168.1.100/brightness="
                         }
                     ]
                 }
@@ -136,7 +136,7 @@ It stores accessory data you can request to display the content on your website 
                         {
                             "trigger": "color",
                             "method": "GET",
-                            "url": "http://192.168.178.163/color"
+                            "url": "http://192.168.1.100/color"
                         }
                     ]
                 }
@@ -272,7 +272,7 @@ To enable the automation module you have to create a file named `automation.json
           "brightness": "100"
         },
         {
-          "url": "http://192.168.178.100:1713/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
+          "url": "http://192.168.1.100:1710/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
         }
       ]
     }
