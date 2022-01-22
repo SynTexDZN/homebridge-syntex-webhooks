@@ -92,7 +92,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			service = new ColoredBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(serviceConfig.type == 'rain')
+		else if(serviceConfig.type == 'rain' || serviceConfig.type == 'leak')
 		{
 			service = new LeakService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}

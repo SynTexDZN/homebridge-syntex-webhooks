@@ -69,7 +69,7 @@ It stores accessory data you can request to display the content on your website 
                     {"type": "switch", "name": "First"},
                     {"type": "motion", "name": "Second"},
                     {"type": "light", "name": "Third"},
-                    {"type": "rain", "name": "Leak"},
+                    {"type": "leak", "name": "Leak"},
                     {"type": "smoke", "name": "Smoke"},
                     {"type": "occupancy", "name": "Present"}
                 ]
@@ -168,7 +168,7 @@ It stores accessory data you can request to display the content on your website 
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `real mac address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
-- `services` Should be one of these: `temperature`, `humidity`, `light`, `leak`, `motion`, `contact`, `smoke`, `occupancy`, `airquality`, `switch`, `relais`, `outlet`, `led`, `dimmer`, `rgb`, `statelessswitch`
+- `services` Should be one of these: `airquality`, `contact`, `dimmer`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `statelessswitch`, `switch`, `temperature`
 
 ### Service Config
 - For Boolean Devices you can add `requests` *( trigger can be: on, off, color )*
@@ -191,9 +191,9 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type these patterns:
-- For boolean devices: `true` / `false` *( leak, motion, contact, smoke, occupancy, switch, outlet )*
-- For numeric devices: `10` / `12.4` *( temperature, humidity, light, airquality )*
-- For all light bulbs: `true` / `false` *( led, dimmer, rgb )*
+- For boolean devices: `true` / `false` *( contact, leak, motion, occupancy, outlet, rain, smoke, switch )*
+- For numeric devices: `10` / `12.4` *( airquality, humidity, light, temperature )*
+- For all light bulbs: `true` / `false` *( dimmer, led, rgb )*
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
@@ -331,15 +331,15 @@ The letters are split into two parts *( numbers )*
 
 
 ## Currently Supported
-- Temperature Sensor
-- Humidity Sensor
-- Light Sensor
-- Leak Sensor
-- Motion Sensor
-- Contact Sensor
-- Smoke Sensor
-- Occupancy Sensor
 - Airquality Sensor
+- Contact Sensor
+- Humidity Sensor
+- Leak / Rain Sensor
+- Light Sensor
+- Motion Sensor
+- Occupancy Sensor
+- Smoke Sensor
 - Stateless Switch
+- Temperature Sensor
 - Switch / Relais / Outlet
 - LED Lights / Dimmable Lights / RGB Lights
