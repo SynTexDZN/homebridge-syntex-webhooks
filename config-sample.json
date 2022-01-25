@@ -2,8 +2,12 @@
 	"platforms": [
 		{
 			"platform": "SynTexWebHooks",
-			"port": 1710,
 			"baseDirectory": "/var/homebridge/SynTex",
+			"options": {
+				"port": 1710,
+				"language": "us",
+				"debug": false
+			},
 			"accessories": [
 				{
 					"id": "sensor1",

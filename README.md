@@ -37,9 +37,12 @@ It stores accessory data you can request to display the content on your website 
 "platforms": [
     {
         "platform": "SynTexWebHooks",
-        "port": 1710,
-        "language": "us",
         "baseDirectory": "/var/homebridge/SynTex",
+        "options": {
+            "port": 1710,
+            "language": "us",
+            "debug": false
+        },
         "accessories": [
             {
                 "id": "sensor1",
