@@ -1,5 +1,3 @@
-let Service, Characteristic;
-
 const { UniversalAccessory } = require('homebridge-syntex-dynamic-platform');
 
 const ContactService = require('./accessories/contact');
@@ -22,9 +20,6 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
 	constructor(homebridgeAccessory, deviceConfig, manager)
 	{
-		Service = manager.platform.api.hap.Service;
-		Characteristic = manager.platform.api.hap.Characteristic;
-
 		super(homebridgeAccessory, deviceConfig, manager);
 	}
 	
@@ -111,10 +106,6 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(serviceConfig.type == 'airquality')
 		{
 			service = new AirQualityService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
-		else
-		{
-			//service = new SynTexAccessory(this.deviceConfig, { Service, Characteristic, logger : this.logger, TypeManager : this.manager.TypeManager, DeviceManager : this.manager.DeviceManager, AutomationSystem : this.manager.AutomationSystem });
 		}
 
 		if(service != null)
