@@ -7,7 +7,7 @@ module.exports = class SynTexAirQualityService extends AirQualityService
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
 		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.AutomationSystem;
+		AutomationSystem = manager.platform.AutomationSystem;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
