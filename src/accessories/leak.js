@@ -1,4 +1,4 @@
-let Service, Characteristic, DeviceManager, AutomationSystem;
+let Characteristic, DeviceManager, AutomationSystem;
 
 const { LeakService } = require('homebridge-syntex-dynamic-platform');
 
@@ -6,7 +6,6 @@ module.exports = class SynTexLeakService extends LeakService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
 		AutomationSystem = manager.AutomationSystem;
 		DeviceManager = manager.DeviceManager;

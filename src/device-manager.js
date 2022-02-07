@@ -15,7 +15,7 @@ module.exports = class DeviceManager
 
 			var counter = 0, finished = 0, success = 0;
 
-			for(var i = 0; i < accessory.options.requests.length; i++)
+			for(let i = 0; i < accessory.options.requests.length; i++)
 			{
 				if(accessory.options.requests[i].trigger != null && state.power != null
 				&& (state.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
@@ -27,7 +27,7 @@ module.exports = class DeviceManager
 				}
 			}
 
-			for(var i = 0; i < accessory.options.requests.length; i++)
+			for(let i = 0; i < accessory.options.requests.length; i++)
 			{
 				if(accessory.options.requests[i].trigger != null && state.power != null)
 				{
@@ -92,7 +92,7 @@ module.exports = class DeviceManager
 								{
 									if(success == 0 && this.typeManager.letterToType(accessory.letters) == 'relais')
 									{
-										resolve(err || new Error('Request to [' + this.url + '] was not succesful.'));
+										resolve(new Error('Request to [' + this.url + '] was not succesful.'));
 									}
 									else
 									{
@@ -131,7 +131,7 @@ module.exports = class DeviceManager
 						}
 						else if(accessory.options.requests[i].trigger.toLowerCase() == 'dimmer')
 						{
-							axios.get(urlToCall + state.brightness, theRequest).then(function() {
+							axios.get(urlToCall + state.brightness, theRequest).then(function(response) {
 
 								this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + '] ');
 							

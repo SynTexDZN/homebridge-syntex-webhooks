@@ -1,4 +1,4 @@
-let Service, Characteristic, DeviceManager, AutomationSystem;
+let Characteristic, AutomationSystem;
 
 const { TemperatureService } = require('homebridge-syntex-dynamic-platform');
 
@@ -6,10 +6,8 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
 		AutomationSystem = manager.AutomationSystem;
-		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
