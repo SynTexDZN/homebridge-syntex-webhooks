@@ -1,6 +1,6 @@
-let Characteristic, DeviceManager, AutomationSystem;
-
 const { LightBulbService } = require('homebridge-syntex-dynamic-platform');
+
+let Characteristic, DeviceManager, AutomationSystem;
 
 module.exports = class SynTexLightBulbService extends LightBulbService
 {
@@ -15,6 +15,8 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 		super.getState((power) => {
 
 			this.power = power || false;
+
+			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
 
 		}, true);
 
@@ -55,9 +57,9 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
 			}
 
+			AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
+
 			callback(result);
 		});
-
-		AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
 	}
 };

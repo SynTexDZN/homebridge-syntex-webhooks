@@ -1,6 +1,6 @@
-let Characteristic, DeviceManager, AutomationSystem;
-
 const { ColoredBulbService } = require('homebridge-syntex-dynamic-platform');
+
+let Characteristic, DeviceManager, AutomationSystem;
 
 module.exports = class SynTexColoredBulbService extends ColoredBulbService
 {
@@ -21,7 +21,13 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			this.saturation = saturation || 100;
 			this.brightness = brightness || 50;
 
+			this.service.getCharacteristic(Characteristic.On).updateValue(this.value);
+			this.service.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
+			this.service.getCharacteristic(Characteristic.Saturation).updateValue(this.saturation);
+			this.service.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+
 			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+		
 		}))));
 
 		this.changeHandler = (state) => {
@@ -181,30 +187,23 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 				DeviceManager.fetchRequests({ power : this.power, hue : this.hue, saturation : this.saturation, brightness : this.brightness }, this).then((result) => {
 
-					if(this.changed)
+					if(this.changed && result == null)
 					{
-						if(callback)
-						{
-							callback();
-						}
-						
-						if(result == null)
-						{
-							this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-						}
-					}
-					else if(callback)
-					{
-						callback();
+						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					}
 	
 					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
 					
+					if(callback != null)
+					{
+						callback();
+					}
+
 					this.changed = false;
 					this.running = false;
 				});
 			}
-			else if(callback)
+			else if(callback != null)
 			{
 				callback();
 			}

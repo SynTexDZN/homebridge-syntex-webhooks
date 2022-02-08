@@ -1,6 +1,6 @@
-let Characteristic, AutomationSystem;
-
 const { LightService } = require('homebridge-syntex-dynamic-platform');
+
+let Characteristic, AutomationSystem;
 
 module.exports = class SynTexLightService extends LightService
 {
@@ -15,6 +15,8 @@ module.exports = class SynTexLightService extends LightService
 
 			this.value = value || 0.0001;
 
+			this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(this.value);
+
 		}, true);
 
 		this.changeHandler = (state) =>
@@ -23,9 +25,9 @@ module.exports = class SynTexLightService extends LightService
 			{
 				this.value = state.value;
 
-				this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(this.value);
+				this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(state.value);
 
-				super.setValue('value', this.value, true);
+				super.setValue('value', state.value, true);
 			
 				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 			}

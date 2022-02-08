@@ -1,6 +1,6 @@
-let Characteristic, DeviceManager, AutomationSystem;
-
 const { OccupancyService } = require('homebridge-syntex-dynamic-platform');
+
+let Characteristic, DeviceManager, AutomationSystem;
 
 module.exports = class SynTexOccupancyService extends OccupancyService
 {
@@ -16,6 +16,8 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 
 			this.value = value || false;
 
+			this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(this.value);
+
 		}, true);
 
 		this.changeHandler = (state) =>
@@ -28,13 +30,13 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 					{
 						this.value = state.value;
 
-						this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(this.value);
+						this.service.getCharacteristic(Characteristic.OccupancyDetected).updateValue(state.value);
 
-						super.setValue('value', this.value, true);
+						super.setValue('value', state.value, true);
 					}
-				});
 
-				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+				});
 			}
 		};
 	}
