@@ -82,7 +82,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	
 	setState(value, callback)
 	{
-		this.setToCurrentColor({ value : value }, 
+		this.setToCurrentColor({ value }, 
 			() => super.setState(value, 
 			() => callback()));
 	}
