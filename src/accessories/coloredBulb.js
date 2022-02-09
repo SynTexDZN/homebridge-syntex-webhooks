@@ -24,13 +24,11 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			this.service.getCharacteristic(this.Characteristic.Saturation).updateValue(this.saturation);
 			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
-			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 		
 		}))));
 
 		this.changeHandler = (state) => {
-
-			state.value = state.value;
 
 			this.setToCurrentColor(state, () => {
 
@@ -75,7 +73,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', hue: ' + super.getValue('hue') +  ', saturation: ' + super.getValue('saturation') + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.value + ', hue: ' + super.getValue('hue') +  ', saturation: ' + super.getValue('saturation') + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
 			}
 		});
 	}
@@ -187,7 +185,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 					if(this.changed && result == null)
 					{
-						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					}
 	
 					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
