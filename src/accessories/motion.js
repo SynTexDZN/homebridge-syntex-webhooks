@@ -1,13 +1,11 @@
 const { MotionService } = require('homebridge-syntex-dynamic-platform');
 
-let Characteristic, DeviceManager, AutomationSystem;
+let DeviceManager;
 
 module.exports = class SynTexMotionService extends MotionService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.platform.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -16,7 +14,7 @@ module.exports = class SynTexMotionService extends MotionService
 
 			this.value = value || false;
 
-			this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.MotionDetected).updateValue(this.value);
 			
 		}, true);
 
@@ -30,12 +28,12 @@ module.exports = class SynTexMotionService extends MotionService
 					{
 						this.value = state.value;
 
-						this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(state.value);
+						this.service.getCharacteristic(this.Characteristic.MotionDetected).updateValue(state.value);
 
 						super.setValue('value', state.value, true);
 					}
 
-					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 				});
 			}
 		};

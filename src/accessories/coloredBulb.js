@@ -1,13 +1,11 @@
 const { ColoredBulbService } = require('homebridge-syntex-dynamic-platform');
 
-let Characteristic, DeviceManager, AutomationSystem;
+let DeviceManager;
 
 module.exports = class SynTexColoredBulbService extends ColoredBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.platform.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -21,10 +19,10 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			this.saturation = saturation || 100;
 			this.brightness = brightness || 50;
 
-			this.service.getCharacteristic(Characteristic.On).updateValue(this.value);
-			this.service.getCharacteristic(Characteristic.Hue).updateValue(this.hue);
-			this.service.getCharacteristic(Characteristic.Saturation).updateValue(this.saturation);
-			this.service.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.Hue).updateValue(this.hue);
+			this.service.getCharacteristic(this.Characteristic.Saturation).updateValue(this.saturation);
+			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
 			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 		
@@ -38,28 +36,28 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 				if(state.value != null)
 				{
-					this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
+					this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
 
 					super.setState(state.value, () => {});
 				}
 
 				if(state.hue != null)
 				{
-					this.service.getCharacteristic(Characteristic.Hue).updateValue(state.hue);
+					this.service.getCharacteristic(this.Characteristic.Hue).updateValue(state.hue);
 
 					super.setHue(state.hue, () => {});
 				}
 
 				if(state.saturation != null)
 				{
-					this.service.getCharacteristic(Characteristic.Saturation).updateValue(state.saturation);
+					this.service.getCharacteristic(this.Characteristic.Saturation).updateValue(state.saturation);
 
 					super.setSaturation(state.saturation, () => {});
 				}
 
 				if(state.brightness != null)
 				{
-					this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+					this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness);
 
 					super.setBrightness(state.brightness, () => {});
 				}
@@ -192,7 +190,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					}
 	
-					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
+					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
 					
 					if(callback != null)
 					{

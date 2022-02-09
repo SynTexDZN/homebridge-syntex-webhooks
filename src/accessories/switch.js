@@ -1,13 +1,11 @@
 const { SwitchService } = require('homebridge-syntex-dynamic-platform');
 
-let Characteristic, DeviceManager, AutomationSystem;
+let DeviceManager;
 
 module.exports = class SynTexSwitchService extends SwitchService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.platform.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -16,7 +14,7 @@ module.exports = class SynTexSwitchService extends SwitchService
 
 			this.power = power || false;
 
-			this.service.getCharacteristic(Characteristic.On).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
 
 		}, true);
 
@@ -24,7 +22,7 @@ module.exports = class SynTexSwitchService extends SwitchService
 		{
 			if(state.value != null)
 			{
-				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
+				this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
 
 				this.setState(state.value, () => {});
 			}
@@ -57,7 +55,7 @@ module.exports = class SynTexSwitchService extends SwitchService
 					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
 			}
 
-			AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
+			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
 
 			callback(result);
 		});

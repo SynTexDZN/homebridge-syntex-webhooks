@@ -16,8 +16,6 @@ class SynTexWebHookPlatform extends DynamicPlatform
 	{
 		super(config, api, pluginID, pluginName, pluginVersion);
 
-		this.devices = config['accessories'] || [];
-	
 		if(this.api != null && this.logger != null && this.files != null)
 		{
 			this.api.on('didFinishLaunching', () => {
@@ -25,7 +23,6 @@ class SynTexWebHookPlatform extends DynamicPlatform
 				DeviceManager = new DeviceManager(this.logger, this.TypeManager);
 
 				this.loadAccessories();
-				this.initWebServer();
 			});
 		}
 		else
@@ -43,17 +40,6 @@ class SynTexWebHookPlatform extends DynamicPlatform
 			device.manufacturer = pluginName;
 
 			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager, ContextManager }));
-		}
-	}
-
-	initWebServer()
-	{
-		if(this.port != null)
-		{
-			this.WebServer.addPage('/reload-automation', async (response) => {
-
-				response.end(await this.AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
-			});
 		}
 	}
 }

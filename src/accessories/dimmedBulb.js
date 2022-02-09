@@ -1,13 +1,11 @@
 const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform');
 
-let Characteristic, DeviceManager, AutomationSystem;
+let DeviceManager;
 
 module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.platform.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -17,8 +15,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			this.power = power || false;
 			this.brightness = brightness || 100;
 
-			this.service.getCharacteristic(Characteristic.On).updateValue(this.value);
-			this.service.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
 			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 		}));
@@ -31,14 +29,14 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 				if(state.value != null)
 				{
-					this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
+					this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
 
 					super.setState(state.value, () => {});
 				}
 
 				if(state.brightness != null)
 				{
-					this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+					this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness);
 
 					super.setBrightness(state.brightness, () => {});
 				}
@@ -117,7 +115,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					}
 	
-					AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
+					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
 					
 					if(callback != null)
 					{

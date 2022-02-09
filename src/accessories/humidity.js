@@ -1,12 +1,11 @@
 const { HumidityService } = require('homebridge-syntex-dynamic-platform');
 
-let Characteristic, AutomationSystem;
+let AutomationSystem;
 
 module.exports = class SynTexHumidityService extends HumidityService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Characteristic = manager.platform.api.hap.Characteristic;
 		AutomationSystem = manager.platform.AutomationSystem;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -15,7 +14,7 @@ module.exports = class SynTexHumidityService extends HumidityService
 
 			this.value = value || 0;
 
-			this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.CurrentRelativeHumidity).updateValue(this.value);
 
 		}, true);
 
@@ -25,7 +24,7 @@ module.exports = class SynTexHumidityService extends HumidityService
 			{
 				this.value = state.value;
 
-				this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity).updateValue(state.value);
+				this.service.getCharacteristic(this.Characteristic.CurrentRelativeHumidity).updateValue(state.value);
 
 				super.setValue('value', state.value, true);
 
