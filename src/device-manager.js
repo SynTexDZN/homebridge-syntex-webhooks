@@ -1,5 +1,4 @@
-const axios = require('axios');
-const convert = require('color-convert');
+const axios = require('axios'), convert = require('color-convert');
 
 module.exports = class DeviceManager
 {
