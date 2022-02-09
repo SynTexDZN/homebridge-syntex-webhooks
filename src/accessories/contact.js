@@ -22,7 +22,7 @@ module.exports = class SynTexContactService extends ContactService
 		{
 			if(state.value != null)
 			{
-				DeviceManager.fetchRequests({ power : state.value }, this).then((result) => {
+				DeviceManager.fetchRequests({ value : state.value }, this).then((result) => {
 
 					if(result == null)
 					{

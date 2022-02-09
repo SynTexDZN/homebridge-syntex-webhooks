@@ -16,9 +16,9 @@ module.exports = class DeviceManager
 
 			for(let i = 0; i < accessory.options.requests.length; i++)
 			{
-				if(accessory.options.requests[i].trigger != null && state.power != null
-				&& (state.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-				|| !state.power && accessory.options.requests[i].trigger.toLowerCase() == 'off'
+				if(accessory.options.requests[i].trigger != null && state.value != null
+				&& (state.value && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+				|| !state.value && accessory.options.requests[i].trigger.toLowerCase() == 'off'
 				|| accessory.options.requests[i].trigger.toLowerCase() == 'color'
 				|| accessory.options.requests[i].trigger.toLowerCase() == 'dimmer'))
 				{
@@ -28,7 +28,7 @@ module.exports = class DeviceManager
 
 			for(let i = 0; i < accessory.options.requests.length; i++)
 			{
-				if(accessory.options.requests[i].trigger != null && state.power != null)
+				if(accessory.options.requests[i].trigger != null && state.value != null)
 				{
 					var urlMethod = accessory.options.requests[i].method || '';
 					var urlToCall = accessory.options.requests[i].url || '';
@@ -70,8 +70,8 @@ module.exports = class DeviceManager
 							}
 						}
 
-						if(state.power && accessory.options.requests[i].trigger.toLowerCase() == 'on'
-						|| !state.power && accessory.options.requests[i].trigger.toLowerCase() == 'off')
+						if(state.value && accessory.options.requests[i].trigger.toLowerCase() == 'on'
+						|| !state.value && accessory.options.requests[i].trigger.toLowerCase() == 'off')
 						{
 							axios.get(urlToCall, theRequest).then(function(response) {
 
@@ -110,7 +110,7 @@ module.exports = class DeviceManager
 								colors = convert.hsv.rgb([state.hue, state.saturation, state.brightness]);
 							}
 
-							axios.get(urlToCall + colors[0] + ',' + colors[1] + ',' + (state.power ? colors[2] : 0), theRequest).then(function(response) {
+							axios.get(urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), theRequest).then(function(response) {
 
 								this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + '] ');
 							

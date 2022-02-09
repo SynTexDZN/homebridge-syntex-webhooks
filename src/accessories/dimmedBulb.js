@@ -10,20 +10,20 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		super.getState((power) => super.getBrightness((brightness) => {
+		super.getState((value) => super.getBrightness((brightness) => {
 
-			this.power = power || false;
+			this.value = value || false;
 			this.brightness = brightness || 100;
 
 			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
 			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
-			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 		}));
 
 		this.changeHandler = (state) => 
 		{
-			state.power = state.value;
+			state.value = state.value;
 
 			this.setToCurrentBrightness(state, () => {
 
@@ -48,20 +48,20 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	{
 		super.getState((value) => {
 
-			callback(null, value != null ? value : this.power);
+			callback(null, value != null ? value : this.value);
 
 			if(value != null)
 			{
-				this.power = value;
+				this.value = value;
 				
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
 			}
 		});
 	}
 	
 	setState(value, callback)
 	{
-		this.setToCurrentBrightness({ power : value }, 
+		this.setToCurrentBrightness({ value : value }, 
 			() => super.setState(value, 
 			() => callback()));
 	}
@@ -88,9 +88,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setToCurrentBrightness(state, callback)
 	{
-		if(state.power != null && this.power != state.power)
+		if(state.value != null && this.value != state.value)
 		{
-			this.power = state.power;
+			this.value = state.value;
 
 			this.changed = true;
 		}
@@ -108,14 +108,14 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.running = true;
 
-				DeviceManager.fetchRequests({ power : this.power, brightness : this.brightness }, this).then((result) => {
+				DeviceManager.fetchRequests({ value : this.value, brightness : this.brightness }, this).then((result) => {
 
 					if(this.changed && result == null)
 					{
-						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					}
 	
-					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
+					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.value, brightness : this.brightness });
 					
 					if(callback != null)
 					{

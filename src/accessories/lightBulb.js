@@ -10,11 +10,11 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		super.getState((power) => {
+		super.getState((value) => {
 
-			this.power = power || false;
+			this.value = value || false;
 
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
 
 		}, true);
 
@@ -35,24 +35,24 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 			if(value != null)
 			{
-				this.power = value;
+				this.value = value;
 			}
 				
-			callback(null, this.power);
+			callback(null, this.value);
 
 		}, true);
 	}
 	
 	setState(value, callback)
 	{
-		DeviceManager.fetchRequests({ power : value }, this).then((result) => {
+		DeviceManager.fetchRequests({ value : value }, this).then((result) => {
 
 			if(result == null)
 			{
-				this.power = value;
+				this.value = value;
 
-				super.setState(this.power, 
-					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
+				super.setState(this.value, 
+					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
 			}
 
 			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });

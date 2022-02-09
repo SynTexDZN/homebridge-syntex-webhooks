@@ -12,9 +12,9 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		
 		this.options.spectrum = serviceConfig.spectrum || 'HSL';
 		
-		super.getState((power) => super.getHue((hue) => super.getSaturation((saturation) => super.getBrightness((brightness) => {
+		super.getState((value) => super.getHue((hue) => super.getSaturation((saturation) => super.getBrightness((brightness) => {
 
-			this.power = power || false;
+			this.value = value || false;
 			this.hue = hue || 0;
 			this.saturation = saturation || 100;
 			this.brightness = brightness || 50;
@@ -24,13 +24,13 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			this.service.getCharacteristic(this.Characteristic.Saturation).updateValue(this.saturation);
 			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
-			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 		
 		}))));
 
 		this.changeHandler = (state) => {
 
-			state.power = state.value;
+			state.value = state.value;
 
 			this.setToCurrentColor(state, () => {
 
@@ -69,20 +69,20 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	{
 		super.getState((value) => {
 
-			callback(null, value != null ? value : this.power);
+			callback(null, value != null ? value : this.value);
 
 			if(value != null)
 			{
-				this.power = value;
+				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', hue: ' + super.getValue('hue') +  ', saturation: ' + super.getValue('saturation') + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', hue: ' + super.getValue('hue') +  ', saturation: ' + super.getValue('saturation') + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
 			}
 		});
 	}
 	
 	setState(value, callback)
 	{
-		this.setToCurrentColor({ power : value }, 
+		this.setToCurrentColor({ value : value }, 
 			() => super.setState(value, 
 			() => callback()));
 	}
@@ -149,9 +149,9 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 	setToCurrentColor(state, callback)
 	{
-		if(state.power != null && this.power != state.power)
+		if(state.value != null && this.value != state.value)
 		{
-			this.power = state.power;
+			this.value = state.value;
 
 			this.changed = true;
 		}
@@ -183,14 +183,14 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.running = true;
 
-				DeviceManager.fetchRequests({ power : this.power, hue : this.hue, saturation : this.saturation, brightness : this.brightness }, this).then((result) => {
+				DeviceManager.fetchRequests({ value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness }, this).then((result) => {
 
 					if(this.changed && result == null)
 					{
-						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					}
 	
-					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
+					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
 					
 					if(callback != null)
 					{
