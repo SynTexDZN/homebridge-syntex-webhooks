@@ -40,7 +40,9 @@ It stores accessory data you can request to display the content on your website 
         "baseDirectory": "/var/homebridge/SynTex",
         "options": {
             "port": 1710,
-            "language": "us",
+            "language": "us"
+        },
+        "log": {
             "debug": false
         },
         "accessories": [
