@@ -114,11 +114,11 @@ module.exports = class DeviceManager
 
 								this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + '] ');
 							
-							}.bind({ url : theRequest.url, logger : this.logger })).catch(function(err) {
+							}.bind({ url : urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), logger : this.logger })).catch(function(err) {
 
 								this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
 							
-							}.bind({ url : theRequest.url, logger : this.logger })).then(function() {
+							}.bind({ url : urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), logger : this.logger })).then(() => {
 
 								finished++;
 
@@ -134,11 +134,11 @@ module.exports = class DeviceManager
 
 								this.logger.log('success', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + '] ');
 							
-							}.bind({ url : theRequest.url, logger : this.logger })).catch(function(err) {
+							}.bind({ url : urlToCall + state.brightness, logger : this.logger })).catch(function(err) {
 
 								this.logger.log('error', accessory.id, accessory.letters, '[' + accessory.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
 							
-							}.bind({ url : theRequest.url, logger : this.logger })).then(function() {
+							}.bind({ url : urlToCall + state.brightness, logger : this.logger })).then(() => {
 
 								finished++;
 
