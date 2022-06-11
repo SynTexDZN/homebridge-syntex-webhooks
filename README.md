@@ -10,8 +10,14 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 It stores accessory data you can request to display the content on your website / app.
 
 
+## Core Features
+- **Device Control:** Create virtual accessory for your Homebridge.
+- **HTTP Access:** Update and read device states via HTTP calls.
+- **Automation:** We integrated our powerful automation API for fast and complex automation.
+
+
 ## Troubleshooting
-#### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex-knx?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-knx/issues)
+#### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex/issues)
 - `Report` us your `Issues`
 - `Join` our `Discord Server`
 #### [![Discord](https://img.shields.io/discord/442095224953634828?color=5865F2&logoColor=white&label=discord&logo=discord&style=for-the-badge)](https://discord.gg/XUqghtw4DE)
@@ -49,110 +55,122 @@ It stores accessory data you can request to display the content on your website 
             {
                 "id": "sensor1",
                 "name": "Contact",
-                "services": "contact"
+                "services": [
+                    { "type": "contact" }
+                ]
             },
             {
                 "id": "EC:FA:BC:59:3F:3C",
                 "name": "Climate",
                 "services": [
-                    "temperature",
-                    "humidity"
+                    { "type": "temperature" },
+                    { "type": "humidity" }
                 ]
             },
             {
                 "id": "multi1",
                 "name": "Multi Switch",
                 "services": [
-                    {"type": "switch", "name": "First"},
-                    {"type": "switch", "name": "Second"}
+                    { "type": "switch", "name": "First" },
+                    { "type": "switch", "name": "Second" }
                 ]
             },
             {
                 "id": "multi2",
                 "name": "Multi Device",
                 "services": [
-                    {"type": "switch", "name": "First"},
-                    {"type": "motion", "name": "Second"},
-                    {"type": "light", "name": "Third"},
-                    {"type": "leak", "name": "Leak"},
-                    {"type": "smoke", "name": "Smoke"},
-                    {"type": "occupancy", "name": "Present"}
+                    { "type": "switch", "name": "First" },
+                    { "type": "motion", "name": "Second" },
+                    { "type": "light", "name": "Third" },
+                    { "type": "leak", "name": "Leak" },
+                    { "type": "smoke", "name": "Smoke" },
+                    { "type": "occupancy", "name": "Present" }
                 ]
             },
             {
                 "id": "EC:FA:BC:59:3F:3F",
                 "name": "Switch",
-                "services": {
-                    "type": "switch",
-                    "requests": [
-                        {
-                            "trigger": "on",
-                            "method": "GET",
-                            "url": "http://192.168.1.100/switch?state=true"
-                        },
-                        {
-                            "trigger": "off",
-                            "method": "GET",
-                            "url": "http://192.168.1.100/switch?state=false"
-                        }
-                    ]
-                }
+                "services": [
+                    {
+                        "type": "switch",
+                        "requests": [
+                            {
+                                "trigger": "on",
+                                "method": "GET",
+                                "url": "http://192.168.1.100/switch?state=true"
+                            },
+                            {
+                                "trigger": "off",
+                                "method": "GET",
+                                "url": "http://192.168.1.100/switch?state=false"
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "id": "EC:FA:BC:59:3F:30",
                 "name": "Relais",
-                "services": {
-                    "type": "relais",
-                    "requests": [
-                        {
-                            "trigger": "on",
-                            "method": "GET",
-                            "url": "http://192.168.1.100/switch?state=true"
-                        },
-                        {
-                            "trigger": "off",
-                            "method": "GET",
-                            "url": "http://192.168.1.100/switch?state=false"
-                        }
-                    ]
-                }
+                "services": [
+                    {
+                        "type": "relais",
+                        "requests": [
+                            {
+                                "trigger": "on",
+                                "method": "GET",
+                                "url": "http://192.168.1.100/switch?state=true"
+                            },
+                            {
+                                "trigger": "off",
+                                "method": "GET",
+                                "url": "http://192.168.1.100/switch?state=false"
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "id": "light1",
                 "name": "Dummy Dimmer",
-                "services": {
-                    "type": "dimmer",
-                    "requests": [
-                        {
-                            "trigger": "dimmer",
-                            "method": "GET",
-                            "url": "http://192.168.1.100/brightness="
-                        }
-                    ]
-                }
+                "services": [
+                    {
+                        "type": "dimmer",
+                        "requests": [
+                            {
+                                "trigger": "dimmer",
+                                "method": "GET",
+                                "url": "http://192.168.1.100/brightness="
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "id": "light1",
                 "name": "Dummy Light",
-                "services": {
-                    "type": "rgb",
-                    "spectrum":  "RGB",
-                    "requests": [
-                        {
-                            "trigger": "color",
-                            "method": "GET",
-                            "url": "http://192.168.1.100/color"
-                        }
-                    ]
-                }
+                "services": [
+                    {
+                        "type": "rgb",
+                        "spectrum":  "RGB",
+                        "requests": [
+                            {
+                                "trigger": "color",
+                                "method": "GET",
+                                "url": "http://192.168.1.100/color"
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "id": "event1",
                 "name": "Events",
-                "services": {
-                    "type": "statelessswitch",
-                    "buttons": 1
-                }
+                "services": [
+                    {
+                        "type": "statelessswitch",
+                        "buttons": 1
+                    }
+                ]
             }
         ]
     }
@@ -160,22 +178,25 @@ It stores accessory data you can request to display the content on your website 
 ```
 
 ### Required Parameters
-- `platform` is always `SynTexMagicHome`
+- `platform` is always `SynTexWebHooks`
 - `baseDirectory` The path where cache data is stored.
 - `accessories` For the accessory config.
 
 ### Optional Parameters
 - `port` To control your accessory over HTTP calls.
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
-- `debug` For further information because of troubleshooting and bug reports.
+
+### Log Parameters
+- Disable certain log level: `error`, `warn`, `info`, `read`, `update`, `success` and `debug` *( for example `debug: false` )*
 
 ### Accessory Config
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `real mac address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
-- `services` Should be one of these: `airquality`, `contact`, `dimmer`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `statelessswitch`, `switch`, `temperature`
+- `services` see service config below.
 
 ### Service Config
+- `type` should be one of these: `airquality`, `contact`, `dimmer`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `statelessswitch`, `switch`, `temperature`
 - For Boolean Devices you can add `requests` *( trigger can be: on, off, color )*
 - For RGB Lights you can add `spectrum` attribute *( to convert to the right output format: RGB / HSL )*
 - For Stateless Switches you have to add `buttons` attribute.
@@ -199,12 +220,12 @@ https://github.com/SynTexDZN/homebridge-syntex
 - For boolean devices: `true` / `false` *( contact, leak, motion, occupancy, outlet, rain, smoke, switch )*
 - For numeric devices: `10` / `12.4` *( airquality, humidity, light, temperature )*
 - For all light bulbs: `true` / `false` *( dimmer, led, rgb )*
-- For accessories with multiple service types add `&type=`  **SERVICETYPE**
-- For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
-*( First of that type = 0, second = 1 .. )*
 - For dimmable and colored lights add `&brightness=`  **New Brightness** *( has to be a number )*
 - For colored lights add `&hue=`  **New Hue** *( has to be a number )*
 - For colored lights add `&saturation=`  **New Saturation** *( has to be a number )*
+- For accessories with multiple service types add `&type=`  **SERVICETYPE**
+- For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
+*( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1710/devices?id=multi2&type=light&counter=0&value=20.5`\
 *( Updates the value of `Third` to `20.5 LUX` from the Example Config )*
@@ -221,7 +242,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 *( Reads the value of `Second` from the Example Config )*
 
 
-## Remove Tuya Device
+## Remove HTTP Device
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&remove=CONFIRM`
 2. Insert the `Bridge IP` and `Device ID`
 
@@ -281,7 +302,7 @@ To enable the automation module you have to create a file named `automation.json
         }
       ]
     }
-  }
+  ]
 }
 ```
 
@@ -308,6 +329,7 @@ The letters are split into two parts *( numbers )*
 - D : Humidity
 - E : Rain
 - F : Light
+- G : Blind
 - 0 : Occupancy
 - 1 : Smoke
 - 2 : Airquality
