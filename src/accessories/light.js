@@ -6,23 +6,14 @@ module.exports = class SynTexLightService extends LightService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		super.getState((value) => {
+		this.changeHandler = (state) => {
 
-			this.value = value || 0.0001;
-
-			this.service.getCharacteristic(this.Characteristic.CurrentAmbientLightLevel).updateValue(this.value);
-
-		}, true);
-
-		this.changeHandler = (state) =>
-		{
 			if(state.value != null)
 			{
 				this.value = state.value;
 
-				this.service.getCharacteristic(this.Characteristic.CurrentAmbientLightLevel).updateValue(state.value);
-
-				super.setValue('value', state.value, true);
+				super.setState(state.value,
+					() => this.service.getCharacteristic(this.Characteristic.CurrentAmbientLightLevel).updateValue(state.value), true);
 			
 				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 			}
@@ -31,15 +22,6 @@ module.exports = class SynTexLightService extends LightService
 
 	getState(callback)
 	{
-		super.getState((value) => {
-
-			if(value != null)
-			{
-				this.value = value;
-			}
-				
-			callback(null, this.value);
-
-		}, true);
+		super.getState(() => callback(null, this.value), true);
 	}
 };

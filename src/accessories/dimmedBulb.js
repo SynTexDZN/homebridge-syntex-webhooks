@@ -1,42 +1,27 @@
 const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform');
 
-let DeviceManager;
-
 module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		DeviceManager = manager.DeviceManager;
-		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		super.getState((value) => super.getBrightness((brightness) => {
+		this.DeviceManager = manager.DeviceManager;
 
-			this.value = value || false;
-			this.brightness = brightness || 100;
+		this.changeHandler = (state) => {
 
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
-			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
-
-			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-		}));
-
-		this.changeHandler = (state) => 
-		{
 			this.setToCurrentBrightness(state, () => {
 
 				if(state.value != null)
 				{
-					this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
-
-					super.setState(state.value, () => {});
+					super.setState(state.value,
+						() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
 				}
 
 				if(state.brightness != null)
 				{
-					this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness);
-
-					super.setBrightness(state.brightness, () => {});
+					super.setBrightness(state.brightness,
+						() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
 				}
 			});
 		};
@@ -44,44 +29,22 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	getState(callback)
 	{
-		super.getState((value) => {
-
-			callback(null, value != null ? value : this.value);
-
-			if(value != null)
-			{
-				this.value = value;
-				
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + super.getValue('brightness') + '] ( ' + this.id + ' )');
-			}
-		});
+		super.getState(() => callback(null, this.value), true);
 	}
 	
 	setState(value, callback)
 	{
-		this.setToCurrentBrightness({ value }, 
-			() => super.setState(value, 
-			() => callback()));
+		this.setToCurrentBrightness({ value }, () => super.setState(value, () => callback()));
 	}
 
 	getBrightness(callback)
 	{
-		super.getBrightness((value) => {
-
-			if(value != null)
-			{
-				this.brightness = value;
-			}
-				
-			callback(null, this.brightness);
-		});
+		super.getBrightness(() => callback(null, this.brightness));
 	}
 
-	setBrightness(value, callback)
+	setBrightness(brightness, callback)
 	{
-		this.setToCurrentBrightness({ brightness : value }, 
-			() => super.setBrightness(value, 
-			() => callback()));
+		this.setToCurrentBrightness({ brightness }, () => super.setBrightness(brightness, () => callback()));
 	}
 
 	setToCurrentBrightness(state, callback)
@@ -106,7 +69,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.running = true;
 
-				DeviceManager.fetchRequests({ value : this.value, brightness : this.brightness }, this).then((result) => {
+				this.DeviceManager.fetchRequests({ value : this.value, brightness : this.brightness }, this).then((result) => {
 
 					if(this.changed && result == null)
 					{

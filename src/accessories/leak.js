@@ -1,36 +1,25 @@
 const { LeakService } = require('homebridge-syntex-dynamic-platform');
 
-let DeviceManager;
-
 module.exports = class SynTexLeakService extends LeakService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		DeviceManager = manager.DeviceManager;
-		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		super.getState((value) => {
+		this.DeviceManager = manager.DeviceManager;
 
-			this.value = value || false;
+		this.changeHandler = (state) => {
 
-			this.service.getCharacteristic(this.Characteristic.LeakDetected).updateValue(this.value);
-
-		}, true);
-
-		this.changeHandler = (state) =>
-		{
 			if(state.value != null)
 			{
-				DeviceManager.fetchRequests({ value : state.value }, this).then((result) => {
+				this.DeviceManager.fetchRequests(state, this).then((result) => {
 
 					if(result == null)
 					{
 						this.value = state.value;
 
-						this.service.getCharacteristic(this.Characteristic.LeakDetected).updateValue(state.value);
-
-						super.setValue('value', state.value, true);
+						super.setState(state.value,
+							() => this.service.getCharacteristic(this.Characteristic.LeakDetected).updateValue(state.value), true);
 					}
 
 					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
@@ -41,15 +30,6 @@ module.exports = class SynTexLeakService extends LeakService
 
 	getState(callback)
 	{
-		super.getState((value) => {
-
-			if(value != null)
-			{
-				this.value = value;
-			}
-				
-			callback(null, this.value);
-
-		}, true);
+		super.getState(() => callback(null, this.value), true);
 	}
 };
