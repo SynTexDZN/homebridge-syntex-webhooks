@@ -8,6 +8,9 @@ module.exports = class SynTexBlindService extends BlindService
 
 		this.DeviceManager = manager.DeviceManager;
 
+		this.timeDelayUp = serviceConfig.delay != null && serviceConfig.delay.up != null ? serviceConfig.delay.up : 11000;
+		this.timeDelayDown = serviceConfig.delay != null && serviceConfig.delay.down != null ? serviceConfig.delay.down : 10000;
+
 		this.changeHandler = (state) => {
 
 			if(state.value != null)
@@ -26,20 +29,12 @@ module.exports = class SynTexBlindService extends BlindService
 	{
 		this.DeviceManager.fetchRequests({ value }, this).then((result) => {
 
-			console.log(result == null, value);
-
 			if(result == null)
 			{
 				this.value = value;
 
-				console.log('X1', super.setTargetPosition != null);
-
-				super.setTargetPosition(value, 
-					() => {
-						console.log('X3');
-						
-						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + value + '] ( ' + this.id + ' )')
-					});
+				super.setTargetPosition(value,
+					() => this.updatePosition(value), true);
 			}
 
 			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
@@ -56,5 +51,24 @@ module.exports = class SynTexBlindService extends BlindService
 	getPositionState(callback)
 	{
 		callback(null, this.position);
+	}
+
+	updatePosition(value)
+	{
+		this.position = value > 0 ? this.Characteristic.PositionState.INCREASING : this.Characteristic.PositionState.DECREASING;
+
+		this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(value);
+		this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.position);
+
+		super.setPositionState(this.position, () => setTimeout(() => {
+
+			this.position = this.Characteristic.PositionState.STOPPED;
+
+			this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.position);
+
+			super.setPositionState(this.position, () => {});
+
+		}, value > 0 ? this.timeDelayUp : this.timeDelayDown));
 	}
 };
