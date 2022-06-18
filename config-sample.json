@@ -41,7 +41,7 @@
 						{ "type": "switch", "name": "First" },
 						{ "type": "motion", "name": "Second" },
 						{ "type": "light", "name": "Third" },
-						{ "type": "rain", "name": "Leak" },
+						{ "type": "leak", "name": "Leak" },
 						{ "type": "smoke", "name": "Smoke" },
 						{ "type": "occupancy", "name": "Present" }
 					]
@@ -56,12 +56,12 @@
 								{
 									"trigger": "on",
 									"method": "GET",
-									"url": "http://192.168.178.100/switch?state=true"
+									"url": "http://192.168.1.100/switch?state=true"
 								},
 								{
 									"trigger": "off",
 									"method": "GET",
-									"url": "http://192.168.178.100/switch?state=false"
+									"url": "http://192.168.1.100/switch?state=false"
 								}
 							]
 						}
@@ -77,12 +77,12 @@
 								{
 									"trigger": "on",
 									"method": "GET",
-									"url": "http://192.168.178.101/switch?state=true"
+									"url": "http://192.168.1.100/switch?state=true"
 								},
 								{
 									"trigger": "off",
 									"method": "GET",
-									"url": "http://192.168.178.101/switch?state=false"
+									"url": "http://192.168.1.100/switch?state=false"
 								}
 							]
 						}
@@ -98,7 +98,7 @@
 								{
 									"trigger": "dimmer",
 									"method": "GET",
-									"url": "http://192.168.178.163/brightness="
+									"url": "http://192.168.1.100/brightness="
 								}
 							]
 						}
@@ -115,7 +115,7 @@
 								{
 									"trigger": "color",
 									"method": "GET",
-									"url": "http://192.168.178.163/color"
+									"url": "http://192.168.1.100/color"
 								}
 							]
 						}
@@ -128,6 +128,19 @@
 						{
 							"type": "statelessswitch",
 							"buttons": 1
+						}
+					]
+				},
+				{
+					"id": "blind1",
+					"name": "Blinid",
+					"services": [
+						{
+							"type": "blind",
+							"delay": {
+								"up": 11000,
+								"down": 10000
+							}
 						}
 					]
 				}
