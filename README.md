@@ -237,7 +237,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 - For colored lights add `&hue=`  **New Hue** *( has to be a number )*
 - For colored lights add `&saturation=`  **New Saturation** *( has to be a number )*
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
-- For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
+- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1710/devices?id=multi2&type=light&counter=0&value=20.5`\
@@ -248,7 +248,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
-- For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
+- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1710/devices?id=multi1&type=switch&counter=1`\
@@ -258,6 +258,9 @@ https://github.com/SynTexDZN/homebridge-syntex
 ## Remove HTTP Device
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&remove=CONFIRM`
 2. Insert the `Bridge IP` and `Device ID`
+- To remove a specific service add `&type=`  **SERVICETYPE**
+- To remove a specific service from an accessory with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
+*( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1710/devices?id=sensor1&remove=CONFIRM`\
 *( Removes `Contact` from the Example Config )*
