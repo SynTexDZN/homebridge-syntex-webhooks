@@ -27,19 +27,20 @@ module.exports = class SynTexBlindService extends BlindService
 	
 	setTargetPosition(value, callback)
 	{
-		this.DeviceManager.fetchRequests({ value }, this).then((result) => {
+		this.DeviceManager.fetchRequests({ value }, this).then((success) => {
 
-			if(result == null)
+			if(success)
 			{
 				this.value = value;
 
-				super.setTargetPosition(value,
-					() => this.updatePosition(value), true);
+				super.setTargetPosition(value, () => callback(this.updatePosition(value)), true);
+
+				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
 			}
-
-			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
-
-			callback(result);
+			else
+			{
+				callback(new Error('Request failed'));
+			}
 		});
 	}
 

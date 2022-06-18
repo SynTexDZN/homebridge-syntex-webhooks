@@ -69,9 +69,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.running = true;
 
-				this.DeviceManager.fetchRequests({ value : this.value, brightness : this.brightness }, this).then((result) => {
+				this.DeviceManager.fetchRequests({ value : this.value, brightness : this.brightness }, this).then((success) => {
 
-					if(this.changed && result == null)
+					if(success && this.changed)
 					{
 						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					}

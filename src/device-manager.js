@@ -91,11 +91,11 @@ module.exports = class DeviceManager
 								{
 									if(success == 0 && this.typeManager.letterToType(accessory.letters) == 'relais')
 									{
-										resolve(new Error('Request to [' + this.url + '] was not succesful.'));
+										resolve(false);
 									}
 									else
 									{
-										resolve(null);
+										resolve(true);
 									}
 								}
 
@@ -124,7 +124,7 @@ module.exports = class DeviceManager
 
 								if(finished >= counter)
 								{
-									resolve(null);
+									resolve(true);
 								}
 							});
 						}
@@ -144,7 +144,7 @@ module.exports = class DeviceManager
 
 								if(finished >= counter)
 								{
-									resolve(null);
+									resolve(true);
 								}
 							});
 						}
@@ -154,7 +154,7 @@ module.exports = class DeviceManager
 
 			if(counter == 0)
 			{
-				resolve(null);
+				resolve(true);
 			}
 		});
 	}

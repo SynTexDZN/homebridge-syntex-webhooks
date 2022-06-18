@@ -25,19 +25,20 @@ module.exports = class SynTexOutletService extends OutletService
 	
 	setState(value, callback)
 	{
-		this.DeviceManager.fetchRequests({ value }, this).then((result) => {
+		this.DeviceManager.fetchRequests({ value }, this).then((success) => {
 
-			if(result == null)
+			if(success)
 			{
 				this.value = value;
 
-				super.setState(value, 
-					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + value + '] ( ' + this.id + ' )'));
+				super.setState(value, () => callback(), true);
+
+				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
 			}
-
-			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
-
-			callback(result);
+			else
+			{
+				callback(new Error('Request failed'));
+			}
 		});
 	}
 };

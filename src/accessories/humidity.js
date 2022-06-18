@@ -14,9 +14,9 @@ module.exports = class SynTexHumidityService extends HumidityService
 
 				super.setState(state.value,
 					() => this.service.getCharacteristic(this.Characteristic.CurrentRelativeHumidity).updateValue(state.value), true);
-
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 			}
+
+			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 		};
 	}
 

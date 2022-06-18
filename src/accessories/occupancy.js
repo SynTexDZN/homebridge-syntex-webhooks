@@ -10,21 +10,18 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 
 		this.changeHandler = (state) => {
 
-			if(state.value != null)
-			{
-				this.DeviceManager.fetchRequests(state, this).then((result) => {
+			this.DeviceManager.fetchRequests(state, this).then((success) => {
 
-					if(result == null)
-					{
-						this.value = state.value;
+				if(success && state.value != null)
+				{
+					this.value = state.value;
 
-						super.setState(state.value,
-							() => this.service.getCharacteristic(this.Characteristic.OccupancyDetected).updateValue(state.value), true);
-					}
+					super.setState(state.value,
+						() => this.service.getCharacteristic(this.Characteristic.OccupancyDetected).updateValue(state.value), true);
+				}
 
-					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
-				});
-			}
+				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+			});
 		};
 	}
 
