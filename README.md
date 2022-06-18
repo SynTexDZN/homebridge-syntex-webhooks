@@ -274,47 +274,47 @@ To enable the automation module you have to create a file named `automation.json
 {
     "id": "automation",
     "automation": [
-    {
-        "id": 0,
-        "name": "Demo Automation",
-        "active": true,
-        "trigger": [
         {
-            "id": "multi2",
-            "name": "Multi Device",
-            "letters": "F0",
-            "plugin": "SynTexWebHooks",
-            "operation": "<",
-            "value": "1000"
+            "id": 0,
+            "name": "Demo Automation",
+            "active": true,
+            "trigger": [
+                {
+                    "id": "multi2",
+                    "name": "Multi Device",
+                    "letters": "F0",
+                    "plugin": "SynTexWebHooks",
+                    "operation": "<",
+                    "value": "1000"
+                }
+            ],
+            "condition": [
+                {
+                    "id": "multi1",
+                    "name": "Multi Switch",
+                    "letters": "41",
+                    "plugin": "SynTexWebHooks",
+                    "operation": "=",
+                    "value": "false"
+                }
+            ],
+            "result": [
+                {
+                    "id": "light1",
+                    "name": "Dummy Light",
+                    "letters": "30",
+                    "plugin": "SynTexWebHooks",
+                    "operation": "=",
+                    "value": "true",
+                    "hue": "218",
+                    "saturation": "100",
+                    "brightness": "100"
+                },
+                {
+                    "url": "http://192.168.1.100:1710/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
+                }
+            ]
         }
-        ],
-        "condition": [
-        {
-            "id": "multi1",
-            "name": "Multi Switch",
-            "letters": "41",
-            "plugin": "SynTexWebHooks",
-            "operation": "=",
-            "value": "false"
-        }
-        ],
-        "result": [
-        {
-            "id": "light1",
-            "name": "Dummy Light",
-            "letters": "30",
-            "plugin": "SynTexWebHooks",
-            "operation": "=",
-            "value": "true",
-            "hue": "218",
-            "saturation": "100",
-            "brightness": "100"
-        },
-        {
-            "url": "http://192.168.1.100:1710/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
-        }
-        ]
-    }
     ]
 }
 ```
