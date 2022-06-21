@@ -133,7 +133,7 @@
 				},
 				{
 					"id": "blind1",
-					"name": "Blinid",
+					"name": "Blind",
 					"services": [
 						{
 							"type": "blind",

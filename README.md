@@ -174,7 +174,7 @@ It stores accessory data you can request to display the content on your website 
             },
             {
                 "id": "blind1",
-                "name": "Blinid",
+                "name": "Blind",
                 "services": [
                     {
                         "type": "blind",
@@ -241,7 +241,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 *( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1710/devices?id=multi2&type=light&counter=0&value=20.5`\
-*( Updates the value of `Third` to `20.5 LUX` from the Example Config )*
+*( Updates the value of `Third` from the Example Config to `20.5 LUX` )*
 
 
 ## Read HTTP Device Values
@@ -262,20 +262,19 @@ https://github.com/SynTexDZN/homebridge-syntex
 - To remove a specific service from an accessory with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
 
-**Example:**  `http://homebridge.local:1710/devices?id=sensor1&remove=CONFIRM`\
-*( Removes `Contact` from the Example Config )*
+**Example:**  `http://homebridge.local:1710/devices?id=ABCDEF1234567890&remove=CONFIRM`\
+*( Removes `ABCDEF1234567890` from the Config and Home App )*
 
 
 ---
 
 
 ## Automation
-To enable the automation module you have to create a file named `automation.json` in your `baseDirectory >> automation` or install the `homebridge-syntex` plugin to create them via UI *( only between syntex plugins )*<br><br>
+To enable the automation module you have to create a file named `automation.json` in your `baseDirectory >> automation` or install the `homebridge-syntex` plugin to create them via UI *( only between SynTex plugins )*<br><br>
 **Example:**  For manual configuration update your `automation.json` file. See snippet below.   
 
 ```json
 {
-    "id": "automation",
     "automation": [
         {
             "id": 0,
@@ -327,25 +326,18 @@ To enable the automation module you have to create a file named `automation.json
 - `name` The name of the accessory.
 - `letters` See letter configuration below.
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
-- `value` The state of your accessory.
+- `value` The state value of your accessory.
 
 ### Optional Parameters
 - `plugin` Use the platform name of the plugin *( see supported plugins below )*
-- `hue` is used for RGB lights.
-- `saturation` is used for RGB lights.
-- `brightness` is used for dimmable lights.
+- `brightness` can be used for dimmable / RGB lights.
+- `hue` can be used for RGB lights.
+- `saturation` can be used for RGB lights.
 
 ### Letter Configuration
-The letters are split into two parts *( numbers )*
+The letters are split into two parts *( characters )*
 
 **1. Service Type**
-- A : Contact
-- B : Motion
-- C : Temperature
-- D : Humidity
-- E : Rain
-- F : Light
-- G : Blind
 - 0 : Occupancy
 - 1 : Smoke
 - 2 : Airquality
@@ -356,6 +348,13 @@ The letters are split into two parts *( numbers )*
 - 7 : Outlet
 - 8 : LED
 - 9 : Dimmer
+- A : Contact
+- B : Motion
+- C : Temperature
+- D : Humidity
+- E : Rain
+- F : Light
+- G : Blind
 
 **2. Duplicate Counter**
 - If there are more services of the same type the counter indicates which is which
@@ -365,7 +364,7 @@ The letters are split into two parts *( numbers )*
 
 ### Supported Plugins
 - SynTexKNX *( `homebridge-syntex-knx` )*
-- SynTexMagicHome *( `homebridge-syntex-webhooks` )*
+- SynTexMagicHome *( `homebridge-syntex-magichome` )*
 - SynTexTuya *( `homebridge-syntex-tuya` )*
 - SynTexWebHooks *( `homebridge-syntex-webhooks` )*
 
@@ -386,4 +385,4 @@ The letters are split into two parts *( numbers )*
 - Temperature Sensor
 - Switch / Relais / Outlet
 - LED Lights / Dimmable Lights / RGB Lights
-- Window Coverings
+- Blinds / Shutters / Window Coverings
