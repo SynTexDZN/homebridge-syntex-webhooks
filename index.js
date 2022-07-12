@@ -20,7 +20,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 		{
 			this.api.on('didFinishLaunching', () => {
 
-				DeviceManager = new DeviceManager(this.logger, this.TypeManager);
+				DeviceManager = new DeviceManager(this);
 
 				this.loadAccessories();
 			});

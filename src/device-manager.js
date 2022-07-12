@@ -2,10 +2,63 @@ const axios = require('axios'), convert = require('color-convert');
 
 module.exports = class DeviceManager
 {
-	constructor(logger, typeManager)
+	constructor(platform)
 	{
-		this.logger = logger;
-		this.typeManager = typeManager;
+		this.connections = {};
+
+		this.logger = platform.logger;
+		this.typeManager = platform.TypeManager;
+
+		this.accessories = platform.accessories;
+
+		if(this.checkInterval == null)
+		{
+			this.checkInterval = setInterval(() => this.pingAccessories(), 30000);
+
+			this.pingAccessories();
+		}
+	}
+
+	pingAccessories()
+	{
+		for(const accessory of this.accessories)
+		{
+			if(accessory[1].pingURL != null)
+			{
+				this.checkConnections(accessory[1]);
+			}
+		}
+	}
+
+	checkConnections(accessory)
+	{
+		var url = accessory.pingURL;
+
+		if(this.connections[url] == null)
+		{
+			this.connections[url] = 0;
+		}
+
+		axios.get(url, { timeout : 25000 }).then(() => {
+
+			this.connections[url] = 0;
+
+			if(accessory.setConnectionState != null)
+			{
+				accessory.setConnectionState(true, null, true);
+			}
+
+		}).catch(() => {
+
+			if(this.connections[url] < 2)
+			{
+				this.connections[url]++;
+			}
+			else if(accessory.setConnectionState != null)
+			{
+				accessory.setConnectionState(false, null, true);
+			}
+		});
 	}
 
 	fetchRequests(state, accessory)

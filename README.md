@@ -106,7 +106,8 @@ It stores accessory data you can request to display the content on your website 
                             }
                         ]
                     }
-                ]
+                ],
+                "pingURL": "http://192.168.1.100/ping"
             },
             {
                 "id": "EC:FA:BC:59:3F:30",
@@ -127,7 +128,8 @@ It stores accessory data you can request to display the content on your website 
                             }
                         ]
                     }
-                ]
+                ],
+                "pingURL": "http://192.168.1.100/ping"
             },
             {
                 "id": "light1",
@@ -143,7 +145,8 @@ It stores accessory data you can request to display the content on your website 
                             }
                         ]
                     }
-                ]
+                ],
+                "pingURL": "http://192.168.1.100/ping"
             },
             {
                 "id": "light2",
@@ -160,7 +163,8 @@ It stores accessory data you can request to display the content on your website 
                             }
                         ]
                     }
-                ]
+                ],
+                "pingURL": "http://192.168.1.100/ping"
             },
             {
                 "id": "event1",
@@ -207,6 +211,7 @@ It stores accessory data you can request to display the content on your website 
 - `id` has to be either a `real mac address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
 - `services` see service config below.
+- `pingURL` check the device connection.
 
 ### Service Config
 - `type` should be one of these: `airquality`, `blind`, `contact`, `dimmer`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `statelessswitch`, `switch`, `temperature`
