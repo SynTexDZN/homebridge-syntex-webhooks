@@ -10,7 +10,7 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 
 		this.changeHandler = (state) => {
 
-			this.DeviceManager.fetchRequests(state, this).then((success) => {
+			this.DeviceManager.fetchRequests(this, state).then((success) => {
 
 				if(success && state.value != null)
 				{

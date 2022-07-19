@@ -117,7 +117,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.running = true;
 
-				this.DeviceManager.fetchRequests({ value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness }, this).then((success) => {
+				this.DeviceManager.fetchRequests(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness }).then((success) => {
 
 					if(success && this.changed)
 					{

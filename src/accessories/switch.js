@@ -25,7 +25,7 @@ module.exports = class SynTexSwitchService extends SwitchService
 	
 	setState(value, callback)
 	{
-		this.DeviceManager.fetchRequests({ value }, this).then((success) => {
+		this.DeviceManager.fetchRequests(this, { value }).then((success) => {
 
 			if(success)
 			{
