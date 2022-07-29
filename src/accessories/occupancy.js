@@ -20,7 +20,7 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 						() => this.service.getCharacteristic(this.Characteristic.OccupancyDetected).updateValue(state.value), true);
 				}
 
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+				this.AutomationSystem.LogikEngine.runAutomation(this, state);
 			});
 		};
 	}

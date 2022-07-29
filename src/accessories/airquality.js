@@ -16,7 +16,7 @@ module.exports = class SynTexAirQualityService extends AirQualityService
 					() => this.service.getCharacteristic(this.Characteristic.AirQuality).updateValue(state.value), true);
 			}
 
-			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+			this.AutomationSystem.LogikEngine.runAutomation(this, state);
 		};
 	}
 

@@ -33,7 +33,7 @@ module.exports = class SynTexSwitchService extends SwitchService
 
 				super.setState(value, () => callback(), true);
 			
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}
 			else
 			{

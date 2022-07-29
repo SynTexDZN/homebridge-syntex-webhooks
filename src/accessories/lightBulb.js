@@ -33,7 +33,7 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 				super.setState(value, () => callback(), true);
 
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}
 			else
 			{

@@ -35,7 +35,7 @@ module.exports = class SynTexBlindService extends BlindService
 
 				super.setTargetPosition(value, () => callback(this.updatePosition(value)), true);
 
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}
 			else
 			{

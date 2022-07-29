@@ -124,7 +124,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					}
 	
-					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
+					this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
 					
 					if(callback != null)
 					{

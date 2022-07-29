@@ -20,7 +20,7 @@ module.exports = class SynTexLeakService extends LeakService
 						() => this.service.getCharacteristic(this.Characteristic.LeakDetected).updateValue(state.value), true);
 				}
 
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+				this.AutomationSystem.LogikEngine.runAutomation(this, state);
 			});
 		};
 	}
