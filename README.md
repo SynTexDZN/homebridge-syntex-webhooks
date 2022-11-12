@@ -1,4 +1,4 @@
-# Homebridge SynTex Webhooks
+# Homebridge SynTex WebHooks
 [![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex-webhooks?label=release&color=brightgree&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex-webhooks/beta?color=orange&label=beta&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
 [![NPM Downloads](https://img.shields.io/npm/dt/homebridge-syntex-webhooks?color=9944ee&&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-webhooks)
@@ -17,7 +17,7 @@ It stores accessory data you can request to display the content on your website 
 
 
 ## Troubleshooting
-#### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex/issues)
+#### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex-webhooks?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-webhooks/issues)
 - `Report` us your `Issues`
 - `Join` our `Discord Server`
 #### [![Discord](https://img.shields.io/discord/442095224953634828?color=5865F2&logoColor=white&label=discord&logo=discord&style=for-the-badge)](https://discord.gg/XUqghtw4DE)
@@ -371,7 +371,7 @@ To enable the automation module you have to create a file named `automation.json
                     "delay": 1000
                 },
                 {
-                    "url": "http://192.168.1.100:1710/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
+                    "url": "http://192.168.1.100:1710/devices?id=ABCDEF1234567890&value=true&brightness=100"
                 }
             ]
         }
