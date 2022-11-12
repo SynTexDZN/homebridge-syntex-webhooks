@@ -211,6 +211,7 @@ It stores accessory data you can request to display the content on your website 
 - `id` has to be either a `real mac address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
 - `services` The services of your accessory.<br><br>
+    - `name` could be anything.
     - `type` Define the service type *( `airquality`, `blind`, `contact`, `dimmer`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `statelessswitch`, `switch`, `temperature` )*
     - For Boolean Devices you can add `requests` *( trigger can be: on, off, color )*
     - For RGB Lights you can add `spectrum` attribute *( to convert to the right output format: RGB / HSL )*
