@@ -207,17 +207,15 @@ It stores accessory data you can request to display the content on your website 
 - Disable certain log level: `error`, `warn`, `info`, `read`, `update`, `success` and `debug` *( for example `debug: false` )*
 
 ### Accessory Config
-- Every device needs these parameters: `id`, `name` and `services` *( required )*
+- Every accessory needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `real mac address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
-- `services` see service config below.
+- `services` The services of your accessory.<br><br>
+    - `type` Define the service type *( `airquality`, `blind`, `contact`, `dimmer`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `statelessswitch`, `switch`, `temperature` )*
+    - For Boolean Devices you can add `requests` *( trigger can be: on, off, color )*
+    - For RGB Lights you can add `spectrum` attribute *( to convert to the right output format: RGB / HSL )*
+    - For Stateless Switches you have to add `buttons` attribute.<br><br>
 - `pingURL` check the device connection.
-
-### Service Config
-- `type` should be one of these: `airquality`, `blind`, `contact`, `dimmer`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `statelessswitch`, `switch`, `temperature`
-- For Boolean Devices you can add `requests` *( trigger can be: on, off, color )*
-- For RGB Lights you can add `spectrum` attribute *( to convert to the right output format: RGB / HSL )*
-- For Stateless Switches you have to add `buttons` attribute.
 
 
 ---
@@ -285,26 +283,61 @@ To enable the automation module you have to create a file named `automation.json
             "id": 0,
             "name": "Demo Automation",
             "active": true,
-            "trigger": [
-                {
-                    "id": "multi2",
-                    "name": "Multi Device",
-                    "letters": "F0",
-                    "plugin": "SynTexWebHooks",
-                    "operation": "<",
-                    "value": "1000"
-                }
-            ],
-            "condition": [
-                {
-                    "id": "multi1",
-                    "name": "Multi Switch",
-                    "letters": "41",
-                    "plugin": "SynTexWebHooks",
-                    "operation": "=",
-                    "value": "false"
-                }
-            ],
+            "trigger": {
+                "logic": "AND",
+                "groups": [
+                    {
+                        "logic": "OR",
+                        "blocks": [
+                            {
+                                "id": "multi2",
+                                "name": "Multi Device",
+                                "letters": "F0",
+                                "plugin": "SynTexWebHooks",
+                                "operation": "<",
+                                "state": {
+                                    "value": 1000
+                                }
+                            },
+                            {
+                                "operation": "=",
+                                "time": "16:00",
+                                "options": {
+                                    "stateLock": true
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "logic": "AND",
+                        "blocks": [
+                            {
+                                "id": "multi1",
+                                "name": "Multi Switch",
+                                "letters": "41",
+                                "plugin": "SynTexWebHooks",
+                                "operation": "=",
+                                "state": {
+                                    "value": false
+                                },
+                                "options": {
+                                    "stateLock": true
+                                }
+                            },
+                            {
+							    "operation": "=",
+                                "days": [
+                                    1,
+                                    2,
+                                    3,
+                                    4,
+                                    5
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
             "result": [
                 {
                     "id": "light1",
@@ -312,10 +345,30 @@ To enable the automation module you have to create a file named `automation.json
                     "letters": "30",
                     "plugin": "SynTexWebHooks",
                     "operation": "=",
-                    "value": "true",
-                    "hue": "218",
-                    "saturation": "100",
-                    "brightness": "100"
+                    "state": {
+                        "value": true,
+                        "hue": 218,
+                        "saturation": 100,
+                        "brightness": 100
+                    }
+                },
+                {
+                    "id": "extern1",
+                    "name": "Extern Accessory",
+                    "letters": "40",
+                    "bridge": "192.168.1.100",
+                    "plugin": "SynTexWebHooks",
+                    "operation": "=",
+                    "state": {
+                        "value": false
+                    },
+                    "options": {
+                        "stateLock": false
+                    }
+                },
+                {
+                    "operation": "=",
+                    "delay": 1000
                 },
                 {
                     "url": "http://192.168.1.100:1710/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
@@ -327,17 +380,43 @@ To enable the automation module you have to create a file named `automation.json
 ```
 
 ### Required Parameters
+- `id` A unique ID of your automation.
+- `name` The name of the automation.
+- `active` Enable / disable a single automation.
+- `trigger` What triggers the automation?<br><br>
+    - `logic` Define a logical operation for your groups *( `AND`, `OR` )*
+    - `groups` Logical layer one<br><br>
+        - `logic` Define a logical operation for your blocks *( `AND`, `OR` )*
+        - `blocks` Logical layer two<br><br>
+- `result` What happens when running an automation?<br><br>
+
+### Block Configuration
+#### Service Block ( Trigger, Result )
 - `id` is the same like in your config file *( or in your log )*
 - `name` The name of the accessory.
 - `letters` See letter configuration below.
+- `bridge` IP of your other bridge *( optional )*
+- `plugin` Use the platform name of the plugin *( optional, see supported plugins below )*
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
-- `value` The state value of your accessory.
+- `state` The state of your accessory.<br><br>
+    - `value` is used for the main characteristic.
+    - `brightness` can be used for dimmable / RGB lights.
+    - `hue` can be used for RGB lights.
+    - `saturation` can be used for RGB lights.
 
-### Optional Parameters
-- `plugin` Use the platform name of the plugin *( see supported plugins below )*
-- `brightness` can be used for dimmable / RGB lights.
-- `hue` can be used for RGB lights.
-- `saturation` can be used for RGB lights.
+#### Time Block ( Trigger )
+- `operation` Use the logical operands *( `>`, `<`, `=` )*
+- `time` Define a time point *( e.g. `16:00` )*
+
+#### Weekday Block ( Trigger )
+- `operation` Use the logical operands *( `=` )*
+- `days` Set the weekdays *( from `0` to `6` )*
+
+#### Delay Block ( Result )
+- `delay` Set a timeout *( in milliseconds )*
+
+#### URL Block ( Result )
+- `url` Fetch an URL.
 
 ### Letter Configuration
 The letters are split into two parts *( characters )*
