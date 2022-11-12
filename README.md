@@ -232,7 +232,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 ## Update HTTP Devices
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
-3. For the `New Value` you can type these patterns:
+3. For the `New Value` you can type this pattern:
 - For boolean devices: `true` / `false` *( contact, leak, motion, occupancy, outlet, rain, smoke, switch )*
 - For numeric devices: `10` / `12.4` *( airquality, blind, humidity, light, temperature )*
 - For all light bulbs: `true` / `false` *( dimmer, led, rgb )*
@@ -254,8 +254,8 @@ https://github.com/SynTexDZN/homebridge-syntex
 - For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
 
-**Example:**  `http://homebridge.local:1710/devices?id=multi1&type=switch&counter=1`\
-*( Reads the value of `Second` from the Example Config )*
+**Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890`\
+*( Reads the state of `ABCDEF1234567890` for example )*
 
 
 ## Remove HTTP Device
