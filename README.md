@@ -248,7 +248,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 *( Updates the value of `ABCDEF1234567890` to `20.5 LUX` for example )*
 
 
-## Read WebHooks Device Values
+## Read WebHooks Device
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
