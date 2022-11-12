@@ -229,7 +229,7 @@ Check out the GitHub page for more information:<br>
 https://github.com/SynTexDZN/homebridge-syntex
 
 
-## Update HTTP Devices
+## Update WebHooks Devices
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type this pattern:
@@ -243,11 +243,11 @@ https://github.com/SynTexDZN/homebridge-syntex
 - For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
 
-**Example:**  `http://homebridge.local:1710/devices?id=multi2&type=light&counter=0&value=20.5`\
-*( Updates the value of `Third` from the Example Config to `20.5 LUX` )*
+**Example:**  `http://homebridge.local:1710/devices?id=ABCDEF1234567890&type=light&counter=0&value=20.5`\
+*( Updates the value of `ABCDEF1234567890` to `20.5 LUX` for example )*
 
 
-## Read HTTP Device Values
+## Read WebHooks Device Values
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
@@ -258,7 +258,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 *( Reads the state of `ABCDEF1234567890` for example )*
 
 
-## Remove HTTP Device
+## Remove WebHooks Device
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&remove=CONFIRM`
 2. Insert the `Bridge IP` and `Device ID`
 - To remove a specific service add `&type=`  **SERVICETYPE**
