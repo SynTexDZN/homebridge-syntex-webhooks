@@ -23,6 +23,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					super.setBrightness(state.brightness,
 						() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
 				}
+
+				this.AutomationSystem.LogikEngine.runAutomation(this, state);
 			});
 		};
 	}
@@ -34,7 +36,12 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	
 	setState(value, callback)
 	{
-		this.setToCurrentBrightness({ value }, () => super.setState(value, () => callback()));
+		this.setToCurrentBrightness({ value }, () => {
+			
+			super.setState(value, () => callback());
+
+			this.AutomationSystem.LogikEngine.runAutomation(this, { value, brightness : this.brightness });
+		});
 	}
 
 	getBrightness(callback)
@@ -44,54 +51,50 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setBrightness(brightness, callback)
 	{
-		this.setToCurrentBrightness({ brightness }, () => super.setBrightness(brightness, () => callback()));
+		this.setToCurrentBrightness({ brightness }, () => {
+			
+			super.setBrightness(brightness, () => callback());
+
+			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness });
+		});
 	}
 
 	setToCurrentBrightness(state, callback)
 	{
-		if(state.value != null && this.value != state.value)
-		{
-			this.value = state.value;
+		const setBrightness = (resolve) => {
 
-			this.changed = true;
-		}
+			this.DeviceManager.fetchRequests(this, { value : this.value, brightness : this.brightness }).then((success) => {
 
-		if(state.brightness != null && this.brightness != state.brightness)
-		{
-			this.brightness = state.brightness;
+				if(success)
+				{
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+				}
 
-			this.changed = true;
-		}
+				if(callback != null)
+				{
+					callback();
+				}
 
-		setTimeout(() => {
+				resolve();
+			});
+		};
 
-			if(!this.running)
-			{
-				this.running = true;
+		super.setToCurrentBrightness(state, (resolve) => {
 
-				this.DeviceManager.fetchRequests(this, { value : this.value, brightness : this.brightness }).then((success) => {
+			setBrightness(resolve);
 
-					if(success && this.changed)
-					{
-						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-					}
-	
-					this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
-					
-					if(callback != null)
-					{
-						callback();
-					}
+		}, (resolve) => {
 
-					this.changed = false;
-					this.running = false;
-				});
-			}
-			else if(callback != null)
+			setBrightness(resolve);
+
+		}, (resolve) => {
+			
+			if(callback != null)
 			{
 				callback();
 			}
 
-		}, 100);
+			resolve();
+		});
 	}
 };
