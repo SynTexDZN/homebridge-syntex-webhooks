@@ -83,63 +83,40 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 	setToCurrentColor(state, callback)
 	{
-		if(state.value != null && this.value != state.value)
-		{
-			this.value = state.value;
+		const setColor = (resolve) => {
 
-			this.changed = true;
-		}
+			this.DeviceManager.fetchRequests(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness }).then((success) => {
 
-		if(state.hue != null && this.hue != state.hue)
-		{
-			this.hue = state.hue;
+				if(success)
+				{
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+				}
+				
+				if(callback != null)
+				{
+					callback();
+				}
 
-			this.changed = true;
-		}
+				resolve();
+			});
+		};
 
-		if(state.saturation != null && this.saturation != state.saturation)
-		{
-			this.saturation = state.saturation;
+		super.setToCurrentColor(state, (resolve) => {
 
-			this.changed = true;
-		}
+			setColor(resolve);
 
-		if(state.brightness != null && this.brightness != state.brightness)
-		{
-			this.brightness = state.brightness;
+		}, (resolve) => {
 
-			this.changed = true;
-		}
-		
-		setTimeout(() => {
+			setColor(resolve);
 
-			if(!this.running)
-			{
-				this.running = true;
-
-				this.DeviceManager.fetchRequests(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness }).then((success) => {
-
-					if(success && this.changed)
-					{
-						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-					}
-	
-					this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
-					
-					if(callback != null)
-					{
-						callback();
-					}
-
-					this.changed = false;
-					this.running = false;
-				});
-			}
-			else if(callback != null)
+		}, (resolve) => {
+			
+			if(callback != null)
 			{
 				callback();
 			}
-			
-		}, 100);
+
+			resolve();
+		});
 	}
 };
