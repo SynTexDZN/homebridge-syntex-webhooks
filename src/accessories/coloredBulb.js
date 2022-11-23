@@ -85,10 +85,15 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 	{
 		const setColor = (resolve) => {
 
-			this.DeviceManager.fetchRequests(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness }).then((success) => {
+			this.DeviceManager.fetchRequests(this, { value : this.tempState.value, hue : this.tempState.hue, saturation : this.tempState.saturation, brightness : this.tempState.brightness }).then((success) => {
 
 				if(success)
 				{
+					this.value = this.tempState.value;
+					this.hue = this.tempState.hue;
+					this.saturation = this.tempState.saturation;
+					this.brightness = this.tempState.brightness;
+
 					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 				}
 				
@@ -98,6 +103,8 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 				}
 
 				resolve();
+
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
 			});
 		};
 
@@ -117,6 +124,8 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			}
 
 			resolve();
+
+			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
 		});
 	}
 };

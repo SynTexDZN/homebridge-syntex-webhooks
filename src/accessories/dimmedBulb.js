@@ -23,8 +23,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					super.setBrightness(state.brightness,
 						() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
 				}
-
-				this.AutomationSystem.LogikEngine.runAutomation(this, state);
 			});
 		};
 	}
@@ -36,12 +34,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	
 	setState(value, callback)
 	{
-		this.setToCurrentBrightness({ value }, () => {
-			
-			super.setState(value, () => callback());
-
-			this.AutomationSystem.LogikEngine.runAutomation(this, { value, brightness : this.brightness });
-		});
+		this.setToCurrentBrightness({ value }, () => super.setState(value, () => callback()));
 	}
 
 	getBrightness(callback)
@@ -51,22 +44,20 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setBrightness(brightness, callback)
 	{
-		this.setToCurrentBrightness({ brightness }, () => {
-			
-			super.setBrightness(brightness, () => callback());
-
-			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness });
-		});
+		this.setToCurrentBrightness({ brightness }, () => super.setBrightness(brightness, () => callback()));
 	}
 
 	setToCurrentBrightness(state, callback)
 	{
 		const setBrightness = (resolve) => {
 
-			this.DeviceManager.fetchRequests(this, { value : this.value, brightness : this.brightness }).then((success) => {
+			this.DeviceManager.fetchRequests(this, { value : this.tempState.value, brightness : this.tempState.brightness }).then((success) => {
 
 				if(success)
 				{
+					this.value = this.tempState.value;
+					this.brightness = this.tempState.brightness;
+
 					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 				}
 
@@ -76,6 +67,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				}
 
 				resolve();
+
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 			});
 		};
 
@@ -95,6 +88,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			}
 
 			resolve();
+
+			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 		});
 	}
 };
