@@ -82,8 +82,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			}
 
 			resolve();
-
-			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 		});
 	}
 };

@@ -110,8 +110,6 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			}
 
 			resolve();
-
-			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
 		});
 	}
 };
