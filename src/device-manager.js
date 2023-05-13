@@ -1,4 +1,4 @@
-const axios = require('axios'), convert = require('color-convert');
+const convert = require('color-convert');
 
 module.exports = class DeviceManager
 {
@@ -7,6 +7,8 @@ module.exports = class DeviceManager
 		this.connections = {};
 
 		this.logger = platform.logger;
+
+		this.RequestManager = platform.RequestManager;
 		this.TypeManager = platform.TypeManager;
 
 		this.accessories = platform.accessories;
@@ -39,24 +41,27 @@ module.exports = class DeviceManager
 			this.connections[url] = 0;
 		}
 
-		axios.get(url, { timeout : 25000 }).then(() => {
+		this.RequestManager.fetch(url, { timeout : 25000 }).then((data) => {
 
-			this.connections[url] = 0;
-
-			if(accessory.setConnectionState != null)
+			if(data != null)
 			{
-				accessory.setConnectionState(true, null, true);
+				this.connections[url] = 0;
+
+				if(accessory.setConnectionState != null)
+				{
+					accessory.setConnectionState(true, null, true);
+				}
 			}
-
-		}).catch(() => {
-
-			if(this.connections[url] < 2)
+			else
 			{
-				this.connections[url]++;
-			}
-			else if(accessory.setConnectionState != null)
-			{
-				accessory.setConnectionState(false, null, true);
+				if(this.connections[url] < 2)
+				{
+					this.connections[url]++;
+				}
+				else if(accessory.setConnectionState != null)
+				{
+					accessory.setConnectionState(false, null, true);
+				}
 			}
 		});
 	}
@@ -126,17 +131,18 @@ module.exports = class DeviceManager
 						if(state.value && service.options.requests[i].trigger.toLowerCase() == 'on'
 						|| !state.value && service.options.requests[i].trigger.toLowerCase() == 'off')
 						{
-							axios.get(urlToCall, theRequest).then(function(response) {
+							this.RequestManager.fetch(urlToCall, theRequest).then(function(data, err) {
 
-								success++;
+								if(data != null)
+								{
+									success++;
 
-								this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + ']');
-							
-							}.bind({ url : urlToCall, logger : this.logger })).catch(function(err) {
-
-								this.logger.log('error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1)+ '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
-							
-							}.bind({ url : urlToCall, logger : this.logger })).then(function() {
+									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (data || '') + ']');
+								}
+								else
+								{
+									this.logger.log('error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1)+ '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
+								}
 
 								finished++;
 
@@ -156,8 +162,8 @@ module.exports = class DeviceManager
 										resolve(true);
 									}
 								}
-
-							}.bind({ url : urlToCall, TypeManager : this.TypeManager }));
+							
+							}.bind({ url : urlToCall, logger : this.logger, TypeManager : this.TypeManager }));
 						}
 						else if(service.options.requests[i].trigger.toLowerCase() == 'color')
 						{
@@ -168,15 +174,16 @@ module.exports = class DeviceManager
 								colors = convert.hsv.rgb([state.hue, state.saturation, state.brightness]);
 							}
 
-							axios.get(urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), theRequest).then(function(response) {
+							this.RequestManager.fetch(urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), theRequest).then(function(data, err) {
 
-								this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + '] ');
-							
-							}.bind({ url : urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), logger : this.logger })).catch(function(err) {
-
-								this.logger.log('error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
-							
-							}.bind({ url : urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), logger : this.logger })).then(() => {
+								if(data != null)
+								{
+									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (data || '') + '] ');
+								}
+								else
+								{
+									this.logger.log('error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
+								}
 
 								finished++;
 
@@ -189,19 +196,21 @@ module.exports = class DeviceManager
 									
 									resolve(true);
 								}
-							});
+							
+							}.bind({ url : urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), logger : this.logger }));
 						}
 						else if(service.options.requests[i].trigger.toLowerCase() == 'dimmer')
 						{
-							axios.get(urlToCall + state.brightness, theRequest).then(function(response) {
+							this.RequestManager.fetch(urlToCall + state.brightness, theRequest).then(function(data, err) {
 
-								this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + response.status + '] %request_result[2]%: [' + (response.data || '') + '] ');
-							
-							}.bind({ url : urlToCall + state.brightness, logger : this.logger })).catch(function(err) {
-
-								this.logger.log('error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
-							
-							}.bind({ url : urlToCall + state.brightness, logger : this.logger })).then(() => {
+								if(data != null)
+								{
+									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (data || '') + '] ');
+								}
+								else
+								{
+									this.logger.log('error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
+								}
 
 								finished++;
 
@@ -214,7 +223,8 @@ module.exports = class DeviceManager
 									
 									resolve(true);
 								}
-							});
+							
+							}.bind({ url : urlToCall + state.brightness, logger : this.logger }));
 						}
 					}
 				}
