@@ -7,7 +7,7 @@ module.exports = class DeviceManager
 		this.connections = {};
 
 		this.logger = platform.logger;
-		this.typeManager = platform.TypeManager;
+		this.TypeManager = platform.TypeManager;
 
 		this.accessories = platform.accessories;
 
@@ -147,7 +147,7 @@ module.exports = class DeviceManager
 										service.setConnectionState(success > 0, null, true);
 									}
 									
-									if(success == 0 && this.typeManager.letterToType(service.letters) == 'relais')
+									if(success == 0 && this.TypeManager.letterToType(service.letters) == 'relais')
 									{
 										resolve(false);
 									}
@@ -157,7 +157,7 @@ module.exports = class DeviceManager
 									}
 								}
 
-							}.bind({ url : urlToCall, typeManager : this.typeManager }));
+							}.bind({ url : urlToCall, TypeManager : this.TypeManager }));
 						}
 						else if(service.options.requests[i].trigger.toLowerCase() == 'color')
 						{
