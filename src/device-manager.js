@@ -137,7 +137,7 @@ module.exports = class DeviceManager
 								{
 									success++;
 
-									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (data || '') + ']');
+									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (JSON.stringify(data) || '') + ']');
 								}
 								else
 								{
@@ -178,7 +178,7 @@ module.exports = class DeviceManager
 
 								if(data != null)
 								{
-									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (data || '') + '] ');
+									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (JSON.stringify(data) || '') + '] ');
 								}
 								else
 								{
@@ -205,7 +205,7 @@ module.exports = class DeviceManager
 
 								if(data != null)
 								{
-									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (data || '') + '] ');
+									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (JSON.stringify(data) || '') + '] ');
 								}
 								else
 								{
