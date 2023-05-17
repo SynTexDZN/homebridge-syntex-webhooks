@@ -41,9 +41,9 @@ module.exports = class DeviceManager
 			this.connections[url] = 0;
 		}
 
-		this.RequestManager.fetch(url, { timeout : 25000 }).then((data) => {
+		this.RequestManager.fetch(url, { timeout : 25000 }).then((response) => {
 
-			if(data != null)
+			if(response.data != null)
 			{
 				this.connections[url] = 0;
 
@@ -131,18 +131,14 @@ module.exports = class DeviceManager
 						if(state.value && service.options.requests[i].trigger.toLowerCase() == 'on'
 						|| !state.value && service.options.requests[i].trigger.toLowerCase() == 'off')
 						{
-							this.RequestManager.fetch(urlToCall, theRequest).then(function(data, err) {
+							this.RequestManager.fetch(urlToCall, theRequest).then(function(response) {
 
-								if(data != null)
+								if(response.data != null)
 								{
 									success++;
-
-									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (JSON.stringify(data) || '') + ']');
 								}
-								else
-								{
-									this.logger.log('error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1)+ '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
-								}
+									
+								this.logger.log(response.data != null ? 'success' : 'error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (response.status || -1)+ '] %request_result[2]%: [' + (response.data || '') + ']', response.error || '');
 
 								finished++;
 
@@ -174,16 +170,9 @@ module.exports = class DeviceManager
 								colors = convert.hsv.rgb([state.hue, state.saturation, state.brightness]);
 							}
 
-							this.RequestManager.fetch(urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), theRequest).then(function(data, err) {
+							this.RequestManager.fetch(urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), theRequest).then(function(response) {
 
-								if(data != null)
-								{
-									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (JSON.stringify(data) || '') + '] ');
-								}
-								else
-								{
-									this.logger.log('error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
-								}
+								this.logger.log(response.data != null ? 'success' : 'error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (response.status || -1) + '] %request_result[2]%: [' + (response.data || '') + ']', response.error || '');
 
 								finished++;
 
@@ -201,16 +190,9 @@ module.exports = class DeviceManager
 						}
 						else if(service.options.requests[i].trigger.toLowerCase() == 'dimmer')
 						{
-							this.RequestManager.fetch(urlToCall + state.brightness, theRequest).then(function(data, err) {
+							this.RequestManager.fetch(urlToCall + state.brightness, theRequest).then(function(response) {
 
-								if(data != null)
-								{
-									this.logger.log('success', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [200] %request_result[2]%: [' + (JSON.stringify(data) || '') + '] ');
-								}
-								else
-								{
-									this.logger.log('error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (err.response != null ? err.response.status : -1) + '] %request_result[2]%: [' + (err.response != null ? err.response.data : '') + ']', err.stack);
-								}
+								this.logger.log(response.data != null ? 'success' : 'error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (response.status || -1) + '] %request_result[2]%: [' + (response.data || '') + ']', response.error || '');
 
 								finished++;
 
