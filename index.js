@@ -1,8 +1,8 @@
-let DeviceManager = require('./src/device-manager');
-
 const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
 
 const SynTexUniversalAccessory = require('./src/universal');
+
+const DeviceManager = require('./src/device-manager');
 
 const pluginID = 'homebridge-syntex-webhooks';
 const pluginName = 'SynTexWebHooks';
@@ -20,7 +20,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 		{
 			this.api.on('didFinishLaunching', () => {
 
-				DeviceManager = new DeviceManager(this);
+				this.DeviceManager = new DeviceManager(this);
 
 				this.loadAccessories();
 			});
@@ -37,9 +37,9 @@ class SynTexWebHookPlatform extends DynamicPlatform
 		{
 			const homebridgeAccessory = this.getAccessory(device.id);
 
-			device.manufacturer = pluginName;
+			device.manufacturer = this.pluginName;
 
-			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager }));
+			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager : this.DeviceManager }));
 		}
 	}
 }
