@@ -33,7 +33,7 @@ module.exports = class SynTexBlindService extends BlindService
 			{
 				this.value = value;
 
-				super.setTargetPosition(value, () => callback(this.updatePosition(value)), true);
+				super.setTargetPosition(value, () => callback(this.updateTarget(value)), true);
 
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}
@@ -51,24 +51,24 @@ module.exports = class SynTexBlindService extends BlindService
 
 	getPositionState(callback)
 	{
-		callback(null, this.position);
+		callback(null, this.mode);
 	}
 
-	updatePosition(value)
+	updateTarget(value)
 	{
-		this.position = value > 0 ? this.Characteristic.PositionState.INCREASING : this.Characteristic.PositionState.DECREASING;
+		this.mode = value > 0 ? this.Characteristic.PositionState.INCREASING : this.Characteristic.PositionState.DECREASING;
 
 		this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(value);
-		this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.position);
+		this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.mode);
 
-		super.setPositionState(this.position, () => setTimeout(() => {
+		super.setPositionState(this.mode, () => setTimeout(() => {
 
-			this.position = this.Characteristic.PositionState.STOPPED;
+			this.mode = this.Characteristic.PositionState.STOPPED;
 
 			this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.value);
-			this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.position);
+			this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.mode);
 
-			super.setPositionState(this.position, () => {});
+			super.setPositionState(this.mode, () => {});
 
 		}, value > 0 ? this.timeDelayUp : this.timeDelayDown));
 	}
