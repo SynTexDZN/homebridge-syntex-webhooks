@@ -18,20 +18,13 @@ module.exports = class SynTexOutletService extends OutletService
 		};
 	}
 
-	getState(callback)
-	{
-		super.getState(() => callback(null, this.value), true);
-	}
-	
 	setState(value, callback)
 	{
 		this.DeviceManager.fetchRequests(this, { value }).then((success) => {
 
 			if(success)
 			{
-				this.value = value;
-
-				super.setState(value, () => callback(), true);
+				super.setState(value, () => callback());
 
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}

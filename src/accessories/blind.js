@@ -15,61 +15,52 @@ module.exports = class SynTexBlindService extends BlindService
 
 			if(state.value != null)
 			{
-				this.setTargetPosition(state.value, () => {});
+				this.setTargetPosition(state.value,
+					() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(state.value));
 			}
 		};
 	}
 
-	getTargetPosition(callback)
+	setTargetPosition(target, callback)
 	{
-		super.getTargetPosition((value) => callback(null, value), true);
-	}
-	
-	setTargetPosition(value, callback)
-	{
-		this.DeviceManager.fetchRequests(this, { value }).then((success) => {
+		this.DeviceManager.fetchRequests(this, { value : target }).then((success) => {
 
 			if(success)
 			{
-				this.value = value;
+				super.setTargetPosition(target, () => callback());
 
-				super.setTargetPosition(value, () => callback(this.updateTarget(value)), true);
+				this.updateTarget();
 
-				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
 			}
 			else
 			{
-				callback(new Error('Request failed'));
+				callback(new Error('Not Connected'));
 			}
 		});
 	}
 
-	getCurrentPosition(callback)
+	updateTarget()
 	{
-		callback(null, this.value);
-	}
+		var currentState = this.target > 0 ? this.Characteristic.PositionState.INCREASING : this.Characteristic.PositionState.DECREASING;
 
-	getPositionState(callback)
-	{
-		callback(null, this.mode);
-	}
+		super.setPositionState(currentState,
+			() => this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(currentState), true);
 
-	updateTarget(value)
-	{
-		this.mode = value > 0 ? this.Characteristic.PositionState.INCREASING : this.Characteristic.PositionState.DECREASING;
+		setTimeout(() => {
 
-		this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(value);
-		this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.mode);
+			currentState = this.Characteristic.PositionState.STOPPED;
 
-		super.setPositionState(this.mode, () => setTimeout(() => {
+			super.setState(this.target,
+				() => this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.target), false);
 
-			this.mode = this.Characteristic.PositionState.STOPPED;
+			super.setPositionState(currentState,
+				() => this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(currentState), false);
 
-			this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.value);
-			this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.mode);
+			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 
-			super.setPositionState(this.mode, () => {});
+			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
 
-		}, value > 0 ? this.timeDelayUp : this.timeDelayDown));
+		}, this.target > 0 ? this.timeDelayUp : this.timeDelayDown);
 	}
 };

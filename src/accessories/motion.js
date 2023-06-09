@@ -14,19 +14,12 @@ module.exports = class SynTexMotionService extends MotionService
 
 				if(success && state.value != null)
 				{
-					this.value = state.value;
-
 					super.setState(state.value,
-						() => this.service.getCharacteristic(this.Characteristic.MotionDetected).updateValue(state.value), true);
+						() => this.service.getCharacteristic(this.Characteristic.MotionDetected).updateValue(state.value));
 				}
 
 				this.AutomationSystem.LogikEngine.runAutomation(this, state);
 			});
 		};
-	}
-
-	getState(callback)
-	{
-		super.getState(() => callback(null, this.value), true);
 	}
 };

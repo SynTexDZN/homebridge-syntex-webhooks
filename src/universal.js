@@ -1,21 +1,16 @@
-const { UniversalAccessory } = require('homebridge-syntex-dynamic-platform');
+const { UniversalAccessory, AirQualityService, HumidityService, LightService, StatelessSwitchService, TemperatureService } = require('homebridge-syntex-dynamic-platform');
 
-const ContactService = require('./accessories/contact');
-const SwitchService = require('./accessories/switch');
-const LightService = require('./accessories/light');
-const MotionService = require('./accessories/motion');
-const TemperatureService = require('./accessories/temperature');
-const HumidityService = require('./accessories/humidity');
-const LightBulbService = require('./accessories/lightBulb');
-const DimmedBulbService = require('./accessories/dimmedBulb');
-const ColoredBulbService = require('./accessories/coloredBulb');
-const LeakService = require('./accessories/leak');
-const OutletService = require('./accessories/outlet');
-const OccupancyService = require('./accessories/occupancy');
-const StatelessSwitchService = require('./accessories/statelessswitch');
-const SmokeService = require('./accessories/smoke');
-const AirQualityService = require('./accessories/airquality');
 const BlindService = require('./accessories/blind');
+const ColoredBulbService = require('./accessories/coloredBulb');
+const ContactService = require('./accessories/contact');
+const DimmedBulbService = require('./accessories/dimmedBulb');
+const LeakService = require('./accessories/leak');
+const LightBulbService = require('./accessories/lightBulb');
+const MotionService = require('./accessories/motion');
+const OccupancyService = require('./accessories/occupancy');
+const OutletService = require('./accessories/outlet');
+const SmokeService = require('./accessories/smoke');
+const SwitchService = require('./accessories/switch');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {

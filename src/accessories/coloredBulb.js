@@ -22,19 +22,9 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		};
 	}
 
-	getState(callback)
-	{
-		super.getState(() => callback(null, this.value), true);
-	}
-	
 	setState(value, callback)
 	{
 		this.setToCurrentColor({ value }, () => callback());
-	}
-
-	getHue(callback)
-	{
-		super.getHue(() => callback(null, this.hue));
 	}
 
 	setHue(hue, callback)
@@ -42,19 +32,9 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		this.setToCurrentColor({ hue }, () => callback());
 	}
 
-	getSaturation(callback)
-	{
-		super.getSaturation(() => callback(null, this.saturation));
-	}
-
 	setSaturation(saturation, callback)
 	{
 		this.setToCurrentColor({ saturation }, () => callback());
-	}
-
-	getBrightness(callback)
-	{
-		super.getBrightness(() => callback(null, this.brightness));
 	}
 
 	setBrightness(brightness, callback)
@@ -70,17 +50,12 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 				if(success)
 				{
-					this.value = this.tempState.value;
-					this.hue = this.tempState.hue;
-					this.saturation = this.tempState.saturation;
-					this.brightness = this.tempState.brightness;
+					super.setState(this.tempState.value, null, false);
+					super.setHue(this.tempState.hue, null, false);
+					super.setSaturation(this.tempState.saturation, null, false);
+					super.setBrightness(this.tempState.brightness, null, false);
 
-					super.setState(this.value, () => {});
-					super.setHue(this.hue, () => {});
-					super.setSaturation(this.saturation, () => {});
-					super.setBrightness(this.brightness, () => {});
-
-					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 				}
 
 				if(callback != null)

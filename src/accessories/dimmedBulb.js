@@ -18,19 +18,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		};
 	}
 
-	getState(callback)
-	{
-		super.getState(() => callback(null, this.value), true);
-	}
-	
 	setState(value, callback)
 	{
 		this.setToCurrentBrightness({ value }, () => callback());
-	}
-
-	getBrightness(callback)
-	{
-		super.getBrightness(() => callback(null, this.brightness));
 	}
 
 	setBrightness(brightness, callback)
@@ -46,13 +36,10 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 				if(success)
 				{
-					this.value = this.tempState.value;
-					this.brightness = this.tempState.brightness;
+					super.setState(this.tempState.value, null, false);
+					super.setBrightness(this.tempState.brightness, null, false);
 
-					super.setState(this.value, () => {});
-					super.setBrightness(this.brightness, () => {});
-
-					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 				}
 
 				if(callback != null)
