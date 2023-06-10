@@ -38,10 +38,10 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 				if(success)
 				{
-					super.setState(this.value, null, false);
-					super.setTargetTemperature(this.target, null, false);
-					super.setCurrentHeatingCoolingState(this.state, null, false);
-					super.setTargetHeatingCoolingState(this.mode, null, false);
+					super.setState(state.value, null, false);
+					super.setTargetTemperature(state.target, null, false);
+					super.setCurrentHeatingCoolingState(state.state, null, false);
+					super.setTargetHeatingCoolingState(state.mode, null, false);
 
 					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 				}
