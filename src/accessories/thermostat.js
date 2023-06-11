@@ -38,10 +38,25 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 				if(success)
 				{
-					super.setState(this.tempState.value, null, false);
-					super.setTargetTemperature(this.tempState.target, null, false);
-					super.setCurrentHeatingCoolingState(this.tempState.state, null, false);
-					super.setTargetHeatingCoolingState(this.tempState.mode, null, false);
+					if(this.changedValue)
+					{
+						super.setState(this.tempState.value, null, false);
+					}
+
+					if(this.changedTarget)
+					{
+						super.setTargetTemperature(this.tempState.target, null, false);
+					}
+
+					if(this.changedState)
+					{
+						super.setCurrentHeatingCoolingState(this.tempState.state, null, false);
+					}
+
+					if(this.changedMode)
+					{
+						super.setTargetHeatingCoolingState(this.tempState.mode, null, false);
+					}
 
 					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 				}
@@ -71,9 +86,16 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 			if(changed)
 			{
-				super.setState(this.tempState.value, null, false);
-				super.setCurrentHeatingCoolingState(this.tempState.state, null, false);
+				if(this.changedValue)
+				{
+					super.setState(this.tempState.value, null, false);
+				}
 
+				if(this.changedState)
+				{
+					super.setCurrentHeatingCoolingState(this.tempState.state, null, false);
+				}
+				
 				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 			}
 			
