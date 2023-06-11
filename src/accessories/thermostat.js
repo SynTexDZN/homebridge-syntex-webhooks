@@ -34,14 +34,14 @@ module.exports = class SynTexThermostatService extends ThermostatService
 	{
 		const setState = (resolve) => {
 
-			this.DeviceManager.fetchRequests(this, { value : this.value, target : this.target, state : this.state, mode : this.mode }).then((success) => {
+			this.DeviceManager.fetchRequests(this, { value : this.tempState.value, target : this.tempState.target, state : this.tempState.state, mode : this.tempState.mode }).then((success) => {
 
 				if(success)
 				{
-					super.setState(state.value, null, false);
-					super.setTargetTemperature(state.target, null, false);
-					super.setCurrentHeatingCoolingState(state.state, null, false);
-					super.setTargetHeatingCoolingState(state.mode, null, false);
+					super.setState(this.tempState.value, null, false);
+					super.setTargetTemperature(this.tempState.target, null, false);
+					super.setCurrentHeatingCoolingState(this.tempState.state, null, false);
+					super.setTargetHeatingCoolingState(this.tempState.mode, null, false);
 
 					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 				}
@@ -66,6 +66,16 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			setState(resolve);
 
 		}, (resolve) => {
+
+			var changed = this.changedValue || this.changedState;
+
+			if(changed)
+			{
+				super.setState(this.tempState.value, null, false);
+				super.setCurrentHeatingCoolingState(this.tempState.state, null, false);
+
+				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
+			}
 			
 			if(callback != null)
 			{
@@ -73,6 +83,11 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			}
 
 			resolve();
+
+			if(changed)
+			{
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
+			}
 		});
 	}
 };
