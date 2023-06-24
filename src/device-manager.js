@@ -68,100 +68,27 @@ module.exports = class DeviceManager
 
 	fetchRequests(service, state)
 	{
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 
-			var counter = 0, finished = 0, success = 0;
+			var promiseArray = [];
 
-			for(let i = 0; i < service.options.requests.length; i++)
+			if(Array.isArray(service.options.requests))
 			{
-				if(service.options.requests[i].trigger != null && state.value != null
-				&& (state.value && service.options.requests[i].trigger.toLowerCase() == 'on'
-				|| !state.value && service.options.requests[i].trigger.toLowerCase() == 'off'
-				|| service.options.requests[i].trigger.toLowerCase() == 'color'
-				|| service.options.requests[i].trigger.toLowerCase() == 'dimmer'))
+				for(const request of service.options.requests)
 				{
-					counter++;
-				}
-			}
-
-			for(let i = 0; i < service.options.requests.length; i++)
-			{
-				if(service.options.requests[i].trigger != null && state.value != null)
-				{
-					var urlMethod = service.options.requests[i].method || '';
-					var urlToCall = service.options.requests[i].url || '';
-					var urlBody = service.options.requests[i].body || '';
-					var urlForm = service.options.requests[i].form || '';
-					var urlHeaders = service.options.requests[i].body || '{}';
-
-					if(urlMethod != '' && urlToCall != '')
+					if(request.type != null && request.url != null)
 					{
-						var theRequest = {
-							timeout : 5000
-						};
+						var type = request.type.toLowerCase(), url = null;
 
-						try
+						if((type == 'on' && state.value == true) || (type == 'off' && state.value == false))
 						{
-							theRequest.headers = JSON.parse(urlHeaders);
+							url = request.url;
 						}
-						catch(e)
+						else if(type == 'dimmer')
 						{
-							this.logger.log('error', service.id, service.letters, 'Request Headers %json_parse_error%! ( ' + theRequest.headers + ')', e);
+							url = request.url + state.brightness;
 						}
-
-						if(urlMethod === 'POST' || urlMethod === 'PUT')
-						{
-							if(urlForm)
-							{
-								try
-								{
-									theRequest.data = JSON.parse(urlForm);
-								}
-								catch(e)
-								{
-									this.logger.log('error', service.id, service.letters, 'Request Form %json_parse_error%! ( ' + theRequest.headers + ')', e);
-								}
-							}
-							else if(urlBody)
-							{
-								theRequest.data = urlBody;
-							}
-						}
-
-						if(state.value && service.options.requests[i].trigger.toLowerCase() == 'on'
-						|| !state.value && service.options.requests[i].trigger.toLowerCase() == 'off')
-						{
-							this.RequestManager.fetch(urlToCall, theRequest).then(function(response) {
-
-								if(response.data != null)
-								{
-									success++;
-								}
-									
-								this.logger.log(response.data != null ? 'success' : 'error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (response.status || -1)+ '] %request_result[2]%: [' + (response.data || '') + ']', response.error || '');
-
-								finished++;
-
-								if(finished >= counter)
-								{
-									if(service.setConnectionState != null)
-									{
-										service.setConnectionState(success > 0, null, true);
-									}
-									
-									if(success == 0 && this.TypeManager.letterToType(service.letters) == 'relais')
-									{
-										resolve(false);
-									}
-									else
-									{
-										resolve(true);
-									}
-								}
-							
-							}.bind({ url : urlToCall, logger : this.logger, TypeManager : this.TypeManager }));
-						}
-						else if(service.options.requests[i].trigger.toLowerCase() == 'color')
+						else if(type == 'color')
 						{
 							var colors = [state.hue, state.saturation, state.brightness];
 
@@ -170,49 +97,87 @@ module.exports = class DeviceManager
 								colors = convert.hsv.rgb([state.hue, state.saturation, state.brightness]);
 							}
 
-							this.RequestManager.fetch(urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), theRequest).then(function(response) {
+							if(!state.value)
+							{
+								colors[2] = 0;
+							}
 
-								this.logger.log(response.data != null ? 'success' : 'error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (response.status || -1) + '] %request_result[2]%: [' + (response.data || '') + ']', response.error || '');
-
-								finished++;
-
-								if(finished >= counter)
-								{
-									if(service.setConnectionState != null)
-									{
-										service.setConnectionState(success > 0, null, true);
-									}
-									
-									resolve(true);
-								}
-							
-							}.bind({ url : urlToCall + colors[0] + ',' + colors[1] + ',' + (state.value ? colors[2] : 0), logger : this.logger }));
+							url = request.url + colors.join(',');
 						}
-						else if(service.options.requests[i].trigger.toLowerCase() == 'dimmer')
+						else if(state[type] != null)
 						{
-							this.RequestManager.fetch(urlToCall + state.brightness, theRequest).then(function(response) {
+							url = request.url + (request.url.includes('?') ? '&' : '?') + request.type + '=' + state[request.type];
+						}
 
-								this.logger.log(response.data != null ? 'success' : 'error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + this.url + '] %request_result[1]% [' + (response.status || -1) + '] %request_result[2]%: [' + (response.data || '') + ']', response.error || '');
-
-								finished++;
-
-								if(finished >= counter)
-								{
-									if(service.setConnectionState != null)
-									{
-										service.setConnectionState(success > 0, null, true);
-									}
-									
-									resolve(true);
-								}
+						if(url != null)
+						{
+							const requestURL = url;
 							
-							}.bind({ url : urlToCall + state.brightness, logger : this.logger }));
+							var options = {
+								method : request.method || 'GET',
+								body : request.body || '',
+								form : request.form || '',
+								headers : request.headers || '{}',
+								timeout : request.timeout || 5000
+							};
+
+							try
+							{
+								options.headers = JSON.parse(options.headers);
+							}
+							catch(e)
+							{
+								this.logger.log('error', service.id, service.letters, 'Request Headers %json_parse_error%! ( ' + options.headers + ')', e);
+							}
+
+							if(options.method == 'POST' || options.method == 'PUT')
+							{
+								if(options.form)
+								{
+									try
+									{
+										options.data = JSON.parse(options.form);
+									}
+									catch(e)
+									{
+										this.logger.log('error', service.id, service.letters, 'Request Form %json_parse_error%! ( ' + options.form + ')', e);
+									}
+								}
+								else if(options.body)
+								{
+									options.data = options.body;
+								}
+							}
+
+							promiseArray.push(new Promise((callback) => {
+
+								this.RequestManager.fetch(requestURL, options).then((response) => {
+								
+									this.logger.log(response.data != null ? 'success' : 'error', service.id, service.letters, '[' + service.name + '] %request_result[0]% [' + requestURL + '] %request_result[1]% [' + (response.status || -1) + '] %request_result[2]%: [' + (response.data || '') + ']', response.error || '');
+									
+									callback(response.data != null);
+								});
+							}));
 						}
 					}
 				}
 			}
+			
+			if(promiseArray.length > 0)
+			{
+				Promise.all(promiseArray).then((result) => {
 
-			if(counter == 0)
+					var type = this.TypeManager.letterToType(service.letters);
+	
+					if(service.setConnectionState != null)
+					{
+						service.setConnectionState(result.includes(true), null, true);
+					}
+	
+					resolve(type != 'relais' || result.includes(true));
+				});
+			}
+			else
 			{
 				resolve(true);
 			}
