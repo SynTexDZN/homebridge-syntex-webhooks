@@ -13,8 +13,8 @@ module.exports = class SynTexFanService extends FanService
 			this.setToCurrentState(state, () => {
 
 				this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
-				this.service.getCharacteristic(this.Characteristic.RotationDirection).updateValue(this.direction);
 				this.service.getCharacteristic(this.Characteristic.RotationSpeed).updateValue(this.speed);
+				this.service.getCharacteristic(this.Characteristic.RotationDirection).updateValue(this.direction);
 			});
 		};
 	}
@@ -24,21 +24,21 @@ module.exports = class SynTexFanService extends FanService
 		this.setToCurrentState({ value }, () => callback());
 	}
 
-	setRotationDirection(direction, callback)
-	{
-		this.setToCurrentState({ direction }, () => callback());
-	}
-
 	setRotationSpeed(speed, callback)
 	{
 		this.setToCurrentState({ speed }, () => callback());
+	}
+
+	setRotationDirection(direction, callback)
+	{
+		this.setToCurrentState({ direction }, () => callback());
 	}
 
 	setToCurrentState(state, callback)
 	{
 		const setState = (resolve) => {
 
-			this.DeviceManager.fetchRequests(this, { value : this.tempState.value, direction : this.tempState.direction, speed : this.tempState.speed }).then((success) => {
+			this.DeviceManager.fetchRequests(this, { value : this.tempState.value, speed : this.tempState.speed, direction : this.tempState.direction }).then((success) => {
 
 				if(success)
 				{
@@ -47,14 +47,14 @@ module.exports = class SynTexFanService extends FanService
 						super.setState(this.tempState.value, null, false);
 					}
 
-					if(this.changedDirection)
-					{
-						super.setRotationDirection(this.tempState.direction, null, false);
-					}
-
 					if(this.changedSpeed)
 					{
 						super.setRotationSpeed(this.tempState.speed, null, false);
+					}
+
+					if(this.changedDirection)
+					{
+						super.setRotationDirection(this.tempState.direction, null, false);
 					}
 
 					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
@@ -67,7 +67,7 @@ module.exports = class SynTexFanService extends FanService
 
 				resolve();
 
-				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, direction : this.direction, speed : this.speed });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, speed : this.speed, direction : this.direction });
 			});
 		};
 
