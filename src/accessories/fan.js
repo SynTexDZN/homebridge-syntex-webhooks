@@ -19,6 +19,11 @@ module.exports = class SynTexFanService extends FanService
 		};
 	}
 
+	setState(value, callback)
+	{
+		this.setToCurrentState({ value }, () => callback());
+	}
+
 	setRotationDirection(direction, callback)
 	{
 		this.setToCurrentState({ direction }, () => callback());
