@@ -4,6 +4,7 @@ const BlindService = require('./accessories/blind');
 const ColoredBulbService = require('./accessories/coloredBulb');
 const ContactService = require('./accessories/contact');
 const DimmedBulbService = require('./accessories/dimmedBulb');
+const FanService = require('./accessories/fan');
 const LeakService = require('./accessories/leak');
 const LightBulbService = require('./accessories/lightBulb');
 const MotionService = require('./accessories/motion');
@@ -113,6 +114,10 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(serviceConfig.type == 'thermostat')
 		{
 			service = new ThermostatService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+		}
+		else if(serviceConfig.type == 'fan')
+		{
+			service = new FanService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 
 		if(service != null)
