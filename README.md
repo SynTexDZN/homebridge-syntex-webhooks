@@ -212,7 +212,7 @@ It stores accessory data you can request to display the content on your website 
 - `name` could be anything.
 - `services` The services of your accessory.<br><br>
     - `name` could be anything.
-    - `type` Define the service type *( `airquality`, `blind`, `contact`, `dimmer`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `statelessswitch`, `switch`, `temperature` )*
+    - `type` Define the service type *( `airquality`, `blind`, `contact`, `dimmer`, `fan`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `statelessswitch`, `switch`, `temperature`, `thermostat` )*
     - For Boolean Devices you can add `requests` *( trigger can be: on, off, color )*
     - For RGB Lights you can add `spectrum` attribute *( to convert to the right output format: RGB / HSL )*
     - For Stateless Switches you have to add `buttons` attribute.<br><br>
